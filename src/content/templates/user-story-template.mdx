@@ -1,0 +1,110 @@
+---
+title: "User Story Template for Software Teams"
+description: "Use this free user story template to write clear, actionable user stories with acceptance criteria, story points, and business value for Jira and Scrum teams."
+slug: "user-story-template"
+category: "Templates"
+keywords:
+  - user story template
+  - user story template jira
+  - agile user story template
+  - scrum user story
+relatedLinks:
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "User Story Examples for Login Page"
+    href: "/examples/user-story-examples-for-login-page"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
+---
+
+## Free User Story Template
+
+```
+## User Story
+As a [type of user],
+I want to [perform some action],
+So that [I achieve some goal or benefit].
+
+## Story Points
+[ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8  [ ] 13
+
+## Priority
+[ ] Critical  [ ] High  [x] Medium  [ ] Low
+
+## Acceptance Criteria
+Given [some context or precondition],
+When [I perform some action],
+Then [I expect this outcome].
+
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+## Definition of Done
+- [ ] Code reviewed and approved
+- [ ] Unit tests written and passing
+- [ ] QA verified in staging
+- [ ] No new bugs introduced
+- [ ] Documentation updated if needed
+
+## Notes / Context
+[Any additional context, constraints, or open questions]
+
+## Dependencies
+[List any blocking stories or dependencies]
+```
+
+## Filled Example
+
+**User Story:**
+As a registered user,
+I want to reset my password via email,
+So that I can regain access to my account if I forget my password.
+
+**Story Points:** 3
+
+**Priority:** High
+
+**Acceptance Criteria:**
+- Given I am on the login page, when I click "Forgot password", then I am taken to the password reset page
+- Given I enter a valid email address, when I click "Send reset link", then I receive an email within 2 minutes
+- Given I click the reset link in the email, when the link is valid and not expired, then I can set a new password
+- Given the reset link has expired (after 24 hours), when I click it, then I see an error message with an option to request a new link
+
+**Definition of Done:**
+- Reset flow works end to end in staging
+- Email is sent via the configured email provider
+- Expired links are handled gracefully
+- QA sign-off received
+
+## What Makes a Good User Story?
+
+A good user story answers three questions:
+
+1. **Who** — who is this for?
+2. **What** — what do they want to do?
+3. **Why** — what is the business value?
+
+Without the "why", teams build features without understanding the purpose. Without the "who", acceptance criteria become vague.
+
+## Common User Story Mistakes
+
+- Writing from the system's perspective instead of the user's
+- Missing acceptance criteria entirely
+- Stories too large to complete in one sprint — split them
+- Technical stories written as user stories (use tasks instead)
+- No definition of done — leads to incomplete handoffs
+
+## FAQ
+
+**How long should a user story be?**
+Short enough to fit on a sticky note. The story itself is one to three sentences. The acceptance criteria do the heavy lifting.
+
+**Should developers write user stories?**
+Anyone can write user stories. Product Owners typically write them, but engineers and QA often add the acceptance criteria and technical notes.
+
+**What is the difference between a user story and a task?**
+A user story describes user value. A task describes technical work. Breaking a user story into tasks is part of sprint planning.
+
+**How many acceptance criteria should a story have?**
+Typically 3–7. Too few means the story is under-defined. Too many means the story is too large and should be split.

@@ -1,0 +1,115 @@
+---
+title: "How to Write a Good Jira Ticket"
+description: "A practical guide for software teams on how to write clear, actionable Jira tickets. Covers titles, descriptions, acceptance criteria, and common mistakes."
+slug: "how-to-write-a-good-jira-ticket"
+category: "Guides"
+keywords:
+  - how to write a jira ticket
+  - jira ticket best practices
+  - good jira ticket
+  - jira ticket tips
+relatedLinks:
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Bug Report vs Jira Ticket"
+    href: "/guides/bug-report-vs-jira-ticket"
+  - title: "Bug Report to Jira Ticket Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+  - title: "Bug Report Example for Web Application"
+    href: "/examples/bug-report-example-for-web-application"
+---
+
+A bad Jira ticket wastes hours. A good Jira ticket saves them.
+
+This guide covers what separates a useful ticket from one that gets bounced back, ignored, or misunderstood.
+
+## 1. Write a Specific Title
+
+The title is the most important field. It should describe the problem or feature in one sentence — specific enough that anyone reading the backlog knows exactly what the ticket is about.
+
+**Bad titles:**
+- "Login broken"
+- "Fix button"
+- "Backend issue"
+
+**Good titles:**
+- "Login button does not respond when clicked in Chrome 114"
+- "Password reset email not delivered to Gmail addresses"
+- "Add rate limiting to POST /api/auth/login endpoint"
+
+**The rule:** If someone reads only the title, they should understand what needs to be done and roughly why.
+
+## 2. Include the Right Description Fields
+
+For **bug reports**, always include:
+
+- **Steps to Reproduce** — Numbered, specific, repeatable
+- **Expected Result** — What should happen
+- **Actual Result** — What does happen
+- **Environment** — Browser, OS, version, URL
+
+For **feature tickets**, always include:
+
+- **User Story** — As a [user], I want to [action], so that [value]
+- **Acceptance Criteria** — Specific, testable conditions
+- **Design / Mockups** — If applicable
+
+## 3. Write Acceptance Criteria Before Development Starts
+
+Acceptance criteria define what "done" means. Without them, developers guess, QA guesses, and the ticket gets reopened.
+
+**Write them before the sprint starts.** The conversation during sprint planning that leads to clear acceptance criteria often reveals misunderstandings before a single line of code is written.
+
+**Good acceptance criteria are:**
+- Testable — QA can write a test case from them
+- Specific — Not "the form should work" but "when valid data is submitted, the API returns HTTP 200 and the user receives a confirmation email"
+- Inclusive of error states — Happy path only is not enough
+
+## 4. Set the Right Priority
+
+Priority should reflect business impact, not urgency to the reporter.
+
+| Priority | Meaning |
+|---|---|
+| Critical | System down, data loss, or security breach. Fix immediately. |
+| High | Major feature broken with no workaround. Fix this sprint. |
+| Medium | Feature broken but has a workaround. Fix next sprint. |
+| Low | Cosmetic issue or minor annoyance. Fix when time allows. |
+
+Don't mark everything High. If everything is high priority, nothing is.
+
+## 5. Attach Evidence
+
+A screenshot or console error log saves 30 minutes of back-and-forth. Always attach:
+
+- Browser console errors
+- Network tab screenshots
+- Stack traces from logs
+- A screen recording if the bug is intermittent
+
+## 6. Link Related Tickets
+
+If this ticket blocks another or is related to a recent change, link them. Jira's issue links feature exists for this. Use it.
+
+## 7. Assign to the Right Team
+
+An unassigned ticket in a large backlog is a ticket that will not be looked at. Assign to a team or a specific person. If you don't know who should own it, tag your team lead.
+
+## Common Mistakes
+
+- **Title that describes the symptom, not the problem** — "Page is slow" vs "Dashboard API takes 8+ seconds to load for accounts with >1000 items"
+- **Missing steps to reproduce** — Developers spend 30 minutes reproducing what took you 2 minutes to find
+- **No acceptance criteria** — The ticket gets closed and the bug comes back
+- **Screenshots not attached** — "I saw an error" without showing the error
+- **Marking everything Critical** — Real critical tickets get ignored when everything is critical
+
+## FAQ
+
+**How long should a Jira ticket description be?**
+Long enough to be clear, short enough to read in under 2 minutes. If it takes longer than that, the ticket is probably too large and should be split.
+
+**Should developers write their own tickets?**
+Yes, when they find bugs or need to track technical work. Technical tasks, debt, and infrastructure work should be in Jira so the team has full visibility.
+
+**How specific should steps to reproduce be?**
+Specific enough that someone who has never seen the bug can reproduce it by following the steps. Include the URL, the data they should enter, and the exact action to take.

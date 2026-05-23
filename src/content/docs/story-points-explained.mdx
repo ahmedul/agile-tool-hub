@@ -1,0 +1,81 @@
+---
+title: "Story Points Explained"
+description: "What story points are, how to estimate them, and why they're more useful than hours for Agile sprint planning. Covers Fibonacci, planning poker, and common mistakes."
+slug: "story-points-explained"
+category: "Docs"
+keywords:
+  - story points explained
+  - what are story points
+  - story points vs hours
+  - planning poker
+  - fibonacci story points
+  - agile estimation
+  - scrum estimation
+relatedLinks:
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Agile Glossary"
+    href: "/docs/agile-glossary"
+  - title: "Scrum Ceremonies Explained"
+    href: "/docs/scrum-ceremonies-explained"
+---
+
+Story points are a unit of measure for estimating the relative **effort, complexity, and uncertainty** involved in completing a backlog item. They deliberately avoid mapping to hours.
+
+## Why Not Just Use Hours?
+
+Hours feel precise but they aren't. Estimation in hours requires knowing:
+- Who will do the work (different people work at different speeds)
+- Whether requirements are fully understood
+- Whether there are hidden technical risks
+
+Story points sidestep this by measuring **relative size** instead. A 5-point story is roughly twice as complex as a 2-point story — but you're not committing to a specific number of hours.
+
+## The Fibonacci Sequence
+
+Most teams use a Fibonacci-based scale: **1, 2, 3, 5, 8, 13, 21**.
+
+The gaps between larger numbers reflect natural uncertainty — the difference between an 8 and a 13 is meaningful; the exact difference between an 8 and a 9 is not.
+
+| Points | Typical meaning |
+|---|---|
+| 1 | Trivial change, fully understood, no risk |
+| 2 | Small, clear task with minimal unknowns |
+| 3 | Moderate complexity, well understood |
+| 5 | Larger task or some uncertainty |
+| 8 | Complex or poorly understood, may need to be split |
+| 13+ | Too large — break it down before pointing |
+
+## Planning Poker
+
+The most common estimation technique for story points:
+
+1. The Product Owner reads a backlog item.
+2. Each team member privately selects a card with their estimate.
+3. All cards are revealed simultaneously.
+4. Outliers explain their reasoning.
+5. The team discusses and re-estimates until consensus is reached.
+
+Simultaneous reveal prevents anchoring — where one person's answer influences everyone else's.
+
+## What Goes Into a Point Estimate?
+
+Consider three dimensions:
+
+- **Complexity** — How technically difficult is this?
+- **Effort** — How much work is involved?
+- **Uncertainty** — How much do we not know yet?
+
+## Common Mistakes
+
+**Converting points to hours.** If your team says "1 point = 1 hour", you've lost the benefit of relative estimation.
+
+**Letting one person dominate.** Planning poker exists specifically to prevent this.
+
+**Pointing bugs and spikes the same way as stories.** Many teams use separate conventions — e.g., bugs get hours, spikes get a fixed cap.
+
+**Forgetting to re-estimate after splitting.** If you split a large story, re-point the pieces rather than dividing the original estimate.
+
+## Velocity
+
+After a few sprints, your team's average completed points per sprint (velocity) becomes a reliable forecasting tool. If your velocity is consistently 30 points and you have 150 points in the backlog, you can project roughly 5 more sprints of work.

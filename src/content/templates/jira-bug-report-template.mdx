@@ -1,0 +1,124 @@
+---
+title: "Jira Bug Report Template for Software Teams"
+description: "Use this free Jira bug report template to create clear tickets with steps to reproduce, expected result, actual result, priority, and acceptance criteria."
+slug: "jira-bug-report-template"
+category: "Templates"
+keywords:
+  - jira bug report template
+  - bug report template
+  - software bug report
+  - jira ticket template
+relatedLinks:
+  - title: "Bug Report Example for Web Application"
+    href: "/examples/bug-report-example-for-web-application"
+  - title: "Bug Report to Jira Ticket Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+  - title: "Bug Report vs Jira Ticket"
+    href: "/guides/bug-report-vs-jira-ticket"
+---
+
+## Free Jira Bug Report Template
+
+Copy and paste this template directly into your Jira ticket description:
+
+```
+## Summary
+[One sentence describing the bug clearly]
+
+## Issue Type
+Bug
+
+## Priority
+[ ] Critical  [ ] High  [x] Medium  [ ] Low
+
+## Environment
+- OS: 
+- Browser/Client: 
+- App Version: 
+- URL: 
+
+## Steps to Reproduce
+1. 
+2. 
+3. 
+
+## Expected Result
+[What should happen]
+
+## Actual Result
+[What actually happens]
+
+## Screenshots / Logs
+[Attach relevant screenshots or paste error logs here]
+
+## Acceptance Criteria
+- [ ] Bug is fixed and verified in the affected environment
+- [ ] No regression introduced
+- [ ] Fix is deployed and tested in staging before production
+```
+
+## Filled Example
+
+**Summary:** Login button does not respond when clicked in Chrome 114
+
+**Priority:** High
+
+**Environment:**
+- OS: macOS 13
+- Browser: Chrome 114
+- URL: https://app.example.com/login
+
+**Steps to Reproduce:**
+1. Open the application in Chrome
+2. Go to /login
+3. Enter valid credentials
+4. Click the Login button
+
+**Expected Result:** User is authenticated and redirected to the dashboard.
+
+**Actual Result:** Nothing happens. No network request is made. No error is shown.
+
+**Screenshots / Logs:** [Console shows: "TypeError: Cannot read property 'submit' of null"]
+
+**Acceptance Criteria:**
+- Login button triggers authentication request
+- User is redirected after successful login
+- Error message is shown if credentials are invalid
+- Works consistently in Chrome, Firefox, and Safari
+
+## What Should a Good Jira Bug Report Include?
+
+A useful bug report contains:
+
+- **Clear title** — Describe the problem, not the symptom
+- **Environment** — OS, browser, version, URL
+- **Steps to reproduce** — Numbered, specific, repeatable
+- **Expected result** — What should have happened
+- **Actual result** — What actually happened
+- **Screenshots or logs** — Evidence is faster than words
+- **Priority** — Help the team triage correctly
+- **Acceptance criteria** — Define what "fixed" means
+
+## Common Bug Report Mistakes
+
+- Writing vague titles like "Login broken" instead of "Login button does not respond in Chrome"
+- Skipping the steps to reproduce — developers can't fix what they can't reproduce
+- Missing environment details — the same bug may only happen on specific OS or browser versions
+- No acceptance criteria — unclear when the bug is actually resolved
+- Reporting symptoms instead of the bug — "page is slow" is not a bug report
+
+## FAQ
+
+**What is the difference between a bug report and a Jira ticket?**
+A bug report is a document describing a software defect. A Jira ticket is the issue management system entry. A bug report can become a Jira ticket, but a Jira ticket can also be a feature request, task, or story.
+
+**How long should a bug report be?**
+Long enough to reproduce it, short enough to read in 60 seconds. Aim for clear and concise over comprehensive.
+
+**Should every bug have acceptance criteria?**
+Yes. Without acceptance criteria, developers and QA don't agree on what "done" means. This causes bugs to be closed prematurely.
+
+**What priority should I set?**
+Critical = system down or data loss. High = major feature broken with no workaround. Medium = feature broken with a workaround. Low = cosmetic or minor issue.

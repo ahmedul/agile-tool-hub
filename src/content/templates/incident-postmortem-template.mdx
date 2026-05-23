@@ -1,0 +1,137 @@
+---
+title: "Incident Postmortem Template for Software Teams"
+description: "Use this free incident postmortem template to document production incidents with timeline, root cause, impact, and follow-up actions. Works for any software team."
+slug: "incident-postmortem-template"
+category: "Templates"
+keywords:
+  - incident postmortem template
+  - postmortem template
+  - incident report template software
+  - blameless postmortem
+relatedLinks:
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+---
+
+## Free Incident Postmortem Template
+
+```
+## Incident Postmortem
+
+### Incident Summary
+- Incident ID: 
+- Date: 
+- Duration: 
+- Severity: [ ] SEV1  [ ] SEV2  [ ] SEV3
+- Status: [ ] Resolved  [ ] Monitoring  [ ] Open
+- Author: 
+- Reviewers: 
+
+---
+
+### Impact
+- Services affected: 
+- Users affected (estimated): 
+- Revenue impact (if known): 
+- External customer-facing: [ ] Yes  [ ] No
+
+---
+
+### Timeline
+(All times in UTC)
+
+| Time | Event |
+|---|---|
+| HH:MM | Incident first detected |
+| HH:MM | Alert triggered / team notified |
+| HH:MM | Investigation started |
+| HH:MM | Root cause identified |
+| HH:MM | Mitigation applied |
+| HH:MM | Service restored |
+| HH:MM | Incident closed |
+
+---
+
+### Root Cause
+[Describe the root cause clearly. Avoid blaming individuals.]
+
+### Contributing Factors
+- 
+- 
+
+---
+
+### What Went Well
+- 
+- 
+
+### What Went Poorly
+- 
+- 
+
+---
+
+### Action Items
+
+| Action Item | Owner | Priority | Due Date |
+|---|---|---|---|
+|  |  | High |  |
+|  |  | Medium |  |
+
+---
+
+### Lessons Learned
+[Key takeaways for the team and the broader organisation]
+```
+
+## Filled Example
+
+**Incident ID:** INC-2026-047
+**Date:** 15 May 2026
+**Duration:** 1 hour 23 minutes
+**Severity:** SEV2
+**Services affected:** User authentication service, login page
+**Users affected:** ~3,400 users unable to log in
+
+**Timeline:**
+
+| Time (UTC) | Event |
+|---|---|
+| 14:03 | Error rate spike detected by monitoring |
+| 14:08 | PagerDuty alert triggered, on-call engineer notified |
+| 14:15 | Investigation started — auth service logs reviewed |
+| 14:34 | Root cause identified: expired SSL certificate on auth provider |
+| 14:41 | Certificate renewed and deployed |
+| 15:26 | Service fully restored, error rate back to baseline |
+
+**Root Cause:**
+An SSL certificate for the third-party authentication provider expired. The certificate renewal was not automated and the manual reminder was missed due to a process gap.
+
+**Action Items:**
+
+| Action Item | Owner | Priority | Due |
+|---|---|---|---|
+| Automate SSL certificate renewal for all third-party integrations | DevOps | High | 29 May |
+| Add certificate expiry monitoring alerts (30-day warning) | DevOps | High | 22 May |
+| Audit all certificates for expiry dates | DevOps | Medium | 30 May |
+
+## How to Write a Good Postmortem
+
+- **Write it quickly** — within 24–48 hours of resolution, while details are fresh
+- **Be blameless** — focus on systems and processes, not individuals
+- **Be specific** — "the deployment pipeline failed" is not a root cause
+- **Action items must have owners** — unassigned items never get done
+- **Share it broadly** — other teams may have the same risk
+
+## FAQ
+
+**What is the difference between a postmortem and an incident report?**
+An incident report describes what happened. A postmortem adds root cause analysis and action items to prevent recurrence.
+
+**Should every incident have a postmortem?**
+SEV1 and SEV2 always should. SEV3 incidents benefit from a lightweight version. Brief incidents can share a summary without the full template.
+
+**How blameless should a postmortem really be?**
+Completely blameless. The goal is to fix systems, not punish individuals. When people fear blame, they hide information — which makes the next incident worse.

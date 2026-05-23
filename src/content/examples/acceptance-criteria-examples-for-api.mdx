@@ -1,0 +1,97 @@
+---
+title: "Acceptance Criteria Examples for REST API Endpoints"
+description: "Real acceptance criteria examples for REST API endpoints, including success cases, error handling, authentication, and performance requirements."
+slug: "acceptance-criteria-examples-for-api"
+category: "Examples"
+keywords:
+  - acceptance criteria examples
+  - acceptance criteria api
+  - acceptance criteria for backend
+  - api acceptance criteria
+relatedLinks:
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "User Story Examples for Login Page"
+    href: "/examples/user-story-examples-for-login-page"
+---
+
+Below are real acceptance criteria examples for common REST API scenarios. Copy and adapt for your own stories.
+
+## Example 1: GET /api/users/:id — Fetch User Profile
+
+**User Story:**
+As a mobile client,
+I want to fetch a user's profile by ID,
+So that I can display their details on the profile screen.
+
+**Acceptance Criteria:**
+
+**Success case:**
+- Given a valid authenticated request with a valid user ID, when the API receives GET /api/users/123, then it returns HTTP 200 with the user object containing: id, email, name, createdAt, avatarUrl
+
+**Authentication:**
+- Given the request has no Authorization header, when the API receives the request, then it returns HTTP 401 with `{"error": "Unauthorized"}`
+- Given the request has an invalid or expired token, when the API receives the request, then it returns HTTP 401
+
+**Not found:**
+- Given a valid authenticated request with a user ID that does not exist, when the API receives the request, then it returns HTTP 404 with `{"error": "User not found"}`
+
+**Authorization:**
+- Given an authenticated user requests another user's private profile data, when the API receives the request, then it returns HTTP 403 with `{"error": "Forbidden"}`
+
+**Performance:**
+- The endpoint responds in under 200ms for 95% of requests under normal load
+
+---
+
+## Example 2: POST /api/auth/login — User Login
+
+**Acceptance Criteria:**
+
+**Success:**
+- Given valid credentials, when POST /api/auth/login is called, then HTTP 200 is returned with `{"token": "...", "expiresAt": "..."}`
+- The token is a signed JWT with a 24-hour expiry
+
+**Invalid credentials:**
+- Given an incorrect password, then HTTP 401 is returned with `{"error": "Invalid credentials"}`
+- The error message does not differentiate between wrong email and wrong password (security)
+
+**Rate limiting:**
+- Given more than 10 failed login attempts from the same IP in 15 minutes, then subsequent attempts return HTTP 429 with `{"error": "Too many attempts. Try again in X minutes."}`
+
+**Input validation:**
+- Given a request body missing the email field, then HTTP 400 is returned with `{"error": "email is required"}`
+- Given an email that is not a valid email format, then HTTP 400 is returned with `{"error": "email must be a valid email address"}`
+
+---
+
+## Example 3: DELETE /api/posts/:id — Delete a Post
+
+**Acceptance Criteria:**
+
+- Given the authenticated user owns the post, when DELETE /api/posts/456 is called, then HTTP 204 No Content is returned and the post is permanently deleted
+- Given the authenticated user does not own the post, then HTTP 403 is returned
+- Given the post ID does not exist, then HTTP 404 is returned
+- Given the request is unauthenticated, then HTTP 401 is returned
+- After deletion, GET /api/posts/456 returns HTTP 404
+
+---
+
+## Why API Acceptance Criteria Need Error Cases
+
+Most teams write only the happy path. This leads to:
+
+- Inconsistent error responses across the API
+- Missing authentication checks on some endpoints
+- No agreed behaviour for edge cases — developers make it up
+
+Good API acceptance criteria cover:
+1. Success response — status code, response body shape
+2. Authentication — what happens with no token, invalid token
+3. Authorization — what happens if the user doesn't have permission
+4. Validation — what happens with missing or invalid input
+5. Not found — what happens if the resource doesn't exist
+6. Rate limiting — if applicable
+7. Performance — response time expectations under load

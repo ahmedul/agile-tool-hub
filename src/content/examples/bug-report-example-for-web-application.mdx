@@ -1,0 +1,102 @@
+---
+title: "Bug Report Example for Web Application"
+description: "A complete bug report example for a web application, including environment details, steps to reproduce, expected and actual results, and acceptance criteria."
+slug: "bug-report-example-for-web-application"
+category: "Examples"
+keywords:
+  - bug report example
+  - bug report example web application
+  - how to write a bug report
+  - jira bug report example
+relatedLinks:
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Bug Report to Jira Ticket Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+This is a complete, real-world bug report example for a web application. Use it as a reference when writing your own Jira tickets.
+
+## Example: Login Button Does Not Respond in Chrome
+
+**Summary:** Login button does not trigger authentication when clicked in Chrome 114 on macOS
+
+**Issue Type:** Bug
+
+**Priority:** High
+
+**Reporter:** Sarah (QA Engineer)
+
+**Assignee:** Platform Team
+
+---
+
+**Environment:**
+- OS: macOS 13.4
+- Browser: Chrome 114.0.5735.133
+- App Version: v2.3.1
+- URL: https://app.example.com/login
+- Tested on: Firefox 115 (works), Safari 16.5 (works), Chrome 114 (fails)
+
+---
+
+**Steps to Reproduce:**
+1. Open https://app.example.com/login in Chrome 114
+2. Enter a valid email address (e.g. user@example.com)
+3. Enter a valid password
+4. Click the "Login" button
+5. Observe — nothing happens
+
+---
+
+**Expected Result:**
+The login form submits, the authentication API is called, and the user is redirected to the dashboard at /dashboard.
+
+**Actual Result:**
+Nothing happens after clicking the Login button. No network request is made, no error message appears, and the page does not change. The browser console shows:
+
+```
+TypeError: Cannot read properties of null (reading 'addEventListener')
+    at login.js:42:18
+```
+
+---
+
+**Screenshots / Logs:**
+- Console error: `TypeError: Cannot read properties of null`
+- Network tab: No requests made after button click
+
+---
+
+**Acceptance Criteria:**
+- [ ] Login button triggers the authentication request in Chrome 114
+- [ ] User is redirected to /dashboard after successful login
+- [ ] Error message is shown if credentials are invalid
+- [ ] Behaviour is consistent across Chrome, Firefox, and Safari
+- [ ] No JavaScript errors in the browser console
+
+---
+
+## Why This Bug Report Works
+
+This example demonstrates what makes a bug report useful:
+
+**Specific title** — "Login button does not respond in Chrome 114 on macOS" tells the developer exactly what, where, and in what environment — without reading the full ticket.
+
+**Environment is complete** — The reporter noted which browsers work and which don't. This immediately tells the developer this is likely a browser-specific JavaScript issue, not a backend problem.
+
+**Steps are numbered and specific** — Anyone on the team can reproduce this in under 2 minutes.
+
+**Console error is included** — The JavaScript error points directly to `login.js:42`. A developer can open the file and start investigating immediately.
+
+**Acceptance criteria are testable** — QA can close this ticket when all five criteria pass.
+
+## What Would Make This Bug Report Worse
+
+- Title: "Login broken" — too vague
+- Missing environment — developer would have to ask which browser
+- Steps: "Try to login" — not reproducible
+- No console error — developer has to reproduce and investigate from scratch
+- No acceptance criteria — unclear when the fix is complete

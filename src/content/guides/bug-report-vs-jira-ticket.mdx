@@ -1,0 +1,111 @@
+---
+title: "Bug Report vs Jira Ticket: What's the Difference?"
+description: "Understand the difference between a bug report and a Jira ticket, when to use each, and how a bug report becomes a Jira ticket in software teams."
+slug: "bug-report-vs-jira-ticket"
+category: "Guides"
+keywords:
+  - bug report vs jira ticket
+  - difference between bug report and jira ticket
+  - what is a bug report
+  - what is a jira ticket
+relatedLinks:
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+  - title: "Bug Report to Jira Ticket Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+---
+
+Teams use "bug report" and "Jira ticket" interchangeably. They are not the same thing — and the distinction matters.
+
+## What is a Bug Report?
+
+A bug report is a **document** that describes a software defect. It focuses on:
+
+- What the problem is
+- How to reproduce it
+- What the expected and actual behaviour is
+- The environment where it occurs
+
+A bug report is format-agnostic. It can be written in an email, a Google Doc, a Slack message, or a dedicated bug tracking tool.
+
+**The purpose of a bug report is to communicate a defect clearly enough that someone else can understand and reproduce it.**
+
+## What is a Jira Ticket?
+
+A Jira ticket is a **unit of work** tracked in Jira. It can represent:
+
+- A bug fix
+- A new feature
+- A task
+- A user story
+- A technical improvement
+- An epic
+
+A Jira ticket is not just a description of a problem. It includes:
+
+- An assignee
+- A status (To Do, In Progress, Done)
+- A sprint or release association
+- Story points or time estimates
+- Linked issues
+- Labels and components
+
+**The purpose of a Jira ticket is to track work through a team's delivery process.**
+
+## How They Relate
+
+A bug report often *becomes* a Jira ticket — but not always.
+
+Here's the typical flow:
+
+1. A user, QA engineer, or developer finds a defect
+2. They write a bug report to document it
+3. The bug report is reviewed (triage)
+4. If it is worth fixing, it becomes a Jira ticket
+5. The Jira ticket is assigned, prioritised, and tracked through delivery
+
+Not every bug report becomes a Jira ticket. Some bugs are:
+- Duplicates of existing tickets
+- Accepted known issues
+- Too low priority to fix now
+- Not reproducible
+
+## Key Differences
+
+| | Bug Report | Jira Ticket |
+|---|---|---|
+| **Format** | Document or message | Structured issue in Jira |
+| **Purpose** | Communicate a defect | Track work to completion |
+| **Contains** | Problem description | Description + metadata + workflow |
+| **Created by** | Anyone who finds a bug | Developer, QA, PM |
+| **Tracked** | Not necessarily | Yes — status, assignee, sprint |
+| **Lifecycle** | Written once | Updated throughout delivery |
+
+## When to Write a Bug Report vs a Jira Ticket
+
+**Write a bug report first when:**
+- You are not sure if it is a bug or expected behaviour
+- You need to gather more information before creating a ticket
+- You are reporting to a customer support team who triages first
+- You are on a team that reviews bugs before adding them to the backlog
+
+**Create a Jira ticket directly when:**
+- You are a developer or QA with backlog access
+- The bug is clearly reproducible and worth fixing
+- Your team does not have a separate triage process
+
+## The Practical Answer
+
+In most modern software teams, the distinction has blurred. Teams use Jira as the first and only place to report bugs — meaning the Jira ticket *is* the bug report.
+
+The important thing is not the format. It is the **content**. Whether you call it a bug report or a Jira ticket, it needs:
+
+- A clear title
+- Steps to reproduce
+- Expected and actual results
+- Environment details
+- Acceptance criteria
+
+Without these, whether it is in Jira or a Google Doc, it is not useful.

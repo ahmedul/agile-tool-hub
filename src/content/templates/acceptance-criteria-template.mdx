@@ -1,0 +1,105 @@
+---
+title: "Acceptance Criteria Template for Software Teams"
+description: "Use this free acceptance criteria template to define clear, testable conditions for user stories and features in Jira, Scrum, and Agile teams."
+slug: "acceptance-criteria-template"
+category: "Templates"
+keywords:
+  - acceptance criteria template
+  - acceptance criteria examples
+  - how to write acceptance criteria
+  - gherkin acceptance criteria
+relatedLinks:
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
+  - title: "User Story Examples for Login Page"
+    href: "/examples/user-story-examples-for-login-page"
+---
+
+## Free Acceptance Criteria Template
+
+### Format 1: Gherkin (Given / When / Then)
+
+Best for features with clear user interactions:
+
+```
+Given [a specific context or precondition],
+When [a user performs an action],
+Then [the expected outcome occurs].
+```
+
+### Format 2: Checklist
+
+Best for simpler stories or non-UI work:
+
+```
+## Acceptance Criteria
+- [ ] [Condition 1 that must be true]
+- [ ] [Condition 2 that must be true]
+- [ ] [Edge case that must be handled]
+- [ ] [Error state that must be handled]
+- [ ] [Performance or security requirement]
+```
+
+### Format 3: Rule-based
+
+Best for complex business logic:
+
+```
+## Business Rules
+- Rule 1: [Describe the rule]
+- Rule 2: [Describe the rule]
+
+## Acceptance Criteria
+- [ ] Rule 1 is implemented and tested
+- [ ] Rule 2 is implemented and tested
+- [ ] Edge cases for Rule 1 are handled
+```
+
+## Filled Example — Password Reset Feature
+
+**Given** a registered user is on the password reset page,
+**When** they enter a valid email address and click "Send reset link",
+**Then** they receive a reset email within 2 minutes.
+
+**Given** the reset link has expired (after 24 hours),
+**When** the user clicks the link,
+**Then** they see an error: "This link has expired. Request a new one."
+
+**Given** the user enters an email not registered in the system,
+**When** they click "Send reset link",
+**Then** they see a message: "If this email is registered, you will receive a link shortly." (do not confirm whether the email exists — security)
+
+**Additional criteria:**
+- [ ] Reset links expire after 24 hours
+- [ ] Each link can only be used once
+- [ ] Old links are invalidated when a new one is requested
+- [ ] Email is sent from a verified domain
+
+## What Makes Good Acceptance Criteria?
+
+Good acceptance criteria are:
+
+- **Testable** — QA can write a test case directly from them
+- **Clear** — No ambiguity about what "done" means
+- **Complete** — Happy path, error states, and edge cases covered
+- **Independent** — Each criterion stands alone
+
+## Common Mistakes
+
+- Writing acceptance criteria as implementation details ("the API should return 200") instead of user-visible outcomes
+- Missing error and edge cases — these are where bugs hide
+- Criteria too vague to test ("the page should load fast")
+- Writing acceptance criteria after development starts
+
+## FAQ
+
+**Who should write acceptance criteria?**
+Product Owners write the initial criteria. Developers and QA refine them during sprint planning. All three should agree before development starts.
+
+**What is the difference between acceptance criteria and a definition of done?**
+Acceptance criteria are specific to one story. Definition of Done is a team-wide checklist that applies to every story (code review, tests, deployment, etc.).
+
+**Should acceptance criteria cover performance?**
+Yes, if performance is a requirement for the feature. "The page loads in under 2 seconds on a 4G connection" is a valid acceptance criterion.

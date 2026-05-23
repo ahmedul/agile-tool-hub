@@ -1,0 +1,94 @@
+---
+title: "User Story Examples for a Login Page"
+description: "Real user story examples for a login page feature, including acceptance criteria, edge cases, and Gherkin format examples for Scrum and Agile teams."
+slug: "user-story-examples-for-login-page"
+category: "Examples"
+keywords:
+  - user story examples
+  - user story example login
+  - agile user story examples
+  - scrum user story examples
+relatedLinks:
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
+---
+
+Below are three complete user story examples for a login page. Each includes acceptance criteria written in two formats.
+
+## Example 1: Basic Login
+
+**User Story:**
+As a registered user,
+I want to log in with my email and password,
+So that I can access my account and use the application.
+
+**Story Points:** 3
+**Priority:** High
+
+**Acceptance Criteria:**
+- Given I am on the login page, when I enter a valid email and password and click Login, then I am redirected to the dashboard
+- Given I enter an invalid password, when I click Login, then I see the message: "Incorrect email or password"
+- Given I enter an email not registered in the system, when I click Login, then I see the same generic error (do not confirm whether the email exists)
+- Given I am already logged in, when I visit /login, then I am redirected to the dashboard
+
+**Definition of Done:**
+- [ ] Login flow tested end to end in staging
+- [ ] Error messages reviewed by product
+- [ ] No sensitive information in error messages
+
+---
+
+## Example 2: Remember Me
+
+**User Story:**
+As a registered user,
+I want to stay logged in between sessions,
+So that I don't have to enter my credentials every time I open the app.
+
+**Story Points:** 2
+**Priority:** Medium
+
+**Acceptance Criteria:**
+- Given I check "Remember me" and log in, when I close and reopen the browser, then I am still logged in
+- Given I do not check "Remember me" and log in, when I close the browser, then my session ends
+- Given I am remembered and my token has expired (after 30 days), when I visit any page, then I am redirected to login
+- Given I click "Log out", when the action completes, then the remember-me token is invalidated and I must log in again
+
+---
+
+## Example 3: Forgot Password
+
+**User Story:**
+As a registered user,
+I want to reset my password via email,
+So that I can regain access to my account if I forget my credentials.
+
+**Story Points:** 5
+**Priority:** High
+
+**Acceptance Criteria:**
+- Given I click "Forgot password", then I am taken to the reset request page
+- Given I enter a registered email address, when I click "Send reset link", then I receive an email within 2 minutes
+- Given I enter an unregistered email, when I click "Send reset link", then I see: "If this email is registered, you will receive a link shortly" (security — do not confirm email existence)
+- Given I click a valid reset link, then I can set a new password
+- Given I click an expired reset link (older than 24 hours), then I see an error and a link to request a new one
+- Given I have already used a reset link, when I click it again, then I see an error (one-time use)
+
+---
+
+## What These Examples Show
+
+**Good user stories answer three questions:**
+1. Who — the type of user and their context
+2. What — the specific action they want to perform
+3. Why — the business value or outcome
+
+**Good acceptance criteria cover:**
+- The happy path (it works)
+- Error states (it fails gracefully)
+- Edge cases (expired links, already-logged-in users, security considerations)
+- Security implications (never confirm whether an email is registered)
