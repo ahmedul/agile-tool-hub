@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import JsonLd from "@/components/JsonLd";
 
 export async function generateStaticParams() {
   return getAllSlugs("guides").map((slug) => ({ slug }));
@@ -20,15 +21,27 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const item = getContentBySlug("guides", slug);
   if (!item) notFound();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: item.title,
+    description: item.description,
+    url: `https://agiletoolhub.com/guides/${slug}`,
+    publisher: { "@type": "Organization", name: "AgileToolHub", url: "https://agiletoolhub.com" },
+  };
+
   return (
-    <ContentLayout
-      title={item.title}
-      description={item.description}
-      category={item.category}
-      breadcrumbs={[{ label: "Guides", href: "/guides" }, { label: item.title }]}
-      relatedLinks={item.relatedLinks}
-    >
-      <MDXRemote source={item.content} />
-    </ContentLayout>
+    <>
+      <JsonLd data={jsonLd} />
+      <ContentLayout
+        title={item.title}
+        description={item.description}
+        category={item.category}
+        breadcrumbs={[{ label: "Guides", href: "/guides" }, { label: item.title }]}
+        relatedLinks={item.relatedLinks}
+      >
+        <MDXRemote source={item.content} />
+      </ContentLayout>
+    </>
   );
 }

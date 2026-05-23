@@ -3,6 +3,7 @@ import Link from "next/link";
 import UserStoryGenerator from "@/components/UserStoryGenerator";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "User Story Generator — Free Tool for Agile Teams",
@@ -18,8 +19,20 @@ const faqItems = [
 ];
 
 export default function UserStoryGeneratorPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <>
+      <JsonLd data={jsonLd} />
+      <div className="max-w-4xl mx-auto px-4 py-10">
       <Breadcrumbs items={[{ label: "Tools", href: "/tools" }, { label: "User Story Generator" }]} />
       <span className="text-xs font-medium text-green-600 uppercase tracking-wide">Free Tool</span>
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
@@ -74,5 +87,6 @@ export default function UserStoryGeneratorPage() {
         </ul>
       </div>
     </div>
+    </>
   );
 }

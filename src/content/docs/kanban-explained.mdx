@@ -1,0 +1,76 @@
+---
+title: "Kanban Explained"
+description: "What Kanban is, how it works, and how software teams use it to manage flow and reduce bottlenecks. Covers WIP limits, Kanban boards, cycle time, and throughput."
+slug: "kanban-explained"
+category: "Docs"
+keywords:
+  - kanban explained
+  - what is kanban
+  - kanban methodology
+  - kanban board explained
+  - wip limits kanban
+  - kanban for software teams
+relatedLinks:
+  - title: "Kanban vs Scrum"
+    href: "/guides/kanban-vs-scrum"
+  - title: "Agile Glossary"
+    href: "/docs/agile-glossary"
+  - title: "Scrum Ceremonies Explained"
+    href: "/docs/scrum-ceremonies-explained"
+---
+
+Kanban is a workflow management method that helps teams visualise their work, limit work-in-progress, and continuously improve how work flows through their system.
+
+## Origins
+
+Kanban was developed by Toyota in the 1940s as a scheduling system for lean manufacturing. The word "kanban" means "visual signal" in Japanese. David J. Anderson adapted it for software development in the 2000s.
+
+## The Four Core Properties
+
+**1. Visualise the workflow**  
+All work is represented on a Kanban board, with columns for each stage of the process (e.g. To Do → In Progress → Review → Done). Everyone can see the state of every work item at a glance.
+
+**2. Limit Work-in-Progress (WIP)**  
+Each column has a maximum number of items allowed at once. When a column is full, the team must finish existing work before starting new work. This is the most important — and most often skipped — part of Kanban.
+
+**3. Manage flow**  
+The goal is to keep work moving smoothly. Blocked items, long queues, and overloaded columns are signals that the system has a problem to solve.
+
+**4. Make policies explicit**  
+The rules for moving work between stages should be written down and agreed on — not assumed. This is the equivalent of Scrum's Definition of Done, applied per column.
+
+## The Kanban Board
+
+A typical software team board:
+
+```
+| Backlog | To Do | In Progress | Review | Done |
+|---------|-------|-------------|--------|------|
+| ...     | ...   | WIP: max 3  | WIP: 2 | ...  |
+```
+
+Items move left to right. WIP limits (e.g. "max 3 in progress") prevent the team from starting too many things at once.
+
+## Key Metrics
+
+**Cycle time** — How long does one item take from "started" to "done"? Lower and more consistent cycle time = healthier flow.
+
+**Throughput** — How many items does the team complete per week? Used for forecasting.
+
+**WIP** — How many items are actively in progress right now? High WIP is usually a sign of problems.
+
+**Lead time** — How long from a request being raised to it being delivered? Includes time waiting in the backlog.
+
+## WIP Limits in Practice
+
+Without WIP limits: everyone starts everything, nothing finishes quickly.
+
+With WIP limits: when the "In Progress" column hits its limit, developers must either finish existing work or help a colleague finish theirs before starting something new. This forces completion over starting.
+
+A good starting point: WIP limit = number of people in the team. Adjust based on what you observe.
+
+## Kanban vs Sprint-Based Development
+
+Kanban has no sprints, no velocity, and no sprint planning. Work is pulled from the top of a prioritised backlog whenever capacity is available. This makes it well-suited for teams with unpredictable, continuous demand (support, ops, platform) rather than teams building to a roadmap.
+
+See [Kanban vs Scrum](/guides/kanban-vs-scrum) for a full comparison.

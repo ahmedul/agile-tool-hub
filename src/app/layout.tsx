@@ -21,6 +21,18 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: "AgileToolHub",
     type: "website",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "AgileToolHub — Free Agile, Scrum & Software Delivery Templates",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/og-image.svg"],
   },
 };
 

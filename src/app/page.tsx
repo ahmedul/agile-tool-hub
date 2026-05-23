@@ -32,6 +32,9 @@ export default function Home() {
             <Link href="/templates" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
               Browse Templates
             </Link>
+            <Link href="/tools/user-story-generator" className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-white transition-colors">
+              Try User Story Generator
+            </Link>
             <Link href="/tools/bug-report-to-jira-ticket-converter" className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-white transition-colors">
               Try Bug Report Converter
             </Link>
@@ -67,6 +70,11 @@ export default function Home() {
               title="User Story Generator"
               description="Describe your feature and get a complete, Jira-ready user story with acceptance criteria instantly."
               href="/tools/user-story-generator"
+            />
+            <ToolCard
+              title="Acceptance Criteria Generator"
+              description="Generate testable acceptance criteria in Given/When/Then or checklist format in seconds."
+              href="/tools/acceptance-criteria-generator"
             />
           </div>
         </div>

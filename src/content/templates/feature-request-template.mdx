@@ -1,0 +1,125 @@
+---
+title: "Feature Request Template"
+description: "A structured feature request template for software teams. Covers problem statement, proposed solution, user impact, and acceptance criteria — ready to use in Jira."
+slug: "feature-request-template"
+category: "Templates"
+keywords:
+  - feature request template
+  - feature request jira
+  - product feature request
+  - feature request format
+  - agile feature request
+relatedLinks:
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+---
+
+Use this template when a stakeholder, customer, or team member requests a new feature. It captures the problem, proposed solution, and business value before any scoping or estimation begins.
+
+---
+
+## Feature Request Template
+
+```
+## Feature Request
+
+**Requested by:** [Name / Team / Customer]
+**Date:** [YYYY-MM-DD]
+**Priority:** [ ] Critical  [ ] High  [ ] Medium  [ ] Low
+
+---
+
+## Problem Statement
+[Describe the problem this feature solves. Focus on the pain point, not the solution.
+e.g. "Users cannot export their data, which means they have to manually copy records 
+one at a time when they want to use it in a spreadsheet."]
+
+## Proposed Solution
+[Describe the feature being requested. What should the product do?
+e.g. "Add a CSV export button to the Reports page that downloads all visible rows."]
+
+## Who Is Affected?
+[Which users or personas experience this problem?
+e.g. "All users with Reporter role or above — approximately 40% of active users."]
+
+## Business Value / Impact
+[Why does this matter? What happens if we don't build it?
+e.g. "Three enterprise customers have requested this. Two are considering churning without it.
+Internal estimates: ~2 hours/week saved per power user."]
+
+## Success Criteria
+[How will we know this feature is working as intended?
+e.g. "Users can export a CSV of their filtered report data within 3 clicks.
+Export time under 5 seconds for up to 10,000 rows."]
+
+## Proposed Acceptance Criteria
+- [ ] [Specific, testable condition 1]
+- [ ] [Specific, testable condition 2]
+- [ ] [Specific, testable condition 3]
+
+## Out of Scope
+[What is explicitly NOT included in this request?
+e.g. "PDF export, scheduled exports, and API access are out of scope for this request."]
+
+## Mockups / References
+[Link to Figma, screenshots, competitor examples, or support tickets]
+
+## Related Tickets
+[Link to any related epics, stories, or bugs]
+```
+
+---
+
+## Example: CSV Export Feature Request
+
+```
+## Feature Request
+
+**Requested by:** Customer Success Team
+**Date:** 2026-05-15
+**Priority:** [x] High
+
+---
+
+## Problem Statement
+Users on the Reports page cannot export their data. When they need to analyse results 
+in Excel or share data with stakeholders, they must manually copy rows one at a time. 
+This is time-consuming and error-prone for large datasets.
+
+## Proposed Solution
+Add a "Export CSV" button to the Reports page that downloads all currently visible 
+(filtered) rows as a .csv file.
+
+## Who Is Affected?
+All users with Reporter role or above — approximately 40% of the active user base.
+Most affected: finance teams and managers who generate weekly reports.
+
+## Business Value / Impact
+- Three enterprise accounts ($180k ARR combined) have flagged this as a blocker
+- Internal estimate: saves ~2 hours/week per power user
+- Currently logged as a limitation in 14 support tickets this quarter
+
+## Success Criteria
+- Users can export a CSV of their current filtered view within 3 clicks
+- Exported file contains all visible columns with correct headers
+- Export completes in under 5 seconds for up to 10,000 rows
+
+## Proposed Acceptance Criteria
+- [ ] Export button is visible on the Reports page for Reporter role and above
+- [ ] Clicking export downloads a .csv file immediately
+- [ ] CSV contains all columns visible in the current filtered view
+- [ ] Column headers match the display labels, not internal field names
+- [ ] Export works correctly for 1 row and 10,000 rows
+
+## Out of Scope
+PDF export, scheduled/automated exports, and API-based data access.
+
+## Related Tickets
+JIRA-892 (Reports page performance), JIRA-445 (Data access permissions)
+```

@@ -3,6 +3,7 @@ import Link from "next/link";
 import BugReportConverter from "@/components/BugReportConverter";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
+import JsonLd from "@/components/JsonLd";
 
 export const metadata: Metadata = {
   title: "Bug Report to Jira Ticket Converter — Free Tool",
@@ -18,8 +19,20 @@ const faqItems = [
 ];
 
 export default function BugReportConverterPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <>
+      <JsonLd data={jsonLd} />
+      <div className="max-w-4xl mx-auto px-4 py-10">
       <Breadcrumbs items={[{ label: "Tools", href: "/tools" }, { label: "Bug Report Converter" }]} />
       <span className="text-xs font-medium text-green-600 uppercase tracking-wide">Free Tool</span>
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
@@ -63,5 +76,6 @@ export default function BugReportConverterPage() {
         </ul>
       </div>
     </div>
+    </>
   );
 }

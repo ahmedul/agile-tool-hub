@@ -22,6 +22,11 @@ export default function ToolsPage() {
           description="Describe your feature and get a complete, Jira-ready user story with acceptance criteria instantly."
           href="/tools/user-story-generator"
         />
+        <ToolCard
+          title="Acceptance Criteria Generator"
+          description="Generate testable acceptance criteria in Given/When/Then or checklist format in seconds."
+          href="/tools/acceptance-criteria-generator"
+        />
       </div>
     </div>
   );

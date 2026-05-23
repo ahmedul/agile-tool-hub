@@ -1,0 +1,116 @@
+---
+title: "QA Test Case Template"
+description: "A structured test case template for QA engineers and software teams. Covers test case ID, preconditions, steps, expected results, and pass/fail status."
+slug: "qa-test-case-template"
+category: "Templates"
+keywords:
+  - qa test case template
+  - test case template jira
+  - software test case template
+  - test case format
+  - qa template agile
+relatedLinks:
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
+---
+
+Use this template for each test case in a test suite. One test case = one specific scenario.
+
+---
+
+## Test Case Template
+
+```
+Test Case ID: TC-[number]
+Feature / Story: [Link to Jira ticket or story title]
+Test Type: [ ] Functional  [ ] Regression  [ ] Smoke  [ ] Edge Case
+
+---
+
+## Title
+[Short description of what is being tested]
+
+## Preconditions
+- [Everything that must be true before this test can run]
+- [e.g. User is logged in as a standard user]
+- [e.g. At least one item is in the cart]
+
+## Test Steps
+1. [First action to take]
+2. [Second action to take]
+3. [Continue until the scenario is complete]
+
+## Expected Result
+[Describe exactly what should happen after the final step]
+
+## Actual Result
+[Fill in during test execution]
+
+## Status
+[ ] Pass  [ ] Fail  [ ] Blocked  [ ] Not Run
+
+## Notes / Evidence
+[Add screenshots, logs, or any relevant information]
+
+## Tested By
+Name:
+Date:
+Environment: [ ] Dev  [ ] Staging  [ ] Production
+```
+
+---
+
+## Example: Login Test Case
+
+```
+Test Case ID: TC-001
+Feature / Story: ATH-142 — User Login
+Test Type: [x] Functional
+
+---
+
+## Title
+Successful login with valid credentials
+
+## Preconditions
+- User has a registered account with email user@example.com
+- User is on the login page (/login)
+- User is not currently logged in
+
+## Test Steps
+1. Enter "user@example.com" in the Email field
+2. Enter "ValidPass123!" in the Password field
+3. Click the "Log In" button
+
+## Expected Result
+- User is redirected to the dashboard (/dashboard)
+- The navigation bar shows the user's name
+- A session cookie is set
+
+## Actual Result
+[Fill in during testing]
+
+## Status
+[ ] Pass  [ ] Fail  [ ] Blocked  [ ] Not Run
+
+## Tested By
+Name: 
+Date: 
+Environment: [ ] Dev  [x] Staging  [ ] Production
+```
+
+---
+
+## Tips for Writing Good Test Cases
+
+- **One scenario per test case** — don't combine multiple behaviours into one
+- **Be specific about expected results** — "login works" is not a valid expected result
+- **Write preconditions you can actually set up** — if the precondition is too hard to create, the test will never run
+- **Cover negative paths** — invalid credentials, empty fields, expired sessions
+- **Number your test cases** — makes it easy to reference in bug reports (`TC-001 fails`)
