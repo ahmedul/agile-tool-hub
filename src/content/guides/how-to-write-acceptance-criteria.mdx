@@ -1,0 +1,85 @@
+---
+title: "How to Write Acceptance Criteria"
+description: "A practical guide to writing clear, testable acceptance criteria for user stories. Covers Given/When/Then, checklist format, and common mistakes to avoid."
+slug: "how-to-write-acceptance-criteria"
+category: "Guides"
+keywords:
+  - how to write acceptance criteria
+  - acceptance criteria guide
+  - acceptance criteria examples
+  - given when then
+  - gherkin acceptance criteria
+  - agile acceptance criteria
+relatedLinks:
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+Acceptance criteria define the boundaries of a user story. They tell the team exactly when a feature is done — and they prevent the most common source of rework: disagreement over what "done" means.
+
+## What Are Acceptance Criteria?
+
+Acceptance criteria are conditions a feature must satisfy to be accepted by the Product Owner and stakeholders. They answer: *How do we know this story is complete?*
+
+Good acceptance criteria are:
+- **Specific** — no ambiguity
+- **Testable** — a QA engineer can write a test case from them
+- **Agreed upon** — written before development starts, not after
+
+## Two Common Formats
+
+### 1. Given/When/Then (Gherkin)
+
+Best for behaviour-driven development (BDD) and when working closely with QA.
+
+```
+Given [a starting context]
+When [an action is taken]
+Then [a specific outcome occurs]
+```
+
+**Example:**
+```
+Given a registered user is on the login page
+When they submit a valid email and password
+Then they are redirected to their dashboard
+And a session cookie is set
+```
+
+### 2. Checklist Format
+
+Best for simpler stories or teams not using BDD tools.
+
+```
+- [ ] User can log in with email and password
+- [ ] Error message shown for invalid credentials
+- [ ] Account locked after 5 failed attempts
+- [ ] Password field is masked by default
+```
+
+## When to Write Them
+
+Acceptance criteria should be written **during refinement**, before the sprint. The Product Owner drafts them; the team reviews and challenges them. If you can't write acceptance criteria for a story, the story isn't ready to be pointed or pulled into a sprint.
+
+## Common Mistakes
+
+**Too vague:** "User can log in successfully" — what does success look like?
+
+**Too implementation-specific:** "Use JWT tokens with a 24-hour expiry" — that's a technical decision, not acceptance criteria.
+
+**Written after development:** At that point you're documenting what was built, not defining what should be built.
+
+**Missing edge cases:** Happy path only. Always ask: what happens when it goes wrong?
+
+## Checklist Before You Finalise
+
+- [ ] Can a QA engineer write a test from each criterion?
+- [ ] Does each criterion describe *behaviour*, not *implementation*?
+- [ ] Are error states and edge cases covered?
+- [ ] Has the whole team reviewed and agreed on them?

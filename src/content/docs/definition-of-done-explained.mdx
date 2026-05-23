@@ -1,0 +1,91 @@
+---
+title: "Definition of Done Explained"
+description: "What the Definition of Done (DoD) is, why it matters, and how to create one for your Agile team. Includes examples for different types of work."
+slug: "definition-of-done-explained"
+category: "Docs"
+keywords:
+  - definition of done
+  - definition of done agile
+  - definition of done scrum
+  - dod agile
+  - what is definition of done
+  - agile done criteria
+relatedLinks:
+  - title: "Agile Glossary"
+    href: "/docs/agile-glossary"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Scrum Ceremonies Explained"
+    href: "/docs/scrum-ceremonies-explained"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+---
+
+The Definition of Done (DoD) is a shared, team-wide checklist that every piece of work must satisfy before it can be called complete. It removes ambiguity about what "done" actually means.
+
+## Why It Matters
+
+Without a DoD, "done" means different things to different people:
+- A developer might mean "code written"
+- QA might mean "tested in dev"
+- A Product Owner might mean "deployed to production and verified"
+
+This ambiguity creates hidden work, failed releases, and trust issues between team members. A DoD makes the implicit explicit.
+
+## DoD vs Acceptance Criteria
+
+These are often confused:
+
+| | Definition of Done | Acceptance Criteria |
+|---|---|---|
+| **Scope** | Applies to every story | Specific to one story |
+| **Who defines it** | The whole team | Product Owner + team |
+| **What it covers** | Process & quality standards | Business behaviour |
+| **Example** | "Code reviewed by one peer" | "User sees error if email is invalid" |
+
+Both must be satisfied for a story to be truly complete.
+
+## Example DoD for a Feature Story
+
+```
+- [ ] Code written and self-reviewed
+- [ ] Pull request reviewed and approved by at least one peer
+- [ ] Unit tests written and passing (coverage not reduced)
+- [ ] Integration tests passing in CI
+- [ ] No new linting errors or warnings introduced
+- [ ] Deployed to staging environment
+- [ ] Tested by QA against acceptance criteria
+- [ ] Product Owner has accepted the story
+- [ ] Feature flag configured (if applicable)
+- [ ] Deployed to production
+- [ ] Monitoring/alerting in place for new endpoints
+```
+
+## Example DoD for a Bug Fix
+
+```
+- [ ] Root cause identified and documented in the ticket
+- [ ] Fix applied and reviewed
+- [ ] Regression test added to prevent recurrence
+- [ ] Tested in staging
+- [ ] Deployed to production
+- [ ] Original reporter notified (if external)
+```
+
+## How to Create Your Team's DoD
+
+1. **Run a workshop** — bring the whole team together (dev, QA, PO)
+2. **Ask:** "What must be true before we'd be comfortable releasing this to users?"
+3. **Draft a list** — start broad, you can tighten it over time
+4. **Post it somewhere visible** — Confluence, Notion, a physical wall
+5. **Review it in retrospectives** — the DoD should evolve as your team matures
+
+## Common Mistakes
+
+**Making it too long.** If your DoD has 25 items, it becomes background noise. Start with 8–10 non-negotiables.
+
+**Not enforcing it.** A DoD only works if the team actually stops stories that don't meet it — even under sprint pressure.
+
+**Confusing it with acceptance criteria.** The DoD applies to all stories. Acceptance criteria are story-specific.
+
+**Never updating it.** As your team improves (better test coverage, better tooling), your DoD should raise the bar accordingly.

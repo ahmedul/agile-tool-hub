@@ -1,0 +1,114 @@
+---
+title: "Acceptance Criteria Examples for E-Commerce Checkout"
+description: "Real acceptance criteria examples for a checkout flow, covering payment, validation, error handling, and order confirmation. Written in both checklist and Given/When/Then format."
+slug: "acceptance-criteria-examples-for-checkout"
+category: "Acceptance Criteria"
+keywords:
+  - acceptance criteria examples
+  - acceptance criteria checkout
+  - acceptance criteria e-commerce
+  - given when then examples
+  - user story acceptance criteria examples
+relatedLinks:
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+---
+
+Below are complete acceptance criteria examples for a checkout feature, written in both formats so you can use whichever fits your team's workflow.
+
+## User Story
+
+**As a** shopper,  
+**I want to** complete a purchase using my credit card,  
+**So that** I can receive the items I've selected.
+
+---
+
+## Example 1: Successful Payment (Given/When/Then)
+
+```
+Given the user has items in their cart and is on the checkout page
+When they enter valid card details and click "Pay Now"
+Then the payment is processed successfully
+And the user is redirected to an order confirmation page
+And a confirmation email is sent to their registered email address
+And the cart is cleared
+```
+
+```
+Given the user has items in their cart
+When they attempt to check out with an empty shipping address
+Then the form does not submit
+And each missing required field is highlighted with an error message
+```
+
+```
+Given the user submits a declined card
+When the payment gateway returns a failure response
+Then the user sees the message: "Your payment was declined. Please check your card details or try a different card."
+And they remain on the checkout page with their details intact
+```
+
+---
+
+## Example 2: Form Validation (Checklist Format)
+
+**Shipping address:**
+- [ ] All fields (name, address line 1, city, postcode, country) are required
+- [ ] Postcode is validated against the selected country's format
+- [ ] User cannot proceed to payment without a valid shipping address
+
+**Payment:**
+- [ ] Card number is validated using Luhn algorithm client-side
+- [ ] Expiry date cannot be in the past
+- [ ] CVV field accepts 3 digits (4 for Amex)
+- [ ] Card details are never stored — passed directly to payment gateway
+- [ ] PCI-DSS compliant: card fields are hosted by the payment provider
+
+**Order summary:**
+- [ ] Itemised list shows product name, quantity, and unit price
+- [ ] Subtotal, shipping cost, and tax are shown separately
+- [ ] Total is calculated correctly before and after discount codes
+
+---
+
+## Example 3: Order Confirmation
+
+**Given/When/Then:**
+```
+Given a payment has been processed successfully
+When the confirmation page loads
+Then the user sees their order number
+And a summary of items purchased
+And the estimated delivery date
+And a "Continue Shopping" button
+```
+
+**Checklist:**
+- [ ] Order confirmation email sent within 60 seconds of payment
+- [ ] Email contains order number, itemised list, total, and shipping address
+- [ ] Order appears in the user's account order history immediately
+
+---
+
+## Example 4: Edge Cases
+
+```
+Given the user's session expires mid-checkout
+When they attempt to submit the payment form
+Then they are redirected to the login page
+And their cart contents are preserved after login
+```
+
+```
+Given an item goes out of stock between cart and checkout
+When the user reaches the order summary step
+Then they are notified which item is unavailable
+And given the option to remove it and continue or return to their cart
+```
