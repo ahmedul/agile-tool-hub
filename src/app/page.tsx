@@ -57,11 +57,16 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-gray-900">Free Tools</h2>
             <Link href="/tools" className="text-blue-600 hover:underline text-sm font-medium">View all →</Link>
           </div>
-          <div className="max-w-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl">
             <ToolCard
               title="Bug Report to Jira Ticket Converter"
               description="Paste messy bug notes and get a clean, structured Jira ticket instantly."
               href="/tools/bug-report-to-jira-ticket-converter"
+            />
+            <ToolCard
+              title="User Story Generator"
+              description="Describe your feature and get a complete, Jira-ready user story with acceptance criteria instantly."
+              href="/tools/user-story-generator"
             />
           </div>
         </div>

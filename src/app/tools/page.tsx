@@ -17,6 +17,11 @@ export default function ToolsPage() {
           description="Paste messy bug notes and get a clean, structured Jira ticket with all required fields."
           href="/tools/bug-report-to-jira-ticket-converter"
         />
+        <ToolCard
+          title="User Story Generator"
+          description="Describe your feature and get a complete, Jira-ready user story with acceptance criteria instantly."
+          href="/tools/user-story-generator"
+        />
       </div>
     </div>
   );
