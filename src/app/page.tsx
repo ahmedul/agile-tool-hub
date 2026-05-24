@@ -76,6 +76,11 @@ export default function Home() {
               description="Generate testable acceptance criteria in Given/When/Then or checklist format in seconds."
               href="/tools/acceptance-criteria-generator"
             />
+            <ToolCard
+              title="Planning Poker"
+              description="Real-time story point estimation for your whole team. No login — just share a link."
+              href="/tools/planning-poker"
+            />
           </div>
         </div>
       </section>

@@ -24,6 +24,7 @@ export default function Footer() {
             <li><Link href="/tools/bug-report-to-jira-ticket-converter" className="hover:text-blue-600">Bug Report Converter</Link></li>
             <li><Link href="/tools/user-story-generator" className="hover:text-blue-600">User Story Generator</Link></li>
             <li><Link href="/tools/acceptance-criteria-generator" className="hover:text-blue-600">AC Generator</Link></li>
+            <li><Link href="/tools/planning-poker" className="hover:text-blue-600">Planning Poker</Link></li>
           </ul>
         </div>
         <div>
