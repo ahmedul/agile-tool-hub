@@ -133,6 +133,26 @@ Adding a `.mdx` file to `src/content/{type}/` automatically adds it to the listi
 
 Progress key: ✅ Done · ⏳ Planned
 
+### Positioning update (added May 24, 2026)
+
+Primary wedge for this project:
+
+- Jira-ready ticket quality toolkit for software teams.
+- Keep Agile/Scrum coverage, but prioritize bug reports, user stories, acceptance criteria, QA handoff, and API requirements.
+- Win with practical output quality, not broad generic Agile content.
+
+### Priority fixes before judging 3-month results
+
+| Item | Status |
+|---|---|
+| Fix context-mismatched CTAs on template/doc pages | ⏳ |
+| Add one-click copy buttons (Markdown/Jira/GitHub/Linear where relevant) | ⏳ |
+| Add About page with builder credibility and background | ⏳ |
+| Add Privacy page (Local mode vs AI mode data handling) | ⏳ |
+| Add ticket quality scoring for Bug Report Converter | ⏳ |
+| Add analytics events (copy, generate, session created, feedback click) | ⏳ |
+| Search title polish pass (remove duplicated brand patterns) | ⏳ |
+
 ### Month 1 — May 2026 (Foundation + first tools)
 
 | Week | Goal | Status |
@@ -141,31 +161,33 @@ Progress key: ✅ Done · ⏳ Planned
 | May 8–14 | 5 guides, 4 examples, 5 docs pages, internal linking | ✅ |
 | May 15–21 | AI tools: User Story Generator, AC Generator, Bug Report Converter | ✅ |
 | May 22–24 | Planning Poker (real-time), Sprint Capacity Calculator, Retrospective Board | ✅ |
-| May 25–31 | SEO audit, meta descriptions, Google Search Console, 3 more content pages | ⏳ |
+| May 24 | AI mode foundation with monthly quota + pricing page | ✅ |
+| May 25–31 | Measurement setup: Google Search Console, Bing Webmaster Tools, event tracking, sitemap checks | ⏳ |
 
-### Month 2 — June 2026 (Content depth + more tools)
-
-| Week | Goal | Status |
-|---|---|---|
-| Jun 1–7 | Daily Standup Generator tool, 3 new templates | ⏳ |
-| Jun 8–14 | Velocity Tracker tool (sprint-over-sprint chart, localStorage), 3 new guides | ⏳ |
-| Jun 15–21 | About page (E-E-A-T signal), internal linking pass on all content | ⏳ |
-| Jun 22–30 | 5 more long-tail examples pages | ⏳ |
-
-### Month 3 — July 2026 (Authority + monetisation prep)
+### Month 2 — June 2026 (Conversion + focused SEO)
 
 | Week | Goal | Status |
 |---|---|---|
-| Jul 1–7 | Backlink outreach — Agile tool directories, Product Hunt launch | ⏳ |
-| Jul 8–14 | User Story Map tool (visual, export to CSV) | ⏳ |
-| Jul 15–21 | Definition of Done Checklist Builder (interactive, copyable) | ⏳ |
-| Jul 22–31 | Analytics review: top 10 pages → double down with more content on those topics | ⏳ |
+| Jun 1–7 | Fix CTA alignment + add copy buttons across highest-traffic pages | ⏳ |
+| Jun 8–14 | Publish high-intent pages only (Jira/API/QA ticket quality topics) | ⏳ |
+| Jun 15–21 | About + Privacy pages + full internal linking pass | ⏳ |
+| Jun 22–30 | Ticket quality score v1 in Bug Report Converter + output quality feedback prompt | ⏳ |
+
+### Month 3 — July 2026 (Double down on winner)
+
+| Week | Goal | Status |
+|---|---|---|
+| Jul 1–7 | Review analytics: identify the top-performing tool/page by usage and retention | ⏳ |
+| Jul 8–14 | Improve winner tool 3x (quality, UX, export formats, trust) | ⏳ |
+| Jul 15–21 | Add export formats for top workflow (Jira, GitHub Issues, Linear) | ⏳ |
+| Jul 22–31 | Backlink outreach + launch push for the standout tool | ⏳ |
 
 ### August 2026 onwards — Monetisation + growth
 
 | Item | Status |
 |---|---|
 | Google AdSense (once 1k+ daily sessions) | ⏳ |
+| Stripe billing + server-side plan enforcement for AI mode | ⏳ |
 | Pro tier design (saved sessions, team settings, export) | ⏳ |
 | Email list / newsletter (Agile tip of the week) | ⏳ |
 | LinkedIn + Twitter presence for tool launches | ⏳ |
