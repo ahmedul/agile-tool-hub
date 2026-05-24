@@ -1,0 +1,123 @@
+---
+title: "User Story Examples for a Mobile App"
+description: "Real user story examples for mobile app features including onboarding, push notifications, offline mode, and settings — with acceptance criteria for iOS and Android teams."
+slug: "user-story-examples-for-mobile-app"
+category: "Examples"
+keywords:
+  - user story examples mobile app
+  - mobile app user story
+  - ios user story examples
+  - android user story examples
+  - mobile user stories agile
+relatedLinks:
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "User Story Examples for Login Page"
+    href: "/examples/user-story-examples-for-login-page"
+---
+
+Below are four user story examples for common mobile app features, with acceptance criteria covering both iOS and Android considerations.
+
+## Example 1: Onboarding Flow
+
+**User Story:**
+As a new user,
+I want to complete a short onboarding flow when I first open the app,
+So that I understand the app's key features before I start using it.
+
+**Story Points:** 5
+**Priority:** High
+
+**Acceptance Criteria:**
+- [ ] Onboarding shows on first launch only — never again after completion
+- [ ] Flow has a maximum of 4 screens
+- [ ] Each screen has a "Next" button and the final screen has "Get Started"
+- [ ] A "Skip" option is available from screen 1
+- [ ] Onboarding completion state is persisted locally (survives app close/reopen)
+- [ ] Works correctly on iOS 16+ and Android 12+
+
+---
+
+## Example 2: Push Notifications
+
+**User Story:**
+As a registered user,
+I want to receive push notifications when something important happens in the app,
+So that I can stay informed without having to open the app constantly.
+
+**Story Points:** 8
+**Priority:** High
+
+**Acceptance Criteria (Given/When/Then):**
+
+```
+Given the user opens the app for the first time
+When they reach the notifications permission screen
+Then the OS permission prompt is shown
+And the user's choice is stored
+```
+
+```
+Given the user has granted notification permissions
+When a relevant event occurs (e.g. new message, task assigned)
+Then a push notification is delivered within 30 seconds
+And tapping the notification opens the app to the relevant screen
+```
+
+```
+Given the user has denied notification permissions
+When a notification event occurs
+Then no notification is sent
+And the app does not re-prompt for permissions automatically
+```
+
+**Additional criteria:**
+- [ ] Users can manage notification preferences in app Settings
+- [ ] Notification types are configurable independently (e.g. turn off messages but keep alerts)
+- [ ] Notifications work correctly when the app is in background, foreground, and killed states
+
+---
+
+## Example 3: Offline Mode
+
+**User Story:**
+As a field worker,
+I want to continue using the app's core features without an internet connection,
+So that I can work in areas with poor or no connectivity without losing progress.
+
+**Story Points:** 13
+**Priority:** Medium
+
+**Acceptance Criteria:**
+- [ ] App detects network status and shows a visible offline indicator
+- [ ] Users can view previously loaded data while offline
+- [ ] Users can create and edit records while offline
+- [ ] All offline changes are queued and synced automatically when connectivity returns
+- [ ] Conflict resolution: if the same record was modified online and offline, the user is prompted to review
+- [ ] Offline mode is indicated in the UI — no silent failures
+- [ ] Data queued for sync survives app close and device restart
+
+---
+
+## Example 4: Profile Settings
+
+**User Story:**
+As a logged-in user,
+I want to update my profile information from within the app,
+So that my details are always current without needing to use a web browser.
+
+**Story Points:** 3
+**Priority:** Low
+
+**Acceptance Criteria:**
+- [ ] User can edit: display name, profile photo, email address, password
+- [ ] Changes are saved immediately on confirmation — no page reload required
+- [ ] Email change triggers a verification email to the new address before it takes effect
+- [ ] Password change requires the current password to be entered first
+- [ ] Profile photo can be selected from the device gallery or taken with the camera
+- [ ] Profile photo is resized to max 1MB before upload
+- [ ] All changes are reflected across the app immediately after saving

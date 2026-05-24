@@ -1,0 +1,156 @@
+---
+title: "Technical Debt Ticket Template"
+description: "A structured Jira ticket template for documenting and prioritising technical debt. Covers debt description, impact, effort, and remediation plan for engineering teams."
+slug: "technical-debt-ticket-template"
+category: "Templates"
+keywords:
+  - technical debt template
+  - technical debt jira ticket
+  - technical debt ticket
+  - tech debt template
+  - engineering debt jira
+relatedLinks:
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Feature Request Template"
+    href: "/templates/feature-request-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+  - title: "Definition of Done Explained"
+    href: "/docs/definition-of-done-explained"
+---
+
+Use this template to create structured technical debt tickets that your team can prioritise, estimate, and schedule — rather than leaving debt undocumented and invisible.
+
+---
+
+## Technical Debt Ticket Template
+
+```
+## Title
+[Tech Debt] [Short description — e.g. "Migrate authentication to OAuth 2.0"]
+
+## Issue Type
+Technical Debt / Task
+
+## Priority
+[ ] Critical  [ ] High  [ ] Medium  [ ] Low
+
+---
+
+## What Is the Debt?
+[Describe the current state and why it's considered technical debt.
+e.g. "Our authentication layer uses a custom session token implementation 
+from 2019 that predates our security standards. It lacks token rotation, 
+has no refresh token support, and is not compatible with our SSO provider."]
+
+## Why Does It Matter?
+[Describe the impact of NOT addressing this debt — on development speed, 
+security, reliability, or future work.]
+
+Examples:
+- Security risk: [describe]
+- Slows down development: [how and by how much]
+- Blocks future work: [what can't be built until this is resolved]
+- Incident risk: [what could go wrong in production]
+
+## How Was This Debt Created?
+[ ] Time pressure / delivery deadline
+[ ] Requirements changed after implementation
+[ ] Outdated dependency / library
+[ ] Architecture decision that no longer fits
+[ ] Lack of knowledge at the time
+[ ] Other: ___
+
+## Proposed Remediation
+[Describe what needs to be done to resolve the debt.
+Be specific enough for the team to estimate it.]
+
+## Estimated Effort
+Story Points: [ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8  [ ] 13
+Time estimate: 
+
+## Risks of Remediation
+[What could go wrong when fixing this? Any areas of the codebase at risk?]
+
+## Acceptance Criteria
+- [ ] [The old implementation is replaced / removed]
+- [ ] [All existing tests pass]
+- [ ] [New tests cover the remediated code]
+- [ ] [No regression in production functionality]
+- [ ] [Relevant documentation is updated]
+
+## Related Tickets
+[Link to any bugs, features, or stories that are blocked by or related to this debt]
+```
+
+---
+
+## Example: Authentication Refactor
+
+```
+## Title
+[Tech Debt] Migrate authentication to OAuth 2.0
+
+## Issue Type
+Technical Debt
+
+## Priority
+[x] High
+
+---
+
+## What Is the Debt?
+Our authentication layer uses a custom session token system built in 2019.
+It lacks token rotation, has no refresh token support, and is incompatible
+with our SSO provider (Okta). It also doesn't meet our current security
+standards (no brute force protection, tokens stored as plain strings in Redis).
+
+## Why Does It Matter?
+- Security risk: tokens don't rotate, so a stolen token is valid indefinitely
+- Blocks SSO: enterprise customers can't use Okta/SAML until this is resolved
+  (affecting 3 enterprise deals worth ~$240k ARR)
+- Slows development: every new auth-related feature requires working around
+  the custom system rather than extending a standard one
+
+## How Was This Debt Created?
+[x] Architecture decision that no longer fits (OAuth wasn't widely adopted
+    internally when this was built)
+
+## Proposed Remediation
+Replace the custom session token system with OAuth 2.0 + PKCE using
+our existing auth library (Passport.js). Implement refresh token rotation.
+Migrate existing sessions with a 30-day parallel-run period.
+
+## Estimated Effort
+Story Points: [x] 13
+Time estimate: 2–3 sprints (split into sub-tickets)
+
+## Risks of Remediation
+- Existing sessions will be invalidated — users will need to log in again
+- Mobile app clients will need a coordinated update
+- Staging environment test coverage needs significant expansion first
+
+## Acceptance Criteria
+- [ ] OAuth 2.0 + PKCE implemented and tested
+- [ ] Refresh token rotation working correctly
+- [ ] All existing auth tests pass
+- [ ] Okta SSO integration verified end-to-end
+- [ ] Security review completed
+- [ ] Mobile app updated and released in coordination
+
+## Related Tickets
+ATH-1204 (SSO Integration Epic), ATH-891 (Brute force protection)
+```
+
+---
+
+## Tips for Managing Technical Debt
+
+**Make it visible.** Debt that lives only in engineers' heads never gets prioritised. Every piece of significant debt should have a ticket.
+
+**Categorise by impact.** Not all debt is equal. Debt that blocks new features or creates security risk is different from slightly unclean code.
+
+**Reserve capacity each sprint.** Many teams allocate 20% of sprint capacity to debt. Even one story per sprint compounds over time.
+
+**Don't let "we'll do it later" become never.** Attach debt tickets to the epics or features that created them, so they stay visible.

@@ -1,0 +1,105 @@
+---
+title: "User Story Examples for a Dashboard"
+description: "Real user story examples for a dashboard feature, including acceptance criteria, role-based access, and data visualisation stories for Agile and Scrum teams."
+slug: "user-story-examples-for-dashboard"
+category: "Examples"
+keywords:
+  - user story examples dashboard
+  - dashboard user story
+  - agile user story examples
+  - data dashboard user story
+  - analytics dashboard user story
+relatedLinks:
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "User Story Examples for Login Page"
+    href: "/examples/user-story-examples-for-login-page"
+---
+
+Below are four complete user story examples for a dashboard feature, covering different personas and use cases teams commonly encounter.
+
+## Example 1: Viewing a Summary Dashboard
+
+**User Story:**
+As a team manager,
+I want to see a summary dashboard of my team's open tickets,
+So that I can quickly understand workload and identify blockers without digging through Jira.
+
+**Story Points:** 5
+**Priority:** High
+
+**Acceptance Criteria:**
+- [ ] Dashboard shows total open, in-progress, and done tickets for the current sprint
+- [ ] Each count is clickable and filters to the relevant tickets
+- [ ] Data refreshes automatically every 5 minutes
+- [ ] Dashboard loads within 2 seconds for up to 500 tickets
+
+---
+
+## Example 2: Filtering Dashboard by Date Range
+
+**User Story:**
+As an analyst,
+I want to filter the dashboard by a custom date range,
+So that I can compare metrics across different time periods.
+
+**Story Points:** 3
+**Priority:** Medium
+
+**Acceptance Criteria (Given/When/Then):**
+
+```
+Given the analyst is on the dashboard page
+When they select a custom date range using the date picker
+Then all metrics and charts update to reflect only data within that range
+And the selected date range is shown clearly above the charts
+```
+
+```
+Given the analyst selects an end date earlier than the start date
+When they confirm the selection
+Then an error message is shown: "End date must be after start date"
+And no data is changed
+```
+
+---
+
+## Example 3: Role-Based Dashboard Access
+
+**User Story:**
+As a product owner,
+I want to see a different default dashboard view than developers,
+So that I see business metrics (velocity, delivery rate) rather than technical metrics (PR count, build times).
+
+**Story Points:** 5
+**Priority:** Medium
+
+**Acceptance Criteria:**
+- [ ] Dashboard view is determined by the user's role at login
+- [ ] Product Owner role sees: velocity, sprint burndown, delivery rate, open blockers
+- [ ] Developer role sees: assigned tickets, PR status, build health, cycle time
+- [ ] Admin users can switch between views using a dropdown
+- [ ] Role assignment is managed in User Settings, not on the dashboard itself
+
+---
+
+## Example 4: Exporting Dashboard Data
+
+**User Story:**
+As a department head,
+I want to export the dashboard data as a CSV,
+So that I can include it in my weekly stakeholder report without manually copying figures.
+
+**Story Points:** 3
+**Priority:** Low
+
+**Acceptance Criteria:**
+- [ ] An "Export CSV" button is visible on the dashboard for Manager role and above
+- [ ] Clicking export downloads all visible metrics for the current date range
+- [ ] The CSV includes column headers matching the dashboard labels
+- [ ] Export completes within 5 seconds for up to 12 months of data
+- [ ] Empty state: if no data exists for the selected range, the CSV contains only headers

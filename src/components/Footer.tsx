@@ -22,6 +22,8 @@ export default function Footer() {
           <p className="font-semibold text-gray-700 mb-3">Tools</p>
           <ul className="space-y-2 text-sm text-gray-500">
             <li><Link href="/tools/bug-report-to-jira-ticket-converter" className="hover:text-blue-600">Bug Report Converter</Link></li>
+            <li><Link href="/tools/user-story-generator" className="hover:text-blue-600">User Story Generator</Link></li>
+            <li><Link href="/tools/acceptance-criteria-generator" className="hover:text-blue-600">AC Generator</Link></li>
           </ul>
         </div>
         <div>
