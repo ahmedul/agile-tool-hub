@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 import { trackEvent } from "@/lib/analytics";
+import OutputFeedback from "@/components/OutputFeedback";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
 type GenerationMode = "local" | "ai";
@@ -324,6 +325,7 @@ export default function AcceptanceCriteriaGenerator() {
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}
           </pre>
+          <OutputFeedback tool="acceptance_criteria" mode={mode} />
         </div>
       )}
     </div>

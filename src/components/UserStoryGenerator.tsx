@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 import { trackEvent } from "@/lib/analytics";
+import OutputFeedback from "@/components/OutputFeedback";
 
 type StoryType = "feature" | "improvement" | "task";
 type Priority = "High" | "Medium" | "Low";
@@ -333,6 +334,7 @@ export default function UserStoryGenerator() {
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}
           </pre>
+          <OutputFeedback tool="user_story" mode={mode} />
         </div>
       )}
     </div>
