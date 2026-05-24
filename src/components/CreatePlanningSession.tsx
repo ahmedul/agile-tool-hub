@@ -1,12 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { trackEvent } from "@/lib/analytics";
 
 export default function CreatePlanningSession() {
   const router = useRouter();
 
   function createSession() {
     const id = crypto.randomUUID();
+    trackEvent("session_created", { tool: "planning_poker" });
     router.push(`/tools/planning-poker/${id}`);
   }
 

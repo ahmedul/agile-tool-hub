@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
+import { trackEvent } from "@/lib/analytics";
 
 type StoryType = "feature" | "improvement" | "task";
 type Priority = "High" | "Medium" | "Low";
@@ -148,6 +149,7 @@ export default function UserStoryGenerator() {
   const handleGenerate = async () => {
     if (!form.featureDescription.trim()) return;
     setError("");
+    trackEvent("generator_run", { tool: "user_story", mode });
 
     if (mode === "local") {
       setOutput(generateUserStory(form));
@@ -194,6 +196,7 @@ export default function UserStoryGenerator() {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(output);
+    trackEvent("output_copy", { tool: "user_story", mode, output_length: output.length });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

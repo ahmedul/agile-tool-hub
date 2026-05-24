@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
+import { trackEvent } from "@/lib/analytics";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
 type GenerationMode = "local" | "ai";
@@ -162,6 +163,7 @@ export default function AcceptanceCriteriaGenerator() {
   const handleGenerate = async () => {
     if (!form.featureDescription.trim()) return;
     setError("");
+    trackEvent("generator_run", { tool: "acceptance_criteria", mode, format: form.format });
 
     if (mode === "local") {
       setOutput(generateAcceptanceCriteria(form));
@@ -206,6 +208,7 @@ export default function AcceptanceCriteriaGenerator() {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(output);
+    trackEvent("output_copy", { tool: "acceptance_criteria", mode, output_length: output.length });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

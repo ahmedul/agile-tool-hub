@@ -1,12 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { trackEvent } from "@/lib/analytics";
 
 export default function CreateRetroSession() {
   const router = useRouter();
 
   function createSession() {
     const id = crypto.randomUUID();
+    trackEvent("session_created", { tool: "retro_board" });
     router.push(`/tools/retro-board/${id}`);
   }
 

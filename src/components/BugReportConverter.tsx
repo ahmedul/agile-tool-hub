@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
+import { trackEvent } from "@/lib/analytics";
 
 type GenerationMode = "local" | "ai";
 
@@ -175,6 +176,7 @@ export default function BugReportConverter() {
   const handleGenerate = async () => {
     if (!input.trim()) return;
     setError("");
+    trackEvent("generator_run", { tool: "bug_report", mode });
 
     if (mode === "local") {
       setOutput(convertBugReport(input));
@@ -215,6 +217,7 @@ export default function BugReportConverter() {
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(output);
+    trackEvent("output_copy", { tool: "bug_report", mode, output_length: output.length });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

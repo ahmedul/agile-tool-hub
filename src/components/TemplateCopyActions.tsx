@@ -21,10 +21,10 @@ export default function TemplateCopyActions({ markdown }: TemplateCopyActionsPro
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <CopyButton text={markdown} label="Copy Markdown" />
-          <CopyButton text={jira} label="Copy Jira" />
-          <CopyButton text={github} label="Copy GitHub" />
-          <CopyButton text={linear} label="Copy Linear" />
+          <CopyButton text={markdown} label="Copy Markdown" eventName="template_copy" eventParams={{ format: "markdown" }} />
+          <CopyButton text={jira} label="Copy Jira" eventName="template_copy" eventParams={{ format: "jira" }} />
+          <CopyButton text={github} label="Copy GitHub" eventName="template_copy" eventParams={{ format: "github" }} />
+          <CopyButton text={linear} label="Copy Linear" eventName="template_copy" eventParams={{ format: "linear" }} />
         </div>
       </div>
     </div>
