@@ -38,6 +38,12 @@ export default function ToolsPage() {
           description="Enter team size and availability to get a realistic sprint commitment in story points."
           href="/tools/sprint-capacity-calculator"
         />
+        <ToolCard
+          title="Retrospective Board"
+          description="Real-time retro board for Agile teams. Went Well, To Improve, and Action Items — live and collaborative."
+          href="/tools/retro-board"
+          badge="Live · Free"
+        />
       </div>
     </div>
   );
