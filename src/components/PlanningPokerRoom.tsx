@@ -19,13 +19,6 @@ interface StorySummary {
   estimate: Vote;
 }
 
-interface PresenceEntry {
-  userId: string;
-  name: string;
-  hasVoted: boolean;
-  vote: Vote;
-}
-
 export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) {
   const [nameInput, setNameInput] = useState("");
   const [joined, setJoined] = useState(false);
@@ -37,111 +30,123 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const [stories, setStories] = useState<StorySummary[]>([]);
   const [finalEstimate, setFinalEstimate] = useState<Vote>(null);
   const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
-  // Fix: sessionUrl as state to avoid SSR/client hydration mismatch
-  const [sessionUrl, setSessionUrl] = useState(`https://agiletoolhub.com/tools/planning-poker/${sessionId}`);
+  const [sessionUrl, setSessionUrl] = useState(
+    `https://agiletoolhub.com/tools/planning-poker/${sessionId}`,
+  );
 
   const channelRef = useRef<RealtimeChannel | null>(null);
   const userIdRef = useRef<string>("");
   const myNameRef = useRef("");
   const myVoteRef = useRef<Vote>(null);
-  const hasVotedRef = useRef(false);
   const autoJoinedRef = useRef(false);
 
-  useEffect(() => {
-    setSessionUrl(window.location.href);
-  }, []);
-
-  useEffect(() => {
-    myVoteRef.current = myVote;
-  }, [myVote]);
+  useEffect(() => { setSessionUrl(window.location.href); }, []);
+  useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
 
   const joinChannel = useCallback(
     (name: string) => {
+      const uid = userIdRef.current;
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        { realtime: { params: { eventsPerSecond: 10 } } },
       );
 
+      // broadcast: self = true so every client (including sender) receives all events uniformly.
+      // Presence is only used for membership (join/leave). All game state goes through broadcast.
       const channel = supabase.channel(`poker-${sessionId}`, {
         config: {
-          presence: { key: userIdRef.current },
-          broadcast: { self: false },
+          presence: { key: uid },
+          broadcast: { self: true },
         },
       });
 
       channel
+        // ── Presence: membership only ──────────────────────────────
         .on("presence", { event: "sync" }, () => {
-          const state = channel.presenceState<PresenceEntry>();
-          const updated: Record<string, Participant> = {};
-          for (const [key, presences] of Object.entries(state)) {
-            const p = presences[0];
-            if (p) {
-              updated[key] = { name: p.name, hasVoted: p.hasVoted, vote: p.vote };
-            }
-          }
-          // Merge: preserve optimistic hasVoted for self so reveal button stays correct
+          const state = channel.presenceState<{ userId: string; name: string }>();
           setParticipants((prev) => {
-            const merged = { ...updated };
-            const myUid = userIdRef.current;
-            if (myUid && merged[myUid] && prev[myUid]) {
-              merged[myUid] = {
-                ...merged[myUid],
-                hasVoted: merged[myUid].hasVoted || prev[myUid].hasVoted,
-              };
+            const next: Record<string, Participant> = {};
+            for (const [key, presences] of Object.entries(state)) {
+              const p = presences[0] as { userId: string; name: string } | undefined;
+              if (p) {
+                // Preserve existing vote state for known participants
+                next[key] = prev[key]
+                  ? { ...prev[key], name: p.name }
+                  : { name: p.name, hasVoted: false, vote: null };
+              }
             }
-            return merged;
+            return next;
           });
         })
-        .on("broadcast", { event: "story" }, ({ payload }) => {
-          setCurrentStory(payload.name as string);
-          setStoryInput(payload.name as string);
+        .on("presence", { event: "leave" }, ({ key }: { key: string }) => {
+          setParticipants((prev) => {
+            const next = { ...prev };
+            delete next[key];
+            return next;
+          });
         })
+        // ── Broadcasts: all game state ─────────────────────────────
+        // Someone voted (no value revealed)
+        .on("broadcast", { event: "voted" }, ({ payload }) => {
+          const { userId } = payload as { userId: string };
+          setParticipants((prev) =>
+            prev[userId] ? { ...prev, [userId]: { ...prev[userId], hasVoted: true } } : prev,
+          );
+        })
+        // Someone unvoted
+        .on("broadcast", { event: "unvoted" }, ({ payload }) => {
+          const { userId } = payload as { userId: string };
+          setParticipants((prev) =>
+            prev[userId] ? { ...prev, [userId]: { ...prev[userId], hasVoted: false } } : prev,
+          );
+        })
+        // Story name set
+        .on("broadcast", { event: "story" }, ({ payload }) => {
+          const name = payload.name as string;
+          setCurrentStory(name);
+          setStoryInput(name);
+        })
+        // Reveal triggered — every client (including sender via self:true) sends their actual vote
         .on("broadcast", { event: "reveal" }, () => {
           setRevealed(true);
-          channelRef.current?.track({
-            userId: userIdRef.current,
-            name: myNameRef.current,
-            hasVoted: hasVotedRef.current,
-            vote: myVoteRef.current,
+          channelRef.current?.send({
+            type: "broadcast",
+            event: "my_vote",
+            payload: { userId: userIdRef.current, vote: myVoteRef.current },
           });
         })
+        // Actual vote (only exchanged at reveal time)
+        .on("broadcast", { event: "my_vote" }, ({ payload }) => {
+          const { userId, vote } = payload as { userId: string; vote: Vote };
+          setParticipants((prev) =>
+            prev[userId] ? { ...prev, [userId]: { ...prev[userId], vote } } : prev,
+          );
+        })
+        // Next round — resets all state for everyone
         .on("broadcast", { event: "next_story" }, ({ payload }) => {
           const story = payload.story as string | undefined;
           const estimate = payload.estimate as Vote;
-          if (story) {
-            setStories((prev) => [...prev, { name: story, estimate: estimate ?? null }]);
-          }
+          if (story) setStories((prev) => [...prev, { name: story, estimate: estimate ?? null }]);
           setRevealed(false);
           setMyVote(null);
           myVoteRef.current = null;
-          hasVotedRef.current = false;
           setCurrentStory("");
           setStoryInput("");
           setFinalEstimate(null);
-          const uid = userIdRef.current;
-          const myName = myNameRef.current;
-          setParticipants((prev) => ({
-            ...prev,
-            [uid]: { name: myName, hasVoted: false, vote: null },
-          }));
-          channelRef.current?.track({ userId: uid, name: myName, hasVoted: false, vote: null });
+          setParticipants((prev) => {
+            const next: Record<string, Participant> = {};
+            for (const [k, p] of Object.entries(prev)) {
+              next[k] = { ...p, hasVoted: false, vote: null };
+            }
+            return next;
+          });
         })
         .subscribe(async (status, err) => {
-          console.log("[poker] channel status:", status, err ?? "");
+          console.log("[poker] status:", status, err ?? "");
           if (status === "SUBSCRIBED") {
             setConnStatus("connected");
-            await channel.track({
-              userId: userIdRef.current,
-              name,
-              hasVoted: false,
-              vote: null,
-            });
-          } else if (
-            status === "CHANNEL_ERROR" ||
-            status === "TIMED_OUT" ||
-            status === "CLOSED"
-          ) {
+            await channel.track({ userId: uid, name });
+          } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
             setConnStatus("error");
           }
         });
@@ -151,7 +156,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     [sessionId],
   );
 
-  // Init: set up userId and auto-rejoin if name was saved
+  // Init: stable userId + auto-rejoin from localStorage
   useEffect(() => {
     let uid = sessionStorage.getItem("pp_uid");
     if (!uid) {
@@ -171,11 +176,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     }
   }, [joinChannel]);
 
-  useEffect(() => {
-    return () => {
-      channelRef.current?.unsubscribe();
-    };
-  }, []);
+  useEffect(() => () => { channelRef.current?.unsubscribe(); }, []);
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,65 +192,46 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const handleVote = (card: CardValue) => {
     if (revealed) return;
     const newVote: Vote = myVote === card ? null : card;
+    const wasVoted = myVote !== null;
+    const isVoted = newVote !== null;
     setMyVote(newVote);
     myVoteRef.current = newVote;
-    hasVotedRef.current = newVote !== null;
-    // Optimistic update so Reveal button enables immediately
-    const uid = userIdRef.current;
-    setParticipants((prev) => ({
-      ...prev,
-      [uid]: { ...(prev[uid] ?? { name: myNameRef.current, vote: null }), hasVoted: newVote !== null },
-    }));
-    channelRef.current?.track({
-      userId: uid,
-      name: myNameRef.current,
-      hasVoted: newVote !== null,
-      vote: null,
-    });
+    // Broadcast will come back to us (self:true) and update participants state
+    if (isVoted && !wasVoted) {
+      channelRef.current?.send({
+        type: "broadcast",
+        event: "voted",
+        payload: { userId: userIdRef.current },
+      });
+    } else if (!isVoted && wasVoted) {
+      channelRef.current?.send({
+        type: "broadcast",
+        event: "unvoted",
+        payload: { userId: userIdRef.current },
+      });
+    }
   };
 
   const handleSetStory = (e: React.FormEvent) => {
     e.preventDefault();
     const name = storyInput.trim();
     if (!name) return;
-    setCurrentStory(name);
+    // self:true — we receive this back ourselves and update currentStory uniformly
     channelRef.current?.send({ type: "broadcast", event: "story", payload: { name } });
   };
 
   const handleReveal = () => {
-    setRevealed(true);
-    channelRef.current?.track({
-      userId: userIdRef.current,
-      name: myNameRef.current,
-      hasVoted: hasVotedRef.current,
-      vote: myVoteRef.current,
-    });
+    // self:true — we receive "reveal" back, set revealed, and broadcast "my_vote"
     channelRef.current?.send({ type: "broadcast", event: "reveal", payload: {} });
   };
 
   const handleNextStory = () => {
-    const story = currentStory;
-    const estimate = finalEstimate;
+    // self:true — we receive "next_story" back and reset state uniformly
     channelRef.current?.send({
       type: "broadcast",
       event: "next_story",
-      payload: { story, estimate },
+      payload: { story: currentStory, estimate: finalEstimate },
     });
-    if (story) setStories((prev) => [...prev, { name: story, estimate }]);
-    setRevealed(false);
-    setMyVote(null);
-    myVoteRef.current = null;
-    hasVotedRef.current = false;
-    setCurrentStory("");
-    setStoryInput("");
-    setFinalEstimate(null);
-    const uid = userIdRef.current;
-    const myName = myNameRef.current;
-    setParticipants((prev) => ({
-      ...prev,
-      [uid]: { name: myName, hasVoted: false, vote: null },
-    }));
-    channelRef.current?.track({ userId: uid, name: myName, hasVoted: false, vote: null });
   };
 
   const participantList = Object.entries(participants);
@@ -306,11 +288,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   : "bg-yellow-100 text-yellow-700",
             ].join(" ")}
           >
-            {connStatus === "connected"
-              ? "● Connected"
-              : connStatus === "error"
-                ? "● Error"
-                : "● Connecting…"}
+            {connStatus === "connected" ? "● Live" : connStatus === "error" ? "● Error" : "● Connecting…"}
           </span>
         </div>
 
@@ -342,9 +320,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
         {/* Card hand */}
         <div>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
-            Your vote
-          </p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Your vote</p>
           <div className="flex flex-wrap gap-3">
             {CARDS.map((card) => (
               <button
@@ -465,9 +441,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           <div className="overflow-y-auto max-h-[60vh] p-3 space-y-2">
             {stories.length === 0 ? (
               <p className="text-xs text-gray-400 text-center py-8 leading-relaxed">
-                Completed stories
-                <br />
-                will appear here
+                Completed stories<br />will appear here
               </p>
             ) : (
               stories.map((s, i) => (
