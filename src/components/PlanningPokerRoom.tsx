@@ -36,40 +36,38 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const [revealed, setRevealed] = useState(false);
   const [stories, setStories] = useState<StorySummary[]>([]);
   const [finalEstimate, setFinalEstimate] = useState<Vote>(null);
+  const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
+  // Fix: sessionUrl as state to avoid SSR/client hydration mismatch
+  const [sessionUrl, setSessionUrl] = useState(`https://agiletoolhub.com/tools/planning-poker/${sessionId}`);
 
   const channelRef = useRef<RealtimeChannel | null>(null);
   const userIdRef = useRef<string>("");
   const myNameRef = useRef("");
   const myVoteRef = useRef<Vote>(null);
   const hasVotedRef = useRef(false);
+  const autoJoinedRef = useRef(false);
 
-  // Keep refs in sync with state for use inside Supabase callbacks
+  useEffect(() => {
+    setSessionUrl(window.location.href);
+  }, []);
+
   useEffect(() => {
     myVoteRef.current = myVote;
   }, [myVote]);
-
-  useEffect(() => {
-    // Generate or retrieve persistent userId scoped to this browser tab
-    let uid = sessionStorage.getItem("pp_uid");
-    if (!uid) {
-      uid = Math.random().toString(36).slice(2, 11);
-      sessionStorage.setItem("pp_uid", uid);
-    }
-    userIdRef.current = uid;
-
-    const savedName = localStorage.getItem("pp_name");
-    if (savedName) setNameInput(savedName);
-  }, []);
 
   const joinChannel = useCallback(
     (name: string) => {
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        { realtime: { params: { eventsPerSecond: 10 } } },
       );
 
       const channel = supabase.channel(`poker-${sessionId}`, {
-        config: { presence: { key: userIdRef.current } },
+        config: {
+          presence: { key: userIdRef.current },
+          broadcast: { self: false },
+        },
       });
 
       channel
@@ -82,7 +80,18 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
               updated[key] = { name: p.name, hasVoted: p.hasVoted, vote: p.vote };
             }
           }
-          setParticipants(updated);
+          // Merge: preserve optimistic hasVoted for self so reveal button stays correct
+          setParticipants((prev) => {
+            const merged = { ...updated };
+            const myUid = userIdRef.current;
+            if (myUid && merged[myUid] && prev[myUid]) {
+              merged[myUid] = {
+                ...merged[myUid],
+                hasVoted: merged[myUid].hasVoted || prev[myUid].hasVoted,
+              };
+            }
+            return merged;
+          });
         })
         .on("broadcast", { event: "story" }, ({ payload }) => {
           setCurrentStory(payload.name as string);
@@ -90,7 +99,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         })
         .on("broadcast", { event: "reveal" }, () => {
           setRevealed(true);
-          // Expose this client's actual vote in presence now that cards are revealed
           channelRef.current?.track({
             userId: userIdRef.current,
             name: myNameRef.current,
@@ -104,7 +112,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           if (story) {
             setStories((prev) => [...prev, { name: story, estimate: estimate ?? null }]);
           }
-          // Reset round
           setRevealed(false);
           setMyVote(null);
           myVoteRef.current = null;
@@ -112,21 +119,30 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           setCurrentStory("");
           setStoryInput("");
           setFinalEstimate(null);
-          channelRef.current?.track({
-            userId: userIdRef.current,
-            name: myNameRef.current,
-            hasVoted: false,
-            vote: null,
-          });
+          const uid = userIdRef.current;
+          const myName = myNameRef.current;
+          setParticipants((prev) => ({
+            ...prev,
+            [uid]: { name: myName, hasVoted: false, vote: null },
+          }));
+          channelRef.current?.track({ userId: uid, name: myName, hasVoted: false, vote: null });
         })
-        .subscribe(async (status) => {
+        .subscribe(async (status, err) => {
+          console.log("[poker] channel status:", status, err ?? "");
           if (status === "SUBSCRIBED") {
+            setConnStatus("connected");
             await channel.track({
               userId: userIdRef.current,
               name,
               hasVoted: false,
               vote: null,
             });
+          } else if (
+            status === "CHANNEL_ERROR" ||
+            status === "TIMED_OUT" ||
+            status === "CLOSED"
+          ) {
+            setConnStatus("error");
           }
         });
 
@@ -135,7 +151,26 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     [sessionId],
   );
 
-  // Cleanup on unmount
+  // Init: set up userId and auto-rejoin if name was saved
+  useEffect(() => {
+    let uid = sessionStorage.getItem("pp_uid");
+    if (!uid) {
+      uid = Math.random().toString(36).slice(2, 11);
+      sessionStorage.setItem("pp_uid", uid);
+    }
+    userIdRef.current = uid;
+
+    const savedName = localStorage.getItem("pp_name");
+    if (savedName && !autoJoinedRef.current) {
+      autoJoinedRef.current = true;
+      setNameInput(savedName);
+      myNameRef.current = savedName;
+      setParticipants({ [uid]: { name: savedName, hasVoted: false, vote: null } });
+      setJoined(true);
+      joinChannel(savedName);
+    }
+  }, [joinChannel]);
+
   useEffect(() => {
     return () => {
       channelRef.current?.unsubscribe();
@@ -148,20 +183,25 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     if (!name) return;
     localStorage.setItem("pp_name", name);
     myNameRef.current = name;
+    setParticipants({ [userIdRef.current]: { name, hasVoted: false, vote: null } });
     setJoined(true);
     joinChannel(name);
   };
 
   const handleVote = (card: CardValue) => {
     if (revealed) return;
-    // Toggle off if same card clicked again
     const newVote: Vote = myVote === card ? null : card;
     setMyVote(newVote);
     myVoteRef.current = newVote;
     hasVotedRef.current = newVote !== null;
-    // Track hasVoted but keep vote hidden (null) until reveal
+    // Optimistic update so Reveal button enables immediately
+    const uid = userIdRef.current;
+    setParticipants((prev) => ({
+      ...prev,
+      [uid]: { ...(prev[uid] ?? { name: myNameRef.current, vote: null }), hasVoted: newVote !== null },
+    }));
     channelRef.current?.track({
-      userId: userIdRef.current,
+      userId: uid,
       name: myNameRef.current,
       hasVoted: newVote !== null,
       vote: null,
@@ -178,7 +218,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
   const handleReveal = () => {
     setRevealed(true);
-    // Expose own vote first, then broadcast to trigger others
     channelRef.current?.track({
       userId: userIdRef.current,
       name: myNameRef.current,
@@ -191,13 +230,11 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const handleNextStory = () => {
     const story = currentStory;
     const estimate = finalEstimate;
-    // Broadcast to all — they'll add to their local story log
     channelRef.current?.send({
       type: "broadcast",
       event: "next_story",
       payload: { story, estimate },
     });
-    // Apply locally immediately (the initiator)
     if (story) setStories((prev) => [...prev, { name: story, estimate }]);
     setRevealed(false);
     setMyVote(null);
@@ -206,22 +243,19 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     setCurrentStory("");
     setStoryInput("");
     setFinalEstimate(null);
-    channelRef.current?.track({
-      userId: userIdRef.current,
-      name: myNameRef.current,
-      hasVoted: false,
-      vote: null,
-    });
+    const uid = userIdRef.current;
+    const myName = myNameRef.current;
+    setParticipants((prev) => ({
+      ...prev,
+      [uid]: { name: myName, hasVoted: false, vote: null },
+    }));
+    channelRef.current?.track({ userId: uid, name: myName, hasVoted: false, vote: null });
   };
-
-  const sessionUrl =
-    typeof window !== "undefined"
-      ? window.location.href
-      : `https://agiletoolhub.com/tools/planning-poker/${sessionId}`;
 
   const participantList = Object.entries(participants);
   const votedCount = participantList.filter(([, p]) => p.hasVoted).length;
   const totalCount = participantList.length;
+  const canReveal = myVote !== null || votedCount > 0;
 
   // ── Name entry screen ──────────────────────────────────────────
   if (!joined) {
@@ -256,13 +290,28 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   // ── Main poker room ────────────────────────────────────────────
   return (
     <div className="flex gap-6">
-      {/* Left / main area */}
       <div className="flex-1 min-w-0 space-y-6">
         {/* Invite bar */}
         <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100 text-sm">
           <span className="text-blue-700 font-medium shrink-0">Invite:</span>
           <span className="text-blue-600 truncate flex-1 font-mono text-xs">{sessionUrl}</span>
           <CopyButton text={sessionUrl} />
+          <span
+            className={[
+              "shrink-0 text-xs px-2 py-0.5 rounded-full font-medium",
+              connStatus === "connected"
+                ? "bg-green-100 text-green-700"
+                : connStatus === "error"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-yellow-100 text-yellow-700",
+            ].join(" ")}
+          >
+            {connStatus === "connected"
+              ? "● Connected"
+              : connStatus === "error"
+                ? "● Error"
+                : "● Connecting…"}
+          </span>
         </div>
 
         {/* Story setter */}
@@ -316,7 +365,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           </div>
         </div>
 
-        {/* Team participants */}
+        {/* Team */}
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
             Team — {votedCount}/{totalCount} voted
@@ -351,22 +400,21 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           )}
         </div>
 
-        {/* Action area */}
+        {/* Actions */}
         {!revealed ? (
           <button
             onClick={handleReveal}
-            disabled={votedCount === 0}
+            disabled={!canReveal}
             className="px-8 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            {votedCount === 0
-              ? "Waiting for votes…"
-              : votedCount === totalCount
+            {!canReveal
+              ? "Pick a card first…"
+              : votedCount === totalCount && totalCount > 0
                 ? "Reveal Cards ✓"
                 : `Reveal Cards (${votedCount}/${totalCount})`}
           </button>
         ) : (
           <div className="space-y-4">
-            {/* Results summary */}
             <div className="p-5 bg-white rounded-xl border border-gray-200">
               <p className="text-sm font-semibold text-gray-700 mb-4">Results</p>
               <div className="flex flex-wrap gap-6">
@@ -378,8 +426,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 ))}
               </div>
             </div>
-
-            {/* Final estimate picker + next story */}
             <div className="flex items-center gap-3 flex-wrap">
               <span className="text-sm text-gray-600 font-medium shrink-0">Final estimate:</span>
               <div className="flex gap-1.5 flex-wrap">
@@ -409,7 +455,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         )}
       </div>
 
-      {/* Right sidebar — session log */}
+      {/* Right sidebar */}
       <aside className="w-64 shrink-0">
         <div className="bg-white rounded-2xl border border-gray-200 flex flex-col sticky top-6">
           <div className="px-4 py-3 border-b border-gray-100">
@@ -425,10 +471,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
               </p>
             ) : (
               stories.map((s, i) => (
-                <div
-                  key={i}
-                  className="flex items-start justify-between gap-2 p-3 bg-gray-50 rounded-lg"
-                >
+                <div key={i} className="flex items-start justify-between gap-2 p-3 bg-gray-50 rounded-lg">
                   <p className="text-xs text-gray-700 leading-snug flex-1">
                     {s.name || "Untitled story"}
                   </p>
