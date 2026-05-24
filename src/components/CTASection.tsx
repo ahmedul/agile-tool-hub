@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-interface CTAProps {
+export interface CTAProps {
   title?: string;
   description?: string;
   primaryHref?: string;
