@@ -28,15 +28,18 @@ export default function Home() {
           <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Free templates and simple tools for software teams that want clearer tickets, better acceptance criteria, and smoother delivery.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
             <Link href="/templates" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
               Browse Templates
             </Link>
+            <Link href="/tools/planning-poker" className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+              Try Planning Poker
+            </Link>
             <Link href="/tools/user-story-generator" className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-white transition-colors">
-              Try User Story Generator
+              User Story Generator
             </Link>
             <Link href="/tools/bug-report-to-jira-ticket-converter" className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-white transition-colors">
-              Try Bug Report Converter
+              Bug Report Converter
             </Link>
           </div>
         </div>
@@ -80,6 +83,11 @@ export default function Home() {
               title="Planning Poker"
               description="Real-time story point estimation for your whole team. No login — just share a link."
               href="/tools/planning-poker"
+            />
+            <ToolCard
+              title="Sprint Capacity Calculator"
+              description="Enter team size and availability to get a realistic sprint commitment in story points."
+              href="/tools/sprint-capacity-calculator"
             />
           </div>
         </div>

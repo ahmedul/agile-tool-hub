@@ -25,6 +25,7 @@ export default function Footer() {
             <li><Link href="/tools/user-story-generator" className="hover:text-blue-600">User Story Generator</Link></li>
             <li><Link href="/tools/acceptance-criteria-generator" className="hover:text-blue-600">AC Generator</Link></li>
             <li><Link href="/tools/planning-poker" className="hover:text-blue-600">Planning Poker</Link></li>
+            <li><Link href="/tools/sprint-capacity-calculator" className="hover:text-blue-600">Capacity Calculator</Link></li>
           </ul>
         </div>
         <div>

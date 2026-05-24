@@ -1,0 +1,150 @@
+---
+title: "Kanban Board Template for Software Teams"
+description: "A free Kanban board template for software teams. Covers column structure, WIP limits, card fields, and how to set up a Kanban board in Jira or any tool."
+slug: "kanban-board-template"
+category: "Templates"
+keywords:
+  - kanban board template
+  - kanban template
+  - kanban board setup
+  - kanban wip limits
+  - jira kanban board
+  - kanban for software teams
+relatedLinks:
+  - title: "Kanban vs Scrum"
+    href: "/guides/kanban-vs-scrum"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Definition of Done Explained"
+    href: "/docs/definition-of-done-explained"
+  - title: "Agile Glossary"
+    href: "/docs/agile-glossary"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+## Free Kanban Board Template
+
+A Kanban board visualises work in progress and makes bottlenecks visible before they become emergencies. The board below is a starting point — adapt column names and WIP limits to match how your team actually works.
+
+---
+
+## Standard Kanban Board Structure
+
+```
+┌──────────┬──────────┬──────────┬──────────┬──────────┐
+│ BACKLOG  │  TO DO   │IN PROGRESS│  REVIEW  │   DONE   │
+│          │  WIP: 5  │  WIP: 3  │  WIP: 3  │          │
+├──────────┼──────────┼──────────┼──────────┼──────────┤
+│ Card     │ Card     │ Card     │ Card     │ Card     │
+│ Card     │ Card     │ Card     │ Card     │ Card     │
+│ Card     │ Card     │ Card     │          │ Card     │
+│ Card     │          │          │          │ Card     │
+└──────────┴──────────┴──────────┴──────────┴──────────┘
+```
+
+### Column Definitions
+
+| Column | Purpose | WIP Limit (suggested) |
+|---|---|---|
+| **Backlog** | All known, unscheduled work | Unlimited |
+| **To Do** | Ready to start — requirements clear, no blockers | 5 |
+| **In Progress** | Actively being worked on | 3 |
+| **In Review** | Code review, QA, or stakeholder review | 3 |
+| **Done** | Meets Definition of Done, shipped or merged | Unlimited |
+
+---
+
+## Extended Board (with Blocked column)
+
+For teams that frequently have work blocked by external dependencies, add a **Blocked** column:
+
+```
+BACKLOG → TO DO → IN PROGRESS → BLOCKED → IN REVIEW → DONE
+```
+
+A card moves to Blocked when it cannot progress — waiting for a third-party API, a design decision, or another team's output. This makes blocked work visible instead of hiding it inside "In Progress."
+
+---
+
+## Kanban Card Template
+
+Each card on the board should contain:
+
+```
+Title: [Short, clear description of the work]
+
+Type: [ ] Feature  [ ] Bug  [ ] Task  [ ] Tech Debt
+
+Priority: [ ] Critical  [ ] High  [ ] Medium  [ ] Low
+
+Description:
+[What needs to be done and why]
+
+Acceptance Criteria:
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+Owner: [Assigned team member]
+Reporter: [Who raised this]
+Linked to: [Epic / Goal / OKR]
+```
+
+---
+
+## WIP Limits Explained
+
+Work In Progress (WIP) limits are the most important and most ignored feature of Kanban. They cap the number of items in a column at any one time.
+
+**Why WIP limits matter:**
+
+Without limits, teams pile work into "In Progress" — everyone is busy, nothing is finishing. WIP limits force the team to finish work before starting new work.
+
+**How to set initial WIP limits:**
+
+A good starting point is: **WIP limit = number of people working in that column × 1.5**
+
+For a team of 4 developers:
+- In Progress: 4 × 1.5 = 6 (round down to 5 or 4)
+- In Review: 3 (reviews shouldn't stack up — they should be prioritised)
+
+Start with these numbers and adjust based on what you observe. If items pile up in Review, reduce the In Progress limit to force the team to clear reviews before starting new work.
+
+---
+
+## Kanban Metrics to Track
+
+| Metric | What it tells you |
+|---|---|
+| **Cycle time** | How long a card takes from "In Progress" to "Done". Shorter is better. |
+| **Lead time** | How long a card takes from creation to "Done". Includes waiting time in Backlog. |
+| **Throughput** | Number of items completed per week. Measures team output. |
+| **WIP age** | How long items have been in a column. Items that age in "In Progress" need attention. |
+| **Blocked rate** | What percentage of items hit the Blocked column. High rates signal systemic dependency problems. |
+
+---
+
+## Setting Up a Kanban Board in Jira
+
+1. **Create a new board** → select "Kanban board"
+2. **Map your columns** to Jira statuses (To Do, In Progress, In Review, Done)
+3. **Set column constraints** → each column → Edit → set maximum cards
+4. **Create a backlog filter** → use a JQL query to populate the backlog (e.g. `project = PROJ AND sprint is EMPTY ORDER BY priority DESC`)
+5. **Set up swimlanes** (optional) → by assignee, by epic, or by priority
+
+---
+
+## Kanban vs Scrum: Which Board to Use?
+
+Use a **Kanban board** when:
+- Work arrives continuously and unpredictably (support, ops, maintenance)
+- The team does not work in fixed sprints
+- You want to optimise flow rather than plan capacity
+
+Use a **Scrum board** when:
+- The team works in fixed sprints with a sprint goal
+- You need predictable delivery cadence
+- Product planning happens in defined cycles
+
+Most teams are somewhere in between. A hybrid approach — time-boxed sprints with Kanban-style WIP limits and flow metrics — is increasingly common. See the [Kanban vs Scrum guide](/guides/kanban-vs-scrum) for a full comparison.

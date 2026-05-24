@@ -2,20 +2,21 @@ import type { Metadata } from "next";
 import ToolCard from "@/components/ToolCard";
 
 export const metadata: Metadata = {
-  title: "Free Agile & Scrum Tools for Software Teams",
-  description: "Simple, free tools for software teams. Convert bug notes to Jira tickets, generate user stories, and more.",
+  title: "Free Agile & Scrum Tools for Software Teams | AgileToolHub",
+  description: "Free online tools for Agile and Scrum teams. Plan poker sessions, generate user stories, write acceptance criteria, and convert bug reports to Jira tickets — no login required.",
 };
 
 export default function ToolsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Free Agile Tools</h1>
-      <p className="text-lg text-gray-600 mb-10">Simple tools that turn messy notes into clean, structured tickets and documents.</p>
+      <p className="text-lg text-gray-600 mb-10">Browser-based tools for software teams. No login, no signup — just open and use.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <ToolCard
-          title="Bug Report to Jira Ticket Converter"
-          description="Paste messy bug notes and get a clean, structured Jira ticket with all required fields."
-          href="/tools/bug-report-to-jira-ticket-converter"
+          title="Planning Poker"
+          description="Real-time story point estimation for your whole team. Share a link, vote simultaneously, reveal together."
+          href="/tools/planning-poker"
+          badge="Live · Free"
         />
         <ToolCard
           title="User Story Generator"
@@ -28,9 +29,14 @@ export default function ToolsPage() {
           href="/tools/acceptance-criteria-generator"
         />
         <ToolCard
-          title="Planning Poker"
-          description="Real-time story point estimation for your whole team. Share a link, vote simultaneously, reveal together."
-          href="/tools/planning-poker"
+          title="Bug Report to Jira Ticket Converter"
+          description="Paste messy bug notes and get a clean, structured Jira ticket with all required fields."
+          href="/tools/bug-report-to-jira-ticket-converter"
+        />
+        <ToolCard
+          title="Sprint Capacity Calculator"
+          description="Enter team size and availability to get a realistic sprint commitment in story points."
+          href="/tools/sprint-capacity-calculator"
         />
       </div>
     </div>
