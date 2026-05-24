@@ -1,7 +1,10 @@
 "use client";
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
+type GenerationMode = "local" | "ai";
 
 interface FormState {
   featureDescription: string;
@@ -138,6 +141,17 @@ export default function AcceptanceCriteriaGenerator() {
   });
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
+  const [mode, setMode] = useState<GenerationMode>("local");
+  const [aiRunsLeft, setAiRunsLeft] = useState(0);
+  const [plan, setPlan] = useState<"free" | "pro">("free");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const status = getAiUsageStatus();
+    setAiRunsLeft(status.remaining);
+    setPlan(status.plan);
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -145,9 +159,49 @@ export default function AcceptanceCriteriaGenerator() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!form.featureDescription.trim()) return;
-    setOutput(generateAcceptanceCriteria(form));
+    setError("");
+
+    if (mode === "local") {
+      setOutput(generateAcceptanceCriteria(form));
+      return;
+    }
+
+    if (plan === "free" && aiRunsLeft <= 0) {
+      setError("You used all free AI generations for this month. Upgrade to Pro for higher limits.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await fetch("/api/ai-generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tool: "acceptance-criteria",
+          input: form.featureDescription,
+          options: {
+            format: form.format,
+            userType: form.userType,
+          },
+        }),
+      });
+
+      const data = (await response.json()) as { output?: string; error?: string };
+      if (!response.ok || !data.output) {
+        throw new Error(data.error || "Failed to generate AI output.");
+      }
+
+      setOutput(data.output);
+      const next = incrementAiUsage();
+      setAiRunsLeft(next.remaining);
+      setPlan(next.plan);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "AI generation failed.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCopy = async () => {
@@ -207,13 +261,51 @@ export default function AcceptanceCriteriaGenerator() {
         </div>
       </div>
 
+      <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <button
+            type="button"
+            onClick={() => setMode("local")}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              mode === "local" ? "bg-blue-600 text-white" : "bg-white border border-gray-300 text-gray-700"
+            }`}
+          >
+            Local mode (Free)
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("ai")}
+            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              mode === "ai" ? "bg-violet-600 text-white" : "bg-white border border-gray-300 text-gray-700"
+            }`}
+          >
+            AI mode (Pro)
+          </button>
+        </div>
+        <p className="text-xs text-gray-600">
+          {plan === "free"
+            ? `Free plan: ${aiRunsLeft} AI generations left this month. Local mode stays unlimited.`
+            : `Pro plan: ${aiRunsLeft} AI generations left this month.`}
+          {" "}
+          <Link href="/pricing" className="text-blue-600 hover:underline">
+            View plans
+          </Link>
+        </p>
+      </div>
+
       <button
         onClick={handleGenerate}
-        disabled={!form.featureDescription.trim()}
+        disabled={!form.featureDescription.trim() || loading}
         className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
-        Generate Acceptance Criteria
+        {loading ? "Generating..." : mode === "ai" ? "Generate with AI" : "Generate Acceptance Criteria"}
       </button>
+
+      {error && (
+        <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+          {error}
+        </div>
+      )}
 
       {output && (
         <div className="mt-6">
