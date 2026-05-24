@@ -145,12 +145,13 @@ Primary wedge for this project:
 
 | Item | Status |
 |---|---|
-| Fix context-mismatched CTAs on template/doc pages | ⏳ |
-| Add one-click copy buttons (Markdown/Jira/GitHub/Linear where relevant) | ⏳ |
-| Add About page with builder credibility and background | ⏳ |
-| Add Privacy page (Local mode vs AI mode data handling) | ⏳ |
+| Fix context-mismatched CTAs on template/doc pages | ✅ (contextual CTA inference system) |
+| Add one-click copy buttons (Markdown/Jira/GitHub/Linear where relevant) | ✅ (TemplateCopyActions on high-intent pages) |
+| Add About page with builder credibility and background | ✅ |
+| Add Privacy page (Local mode vs AI mode data handling) | ✅ |
 | Add ticket quality scoring for Bug Report Converter | ⏳ |
-| Add analytics events (copy, generate, session created, feedback click) | ⏳ |
+| Add analytics events (copy, generate, session created, feedback click) | ✅ (8 event types: generator_run, output_copy, session_created, template_copy, output_feedback, feedback_text_submitted) |
+| Add output usefulness feedback prompt | ✅ (Yes/No buttons + free-text "What was missing?" form) |
 | Search title polish pass (remove duplicated brand patterns) | ⏳ |
 
 ### Month 1 — May 2026 (Foundation + first tools)
@@ -160,18 +161,19 @@ Primary wedge for this project:
 | May 1–7 | Project setup, deploy to Vercel, 8 core templates | ✅ |
 | May 8–14 | 5 guides, 4 examples, 5 docs pages, internal linking | ✅ |
 | May 15–21 | AI tools: User Story Generator, AC Generator, Bug Report Converter | ✅ |
-| May 22–24 | Planning Poker (real-time), Sprint Capacity Calculator, Retrospective Board | ✅ |
+| May 24 | Planning Poker, Sprint Capacity Calculator, Retrospective Board (real-time) | ✅ |
 | May 24 | AI mode foundation with monthly quota + pricing page | ✅ |
-| May 25–31 | Measurement setup: Google Search Console, Bing Webmaster Tools, event tracking, sitemap checks | ⏳ |
+| May 24 | Contextual CTAs, copy buttons, About/Privacy pages, GA4 tracking, feedback forms | ✅ |
+| May 25–31 | Measurement setup: Google Search Console, Bing Webmaster Tools, event tracking review, sitemap checks | ⏳ |
 
 ### Month 2 — June 2026 (Conversion + focused SEO)
 
 | Week | Goal | Status |
 |---|---|---|
-| Jun 1–7 | Fix CTA alignment + add copy buttons across highest-traffic pages | ⏳ |
+| Jun 1–7 | Daily Standup Generator, Velocity Tracker tool (client-side) | ⏳ |
 | Jun 8–14 | Publish high-intent pages only (Jira/API/QA ticket quality topics) | ⏳ |
-| Jun 15–21 | About + Privacy pages + full internal linking pass | ⏳ |
-| Jun 22–30 | Ticket quality score v1 in Bug Report Converter + output quality feedback prompt | ⏳ |
+| Jun 15–21 | Ticket quality score v1 in Bug Report Converter + search title polish | ⏳ |
+| Jun 22–30 | Stripe billing integration (server-side plan enforcement) | ⏳ |
 
 ### Month 3 — July 2026 (Double down on winner)
 
