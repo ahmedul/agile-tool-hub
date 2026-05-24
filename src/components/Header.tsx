@@ -26,6 +26,7 @@ export default function Header() {
           <Link href="/guides" className="text-gray-600 hover:text-blue-600 font-medium">Guides</Link>
           <Link href="/docs" className="text-gray-600 hover:text-blue-600 font-medium">Docs</Link>
           <Link href="/tools" className="text-gray-600 hover:text-blue-600 font-medium">Tools</Link>
+          <Link href="/about" className="text-gray-600 hover:text-blue-600 font-medium">About</Link>
         </nav>
       </div>
     </header>

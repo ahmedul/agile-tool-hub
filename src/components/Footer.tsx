@@ -7,6 +7,10 @@ export default function Footer() {
         <div>
           <p className="font-bold text-gray-900 mb-3">AgileToolHub</p>
           <p className="text-sm text-gray-500">Free Agile, Scrum, and software delivery templates for engineering teams.</p>
+          <ul className="mt-3 space-y-1 text-sm text-gray-500">
+            <li><Link href="/about" className="hover:text-blue-600">About</Link></li>
+            <li><Link href="/pricing" className="hover:text-blue-600">Pricing</Link></li>
+          </ul>
         </div>
         <div>
           <p className="font-semibold text-gray-700 mb-3">Templates</p>
