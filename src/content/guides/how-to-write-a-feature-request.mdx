@@ -1,0 +1,149 @@
+---
+title: "How to Write a Feature Request"
+description: "A practical guide to writing clear, compelling feature requests that product teams actually act on. Covers structure, business case, acceptance criteria, and common mistakes."
+slug: "how-to-write-a-feature-request"
+category: "Guides"
+keywords:
+  - how to write a feature request
+  - feature request guide
+  - feature request best practices
+  - writing feature requests
+  - product feature request
+  - feature request template
+relatedLinks:
+  - title: "Feature Request Template"
+    href: "/templates/feature-request-template"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+Most feature requests die in the backlog. Not because the idea was bad — but because the request was written in a way that made it impossible to prioritise, scope, or build.
+
+A feature request that gets acted on is not just "I want X". It answers: who is affected, what problem they have, what success looks like, and why it matters now.
+
+## The anatomy of a good feature request
+
+### 1. Start with the problem, not the solution
+
+The single most common mistake is jumping straight to the solution.
+
+**Bad:**
+> "Add a dark mode to the dashboard."
+
+**Good:**
+> "Users who work in low-light environments or use the product for long periods report eye strain. A dark mode would reduce this and is a frequently requested feature in our NPS comments."
+
+The solution (dark mode) is fine — but leading with the problem gives the product team context to evaluate whether dark mode is the right solution, or whether another approach might serve users better.
+
+### 2. Identify who is affected
+
+A feature that impacts 80% of users is a different priority than one that helps 2%.
+
+- **User segment:** Who experiences this problem? All users, a specific role, enterprise customers only?
+- **Frequency:** How often do they encounter it? Daily or once a quarter?
+- **Severity:** Is it a minor inconvenience or a blocker that causes them to use a workaround?
+
+### 3. Describe the proposed solution clearly
+
+After establishing the problem, describe your proposed solution at a level that allows scoping — but avoid over-specifying the implementation.
+
+Include:
+- What the feature does from the user's perspective
+- Where in the product it lives
+- Any known edge cases or constraints
+
+Leave the technical implementation to the engineers.
+
+### 4. Define acceptance criteria
+
+Without acceptance criteria, "done" is undefined. Write at least 3–5 testable conditions that must be true for this feature to be considered complete.
+
+**Example for a dark mode request:**
+
+- [ ] User can toggle between light and dark mode from the account settings page
+- [ ] Preference is persisted across sessions
+- [ ] All existing UI components render correctly in dark mode
+- [ ] Toggle is accessible via keyboard
+- [ ] Dark mode respects the user's OS-level preference by default
+
+Use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) to draft these quickly.
+
+### 5. Make the business case
+
+Product teams are balancing dozens of requests. Help them prioritise yours by quantifying the impact:
+
+- How many users or accounts are affected?
+- Is there data from support tickets, NPS, or user interviews?
+- What is the cost of not doing this? (churn risk, workaround time, competitive gap)
+- Does this unlock new customers or revenue segments?
+
+Even rough data ("3 enterprise accounts have mentioned this in renewal calls") is more convincing than none.
+
+### 6. Suggest a priority and explain why
+
+Don't leave prioritisation entirely to the product team. State what you think the priority should be and why:
+
+> "I'd suggest High priority because this is blocking two enterprise deals currently in negotiation."
+
+You may be wrong about the priority, and that's fine — but stating your reasoning starts a useful conversation.
+
+---
+
+## Feature Request Structure
+
+Use this structure every time:
+
+```
+**Problem Statement**
+[Who has the problem, what is it, how often does it occur, what is the impact]
+
+**Proposed Solution**
+[What you want built, from the user's perspective]
+
+**User Segment Affected**
+[All users / specific role / specific plan tier]
+
+**Acceptance Criteria**
+- [ ] Criteria 1
+- [ ] Criteria 2
+- [ ] Criteria 3
+
+**Business Case**
+[Data, user quotes, revenue impact, competitive context]
+
+**Suggested Priority**
+[ ] Critical  [ ] High  [ ] Medium  [ ] Low
+
+**Reason for Priority**
+[Why now? What happens if this is deprioritised?]
+```
+
+---
+
+## Common mistakes to avoid
+
+**Writing a solution without a problem.** "Add a bulk export button" tells engineering what to build but not why. Without the why, it can't be scoped, prioritised, or challenged constructively.
+
+**No acceptance criteria.** A vague feature request produces a vague implementation. Testable criteria prevent misalignment between what was requested and what was built.
+
+**Treating it as a one-line ticket.** "Dark mode" is a title, not a feature request. One line is not enough information for a product team to make a decision.
+
+**Overfitting the solution.** Requesting a specific implementation ("add a toggle in the top nav, third icon from the left, 24px") leaves no room for better approaches. Describe the outcome you need, not the pixel-level design.
+
+**No business case.** "Users want this" is not a business case. "This is mentioned in 14% of churn survey responses" is.
+
+---
+
+## Feature request vs user story
+
+A feature request is written by a stakeholder or customer to describe a need. A user story is written by the product team to define the work that delivers against that need.
+
+A single feature request often spawns multiple user stories. The feature request says *what* and *why*. The user stories say *how it will be built*, broken into shippable increments.
+
+Once a feature request is approved, use the [User Story Generator](/tools/user-story-generator) to break it down into structured, Jira-ready stories.

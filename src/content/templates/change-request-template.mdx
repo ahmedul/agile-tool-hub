@@ -1,0 +1,149 @@
+---
+title: "Change Request Template for Software Teams"
+description: "A structured change request template for software teams. Covers impact analysis, risk assessment, rollback plan, and approval tracking — ready for Jira or Confluence."
+slug: "change-request-template"
+category: "Templates"
+keywords:
+  - change request template
+  - change request form
+  - software change request
+  - change management template
+  - change request jira
+  - change request agile
+relatedLinks:
+  - title: "Incident Postmortem Template"
+    href: "/templates/incident-postmortem-template"
+  - title: "Feature Request Template"
+    href: "/templates/feature-request-template"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+## Free Change Request Template
+
+A change request documents a proposed modification to a system, process, or codebase. A good change request makes the risk visible before the change is made — not after.
+
+---
+
+## Change Request Template
+
+```
+Title: [Short description of the change]
+
+**Change Type:** [ ] Feature  [ ] Bug Fix  [ ] Configuration  [ ] Infrastructure  [ ] Security
+
+**Priority:** [ ] Critical  [ ] High  [ ] Medium  [ ] Low
+
+**Requested By:** [Name / Team]
+**Date Requested:** [YYYY-MM-DD]
+**Target Release / Deploy Date:** [YYYY-MM-DD]
+
+---
+
+## 1. Summary
+[1–3 sentences describing what is changing and why.]
+
+## 2. Business Justification
+[Why is this change needed? What problem does it solve or what value does it deliver?]
+
+## 3. Scope of Change
+[What systems, services, databases, or APIs are affected?]
+
+- Component/Service: 
+- Environment: [ ] Dev  [ ] Staging  [ ] Production
+- Data migration required: [ ] Yes  [ ] No
+
+## 4. Technical Description
+[Describe the technical implementation. Link to design docs, PRs, or architecture diagrams.]
+
+## 5. Impact Analysis
+
+| Area | Impact | Notes |
+|---|---|---|
+| Users | Low / Medium / High | |
+| Performance | Low / Medium / High | |
+| Security | Low / Medium / High | |
+| Dependencies | Low / Medium / High | |
+| Downtime Required | Yes / No | Duration: |
+
+## 6. Risk Assessment
+
+**Overall Risk:** [ ] Low  [ ] Medium  [ ] High
+
+| Risk | Likelihood | Mitigation |
+|---|---|---|
+| [e.g. Data loss] | Low / Medium / High | [Mitigation plan] |
+| [e.g. Service outage] | Low / Medium / High | [Mitigation plan] |
+
+## 7. Testing Plan
+[How has this change been tested? Include test types: unit, integration, regression, UAT.]
+
+- [ ] Unit tests written and passing
+- [ ] Integration tests passing
+- [ ] Staging environment validated
+- [ ] Performance baseline checked
+
+## 8. Rollback Plan
+[Step-by-step instructions to revert this change if it causes issues in production.]
+
+1. 
+2. 
+3. 
+
+**Rollback time estimate:** [e.g. 15 minutes]
+
+## 9. Deployment Steps
+[Ordered checklist of deployment actions.]
+
+- [ ] Step 1: 
+- [ ] Step 2: 
+- [ ] Step 3: 
+- [ ] Post-deploy smoke test: 
+
+## 10. Approval
+
+| Role | Name | Decision | Date |
+|---|---|---|---|
+| Engineering Lead | | [ ] Approved  [ ] Rejected | |
+| Product Owner | | [ ] Approved  [ ] Rejected | |
+| QA Lead | | [ ] Approved  [ ] Rejected | |
+
+---
+
+**Change Request ID:** CR-[NUMBER]
+**Status:** [ ] Draft  [ ] In Review  [ ] Approved  [ ] Rejected  [ ] Deployed
+```
+
+---
+
+## Change Request Fields Explained
+
+### Change Type
+Categorising the change helps teams apply the right level of scrutiny. Infrastructure and security changes warrant more rigorous review than a simple configuration tweak.
+
+### Impact Analysis
+Force yourself to assess impact across multiple dimensions. A change that looks low-risk in isolation can be high-risk for a downstream service you didn't consider.
+
+### Rollback Plan
+This is the most commonly skipped section. Write it before you deploy — not during an incident. If you can't describe how to roll back, the change isn't ready to ship.
+
+### Approval
+Who needs to sign off depends on your organisation. At minimum, an engineering lead and product owner should approve production changes that affect end users.
+
+---
+
+## Change Request vs Bug Report
+
+A **bug report** documents something that is broken and needs fixing. A **change request** documents a deliberate modification — a feature, a configuration change, or an infrastructure update. Both need a clear description, impact assessment, and acceptance criteria, but the approval chain for a change request is typically more formal.
+
+---
+
+## Tips for Effective Change Requests
+
+1. **Write the rollback plan first.** If you can't answer "how do we undo this?", stop and find out before proceeding.
+2. **Be specific about scope.** "The API" is not a scope. "The `/api/payments` endpoint on the production cluster" is.
+3. **Link evidence.** Attach test results, performance benchmarks, and staging screenshots to the request.
+4. **Estimate downtime honestly.** Teams that always say "zero downtime" lose credibility. If maintenance windows are needed, say so.
+5. **Keep a change log.** Approved, deployed, and rejected change requests form an audit trail that is invaluable during incidents.

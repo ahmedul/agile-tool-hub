@@ -1,0 +1,157 @@
+---
+title: "Bug Report Example for Mobile App"
+description: "Real bug report examples for mobile apps, covering crashes, UI issues, and performance problems. Written in Jira-ready format for iOS and Android teams."
+slug: "bug-report-example-for-mobile-app"
+category: "Examples"
+keywords:
+  - bug report example mobile app
+  - mobile app bug report
+  - ios bug report example
+  - android bug report example
+  - mobile bug report template
+  - jira bug report mobile
+relatedLinks:
+  - title: "Bug Report to Jira Ticket Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Bug Report Example for Web Application"
+    href: "/examples/bug-report-example-for-web-application"
+  - title: "Bug Report vs Jira Ticket"
+    href: "/guides/bug-report-vs-jira-ticket"
+---
+
+Below are three complete bug report examples for common mobile app issues. Each is written in Jira-ready format and covers a different category: crash, UI regression, and performance.
+
+---
+
+## Example 1: App Crash on Login (iOS)
+
+**Summary:** App crashes immediately after tapping "Sign In" on iOS 17.4 when Face ID is enabled
+
+**Environment:**
+- Platform: iOS 17.4
+- Device: iPhone 15 Pro
+- App Version: 3.2.1 (Build 412)
+- Network: Wi-Fi
+
+**Steps to Reproduce:**
+1. Open the app on an iPhone with Face ID enabled
+2. Enter valid email and password
+3. Tap "Sign In"
+4. Face ID prompt appears
+5. Authenticate with Face ID
+
+**Expected Result:**
+User is authenticated and directed to the home screen.
+
+**Actual Result:**
+The app crashes immediately after Face ID authentication succeeds. The app returns to the iOS home screen with no error message.
+
+**Frequency:** Reproducible 100% of the time on affected devices
+
+**Workaround:** Disabling Face ID in app settings and using password-only login works correctly.
+
+**Crash Log (excerpt):**
+```
+Thread 0 Crashed:
+0   libswiftCore.dylib        0x00000001a3c2f4a8 _swift_retain_n + 8
+1   AppName                   0x000000010045f2bc AuthenticationManager.handleBiometricResult(_:) + 124
+2   AppName                   0x000000010045e8a0 LoginViewController.signIn() + 340
+```
+
+**Severity:** Critical — blocks all iOS users with Face ID enabled from logging in
+
+**Attachments:** [crash_log_ios17_faceid.txt] [screen_recording.mp4]
+
+---
+
+## Example 2: Checkout Button Invisible in Dark Mode (Android)
+
+**Summary:** "Proceed to Checkout" button is not visible in dark mode on Android — button text is white on white background
+
+**Environment:**
+- Platform: Android 14
+- Device: Samsung Galaxy S24
+- App Version: 3.2.0 (Build 408)
+- Display Mode: Dark Mode (system-level)
+
+**Steps to Reproduce:**
+1. Enable dark mode in Android system settings
+2. Open the app
+3. Add any item to the cart
+4. Navigate to the cart screen
+5. Scroll to the bottom of the cart
+
+**Expected Result:**
+"Proceed to Checkout" button is clearly visible with appropriate contrast in dark mode.
+
+**Actual Result:**
+The button background is white and the button text is also white, making the button invisible. The button is still tappable (confirmed by tapping the invisible area) but users cannot see it.
+
+**Frequency:** Reproducible 100% of the time when system dark mode is enabled
+
+**Workaround:** Switching to light mode restores the button's visibility.
+
+**Screenshots:**
+- [cart_dark_mode_invisible_button.png] — shows the blank area where the button should be
+- [cart_light_mode_correct.png] — correct appearance in light mode
+
+**Severity:** High — any user with dark mode enabled cannot visually locate the checkout button, directly impacting conversion
+
+**Root Cause Hypothesis:** The button style likely inherits `background: #FFFFFF` with `color: #FFFFFF` when the system dark mode flag is set, suggesting the dark mode stylesheet override is missing for this component.
+
+---
+
+## Example 3: Feed Takes 8+ Seconds to Load on 4G (iOS and Android)
+
+**Summary:** Home feed takes 8–12 seconds to load on 4G connection — was under 2 seconds before 3.2.0 release
+
+**Environment:**
+- Platform: iOS 17.4 and Android 14 (both affected)
+- Devices tested: iPhone 14, Samsung Galaxy A54
+- App Version: 3.2.0 (regression — 3.1.9 was fast)
+- Network: 4G LTE (confirmed with speed test: 35 Mbps down)
+
+**Steps to Reproduce:**
+1. Launch the app on a device connected to 4G (not Wi-Fi)
+2. Navigate to the home feed
+3. Observe load time
+
+**Expected Result:**
+Feed loads within 2 seconds (baseline from version 3.1.9).
+
+**Actual Result:**
+Feed shows a spinner for 8–12 seconds before content appears. On slower 4G connections, the request times out entirely and an error state is shown.
+
+**Performance Data:**
+
+| Version | Network | Load Time |
+|---|---|---|
+| 3.1.9 | 4G | 1.8s |
+| 3.2.0 | 4G | 9.4s |
+| 3.2.0 | Wi-Fi | 1.9s |
+
+**Frequency:** Reproducible 100% of the time on 4G. No regression observed on Wi-Fi.
+
+**Likely Cause:** The 3.2.0 release added infinite scroll prefetching. The prefetch requests may be blocking the initial feed render on slower connections. Wi-Fi masks the issue due to higher bandwidth.
+
+**Severity:** High — significantly degrades experience for the ~60% of mobile users on cellular connections. Likely causing increased bounce rate from the feed.
+
+**Attachments:** [network_trace_4g_v320.har] [network_trace_wifi_v320.har]
+
+---
+
+## Key Differences Between Mobile and Web Bug Reports
+
+Mobile bug reports need a few extra fields that web bug reports often skip:
+
+**OS version matters more.** iOS and Android behave differently across versions. Always specify the exact OS version — "iOS" is not enough.
+
+**Device model affects rendering.** Screen sizes, notches, and manufacturer UI overlays (especially on Android) can cause device-specific bugs. Always name the exact device.
+
+**Build number, not just version.** App stores sometimes serve different builds to different users. The build number (in brackets) identifies the exact binary.
+
+**Network type is a first-class field for mobile.** Cellular vs Wi-Fi can completely change behaviour due to latency, bandwidth, and background data restrictions. Always test on real cellular when reporting performance issues.
+
+**Include crash logs when available.** On iOS, crash logs are in Settings → Privacy → Analytics → Analytics Data. On Android, they appear in logcat. Always attach them — they cut debugging time dramatically.
