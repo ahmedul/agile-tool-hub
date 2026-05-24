@@ -11,10 +11,68 @@ interface FormState {
   priority: Priority;
 }
 
+interface ParsedStoryInput {
+  user: string;
+  goal: string;
+  benefit: string;
+  constraints: string[];
+  dependencies: string[];
+}
+
+function trimToSentence(text: string, fallback: string): string {
+  const value = text.trim();
+  if (!value) return fallback;
+  return value.replace(/^["'`]+|["'`]+$/g, "").replace(/\s+/g, " ");
+}
+
+function parseStoryInput(featureDescription: string, userType: string): ParsedStoryInput {
+  const normalized = featureDescription.replace(/\s+/g, " ").trim();
+  const lines = featureDescription
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const userFromText =
+    normalized.match(/\bas an?\s+([^,.;]+)/i)?.[1] ??
+    normalized.match(/\bfor\s+([^,.;]+?)\s+(?:to|who|when)/i)?.[1] ??
+    userType;
+
+  const goalFromText =
+    normalized.match(/\bi want to\s+([^.;]+)/i)?.[1] ??
+    normalized.match(/\bneed to\s+([^.;]+)/i)?.[1] ??
+    normalized.match(/\bshould be able to\s+([^.;]+)/i)?.[1] ??
+    normalized;
+
+  const benefitFromText =
+    normalized.match(/\bso that\s+([^.;]+)/i)?.[1] ??
+    normalized.match(/\bbecause\s+([^.;]+)/i)?.[1] ??
+    "the user can complete the job faster with fewer errors";
+
+  const constraints = lines
+    .filter((line) => /(must|should|cannot|can't|only|within|without|except|limit)/i.test(line))
+    .slice(0, 4)
+    .map((line) => line.replace(/^[-*]\s*/, ""));
+
+  const dependencies = lines
+    .filter((line) => /(depends on|blocked by|requires|needs|integration|api|design)/i.test(line))
+    .slice(0, 3)
+    .map((line) => line.replace(/^[-*]\s*/, ""));
+
+  return {
+    user: trimToSentence(userFromText ?? "", "user"),
+    goal: trimToSentence(goalFromText ?? "", "complete the workflow"),
+    benefit: trimToSentence(benefitFromText ?? "", "the user can complete the job faster with fewer errors"),
+    constraints,
+    dependencies,
+  };
+}
+
 function generateUserStory(form: FormState): string {
   const { featureDescription, userType, storyType, priority } = form;
-  const user = userType.trim() || "user";
-  const desc = featureDescription.trim();
+  const parsed = parseStoryInput(featureDescription, userType);
+  const user = parsed.user;
+  const desc = parsed.goal;
+  const benefit = parsed.benefit;
 
   // Derive a concise title from the description
   const title = desc.length > 80 ? desc.slice(0, 77) + "..." : desc;
@@ -34,26 +92,27 @@ ${priority}
 ## User Story
 As a ${user},
 I want to ${desc},
-So that [describe the benefit or business value].
+So that ${benefit}.
 
 ## Story Points
 [ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8
 
 ## Acceptance Criteria
-- [ ] Given [starting context], when [action is taken], then [expected outcome]
-- [ ] Given [starting context], when [action is taken], then [expected outcome]
-- [ ] Error states and edge cases are handled gracefully
-- [ ] The feature works correctly on mobile and desktop
-- [ ] The implementation meets the team's Definition of Done
+- [ ] Given a ${user} with required permissions, when they ${desc}, then the expected value is returned in the UI
+- [ ] Given invalid or incomplete input, when the ${user} attempts this flow, then a clear validation message is shown
+- [ ] Given a dependency failure (API/network), when the ${user} retries, then failure is handled without data loss
+- [ ] Analytics/audit event is recorded for this action (if required by product)
+- [ ] The flow meets accessibility baseline (keyboard + screen reader labels)
 
 ## Out of Scope
-- [List anything explicitly NOT included in this story]
+${parsed.constraints.length ? parsed.constraints.map((item) => `- ${item}`).join("\n") : "- [List anything explicitly NOT included in this story]"}
 
 ## Dependencies
-- [List any blockers, related tickets, or external dependencies]
+${parsed.dependencies.length ? parsed.dependencies.map((item) => `- ${item}`).join("\n") : "- [List any blockers, related tickets, or external dependencies]"}
 
 ## Notes
-- [Add any additional context, mockup links, or design references here]`;
+- Source context pasted by author:
+${featureDescription.trim()}`;
 }
 
 export default function UserStoryGenerator() {
@@ -95,10 +154,10 @@ export default function UserStoryGenerator() {
           name="featureDescription"
           value={form.featureDescription}
           onChange={handleChange}
-          placeholder="e.g. filter the product list by category so I can find items faster"
+          placeholder="e.g. Paste chat: PM wants users to filter product list by category and price. Must work on mobile. Depends on search API v2."
           className="w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-800 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
         />
-        <p className="text-xs text-gray-400 mt-1">Write it as the continuation of "I want to…"</p>
+        <p className="text-xs text-gray-400 mt-1">You can write a short sentence or paste a transcript from Slack/meeting notes.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

@@ -9,10 +9,64 @@ interface FormState {
   format: OutputFormat;
 }
 
+interface ParsedCriteriaInput {
+  user: string;
+  action: string;
+  outcome: string;
+  constraints: string[];
+}
+
+function normalizeText(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function parseCriteriaInput(featureDescription: string, userType: string): ParsedCriteriaInput {
+  const normalized = normalizeText(featureDescription);
+  const lines = featureDescription
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const user =
+    userType.trim() ||
+    normalized.match(/\bas an?\s+([^,.;]+)/i)?.[1] ||
+    normalized.match(/\bfor\s+([^,.;]+?)\s+(?:to|who|when)/i)?.[1] ||
+    "user";
+
+  const action =
+    normalized.match(/\b(can|should be able to|needs to|want to)\s+([^.;]+)/i)?.[2] ||
+    normalized.match(/\bi want to\s+([^.;]+)/i)?.[1] ||
+    normalized ||
+    "complete the workflow";
+
+  const outcome =
+    normalized.match(/\bso that\s+([^.;]+)/i)?.[1] ||
+    normalized.match(/\bresult(?: is| should be)?\s*:?\s*([^.;]+)/i)?.[1] ||
+    "the expected result is visible and persisted";
+
+  const constraints = lines
+    .filter((line) => /(must|should|cannot|can't|only|within|without|except|under)/i.test(line))
+    .slice(0, 3)
+    .map((line) => line.replace(/^[-*]\s*/, ""));
+
+  return {
+    user,
+    action: normalizeText(action),
+    outcome: normalizeText(outcome),
+    constraints,
+  };
+}
+
 function generateAcceptanceCriteria(form: FormState): string {
   const { featureDescription, userType, format } = form;
-  const user = userType.trim() || "user";
-  const desc = featureDescription.trim();
+  const parsed = parseCriteriaInput(featureDescription, userType);
+  const user = parsed.user;
+  const desc = parsed.action;
+  const outcome = parsed.outcome;
+
+  const constraints = parsed.constraints.length
+    ? parsed.constraints.map((line) => `- [ ] ${line}`).join("\n")
+    : "- [ ] [Add any constraints, limits, or policy requirements here]";
 
   const gherkin = `## Acceptance Criteria (Given/When/Then)
 
@@ -20,8 +74,8 @@ function generateAcceptanceCriteria(form: FormState): string {
 \`\`\`
 Given the ${user} is on the relevant page
 When they ${desc}
-Then the expected outcome occurs successfully
-And the UI reflects the updated state
+Then ${outcome}
+And the UI reflects the updated state without ambiguity
 \`\`\`
 
 **Validation / error state:**
@@ -44,7 +98,7 @@ And the ${user} is shown a meaningful message with next steps
 
 **Functional:**
 - [ ] The ${user} can ${desc} successfully under normal conditions
-- [ ] The action produces the expected result in the UI
+- [ ] The action produces this outcome: ${outcome}
 - [ ] Changes are persisted correctly (if applicable)
 
 **Validation:**
@@ -66,7 +120,10 @@ And the ${user} is shown a meaningful message with next steps
 - [ ] Code reviewed and approved
 - [ ] Tests written and passing
 - [ ] QA verified against these criteria
-- [ ] Product Owner has accepted the story`;
+- [ ] Product Owner has accepted the story
+
+**Business constraints from input:**
+${constraints}`;
 
   if (format === "gherkin") return gherkin;
   if (format === "checklist") return checklist;
@@ -110,10 +167,10 @@ export default function AcceptanceCriteriaGenerator() {
           name="featureDescription"
           value={form.featureDescription}
           onChange={handleChange}
-          placeholder="e.g. filter the product list by category"
+          placeholder="e.g. Paste notes/chat: User should be able to filter product list by category. Must respond under 2s. Should handle empty state gracefully."
           className="w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-800 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
         />
-        <p className="text-xs text-gray-400 mt-1">Write it as the continuation of "The user can…"</p>
+        <p className="text-xs text-gray-400 mt-1">Works with short prompts or pasted meeting/chat transcripts.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
