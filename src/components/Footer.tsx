@@ -10,6 +10,7 @@ export default function Footer() {
           <ul className="mt-3 space-y-1 text-sm text-gray-500">
             <li><Link href="/about" className="hover:text-blue-600">About</Link></li>
             <li><Link href="/pricing" className="hover:text-blue-600">Pricing</Link></li>
+            <li><Link href="/privacy" className="hover:text-blue-600">Privacy</Link></li>
           </ul>
         </div>
         <div>
