@@ -27,7 +27,12 @@ const faqItems = [
   {
     question: "What does the generator include?",
     answer:
-      "It formats your update into Yesterday, Today, and Blockers, plus a Support Needed section. The output is easy to paste into Jira comments, Slack, or standup docs.",
+      "It formats updates into Yesterday, Today, and Blockers, plus a Support Needed section. You can switch between Individual and Team modes.",
+  },
+  {
+    question: "Can I export in Jira-friendly format?",
+    answer:
+      "Yes. Choose Jira Wiki output to generate heading and bullet formatting that is easy to paste into Jira comments.",
   },
   {
     question: "Can I paste rough notes or transcript text?",
