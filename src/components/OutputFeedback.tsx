@@ -4,11 +4,11 @@ import { useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 
 interface OutputFeedbackProps {
-  tool: "user_story" | "acceptance_criteria" | "bug_report" | "daily_standup";
-  mode: "local" | "ai";
+  tool: "user_story" | "acceptance_criteria" | "bug_report" | "daily_standup" | "velocity_tracker";
+  mode?: "local" | "ai";
 }
 
-export default function OutputFeedback({ tool, mode }: OutputFeedbackProps) {
+export default function OutputFeedback({ tool, mode = "local" }: OutputFeedbackProps) {
   const [selected, setSelected] = useState<"yes" | "no" | null>(null);
   const [feedbackText, setFeedbackText] = useState("");
   const [submitted, setSubmitted] = useState(false);

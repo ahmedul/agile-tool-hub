@@ -44,6 +44,11 @@ export default function ToolsPage() {
           href="/tools/daily-standup-generator"
         />
         <ToolCard
+          title="Velocity Tracker"
+          description="Track team sprint velocity, visualize trends, and forecast future sprint capacity with metrics-driven planning."
+          href="/tools/velocity-tracker"
+        />
+        <ToolCard
           title="Retrospective Board"
           description="Real-time retro board for Agile teams. Went Well, To Improve, and Action Items — live and collaborative."
           href="/tools/retro-board"
