@@ -39,6 +39,11 @@ export default function ToolsPage() {
           href="/tools/sprint-capacity-calculator"
         />
         <ToolCard
+          title="Daily Standup Generator"
+          description="Turn rough notes into a clear Yesterday/Today/Blockers update you can paste into Slack or Jira."
+          href="/tools/daily-standup-generator"
+        />
+        <ToolCard
           title="Retrospective Board"
           description="Real-time retro board for Agile teams. Went Well, To Improve, and Action Items — live and collaborative."
           href="/tools/retro-board"

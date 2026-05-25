@@ -91,6 +91,11 @@ export default function Home() {
               href="/tools/sprint-capacity-calculator"
             />
             <ToolCard
+              title="Daily Standup Generator"
+              description="Turn rough notes into a clean Yesterday/Today/Blockers update for your daily scrum."
+              href="/tools/daily-standup-generator"
+            />
+            <ToolCard
               title="Retrospective Board"
               description="Real-time retro board for Agile teams. Went Well, To Improve, and Action Items — live and collaborative."
               href="/tools/retro-board"

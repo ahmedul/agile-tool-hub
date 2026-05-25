@@ -4,7 +4,7 @@ import { useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 
 interface OutputFeedbackProps {
-  tool: "user_story" | "acceptance_criteria" | "bug_report";
+  tool: "user_story" | "acceptance_criteria" | "bug_report" | "daily_standup";
   mode: "local" | "ai";
 }
 
