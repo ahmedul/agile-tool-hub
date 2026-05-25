@@ -1,0 +1,237 @@
+---
+title: "Definition of Ready (DoR) Checklist Template"
+description: "What makes a Jira ticket ready for sprint? This DoR checklist ensures tickets have acceptance criteria, estimates, dependencies, and all info needed for the team."
+slug: "definition-of-ready-template"
+category: "Templates"
+keywords:
+  - definition of ready
+  - jira ticket ready
+  - sprint readiness
+  - acceptance criteria checklist
+  - ticket quality
+  - agile dor
+relatedLinks:
+  - title: "Complete Jira Ticket Template"
+    href: "/templates/complete-jira-ticket-template"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+  - title: "Definition of Done Explained"
+    href: "/docs/definition-of-done-explained"
+---
+
+## Definition of Ready (DoR) Checklist
+
+**Definition of Ready** = a ticket is clear enough that any team member can start working on it without asking clarifying questions.
+
+Use this checklist during backlog refinement (1–2 sprints before work begins) to ensure tickets are actually ready.
+
+---
+
+## Pre-Sprint DoR Checklist
+
+Before a ticket enters the sprint, it must pass **all** of these checks:
+
+### ✓ Title & Description
+
+- [ ] **Title is clear and specific** — Describes the problem or goal, not just "Fix bug" or "Implement feature"
+  - ❌ Bad: "Login broken"
+  - ✅ Good: "Login button unresponsive on Safari when page takes >2s to load"
+
+- [ ] **Description explains the WHY** — Why are we building this? What's the business value?
+  - Include: Problem statement, user impact, or business goal
+  - One paragraph is often enough
+
+- [ ] **Acceptance criteria are written and specific** — Not vague or open-ended
+  - ❌ Bad: "Make it work"
+  - ✅ Good: "Users in all supported browsers can log in within 2 seconds"
+
+### ✓ Requirements & Scope
+
+- [ ] **Requirements are clear and testable** — What exactly needs to be done?
+  - Use bullet points or numbered lists
+  - Each item should be independently testable
+
+- [ ] **Scope is bounded** — Not an epic disguised as a ticket
+  - If it feels too big, break it into smaller tickets
+  - Rule of thumb: 2–5 day effort, max
+
+- [ ] **Edge cases are identified** — What about empty states, errors, edge cases?
+  - Document known edge cases upfront
+  - Include error handling requirements if applicable
+
+- [ ] **Non-functional requirements are stated** (if applicable):
+  - [ ] Performance requirement (e.g., "response under 200ms")
+  - [ ] Security requirement (e.g., "data must be encrypted at rest")
+  - [ ] Accessibility requirement (e.g., "WCAG 2.1 AA compliance")
+  - [ ] Scalability requirement (e.g., "must handle 1000 concurrent users")
+
+### ✓ Dependencies & Blockers
+
+- [ ] **All dependencies are identified** — What other tickets or systems does this depend on?
+  - Link to related tickets
+  - Highlight if this ticket is blocked by another
+
+- [ ] **External APIs are available** — If this needs a third-party API, is it accessible?
+  - Include credentials/access info or confirm team has it
+
+- [ ] **Design is approved** (if applicable) — If this is visual work, does design have sign-off?
+  - Link to design spec or Figma
+
+- [ ] **No blockers exist** — The ticket should be unblocked and ready to start immediately
+
+### ✓ Estimation & Priority
+
+- [ ] **Story points are estimated** — Team has agreed on effort (if using story points)
+  - If not estimated, add to backlog refinement agenda
+
+- [ ] **Priority is set** — Critical / High / Medium / Low
+  - Should align with sprint goals and business priorities
+
+- [ ] **Priority is realistic** — Not everything is "Critical"
+  - Only ~10% of tickets should be Critical
+
+### ✓ Testing & Acceptance
+
+- [ ] **Acceptance criteria are testable** — How will we know when this is done?
+  - Use Given/When/Then format, or specific checklist items
+  - Each criterion should be independently verifiable
+
+- [ ] **Definition of Done is understood** — Team knows what "done" means
+  - Tests written? Code reviewed? Documentation updated?
+  - Link to your team's DoD definition
+
+- [ ] **Testing strategy is clear** — Unit tests? Integration tests? Manual QA?
+  - Specify what tests are required before merge
+  - Identify any manual QA steps
+
+### ✓ Resources & Knowledge
+
+- [ ] **Assignee is identified** (optional pre-sprint, required sprint start)
+  - Or at least, team members know who will work on it
+
+- [ ] **Any special knowledge is documented** — Complex areas explained
+  - Link to relevant documentation, code comments, or previous related tickets
+  - Include relevant context that might not be obvious
+
+- [ ] **Success metrics are defined** (if applicable) — How do we measure if this works?
+  - e.g., "Performance improves by 30%", "User sign-up rate increases"
+
+---
+
+## DoR Red Flags 🚩
+
+**If any of these are true, send the ticket back to refinement:**
+
+- ❌ Acceptance criteria are missing or vague
+- ❌ Estimated effort is >8 story points (too big, break it up)
+- ❌ Ticket is blocked by another ticket
+- ❌ Title doesn't clearly describe the work
+- ❌ No one on the team understands what "done" means
+- ❌ Depends on external approval that hasn't been granted yet
+- ❌ "Nice to have" features are mixed in with requirements (separate them)
+- ❌ Dependencies on other teams exist but haven't been communicated
+- ❌ Acceptance criteria are not testable (too subjective)
+
+---
+
+## DoR by Ticket Type
+
+### Bug Tickets
+
+- [ ] **Repro steps are clear and repeatable** — Anyone should be able to reproduce it
+- [ ] **Expected vs. actual result is documented** — What should happen vs. what's happening
+- [ ] **Environment is specified** — Browser, OS, version, URL, etc.
+- [ ] **Severity/Priority is set** — Critical (user can't work), High (major impact), Medium, Low
+- [ ] **Attachments included** — Screenshots, error logs, video if possible
+
+### User Story Tickets
+
+- [ ] **"As a X, I want to Y, so that Z" format is complete** — User role, goal, value
+- [ ] **Acceptance criteria describe the happy path AND edge cases**
+- [ ] **Story points estimated**
+- [ ] **Dependencies identified** — Does this need another story first?
+- [ ] **Product Owner has approved the story**
+
+### Task / Infrastructure Tickets
+
+- [ ] **Work is clearly defined** — Not "improve performance" (too vague), but "reduce page load time from 4s to <2s"
+- [ ] **Success criteria are measurable** — "X is reduced by Y%", "Response time < Zms"
+- [ ] **Priority is set** — Doesn't hold up other work?
+- [ ] **Estimated effort is reasonable** — If >8 points, break it down
+
+---
+
+## DoR Ceremony (Backlog Refinement)
+
+**Run this 1–2 sprints before the sprint:**
+
+1. **Prepare** (5 min) — Product owner presents top backlog items
+2. **Discuss** (20–30 min) — Team asks questions, clarifies scope
+3. **Estimate** (10–15 min) — Team estimates effort
+4. **Decide** (5 min) — "Ready for next sprint?" Yes/No
+   - If No → Add to refinement backlog, re-discuss next week
+   - If Yes → Ticket moves to sprint backlog
+
+**Attendees:** Product Owner, Tech Lead, 1–2 engineers (rotating)
+
+---
+
+## Why Definition of Ready Matters
+
+✅ **Reduces surprises** — Team starts work with full context  
+✅ **Speeds up sprints** — Less time asking questions, more time building  
+✅ **Improves estimates** — Clearer requirements = better estimates  
+✅ **Prevents rework** — Misunderstandings caught before work starts  
+✅ **Protects team focus** — No mid-sprint scope creep  
+
+---
+
+## Definition of Done vs. Definition of Ready
+
+| Definition of Ready (DoR) | Definition of Done (DoD) |
+|---|---|
+| **When?** Before sprint | **When?** After work is complete |
+| **Who?** Product Owner + Team | **Who?** Team + QA |
+| **Question?** "Is this clear enough to start?" | **Question?** "Is this actually finished?" |
+| **Example** | **Example** |
+| Acceptance criteria written ✓ | Code reviewed & approved ✓ |
+| Estimated ✓ | Tests written & passing ✓ |
+| No blockers ✓ | QA verified ✓ |
+| | Documentation updated ✓ |
+
+---
+
+## Template for Your Team
+
+Copy this into Confluence or your team's wiki, customize the checkboxes, and use it during refinement:
+
+```
+## Definition of Ready Checklist
+
+**Before this ticket enters the sprint, check ALL boxes:**
+
+- [ ] Title clearly describes the work
+- [ ] Description explains the WHY
+- [ ] Acceptance criteria are written and testable
+- [ ] Scope is bounded (2–5 day effort)
+- [ ] Story points are estimated
+- [ ] Priority is set (Critical/High/Medium/Low)
+- [ ] No blockers exist
+- [ ] Dependencies are identified and linked
+- [ ] Design/API spec is approved (if applicable)
+- [ ] Testing strategy is clear
+- [ ] Team understands what "done" means
+
+**If any box is unchecked, ticket goes back to backlog refinement.**
+```
+
+---
+
+## Related Resources
+
+- [Definition of Done Explained](/docs/definition-of-done-explained)
+- [Complete Jira Ticket Template](/templates/complete-jira-ticket-template)
+- [How to Write a Good Jira Ticket](/guides/how-to-write-a-good-jira-ticket)
+- [Acceptance Criteria Template](/templates/acceptance-criteria-template)

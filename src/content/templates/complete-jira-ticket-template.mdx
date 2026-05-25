@@ -1,0 +1,204 @@
+---
+title: "Complete Jira Ticket Template — Everything You Need"
+description: "The ultimate Jira ticket template for bugs, user stories, features, and tasks. Includes all required fields, acceptance criteria, and best practices."
+slug: "complete-jira-ticket-template"
+category: "Templates"
+keywords:
+  - jira ticket template
+  - jira ticket structure
+  - how to write jira tickets
+  - bug report template
+  - user story template
+  - acceptance criteria
+relatedLinks:
+  - title: "Bug Report to Jira Ticket Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+## Complete Jira Ticket Template
+
+This is the **master template** that works for bugs, user stories, features, and tasks. Customize each section based on your ticket type.
+
+---
+
+## Bug Report Ticket
+
+```
+## Title
+[Clear, specific bug description — not the symptom, the problem]
+
+## Issue Type
+Bug
+
+## Priority
+Critical / High / Medium / Low
+
+## Description
+[2–3 sentences explaining what the bug is and why it matters]
+
+## Steps to Reproduce
+1. [Specific, numbered steps]
+2. [Anyone should be able to follow these]
+3. [Include prerequisites if needed]
+
+## Expected Result
+[What should have happened]
+
+## Actual Result
+[What actually happened]
+
+## Environment
+- Browser: Chrome 124 (or N/A if not applicable)
+- OS: macOS 14.2
+- App Version: v2.1.5
+- URL: https://app.example.com/specific-page
+
+## Acceptance Criteria
+- [ ] Bug is no longer reproducible following the steps above
+- [ ] Expected result is met in all affected browsers/OS
+- [ ] Regression checks pass for related functionality
+- [ ] QA can verify with a clear pass/fail outcome
+
+## Attachments
+[Screenshots, error logs, video of the issue reproducing]
+```
+
+---
+
+## User Story Ticket
+
+```
+## Title
+[Feature name or goal, e.g., "Filter products by category on the shop page"]
+
+## Issue Type
+Story / Task / Improvement
+
+## Priority
+High / Medium / Low
+
+## User Story
+As a [user type — e.g., logged-in shopper],
+I want to [specific goal],
+So that [business value or benefit].
+
+## Description
+[Additional context: why this matters, any constraints, dependencies]
+
+## Acceptance Criteria
+- [ ] Given [precondition], when [user action], then [expected outcome]
+- [ ] [Specific testable condition relevant to this story]
+- [ ] [Performance/accessibility/security requirement if applicable]
+- [ ] [Edge case handling if relevant]
+
+## Story Points
+[ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8  [ ] 13
+
+## Dependencies
+- Blocked by: [link to other ticket if applicable]
+- Related to: [other relevant tickets]
+- Requires API: [API name and version]
+
+## Definition of Done
+- [ ] Code is reviewed and approved
+- [ ] Tests pass (unit, integration, E2E)
+- [ ] No console errors or warnings
+- [ ] Accessibility baseline met (keyboard + screen reader labels)
+- [ ] Product Owner has accepted the story
+
+## Out of Scope
+[Explicitly list what's NOT included in this story]
+```
+
+---
+
+## Feature / Improvement Ticket
+
+```
+## Title
+[Feature name — keep it clear and concise]
+
+## Issue Type
+Task / Improvement / Feature
+
+## Priority
+High / Medium / Low
+
+## Summary
+[Why are we building this? What problem does it solve?]
+
+## Requirements
+- Requirement 1: [Specific, testable condition]
+- Requirement 2: [Must include acceptance criteria]
+- Requirement 3: [Link to design, spec, or user feedback if available]
+
+## Acceptance Criteria
+- [ ] [Functional requirement 1]
+- [ ] [Functional requirement 2]
+- [ ] [Performance requirement if applicable]
+- [ ] [Security/compliance check if applicable]
+- [ ] [Mobile/responsive check if applicable]
+
+## Technical Notes
+[Implementation hints, gotchas, architecture considerations]
+
+## Testing
+- Unit tests: [coverage target or specific test scenarios]
+- Integration tests: [what to test across services]
+- Manual QA focus: [edge cases, user flows to prioritize]
+
+## Definition of Done
+- [ ] Code peer-reviewed
+- [ ] Tests written and passing
+- [ ] Documentation updated (README, API docs, etc.)
+- [ ] No new technical debt introduced
+- [ ] Product Owner sign-off
+```
+
+---
+
+## What Every Jira Ticket Needs
+
+Regardless of type, **always include:**
+
+1. **Clear Title** — Specific, describes the problem or goal (not "Fix bug" — "Login button unresponsive on Safari 17")
+2. **Issue Type** — Bug / Story / Task / Improvement / Epic
+3. **Priority** — Critical / High / Medium / Low (be honest)
+4. **Description** — Context, why it matters, any relevant history
+5. **Steps/Requirements** — Specific, testable, repeatable
+6. **Acceptance Criteria** — How do we know it's done? (use checklists or BDD format)
+7. **Dependencies** — Blocked by? Relates to? Requires?
+
+---
+
+## Pro Tips
+
+- **Use consistent formatting:** Markdown headers, bullet lists, numbered steps make tickets scannable
+- **Link related tickets:** Use `[]` links or Jira's native linking to keep context connected
+- **Attach evidence:** Screenshots for UI bugs, error logs for backend issues, design mocks for features
+- **Set realistic priority:** If everything is "Critical," nothing is
+- **Include acceptance criteria checklist:** Teams should know exactly when this ticket is done
+- **Keep it under 500 words:** If your ticket is longer, break it into sub-tasks
+
+---
+
+## Related Templates
+
+- [Jira Bug Report Template](/templates/jira-bug-report-template)
+- [User Story Template](/templates/user-story-template)
+- [Acceptance Criteria Template](/templates/acceptance-criteria-template)
+- [Definition of Ready Template](/templates/definition-of-ready-template)
+
+---
+
+## Tools to Help
+
+- [Bug Report to Jira Ticket Converter](/tools/bug-report-to-jira-ticket-converter) — Paste messy notes, get structured output
+- [User Story Generator](/tools/user-story-generator) — Generate stories from transcripts
+- [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) — Create testable criteria instantly

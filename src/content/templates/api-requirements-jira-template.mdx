@@ -1,0 +1,253 @@
+---
+title: "API Requirements Template for Jira Tickets"
+description: "How to document API requirements, contracts, and error handling in Jira. Includes endpoint specs, payloads, authentication, and acceptance criteria."
+slug: "api-requirements-jira-template"
+category: "Templates"
+keywords:
+  - api requirements template
+  - jira api ticket
+  - api specification
+  - api contract
+  - api documentation template
+  - rest api requirements
+relatedLinks:
+  - title: "Complete Jira Ticket Template"
+    href: "/templates/complete-jira-ticket-template"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Bug Report to Jira Ticket Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+---
+
+## API Requirements Template for Jira
+
+Use this template when documenting API development work in Jira — whether you're building a new endpoint, modifying contracts, or fixing API bugs.
+
+---
+
+## API Feature / Endpoint Ticket
+
+```
+## Title
+[Specific endpoint and action: e.g., "POST /api/products — Create a new product"]
+
+## Issue Type
+Task / Feature
+
+## Priority
+High / Medium / Low
+
+## API Endpoint Details
+
+### HTTP Method & Path
+POST /api/products/v2
+
+### Base URL
+https://api.example.com
+
+### Authentication
+- Type: Bearer Token (JWT)
+- Header: Authorization: Bearer <token>
+- Scopes required: products:write, inventory:write
+
+### Rate Limiting
+- Requests per second: 10 RPS
+- Burst: 100 requests in a 10-second window
+- Response header: X-RateLimit-Remaining
+
+## Request Contract
+
+### Headers
+```
+Content-Type: application/json
+Authorization: Bearer <token>
+X-Request-ID: <uuid> (optional, for tracing)
+```
+
+### Body Schema
+```json
+{
+  "name": "string (required, min 3 chars, max 100)",
+  "sku": "string (required, unique, alphanumeric)",
+  "description": "string (optional, max 500 chars)",
+  "price": "number (required, >= 0, 2 decimal places)",
+  "category_id": "integer (required, must exist in categories table)",
+  "stock": "integer (required, >= 0)",
+  "images": [
+    {
+      "url": "string (required, valid image URL)",
+      "alt_text": "string (optional)",
+      "is_primary": "boolean (optional)"
+    }
+  ],
+  "metadata": {
+    "color": "string (optional)",
+    "size": "string (optional)"
+  }
+}
+```
+
+### Example Request
+```
+curl -X POST https://api.example.com/api/products/v2 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer eyJhbGc..." \
+  -d '{
+    "name": "Blue Widget",
+    "sku": "WIDGET-001",
+    "price": 29.99,
+    "category_id": 5,
+    "stock": 100
+  }'
+```
+
+## Response Contract
+
+### Success Response (201 Created)
+```json
+{
+  "id": "integer (product ID)",
+  "name": "string",
+  "sku": "string",
+  "price": "number",
+  "category_id": "integer",
+  "stock": "integer",
+  "created_at": "ISO 8601 timestamp",
+  "updated_at": "ISO 8601 timestamp",
+  "url": "string (URL to the product)"
+}
+```
+
+### Example Success Response
+```json
+{
+  "id": 12345,
+  "name": "Blue Widget",
+  "sku": "WIDGET-001",
+  "price": 29.99,
+  "category_id": 5,
+  "stock": 100,
+  "created_at": "2026-05-25T14:32:00Z",
+  "updated_at": "2026-05-25T14:32:00Z",
+  "url": "https://shop.example.com/products/WIDGET-001"
+}
+```
+
+## Error Handling
+
+| Error Scenario | HTTP Status | Error Code | Message | Details |
+|---|---|---|---|---|
+| Invalid JWT | 401 | INVALID_TOKEN | Unauthorized | Include `error_details` with token expiry info |
+| Missing required field | 400 | VALIDATION_ERROR | Missing required field: name | Include `field` in response |
+| SKU already exists | 409 | CONFLICT | SKU already in use | Include `existing_id` |
+| Category not found | 404 | NOT_FOUND | Category with ID 999 not found | Include `resource_type` and `resource_id` |
+| Rate limit exceeded | 429 | RATE_LIMIT_EXCEEDED | Too many requests | Include `retry_after` header (seconds) |
+| Server error | 500 | INTERNAL_ERROR | An unexpected error occurred | Include `request_id` for debugging |
+
+### Example Error Response
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Missing required field: name",
+    "field": "name",
+    "request_id": "req-12345-67890"
+  }
+}
+```
+
+## Acceptance Criteria
+
+- [ ] Endpoint accepts valid requests and returns 201 with correct response schema
+- [ ] All required fields are validated; missing fields return 400 with specific error message
+- [ ] Invalid data types return 400 with field name in error
+- [ ] SKU uniqueness is enforced; duplicate SKU returns 409 with existing ID
+- [ ] Category ID validation works; non-existent category returns 404
+- [ ] Authentication is required; missing/invalid token returns 401
+- [ ] Rate limiting is enforced; excess requests return 429 with Retry-After header
+- [ ] Timestamps (created_at, updated_at) are correct ISO 8601 format
+- [ ] Response includes correct Content-Type header (application/json)
+- [ ] All fields match the schema defined above (no extra fields in response)
+- [ ] Database transaction succeeds fully or rolls back fully (no partial writes)
+- [ ] API documentation is updated on /api/docs (or equivalent)
+
+## Dependencies
+
+- Blocked by: [Link to category API ticket if not yet available]
+- Related to: [Link to product update/delete endpoint tickets]
+- Requires: PostgreSQL v12+, Node.js v18+
+
+## Testing
+
+- Unit tests: Input validation, schema compliance, error code mapping
+- Integration tests: Happy path, all error scenarios, rate limiting, database rollback
+- Load tests: 10 RPS sustained, spike to 100 requests in 10s
+- Smoke test: Verify endpoint is accessible after deployment
+
+## Deployment Notes
+
+- No schema changes required (use existing products table)
+- May need database index on `sku` column for uniqueness constraint
+- Update API rate limiter configuration before release
+```
+
+---
+
+## Database / Backend Ticket (for the engineering team)
+
+```
+## Title
+[e.g., "Implement POST /api/products endpoint with validation"]
+
+## Issue Type
+Task
+
+## Technical Requirements
+
+### What needs to be built
+- POST handler for /api/products/v2
+- Input validation layer (all fields in schema above)
+- SKU uniqueness check
+- Category ID foreign key validation
+- Response serialization (match schema exactly)
+- Error response formatting
+
+### Code changes
+- New file: `src/controllers/products.js` (or equivalent)
+- Update: `src/models/product.js` to add validation methods
+- Update: `src/middleware/auth.js` to check product:write scope
+- Add: Integration test file `tests/api/products.test.js`
+
+### Dependencies
+- Requires category endpoint to be live (or mock it)
+- Depends on JWT validation middleware already in place
+
+### Acceptance Criteria
+- [ ] All unit tests pass (100% coverage on validation logic)
+- [ ] All integration tests pass (happy path + all error scenarios)
+- [ ] Code review approval from [team lead]
+- [ ] API docs updated and reviewed
+- [ ] Tested against rate limiter; no bypass possible
+- [ ] Database migration (if needed) is reversible
+```
+
+---
+
+## Tips for API Tickets in Jira
+
+1. **Be explicit about the contract:** If frontend/mobile teams depend on this, every field type and error case matters
+2. **Include example requests and responses:** Copy-paste-able curl commands save hours of integration time
+3. **Define error codes clearly:** Use consistent error code naming (e.g., `VALIDATION_ERROR`, `NOT_FOUND`)
+4. **Test error paths:** Most bugs happen when things go wrong, not when they go right
+5. **Link to dependent tickets:** If other teams need this API, link the ticket so they can track progress
+6. **Include rate limiting info:** If your API has rate limits, document them upfront
+7. **Specify authentication upfront:** JWT? API Key? OAuth? State it in the ticket, not buried in a comment
+
+---
+
+## Related Resources
+
+- [Complete Jira Ticket Template](/templates/complete-jira-ticket-template)
+- [How to Write a Good Jira Ticket](/guides/how-to-write-a-good-jira-ticket)
+- [User Story Template](/templates/user-story-template)
+
