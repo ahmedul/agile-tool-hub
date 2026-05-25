@@ -3,14 +3,24 @@ import VelocityTracker from "@/components/VelocityTracker";
 import FAQ from "@/components/FAQ";
 import RelatedLinks from "@/components/RelatedLinks";
 import CTASection from "@/components/CTASection";
+import JsonLd from "@/components/JsonLd";
+import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
 
-export const metadata = {
-  title: "Velocity Tracker - Agile Tool Hub",
+export const metadata = buildMetadata({
+  title: "Velocity Tracker — Free Sprint Metrics & Forecasting Tool",
   description:
-    "Track team sprint velocity, visualize trends, and forecast future capacity. Free Jira planning tool.",
-};
+    "Track team sprint velocity, visualize trends, forecast future sprint capacity, and improve planning accuracy. Free agile metrics tool. Export to Jira and Markdown.",
+  keywords: KEYWORDS.velocityTracker,
+  canonical: "https://agile-tool-hub.vercel.app/tools/velocity-tracker",
+});
 
 export default function VelocityTrackerPage() {
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { label: "Home", href: "/" },
+    { label: "Tools", href: "/tools" },
+    { label: "Velocity Tracker", href: "/tools/velocity-tracker" },
+  ]);
+  
   const faqs = [
     {
       question: "What is velocity in Agile?",
@@ -54,8 +64,19 @@ export default function VelocityTrackerPage() {
     },
   ];
 
+  const faqSchema = buildFAQSchema(faqs);
+  const toolSchema = buildToolSchema({
+    name: "Velocity Tracker",
+    description: "Track team sprint velocity, visualize trends, and forecast future sprint capacity with metrics-driven planning.",
+    url: "https://agile-tool-hub.vercel.app/tools/velocity-tracker",
+    applicationCategory: "BusinessApplication",
+  });
+
   return (
     <div className="min-h-screen bg-white">
+      <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={toolSchema} />
       {/* Hero */}
       <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">

@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import TemplateCard from "@/components/TemplateCard";
 import ToolCard from "@/components/ToolCard";
+import JsonLd from "@/components/JsonLd";
+import { buildMetadata, buildOrganizationSchema, KEYWORDS } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "AgileToolHub — Free Agile, Scrum & Software Delivery Templates",
+export const metadata: Metadata = buildMetadata({
+  title: "AgileToolHub — Free Agile, Scrum & Software Delivery Templates & Tools",
   description:
-    "Free templates and simple tools for software teams. Create better Jira tickets, bug reports, user stories, sprint retrospectives, and postmortems in minutes.",
-};
+    "Free templates and tools for Agile teams. Generate user stories, acceptance criteria, bug reports, and Jira tickets. Track sprint velocity. Real-time planning poker and retros. No login required.",
+  keywords: KEYWORDS.homepage,
+  canonical: "https://agile-tool-hub.vercel.app",
+});
 
 const templates = [
   { title: "Jira Bug Report Template", description: "A structured template for clear, actionable bug reports with steps to reproduce, expected vs actual results.", href: "/templates/jira-bug-report-template", category: "Template" },
@@ -19,8 +23,11 @@ const templates = [
 ];
 
 export default function Home() {
+  const organizationSchema = buildOrganizationSchema();
+
   return (
     <>
+      <JsonLd data={organizationSchema} />
       <section className="bg-gray-50 border-b border-gray-200 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">

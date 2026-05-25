@@ -4,11 +4,14 @@ import UserStoryGenerator from "@/components/UserStoryGenerator";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
+import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "User Story Generator — Free Tool for Agile Teams",
-  description: "Generate a complete, structured user story with acceptance criteria in seconds. Free tool for product managers, developers, and Scrum teams. No login required.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "User Story Generator — AI-Powered Free Tool for Agile Teams",
+  description: "Generate complete, Jira-ready user stories with acceptance criteria in seconds. Free tool for product managers, developers, and Scrum teams. Includes quality scoring and presets.",
+  keywords: KEYWORDS.userStory,
+  canonical: "https://agile-tool-hub.vercel.app/tools/user-story-generator",
+});
 
 const faqItems = [
   { question: "Is this tool free?", answer: "Yes, completely free. No login or signup required." },
@@ -22,19 +25,24 @@ const faqItems = [
 ];
 
 export default function UserStoryGeneratorPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqItems.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer },
-    })),
-  };
+  const faqSchema = buildFAQSchema(faqItems);
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { label: "Home", href: "/" },
+    { label: "Tools", href: "/tools" },
+    { label: "User Story Generator", href: "/tools/user-story-generator" },
+  ]);
+  const toolSchema = buildToolSchema({
+    name: "User Story Generator",
+    description: "AI-powered tool to generate complete, Jira-ready user stories with acceptance criteria, story points, and scope boundaries in seconds.",
+    url: "https://agile-tool-hub.vercel.app/tools/user-story-generator",
+    applicationCategory: "BusinessApplication",
+  });
 
   return (
     <>
-      <JsonLd data={jsonLd} />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={toolSchema} />
       <div className="max-w-4xl mx-auto px-4 py-10">
       <Breadcrumbs items={[{ label: "Tools", href: "/tools" }, { label: "User Story Generator" }]} />
       <span className="text-xs font-medium text-green-600 uppercase tracking-wide">Free Tool</span>

@@ -1,14 +1,25 @@
 import type { Metadata } from "next";
 import ToolCard from "@/components/ToolCard";
+import JsonLd from "@/components/JsonLd";
+import { buildMetadata, buildBreadcrumbSchema, KEYWORDS } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Agile & Scrum Tools for Software Teams | AgileToolHub",
-  description: "Free online tools for Agile and Scrum teams. Plan poker sessions, generate user stories, write acceptance criteria, and convert bug reports to Jira tickets — no login required.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "Free Agile & Scrum Tools for Software Teams — AgileToolHub",
+  description: "Free online tools for Agile and Scrum teams. Planning poker, user story generator, acceptance criteria, bug report converter, velocity tracker, standup generator, and retro board — no login required.",
+  keywords: KEYWORDS.tools,
+  canonical: "https://agile-tool-hub.vercel.app/tools",
+});
 
 export default function ToolsPage() {
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { label: "Home", href: "/" },
+    { label: "Tools", href: "/tools" },
+  ]);
+
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
+    <>
+      <JsonLd data={breadcrumbSchema} />
+      <div className="max-w-6xl mx-auto px-4 py-12">
       <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Free Agile Tools</h1>
       <p className="text-lg text-gray-600 mb-10">Browser-based tools for software teams. No login, no signup — just open and use.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -56,5 +67,6 @@ export default function ToolsPage() {
         />
       </div>
     </div>
+    </>
   );
 }

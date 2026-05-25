@@ -4,11 +4,14 @@ import AcceptanceCriteriaGenerator from "@/components/AcceptanceCriteriaGenerato
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
+import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Acceptance Criteria Generator — Free Tool for Agile Teams",
-  description: "Generate testable acceptance criteria in Given/When/Then or checklist format instantly. Free tool for product managers, developers, and Scrum teams. No login required.",
-};
+export const metadata: Metadata = buildMetadata({
+  title: "Acceptance Criteria Generator — AI-Powered Free Tool for Agile Teams",
+  description: "Generate testable acceptance criteria in Given/When/Then (Gherkin) or checklist format instantly. Free tool for product managers, developers, and Scrum teams. Includes quality scoring and presets.",
+  keywords: KEYWORDS.acceptanceCriteria,
+  canonical: "https://agile-tool-hub.vercel.app/tools/acceptance-criteria-generator",
+});
 
 const faqItems = [
   { question: "Is this tool free?", answer: "Yes, completely free. No login or signup required." },
@@ -22,19 +25,24 @@ const faqItems = [
 ];
 
 export default function AcceptanceCriteriaGeneratorPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqItems.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer },
-    })),
-  };
+  const faqSchema = buildFAQSchema(faqItems);
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { label: "Home", href: "/" },
+    { label: "Tools", href: "/tools" },
+    { label: "Acceptance Criteria Generator", href: "/tools/acceptance-criteria-generator" },
+  ]);
+  const toolSchema = buildToolSchema({
+    name: "Acceptance Criteria Generator",
+    description: "Generate testable acceptance criteria in Given/When/Then (Gherkin) or checklist format with quality scoring and work-type presets.",
+    url: "https://agile-tool-hub.vercel.app/tools/acceptance-criteria-generator",
+    applicationCategory: "BusinessApplication",
+  });
 
   return (
     <>
-      <JsonLd data={jsonLd} />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={toolSchema} />
       <div className="max-w-4xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: "Tools", href: "/tools" }, { label: "Acceptance Criteria Generator" }]} />
         <span className="text-xs font-medium text-green-600 uppercase tracking-wide">Free Tool</span>
