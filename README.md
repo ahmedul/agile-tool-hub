@@ -149,10 +149,10 @@ Primary wedge for this project:
 | Add one-click copy buttons (Markdown/Jira/GitHub/Linear where relevant) | ✅ (TemplateCopyActions on high-intent pages) |
 | Add About page with builder credibility and background | ✅ |
 | Add Privacy page (Local mode vs AI mode data handling) | ✅ |
-| Add ticket quality scoring for Bug Report Converter | ⏳ |
+| Add ticket quality scoring for Bug Report Converter | ✅ (quality score v1 with 7 criteria + GA event) |
 | Add analytics events (copy, generate, session created, feedback click) | ✅ (8 event types: generator_run, output_copy, session_created, template_copy, output_feedback, feedback_text_submitted) |
 | Add output usefulness feedback prompt | ✅ (Yes/No buttons + free-text "What was missing?" form) |
-| Search title polish pass (remove duplicated brand patterns) | ⏳ |
+| Search title polish pass (remove duplicated brand patterns) | ✅ |
 
 ### Month 1 — May 2026 (Foundation + first tools)
 
@@ -172,7 +172,7 @@ Primary wedge for this project:
 |---|---|---|
 | Jun 1–7 | Daily Standup Generator, Velocity Tracker tool (client-side) | ⏳ |
 | Jun 8–14 | Publish high-intent pages only (Jira/API/QA ticket quality topics) | ⏳ |
-| Jun 15–21 | Ticket quality score v1 in Bug Report Converter + search title polish | ⏳ |
+| Jun 15–21 | Ticket quality score v1 in Bug Report Converter + search title polish | ✅ (completed early on May 25) |
 | Jun 22–30 | Stripe billing integration (server-side plan enforcement) | ⏳ |
 
 ### Month 3 — July 2026 (Double down on winner)

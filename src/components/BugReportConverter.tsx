@@ -22,6 +22,17 @@ interface ParsedBugReport {
   };
 }
 
+interface QualityCriterion {
+  label: string;
+  met: boolean;
+}
+
+interface TicketQualityResult {
+  score: number;
+  grade: "Excellent" | "Good" | "Needs Work";
+  criteria: QualityCriterion[];
+}
+
 const BROWSERS = ["chrome", "firefox", "safari", "edge", "opera", "brave"];
 const OSS = ["windows", "mac", "macos", "linux", "android", "ios"];
 
@@ -158,6 +169,52 @@ ${parsed.actual}
 - [ ] QA can verify with clear pass/fail outcome`;
 }
 
+function getSectionValue(markdown: string, heading: string): string {
+  const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`##\\s+${escaped}\\n([\\s\\S]*?)(?=\\n##\\s+|$)`, "i");
+  const match = markdown.match(regex);
+  return match?.[1]?.trim() ?? "";
+}
+
+function scoreTicketQuality(markdown: string): TicketQualityResult {
+  const title = getSectionValue(markdown, "Title").split("\n")[0]?.trim() ?? "";
+  const description = getSectionValue(markdown, "Description");
+  const stepsText = getSectionValue(markdown, "Steps to Reproduce");
+  const expected = getSectionValue(markdown, "Expected Result");
+  const actual = getSectionValue(markdown, "Actual Result");
+  const environment = getSectionValue(markdown, "Environment");
+  const acceptanceCriteria = getSectionValue(markdown, "Acceptance Criteria");
+
+  const stepCount = stepsText
+    .split("\n")
+    .filter((line) => /^\d+[.)]\s+/.test(line.trim())).length;
+
+  const specifiedEnvCount = environment
+    .split("\n")
+    .filter((line) => line.includes(":"))
+    .map((line) => line.split(":").slice(1).join(":").trim().toLowerCase())
+    .filter((value) => value && value !== "not specified").length;
+
+  const criteria: QualityCriterion[] = [
+    { label: "Clear, concise title", met: title.length >= 8 && title.length <= 90 },
+    { label: "Detailed description", met: description.length >= 40 },
+    { label: "Repro steps are numbered", met: stepCount >= 3 },
+    { label: "Expected result is explicit", met: expected.length >= 15 },
+    { label: "Actual result is explicit", met: actual.length >= 15 },
+    { label: "Environment details included", met: specifiedEnvCount >= 2 },
+    { label: "Acceptance criteria included", met: acceptanceCriteria.includes("[ ]") || acceptanceCriteria.includes("- [") },
+  ];
+
+  const metCount = criteria.filter((item) => item.met).length;
+  const score = Math.round((metCount / criteria.length) * 100);
+
+  let grade: TicketQualityResult["grade"] = "Needs Work";
+  if (score >= 85) grade = "Excellent";
+  else if (score >= 65) grade = "Good";
+
+  return { score, grade, criteria };
+}
+
 export default function BugReportConverter() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -167,6 +224,7 @@ export default function BugReportConverter() {
   const [plan, setPlan] = useState<"free" | "pro">("free");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [quality, setQuality] = useState<TicketQualityResult | null>(null);
 
   useEffect(() => {
     const status = getAiUsageStatus();
@@ -180,7 +238,16 @@ export default function BugReportConverter() {
     trackEvent("generator_run", { tool: "bug_report", mode });
 
     if (mode === "local") {
-      setOutput(convertBugReport(input));
+      const generated = convertBugReport(input);
+      const qualityResult = scoreTicketQuality(generated);
+      setOutput(generated);
+      setQuality(qualityResult);
+      trackEvent("ticket_quality_scored", {
+        tool: "bug_report",
+        mode,
+        score: qualityResult.score,
+        grade: qualityResult.grade,
+      });
       return;
     }
 
@@ -205,7 +272,15 @@ export default function BugReportConverter() {
         throw new Error(data.error || "Failed to generate AI output.");
       }
 
+      const qualityResult = scoreTicketQuality(data.output);
       setOutput(data.output);
+      setQuality(qualityResult);
+      trackEvent("ticket_quality_scored", {
+        tool: "bug_report",
+        mode,
+        score: qualityResult.score,
+        grade: qualityResult.grade,
+      });
       const next = incrementAiUsage();
       setAiRunsLeft(next.remaining);
       setPlan(next.plan);
@@ -288,6 +363,44 @@ export default function BugReportConverter() {
 
       {output && (
         <div className="mt-6">
+          {quality && (
+            <div className="mb-3 rounded-lg border border-gray-200 bg-white p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-700">Ticket Quality Score</p>
+                <span
+                  className={`text-xs px-2 py-1 rounded font-semibold ${
+                    quality.grade === "Excellent"
+                      ? "bg-green-100 text-green-700"
+                      : quality.grade === "Good"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}
+                >
+                  {quality.score}/100 · {quality.grade}
+                </span>
+              </div>
+              <div className="h-2 w-full rounded bg-gray-100 mb-3">
+                <div
+                  className={`h-2 rounded transition-all ${
+                    quality.score >= 85
+                      ? "bg-green-500"
+                      : quality.score >= 65
+                      ? "bg-blue-500"
+                      : "bg-amber-500"
+                  }`}
+                  style={{ width: `${quality.score}%` }}
+                />
+              </div>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+                {quality.criteria.map((item) => (
+                  <li key={item.label} className="flex items-center gap-1.5">
+                    <span className={item.met ? "text-green-600" : "text-amber-600"}>{item.met ? "✓" : "!"}</span>
+                    <span>{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700">Generated Jira Ticket</label>
             <button
