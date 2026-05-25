@@ -27,7 +27,7 @@ Use this template when documenting API development work in Jira — whether you'
 
 ## API Feature / Endpoint Ticket
 
-```
+~~~
 ## Title
 [Specific endpoint and action: e.g., "POST /api/products — Create a new product"]
 
@@ -189,13 +189,13 @@ curl -X POST https://api.example.com/api/products/v2 \
 - No schema changes required (use existing products table)
 - May need database index on `sku` column for uniqueness constraint
 - Update API rate limiter configuration before release
-```
+~~~
 
 ---
 
 ## Database / Backend Ticket (for the engineering team)
 
-```
+~~~
 ## Title
 [e.g., "Implement POST /api/products endpoint with validation"]
 
@@ -229,7 +229,7 @@ Task
 - [ ] API docs updated and reviewed
 - [ ] Tested against rate limiter; no bypass possible
 - [ ] Database migration (if needed) is reversible
-```
+~~~
 
 ---
 
