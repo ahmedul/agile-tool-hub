@@ -15,6 +15,7 @@ const templates = [
   { title: "Acceptance Criteria Template", description: "Define clear, testable acceptance criteria that your whole team understands.", href: "/templates/acceptance-criteria-template", category: "Template" },
   { title: "Sprint Retrospective Template", description: "Run effective retrospectives with What Went Well, What Didn't, and Action Items.", href: "/templates/sprint-retrospective-template", category: "Template" },
   { title: "Incident Postmortem Template", description: "Document incidents clearly with timeline, root cause, impact, and follow-up actions.", href: "/templates/incident-postmortem-template", category: "Template" },
+  { title: "Feature Request Template", description: "Capture product ideas with business value, scope, and clear acceptance criteria for implementation.", href: "/templates/feature-request-template", category: "Template" },
 ];
 
 export default function Home() {
@@ -63,7 +64,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-gray-900">Free Tools</h2>
             <Link href="/tools" className="text-blue-600 hover:underline text-sm font-medium">View all →</Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <ToolCard
               title="Bug Report to Jira Ticket Converter"
               description="Paste messy bug notes and get a clean, structured Jira ticket instantly."
