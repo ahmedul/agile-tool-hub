@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 import { trackEvent } from "@/lib/analytics";
+import { scoreBugReport, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
 
 type GenerationMode = "local" | "ai";
@@ -22,16 +23,8 @@ interface ParsedBugReport {
   };
 }
 
-interface QualityCriterion {
-  label: string;
-  met: boolean;
-}
-
-interface TicketQualityResult {
-  score: number;
-  grade: "Excellent" | "Good" | "Needs Work";
-  criteria: QualityCriterion[];
-}
+// QualityCriterion and TicketQualityResult types are imported from ticketQuality utility
+type TicketQualityResult = QualityResult;
 
 const BROWSERS = ["chrome", "firefox", "safari", "edge", "opera", "brave"];
 const OSS = ["windows", "mac", "macos", "linux", "android", "ios"];
@@ -169,51 +162,7 @@ ${parsed.actual}
 - [ ] QA can verify with clear pass/fail outcome`;
 }
 
-function getSectionValue(markdown: string, heading: string): string {
-  const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const regex = new RegExp(`##\\s+${escaped}\\n([\\s\\S]*?)(?=\\n##\\s+|$)`, "i");
-  const match = markdown.match(regex);
-  return match?.[1]?.trim() ?? "";
-}
 
-function scoreTicketQuality(markdown: string): TicketQualityResult {
-  const title = getSectionValue(markdown, "Title").split("\n")[0]?.trim() ?? "";
-  const description = getSectionValue(markdown, "Description");
-  const stepsText = getSectionValue(markdown, "Steps to Reproduce");
-  const expected = getSectionValue(markdown, "Expected Result");
-  const actual = getSectionValue(markdown, "Actual Result");
-  const environment = getSectionValue(markdown, "Environment");
-  const acceptanceCriteria = getSectionValue(markdown, "Acceptance Criteria");
-
-  const stepCount = stepsText
-    .split("\n")
-    .filter((line) => /^\d+[.)]\s+/.test(line.trim())).length;
-
-  const specifiedEnvCount = environment
-    .split("\n")
-    .filter((line) => line.includes(":"))
-    .map((line) => line.split(":").slice(1).join(":").trim().toLowerCase())
-    .filter((value) => value && value !== "not specified").length;
-
-  const criteria: QualityCriterion[] = [
-    { label: "Clear, concise title", met: title.length >= 8 && title.length <= 90 },
-    { label: "Detailed description", met: description.length >= 40 },
-    { label: "Repro steps are numbered", met: stepCount >= 3 },
-    { label: "Expected result is explicit", met: expected.length >= 15 },
-    { label: "Actual result is explicit", met: actual.length >= 15 },
-    { label: "Environment details included", met: specifiedEnvCount >= 2 },
-    { label: "Acceptance criteria included", met: acceptanceCriteria.includes("[ ]") || acceptanceCriteria.includes("- [") },
-  ];
-
-  const metCount = criteria.filter((item) => item.met).length;
-  const score = Math.round((metCount / criteria.length) * 100);
-
-  let grade: TicketQualityResult["grade"] = "Needs Work";
-  if (score >= 85) grade = "Excellent";
-  else if (score >= 65) grade = "Good";
-
-  return { score, grade, criteria };
-}
 
 export default function BugReportConverter() {
   const [input, setInput] = useState("");
@@ -234,7 +183,7 @@ export default function BugReportConverter() {
     trackEvent("generator_run", { tool: "bug_report", mode: "local" });
 
     const generated = convertBugReport(input);
-    const qualityResult = scoreTicketQuality(generated);
+    const qualityResult = scoreBugReport(generated);
     setOutput(generated);
     setQuality(qualityResult);
     trackEvent("ticket_quality_scored", {

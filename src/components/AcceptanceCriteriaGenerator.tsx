@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 import { trackEvent } from "@/lib/analytics";
+import { scoreAcceptanceCriteria, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
@@ -25,16 +26,8 @@ interface ParsedCriteriaInput {
   hasMeasurableSignal: boolean;
 }
 
-interface QualityCriterion {
-  label: string;
-  met: boolean;
-}
-
-interface CriteriaQualityResult {
-  score: number;
-  grade: "Excellent" | "Good" | "Needs Work";
-  criteria: QualityCriterion[];
-}
+// QualityCriterion and CriteriaQualityResult types are imported from ticketQuality utility
+type CriteriaQualityResult = QualityResult;
 
 function normalizeText(value: string): string {
   return value.replace(/\s+/g, " ").trim();
@@ -227,44 +220,7 @@ ${constraints}`;
   return { markdown, parsed };
 }
 
-function scoreAcceptanceCriteria(markdown: string, parsed: ParsedCriteriaInput, format: OutputFormat): CriteriaQualityResult {
-  const criteria: QualityCriterion[] = [
-    { label: "Clear user/actor defined", met: parsed.user.trim().length >= 2 },
-    { label: "Action and expected outcome specified", met: parsed.action.length >= 8 && parsed.outcome.length >= 8 },
-    {
-      label: "Gherkin scenarios included",
-      met: format === "checklist" || /Given[\s\S]*When[\s\S]*Then/i.test(markdown),
-    },
-    {
-      label: "Checklist depth included",
-      met: format === "gherkin" || (markdown.match(/- \[ \]/g) ?? []).length >= 8,
-    },
-    {
-      label: "Error handling covered",
-      met: /error|validation|fails gracefully|unexpected condition/i.test(markdown),
-    },
-    {
-      label: "Constraints captured",
-      met: markdown.includes("Business constraints from input"),
-    },
-    {
-      label: "Clarifications section included",
-      met: markdown.includes("## Clarifications Needed"),
-    },
-    {
-      label: "Measurable signal present",
-      met: parsed.hasMeasurableSignal || /under\s+\d+|latency|kpi|metric|percent|%/i.test(markdown),
-    },
-  ];
 
-  const metCount = criteria.filter((item) => item.met).length;
-  const score = Math.round((metCount / criteria.length) * 100);
-  let grade: CriteriaQualityResult["grade"] = "Needs Work";
-  if (score >= 85) grade = "Excellent";
-  else if (score >= 65) grade = "Good";
-
-  return { score, grade, criteria };
-}
 
 export default function AcceptanceCriteriaGenerator() {
   const [form, setForm] = useState<FormState>({
@@ -295,7 +251,7 @@ export default function AcceptanceCriteriaGenerator() {
     // Always use local mode (AI mode not yet available)
     trackEvent("generator_run", { tool: "acceptance_criteria", mode: "local", format: form.format, preset: form.preset });
     const generated = generateAcceptanceCriteria(form);
-    const qualityResult = scoreAcceptanceCriteria(generated.markdown, generated.parsed, form.format);
+    const qualityResult = scoreAcceptanceCriteria(generated.markdown, form.format, generated.parsed.user.trim().length >= 2, generated.parsed.clarifications, generated.parsed.hasMeasurableSignal);
     setOutput(generated.markdown);
     setQuality(qualityResult);
     trackEvent("ticket_quality_scored", {

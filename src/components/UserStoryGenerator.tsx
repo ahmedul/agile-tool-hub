@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 import { trackEvent } from "@/lib/analytics";
+import { scoreUserStory, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
 
 type StoryType = "feature" | "improvement" | "task";
@@ -28,16 +29,8 @@ interface ParsedStoryInput {
   hasMeasurableOutcome: boolean;
 }
 
-interface QualityCriterion {
-  label: string;
-  met: boolean;
-}
-
-interface StoryQualityResult {
-  score: number;
-  grade: "Excellent" | "Good" | "Needs Work";
-  criteria: QualityCriterion[];
-}
+// QualityCriterion and StoryQualityResult types are imported from ticketQuality utility
+type StoryQualityResult = QualityResult;
 
 function trimToSentence(text: string, fallback: string): string {
   const value = text.trim();
@@ -219,27 +212,7 @@ ${featureDescription.trim()}`;
   return { markdown, parsed };
 }
 
-function scoreStoryQuality(markdown: string, parsed: ParsedStoryInput): StoryQualityResult {
-  const normalized = markdown.toLowerCase();
 
-  const criteria: QualityCriterion[] = [
-    { label: "Clear actor in user story", met: /as a\s+[^\n,]+/i.test(markdown) },
-    { label: "Explicit business value", met: /so that\s+[^\n]+/i.test(markdown) },
-    { label: "At least 4 acceptance criteria", met: (markdown.match(/- \[ \]/g) ?? []).length >= 4 },
-    { label: "Scope boundaries included", met: normalized.includes("## out of scope") },
-    { label: "Dependencies captured", met: parsed.dependencies.length > 0 || normalized.includes("## dependencies") },
-    { label: "Clarifications section included", met: normalized.includes("## clarifications needed") },
-    { label: "Measurable outcome signal", met: parsed.hasMeasurableOutcome || /kpi|metric|latency|conversion|error rate/i.test(markdown) },
-  ];
-
-  const metCount = criteria.filter((item) => item.met).length;
-  const score = Math.round((metCount / criteria.length) * 100);
-  let grade: StoryQualityResult["grade"] = "Needs Work";
-  if (score >= 85) grade = "Excellent";
-  else if (score >= 65) grade = "Good";
-
-  return { score, grade, criteria };
-}
 
 export default function UserStoryGenerator() {
   const [form, setForm] = useState<FormState>({
@@ -271,7 +244,7 @@ export default function UserStoryGenerator() {
     // Always use local mode (AI mode not yet available)
     trackEvent("generator_run", { tool: "user_story", mode: "local", preset: form.preset });
     const generated = generateUserStory(form);
-    const qualityResult = scoreStoryQuality(generated.markdown, generated.parsed);
+    const qualityResult = scoreUserStory(generated.markdown, generated.parsed.hasMeasurableOutcome, generated.parsed.dependencies);
     setOutput(generated.markdown);
     setQuality(qualityResult);
     trackEvent("ticket_quality_scored", {
