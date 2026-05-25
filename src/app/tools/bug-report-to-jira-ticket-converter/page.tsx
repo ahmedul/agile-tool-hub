@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 
 const faqItems = [
   { question: "Is this tool free?", answer: "Yes, completely free. No login or signup required." },
-  { question: "Does this send my data anywhere?", answer: "In Local mode, everything stays in your browser. In AI mode, your input is sent securely to the AI provider to generate higher-quality output." },
-  { question: "Is AI mode subscription-based?", answer: "Yes. Free plan includes limited monthly AI generations, and Pro provides higher monthly limits. Local mode remains unlimited." },
+  { question: "What is Local mode?", answer: "Local mode uses fast, deterministic parsing that runs entirely in your browser. No data leaves your computer." },
+  { question: "Is AI mode available?", answer: "AI mode is coming soon! It will deliver higher-quality rewrites from messy chats and transcripts. We'll announce when it's ready." },
   { question: "Can I use the output directly in Jira?", answer: "Yes. Copy the output and paste it into the Jira ticket description field. The Markdown formatting will render correctly." },
-  { question: "How is AI mode different from Local mode?", answer: "Local mode uses deterministic parsing in your browser. AI mode delivers higher-quality rewrites from messy chats and transcripts." },
+  { question: "What will AI mode cost?", answer: "AI mode will be available as a paid add-on once launched. Local mode will always be free." },
   { question: "Can I export to GitHub Issues or Linear?", answer: "Export to other formats like GitHub Issues, Linear, and Azure DevOps is on the roadmap." },
 ];
 

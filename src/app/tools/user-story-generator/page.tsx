@@ -12,11 +12,11 @@ export const metadata: Metadata = {
 
 const faqItems = [
   { question: "Is this tool free?", answer: "Yes, completely free. No login or signup required." },
-  { question: "Does this send my data anywhere?", answer: "In Local mode, everything stays in your browser. In AI mode, your input is sent securely to the AI provider to generate higher-quality output." },
-  { question: "Is AI mode subscription-based?", answer: "Yes. Free plan includes limited monthly AI generations, and Pro provides higher monthly limits. Local mode remains unlimited." },
+  { question: "What is Local mode?", answer: "Local mode uses deterministic parsing in your browser — your data never leaves your computer." },
+  { question: "Is AI mode available?", answer: "AI mode is coming soon! It will generate even better stories from messy notes and chat transcripts. We'll announce when it's ready." },
   { question: "Can I paste the output directly into Jira?", answer: "Yes. Copy the output and paste it into the Jira description field. The Markdown formatting renders correctly in Jira." },
   { question: "What's the difference between a Story, Improvement, and Task?", answer: "A Story is a new feature from the user's perspective. An Improvement is an enhancement to existing functionality. A Task is technical work that doesn't directly deliver user-facing value, like refactoring or infrastructure changes." },
-  { question: "Should I fill in the acceptance criteria placeholders?", answer: "Yes — the generated acceptance criteria are intentionally generic. You should replace the placeholder text with specific, testable conditions relevant to your feature before sharing with your team." },
+  { question: "Should I edit the output?", answer: "Yes — the generated text uses placeholders. You should customize it with specific details about your actual feature before sharing with your team." },
 ];
 
 export default function UserStoryGeneratorPage() {

@@ -129,16 +129,11 @@ export default function UserStoryGenerator() {
   });
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
-  const [mode, setMode] = useState<GenerationMode>("local");
-  const [aiRunsLeft, setAiRunsLeft] = useState(0);
-  const [plan, setPlan] = useState<"free" | "pro">("free");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const status = getAiUsageStatus();
-    setAiRunsLeft(status.remaining);
-    setPlan(status.plan);
+    // Reset for when AI mode is re-enabled
   }, []);
 
   const handleChange = (
@@ -150,54 +145,14 @@ export default function UserStoryGenerator() {
   const handleGenerate = async () => {
     if (!form.featureDescription.trim()) return;
     setError("");
-    trackEvent("generator_run", { tool: "user_story", mode });
-
-    if (mode === "local") {
-      setOutput(generateUserStory(form));
-      return;
-    }
-
-    if (plan === "free" && aiRunsLeft <= 0) {
-      setError("You used all free AI generations for this month. Upgrade to Pro for higher limits.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await fetch("/api/ai-generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tool: "user-story",
-          input: form.featureDescription,
-          options: {
-            storyType: form.storyType,
-            priority: form.priority,
-            userType: form.userType,
-          },
-        }),
-      });
-
-      const data = (await response.json()) as { output?: string; error?: string };
-
-      if (!response.ok || !data.output) {
-        throw new Error(data.error || "Failed to generate AI output.");
-      }
-
-      setOutput(data.output);
-      const next = incrementAiUsage();
-      setAiRunsLeft(next.remaining);
-      setPlan(next.plan);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "AI generation failed.");
-    } finally {
-      setLoading(false);
-    }
+    // Always use local mode (AI mode not yet available)
+    trackEvent("generator_run", { tool: "user_story", mode: "local" });
+    setOutput(generateUserStory(form));
   };
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(output);
-    trackEvent("output_copy", { tool: "user_story", mode, output_length: output.length });
+    trackEvent("output_copy", { tool: "user_story", mode: "local", output_length: output.length });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -276,31 +231,22 @@ export default function UserStoryGenerator() {
 
       <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <button
-            type="button"
-            onClick={() => setMode("local")}
-            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              mode === "local" ? "bg-blue-600 text-white" : "bg-white border border-gray-300 text-gray-700"
-            }`}
-          >
+          <span className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-600 text-white">
             Local mode (Free)
-          </button>
+          </span>
           <button
             type="button"
-            onClick={() => setMode("ai")}
-            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
-              mode === "ai" ? "bg-violet-600 text-white" : "bg-white border border-gray-300 text-gray-700"
-            }`}
+            disabled
+            className="px-3 py-1.5 rounded-md text-sm font-medium bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
+            title="Coming soon"
           >
             AI mode (Pro)
           </button>
+          <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">Coming Soon</span>
         </div>
         <p className="text-xs text-gray-600">
-          {plan === "free"
-            ? `Free plan: ${aiRunsLeft} AI generations left this month. Local mode stays unlimited.`
-            : `Pro plan: ${aiRunsLeft} AI generations left this month.`}
-          {" "}
-          <Link href="/pricing" className="text-blue-600 hover:underline">
+          Local mode is free and works entirely in your browser. AI mode is coming soon with Pro plan.
+          <Link href="/pricing" className="text-blue-600 hover:underline ml-1">
             View plans
           </Link>
         </p>
@@ -311,7 +257,7 @@ export default function UserStoryGenerator() {
         disabled={!form.featureDescription.trim() || loading}
         className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
-        {loading ? "Generating..." : mode === "ai" ? "Generate with AI" : "Generate User Story"}
+        {loading ? "Generating..." : "Generate User Story"}
       </button>
 
       {error && (
@@ -334,7 +280,7 @@ export default function UserStoryGenerator() {
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}
           </pre>
-          <OutputFeedback tool="user_story" mode={mode} />
+          <OutputFeedback tool="user_story" mode="local" />
         </div>
       )}
     </div>

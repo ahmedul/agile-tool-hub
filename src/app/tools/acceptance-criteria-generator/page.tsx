@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 const faqItems = [
   { question: "Is this tool free?", answer: "Yes, completely free. No login or signup required." },
-  { question: "Does this send my data anywhere?", answer: "In Local mode, everything stays in your browser. In AI mode, your input is sent securely to the AI provider to generate higher-quality output." },
-  { question: "Is AI mode subscription-based?", answer: "Yes. Free plan includes limited monthly AI generations, and Pro provides higher monthly limits. Local mode remains unlimited." },
+  { question: "What is Local mode?", answer: "Local mode uses deterministic parsing in your browser — your data never leaves your computer." },
+  { question: "Is AI mode available?", answer: "AI mode is coming soon! It will generate better criteria from messy notes and chat transcripts. We'll announce when it's ready." },
   { question: "What's the difference between Given/When/Then and checklist format?", answer: "Given/When/Then (Gherkin) is best for BDD workflows and teams using tools like Cucumber. Checklist format is simpler and works well for most Scrum teams in Jira. When in doubt, use both — the tool generates both by default." },
   { question: "Should I edit the output?", answer: "Yes — the generated criteria use placeholder text. You must replace the generic conditions with specific, testable values relevant to your feature before using them in a ticket." },
   { question: "Can I paste this directly into Jira?", answer: "Yes. Copy and paste into the Jira description or acceptance criteria field. Markdown formatting renders correctly in Jira." },

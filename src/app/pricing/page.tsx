@@ -4,41 +4,42 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Pricing | AgileToolHub",
   description:
-    "AgileToolHub pricing for Local and AI modes. Start free with unlimited local generation and monthly AI credits.",
+    "AgileToolHub pricing for Local and AI modes. Local mode is free forever. AI mode coming soon with paid plans.",
 };
 
 const plans = [
   {
     name: "Free",
     price: "$0",
-    subtitle: "Best for individual contributors",
+    subtitle: "Free forever",
     highlighted: false,
     features: [
       "Unlimited Local mode",
-      "20 AI generations per month",
+      "All tools available",
       "No account required",
+      "AI mode (coming soon)",
     ],
   },
   {
     name: "Pro",
     price: "$12/mo",
-    subtitle: "Best for power users",
+    subtitle: "When AI mode launches",
     highlighted: true,
     features: [
       "Everything in Free",
-      "800 AI generations per month",
-      "Priority AI quality presets (coming soon)",
+      "AI mode with 800 generations/month (coming soon)",
+      "Priority support (coming soon)",
     ],
   },
   {
     name: "Team",
     price: "$39/mo",
-    subtitle: "Best for product + engineering teams",
+    subtitle: "For teams and organizations",
     highlighted: false,
     features: [
-      "Shared templates and standards (coming soon)",
+      "Everything in Pro",
+      "Team management (coming soon)",
       "Usage analytics (coming soon)",
-      "Team management and seats (coming soon)",
     ],
   },
 ] as const;
@@ -48,8 +49,11 @@ export default function PricingPage() {
     <div className="max-w-6xl mx-auto px-4 py-12">
       <div className="max-w-2xl mx-auto text-center mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Pricing</h1>
-        <p className="text-gray-600">
-          Keep Local mode free forever. Upgrade for higher AI limits when you need more.
+        <p className="text-gray-600 mb-2">
+          All tools are free with Local mode. AI mode coming soon with paid plans.
+        </p>
+        <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded px-3 py-2 inline-block">
+          🚀 AI mode is currently <strong>coming soon</strong> — stay tuned!
         </p>
       </div>
 
