@@ -4,7 +4,7 @@ import TemplateCard from "@/components/TemplateCard";
 import { getAllContent } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Agile & Scrum Examples for Software Teams",
+  title: "Agile & Scrum Examples for Software Teams | AgileToolHub",
   description: "Real-world examples of bug reports, user stories, and acceptance criteria for software teams. Copy, adapt, and use in your own projects.",
 };
 

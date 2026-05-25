@@ -4,8 +4,8 @@ import TemplateCard from "@/components/TemplateCard";
 import { getAllContent } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Free Agile & Scrum Templates for Software Teams",
-  description: "Browse free Jira, Scrum, and Agile templates. Bug report templates, user story templates, retrospective templates, postmortem templates and more.",
+  title: "Free Agile & Scrum Templates for Software Teams | AgileToolHub",
+  description: "Browse free Jira-ready templates. Bug report templates, user story templates, acceptance criteria, retrospective templates, postmortem templates and more for software teams.",
 };
 
 export default function TemplatesPage() {
