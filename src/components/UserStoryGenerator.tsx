@@ -8,12 +8,14 @@ import OutputFeedback from "@/components/OutputFeedback";
 type StoryType = "feature" | "improvement" | "task";
 type Priority = "High" | "Medium" | "Low";
 type GenerationMode = "local" | "ai";
+type StoryPreset = "product" | "engineering" | "api" | "tech_debt";
 
 interface FormState {
   featureDescription: string;
   userType: string;
   storyType: StoryType;
   priority: Priority;
+  preset: StoryPreset;
 }
 
 interface ParsedStoryInput {
@@ -22,6 +24,19 @@ interface ParsedStoryInput {
   benefit: string;
   constraints: string[];
   dependencies: string[];
+  clarifications: string[];
+  hasMeasurableOutcome: boolean;
+}
+
+interface QualityCriterion {
+  label: string;
+  met: boolean;
+}
+
+interface StoryQualityResult {
+  score: number;
+  grade: "Excellent" | "Good" | "Needs Work";
+  criteria: QualityCriterion[];
 }
 
 function trimToSentence(text: string, fallback: string): string {
@@ -63,21 +78,100 @@ function parseStoryInput(featureDescription: string, userType: string): ParsedSt
     .slice(0, 3)
     .map((line) => line.replace(/^[-*]\s*/, ""));
 
+  const clarifications = lines
+    .filter((line) => /\?|tbd|to be decided|unclear|unsure|confirm|decision needed|need input/i.test(line))
+    .slice(0, 4)
+    .map((line) => line.replace(/^[-*]\s*/, ""));
+
+  const hasMeasurableOutcome = /\b(\d+%|\d+\s?(ms|s|sec|seconds|min|minutes)|under\s+\d+|less than\s+\d+|at least\s+\d+)\b/i.test(normalized);
+
   return {
     user: trimToSentence(userFromText ?? "", "user"),
     goal: trimToSentence(goalFromText ?? "", "complete the workflow"),
     benefit: trimToSentence(benefitFromText ?? "", "the user can complete the job faster with fewer errors"),
     constraints,
     dependencies,
+    clarifications,
+    hasMeasurableOutcome,
   };
 }
 
-function generateUserStory(form: FormState): string {
+function getPresetAcceptanceCriteria(preset: StoryPreset, user: string, desc: string): string[] {
+  if (preset === "engineering") {
+    return [
+      `Given a ${user}, when they ${desc}, then the workflow completes without regressions`,
+      "Given existing functionality, when this change ships, then backward compatibility is preserved",
+      "Given production telemetry, when the change runs, then logs/metrics are available for debugging",
+      "Code paths include tests for happy path and at least one failure mode",
+      "Performance remains within team baseline for this flow",
+    ];
+  }
+
+  if (preset === "api") {
+    return [
+      `Given an authorized ${user}, when they ${desc}, then the API returns a valid success response schema`,
+      "Given invalid input, when the request is submitted, then field-level validation errors are returned",
+      "Given dependency/service failure, when requests retry, then errors are handled without data corruption",
+      "Response codes and error payloads follow the documented contract",
+      "API behavior is covered by integration tests",
+    ];
+  }
+
+  if (preset === "tech_debt") {
+    return [
+      `Given the existing implementation, when refactoring ${desc}, then behavior remains functionally equivalent`,
+      "Given the code changes, when reviewed, then complexity/readability improves measurably",
+      "Given CI checks, when tests run, then all existing tests pass and new safeguards are added",
+      "Rollback path is documented if deployment introduces regressions",
+      "Operational visibility (logs/alerts) is preserved or improved",
+    ];
+  }
+
+  return [
+    `Given a ${user} with required permissions, when they ${desc}, then the expected value is returned in the UI`,
+    `Given invalid or incomplete input, when the ${user} attempts this flow, then a clear validation message is shown`,
+    `Given a dependency failure (API/network), when the ${user} retries, then failure is handled without data loss`,
+    "Analytics/audit event is recorded for this action (if required by product)",
+    "The flow meets accessibility baseline (keyboard + screen reader labels)",
+  ];
+}
+
+function getPresetNotes(preset: StoryPreset): string[] {
+  if (preset === "engineering") {
+    return [
+      "Implementation focus: maintainability, test coverage, and safe rollout",
+      "Document any migration or config change required by this task",
+    ];
+  }
+
+  if (preset === "api") {
+    return [
+      "Include endpoint contract examples (request/response) before implementation starts",
+      "Align error codes with existing API standards",
+    ];
+  }
+
+  if (preset === "tech_debt") {
+    return [
+      "Capture current pain (bugs, slow delivery, complexity) in measurable terms",
+      "Define how we verify no functional regressions after refactor",
+    ];
+  }
+
+  return [
+    "Prioritize user value and testable business outcomes",
+    "Ensure criteria can be validated by PM, QA, and engineering",
+  ];
+}
+
+function generateUserStory(form: FormState): { markdown: string; parsed: ParsedStoryInput } {
   const { featureDescription, userType, storyType, priority } = form;
   const parsed = parseStoryInput(featureDescription, userType);
   const user = parsed.user;
   const desc = parsed.goal;
   const benefit = parsed.benefit;
+  const criteria = getPresetAcceptanceCriteria(form.preset, user, desc);
+  const presetNotes = getPresetNotes(form.preset);
 
   // Derive a concise title from the description
   const title = desc.length > 80 ? desc.slice(0, 77) + "..." : desc;
@@ -85,7 +179,7 @@ function generateUserStory(form: FormState): string {
   const issueTypeLabel =
     storyType === "feature" ? "Story" : storyType === "improvement" ? "Improvement" : "Task";
 
-  return `## Title
+  const markdown = `## Title
 As a ${user}, I want to ${title}
 
 ## Issue Type
@@ -103,11 +197,7 @@ So that ${benefit}.
 [ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8
 
 ## Acceptance Criteria
-- [ ] Given a ${user} with required permissions, when they ${desc}, then the expected value is returned in the UI
-- [ ] Given invalid or incomplete input, when the ${user} attempts this flow, then a clear validation message is shown
-- [ ] Given a dependency failure (API/network), when the ${user} retries, then failure is handled without data loss
-- [ ] Analytics/audit event is recorded for this action (if required by product)
-- [ ] The flow meets accessibility baseline (keyboard + screen reader labels)
+${criteria.map((item) => `- [ ] ${item}`).join("\n")}
 
 ## Out of Scope
 ${parsed.constraints.length ? parsed.constraints.map((item) => `- ${item}`).join("\n") : "- [List anything explicitly NOT included in this story]"}
@@ -115,9 +205,40 @@ ${parsed.constraints.length ? parsed.constraints.map((item) => `- ${item}`).join
 ## Dependencies
 ${parsed.dependencies.length ? parsed.dependencies.map((item) => `- ${item}`).join("\n") : "- [List any blockers, related tickets, or external dependencies]"}
 
+## Clarifications Needed
+${parsed.clarifications.length ? parsed.clarifications.map((item) => `- ${item}`).join("\n") : "- [None detected. If scope is still unclear, add open questions here before sprint planning.]"}
+
+## Preset Guidance
+- Preset: ${form.preset === "tech_debt" ? "Tech Debt" : form.preset === "api" ? "API" : form.preset === "engineering" ? "Engineering" : "Product"}
+${presetNotes.map((item) => `- ${item}`).join("\n")}
+
 ## Notes
 - Source context pasted by author:
 ${featureDescription.trim()}`;
+
+  return { markdown, parsed };
+}
+
+function scoreStoryQuality(markdown: string, parsed: ParsedStoryInput): StoryQualityResult {
+  const normalized = markdown.toLowerCase();
+
+  const criteria: QualityCriterion[] = [
+    { label: "Clear actor in user story", met: /as a\s+[^\n,]+/i.test(markdown) },
+    { label: "Explicit business value", met: /so that\s+[^\n]+/i.test(markdown) },
+    { label: "At least 4 acceptance criteria", met: (markdown.match(/- \[ \]/g) ?? []).length >= 4 },
+    { label: "Scope boundaries included", met: normalized.includes("## out of scope") },
+    { label: "Dependencies captured", met: parsed.dependencies.length > 0 || normalized.includes("## dependencies") },
+    { label: "Clarifications section included", met: normalized.includes("## clarifications needed") },
+    { label: "Measurable outcome signal", met: parsed.hasMeasurableOutcome || /kpi|metric|latency|conversion|error rate/i.test(markdown) },
+  ];
+
+  const metCount = criteria.filter((item) => item.met).length;
+  const score = Math.round((metCount / criteria.length) * 100);
+  let grade: StoryQualityResult["grade"] = "Needs Work";
+  if (score >= 85) grade = "Excellent";
+  else if (score >= 65) grade = "Good";
+
+  return { score, grade, criteria };
 }
 
 export default function UserStoryGenerator() {
@@ -126,11 +247,13 @@ export default function UserStoryGenerator() {
     userType: "",
     storyType: "feature",
     priority: "Medium",
+    preset: "product",
   });
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [quality, setQuality] = useState<StoryQualityResult | null>(null);
 
   useEffect(() => {
     // Reset for when AI mode is re-enabled
@@ -146,8 +269,18 @@ export default function UserStoryGenerator() {
     if (!form.featureDescription.trim()) return;
     setError("");
     // Always use local mode (AI mode not yet available)
-    trackEvent("generator_run", { tool: "user_story", mode: "local" });
-    setOutput(generateUserStory(form));
+    trackEvent("generator_run", { tool: "user_story", mode: "local", preset: form.preset });
+    const generated = generateUserStory(form);
+    const qualityResult = scoreStoryQuality(generated.markdown, generated.parsed);
+    setOutput(generated.markdown);
+    setQuality(qualityResult);
+    trackEvent("ticket_quality_scored", {
+      tool: "user_story",
+      mode: "local",
+      score: qualityResult.score,
+      grade: qualityResult.grade,
+      preset: form.preset,
+    });
   };
 
   const handleCopy = async () => {
@@ -175,7 +308,7 @@ export default function UserStoryGenerator() {
         <p className="text-xs text-gray-400 mt-1">You can write a short sentence or paste a transcript from Slack/meeting notes.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {/* User type */}
         <div>
           <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1">
@@ -227,6 +360,24 @@ export default function UserStoryGenerator() {
             <option value="Low">Low</option>
           </select>
         </div>
+
+        <div>
+          <label htmlFor="preset" className="block text-sm font-medium text-gray-700 mb-1">
+            Preset
+          </label>
+          <select
+            id="preset"
+            name="preset"
+            value={form.preset}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          >
+            <option value="product">Product</option>
+            <option value="engineering">Engineering</option>
+            <option value="api">API</option>
+            <option value="tech_debt">Tech Debt</option>
+          </select>
+        </div>
       </div>
 
       <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
@@ -268,6 +419,44 @@ export default function UserStoryGenerator() {
 
       {output && (
         <div className="mt-6">
+          {quality && (
+            <div className="mb-3 rounded-lg border border-gray-200 bg-white p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-700">Story Quality Score</p>
+                <span
+                  className={`text-xs px-2 py-1 rounded font-semibold ${
+                    quality.grade === "Excellent"
+                      ? "bg-green-100 text-green-700"
+                      : quality.grade === "Good"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}
+                >
+                  {quality.score}/100 · {quality.grade}
+                </span>
+              </div>
+              <div className="h-2 w-full rounded bg-gray-100 mb-3">
+                <div
+                  className={`h-2 rounded transition-all ${
+                    quality.score >= 85
+                      ? "bg-green-500"
+                      : quality.score >= 65
+                      ? "bg-blue-500"
+                      : "bg-amber-500"
+                  }`}
+                  style={{ width: `${quality.score}%` }}
+                />
+              </div>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+                {quality.criteria.map((item) => (
+                  <li key={item.label} className="flex items-center gap-1.5">
+                    <span className={item.met ? "text-green-600" : "text-amber-600"}>{item.met ? "✓" : "!"}</span>
+                    <span>{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700">Generated User Story</label>
             <button

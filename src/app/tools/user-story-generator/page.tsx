@@ -14,6 +14,8 @@ const faqItems = [
   { question: "Is this tool free?", answer: "Yes, completely free. No login or signup required." },
   { question: "What is Local mode?", answer: "Local mode uses deterministic parsing in your browser — your data never leaves your computer." },
   { question: "Is AI mode available?", answer: "AI mode is coming soon! It will generate even better stories from messy notes and chat transcripts. We'll announce when it's ready." },
+  { question: "What are presets?", answer: "Presets tailor the output for Product, Engineering, API, or Tech Debt work. They adjust acceptance criteria and guidance so the story matches the work type." },
+  { question: "What is the Story Quality Score?", answer: "It scores your draft against practical readiness checks like clear actor, business value, acceptance criteria quality, scope boundaries, and dependencies." },
   { question: "Can I paste the output directly into Jira?", answer: "Yes. Copy the output and paste it into the Jira description field. The Markdown formatting renders correctly in Jira." },
   { question: "What's the difference between a Story, Improvement, and Task?", answer: "A Story is a new feature from the user's perspective. An Improvement is an enhancement to existing functionality. A Task is technical work that doesn't directly deliver user-facing value, like refactoring or infrastructure changes." },
   { question: "Should I edit the output?", answer: "Yes — the generated text uses placeholders. You should customize it with specific details about your actual feature before sharing with your team." },
