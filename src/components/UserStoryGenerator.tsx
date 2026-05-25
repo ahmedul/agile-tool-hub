@@ -27,6 +27,8 @@ interface ParsedStoryInput {
   dependencies: string[];
   clarifications: string[];
   hasMeasurableOutcome: boolean;
+  sourceContext: string;
+  isIncidentLike: boolean;
 }
 
 // QualityCriterion and StoryQualityResult types are imported from ticketQuality utility
@@ -38,9 +40,89 @@ function trimToSentence(text: string, fallback: string): string {
   return value.replace(/^["'`]+|["'`]+$/g, "").replace(/\s+/g, " ");
 }
 
+function extractMarkdownSection(markdown: string, heading: string): string {
+  const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`##\\s+${escaped}\\n([\\s\\S]*?)(?=\\n##\\s+|$)`, "i");
+  const match = markdown.match(regex);
+  return match?.[1]?.trim() ?? "";
+}
+
+function sanitizeStoryInput(input: string): string {
+  const hasTemplateHeadings = [
+    "## Title",
+    "## User Story",
+    "## Acceptance Criteria",
+    "## Dependencies",
+    "## Notes",
+  ].filter((heading) => input.includes(heading)).length >= 2;
+
+  if (!hasTemplateHeadings) return input;
+
+  const userStory = extractMarkdownSection(input, "User Story");
+  const description = extractMarkdownSection(input, "Description");
+  return (userStory || description || input).replace(/\s+/g, " ").trim();
+}
+
+function firstMeaningfulLine(lines: string[]): string {
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    if (/^dear\b/i.test(line)) continue;
+    if (/^hi\b/i.test(line)) continue;
+    if (/^hello\b/i.test(line)) continue;
+    if (/^(thanks|thank you|best regards|regards|cheers)\b/i.test(line)) continue;
+    return line;
+  }
+  return lines[0] ?? "complete the workflow";
+}
+
+function redactPeopleMentions(text: string): string {
+  return text
+    .replace(
+      /\b(i\s+have\s+worked\s+with|worked\s+with|coordinated\s+with|talked\s+to|spoke\s+with)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})\b/g,
+      "$1 [redacted]"
+    )
+    .replace(
+      /\b(confirmed\s+by|reviewed\s+by|reported\s+by)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,2})\b/g,
+      "$1 [redacted]"
+    );
+}
+
+function isIncidentInput(normalized: string): boolean {
+  return /(outage|incident|impact(ed)?|degradation|service placement|desire\s*db|vprn|edge\d+\.|fra\d+|mad|ams)/i.test(
+    normalized
+  );
+}
+
+function deriveIncidentStoryFields(normalized: string): {
+  user: string;
+  goal: string;
+  benefit: string;
+} {
+  const vprn = normalized.match(/\bvprn\s*[:#-]?\s*(\d+)\b/i)?.[1];
+  const serviceIds = normalized
+    .match(/service\s*id\s*[:#]?\s*([\d\s|,]+)/i)?.[1]
+    ?.replace(/\s+/g, " ")
+    .trim();
+  const location = normalized.match(/\b([a-z]{3}\d{2})\b/i)?.[1]?.toUpperCase();
+
+  const scope = vprn
+    ? `service placement discrepancy for VPRN ${vprn}${serviceIds ? ` (Service ID ${serviceIds})` : ""}`
+    : "service placement discrepancy";
+
+  return {
+    user: "cloud operations engineer",
+    goal: `verify and resolve ${scope}`,
+    benefit: location
+      ? `operations can confirm whether the ${location} outage impacted production services and restore data consistency`
+      : "operations can confirm outage impact and restore data consistency across systems",
+  };
+}
+
 function parseStoryInput(featureDescription: string, userType: string): ParsedStoryInput {
-  const normalized = featureDescription.replace(/\s+/g, " ").trim();
-  const lines = featureDescription
+  const sourceInput = sanitizeStoryInput(featureDescription);
+  const normalized = sourceInput.replace(/\s+/g, " ").trim();
+  const lines = sourceInput
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
@@ -50,11 +132,14 @@ function parseStoryInput(featureDescription: string, userType: string): ParsedSt
     normalized.match(/\bfor\s+([^,.;]+?)\s+(?:to|who|when)/i)?.[1] ??
     userType;
 
+  const incidentLike = isIncidentInput(normalized);
+  const incidentFields = incidentLike ? deriveIncidentStoryFields(normalized) : null;
+
   const goalFromText =
     normalized.match(/\bi want to\s+([^.;]+)/i)?.[1] ??
     normalized.match(/\bneed to\s+([^.;]+)/i)?.[1] ??
     normalized.match(/\bshould be able to\s+([^.;]+)/i)?.[1] ??
-    normalized;
+    firstMeaningfulLine(lines);
 
   const benefitFromText =
     normalized.match(/\bso that\s+([^.;]+)/i)?.[1] ??
@@ -62,7 +147,7 @@ function parseStoryInput(featureDescription: string, userType: string): ParsedSt
     "the user can complete the job faster with fewer errors";
 
   const constraints = lines
-    .filter((line) => /(must|should|cannot|can't|only|within|without|except|limit)/i.test(line))
+    .filter((line) => /(must|cannot|can't|within|without|except|limit|only if|must not)/i.test(line))
     .slice(0, 4)
     .map((line) => line.replace(/^[-*]\s*/, ""));
 
@@ -72,20 +157,26 @@ function parseStoryInput(featureDescription: string, userType: string): ParsedSt
     .map((line) => line.replace(/^[-*]\s*/, ""));
 
   const clarifications = lines
-    .filter((line) => /\?|tbd|to be decided|unclear|unsure|confirm|decision needed|need input/i.test(line))
+    .filter((line) => /\?|tbd|to be decided|unclear|unsure|decision needed|need input|please confirm/i.test(line))
     .slice(0, 4)
     .map((line) => line.replace(/^[-*]\s*/, ""));
 
   const hasMeasurableOutcome = /\b(\d+%|\d+\s?(ms|s|sec|seconds|min|minutes)|under\s+\d+|less than\s+\d+|at least\s+\d+)\b/i.test(normalized);
+  const sourceContext = redactPeopleMentions(sourceInput.trim());
 
   return {
-    user: trimToSentence(userFromText ?? "", "user"),
-    goal: trimToSentence(goalFromText ?? "", "complete the workflow"),
-    benefit: trimToSentence(benefitFromText ?? "", "the user can complete the job faster with fewer errors"),
+    user: trimToSentence(incidentFields?.user ?? userFromText ?? "", "user"),
+    goal: trimToSentence(incidentFields?.goal ?? goalFromText ?? "", "complete the workflow"),
+    benefit: trimToSentence(
+      incidentFields?.benefit ?? benefitFromText ?? "",
+      "the user can complete the job faster with fewer errors"
+    ),
     constraints,
     dependencies,
     clarifications,
     hasMeasurableOutcome,
+    sourceContext,
+    isIncidentLike: incidentLike,
   };
 }
 
@@ -169,8 +260,21 @@ function generateUserStory(form: FormState): { markdown: string; parsed: ParsedS
   // Derive a concise title from the description
   const title = desc.length > 80 ? desc.slice(0, 77) + "..." : desc;
 
-  const issueTypeLabel =
-    storyType === "feature" ? "Story" : storyType === "improvement" ? "Improvement" : "Task";
+  const issueTypeLabel = parsed.isIncidentLike
+    ? "Task"
+    : storyType === "feature"
+    ? "Story"
+    : storyType === "improvement"
+    ? "Improvement"
+    : "Task";
+
+  const incidentAcceptanceCriteria = [
+    `Given reported outage indicators, when ${user} compares system data vs edge CLI, then discrepancies are identified and documented`,
+    "Given conflicting placement data, when investigation is completed, then source-of-truth is established",
+    "Given affected services, when impact analysis is performed, then impacted and non-impacted locations are explicitly listed",
+    "Investigation outcome includes remediation recommendation and operational owner",
+    "Evidence links (dashboards/logs/CLI output) are attached for auditability",
+  ];
 
   const markdown = `## Title
 As a ${user}, I want to ${title}
@@ -190,10 +294,10 @@ So that ${benefit}.
 [ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8
 
 ## Acceptance Criteria
-${criteria.map((item) => `- [ ] ${item}`).join("\n")}
+${(parsed.isIncidentLike ? incidentAcceptanceCriteria : criteria).map((item) => `- [ ] ${item}`).join("\n")}
 
 ## Out of Scope
-${parsed.constraints.length ? parsed.constraints.map((item) => `- ${item}`).join("\n") : "- [List anything explicitly NOT included in this story]"}
+${parsed.constraints.length ? parsed.constraints.map((item) => `- ${item}`).join("\n") : parsed.isIncidentLike ? "- No service configuration changes are included in this investigation task" : "- [List anything explicitly NOT included in this story]"}
 
 ## Dependencies
 ${parsed.dependencies.length ? parsed.dependencies.map((item) => `- ${item}`).join("\n") : "- [List any blockers, related tickets, or external dependencies]"}
@@ -204,10 +308,11 @@ ${parsed.clarifications.length ? parsed.clarifications.map((item) => `- ${item}`
 ## Preset Guidance
 - Preset: ${form.preset === "tech_debt" ? "Tech Debt" : form.preset === "api" ? "API" : form.preset === "engineering" ? "Engineering" : "Product"}
 ${presetNotes.map((item) => `- ${item}`).join("\n")}
+${parsed.isIncidentLike ? "- Incident-like input detected: output is optimized for operations investigation tasks" : ""}
 
 ## Notes
 - Source context pasted by author:
-${featureDescription.trim()}`;
+${parsed.sourceContext || featureDescription.trim()}`;
 
   return { markdown, parsed };
 }
