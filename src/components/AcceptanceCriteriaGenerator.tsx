@@ -7,11 +7,13 @@ import OutputFeedback from "@/components/OutputFeedback";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
 type GenerationMode = "local" | "ai";
+type CriteriaPreset = "product" | "engineering" | "api" | "tech_debt";
 
 interface FormState {
   featureDescription: string;
   userType: string;
   format: OutputFormat;
+  preset: CriteriaPreset;
 }
 
 interface ParsedCriteriaInput {
@@ -19,6 +21,19 @@ interface ParsedCriteriaInput {
   action: string;
   outcome: string;
   constraints: string[];
+  clarifications: string[];
+  hasMeasurableSignal: boolean;
+}
+
+interface QualityCriterion {
+  label: string;
+  met: boolean;
+}
+
+interface CriteriaQualityResult {
+  score: number;
+  grade: "Excellent" | "Good" | "Needs Work";
+  criteria: QualityCriterion[];
 }
 
 function normalizeText(value: string): string {
@@ -54,15 +69,72 @@ function parseCriteriaInput(featureDescription: string, userType: string): Parse
     .slice(0, 3)
     .map((line) => line.replace(/^[-*]\s*/, ""));
 
+  const clarifications = lines
+    .filter((line) => /\?|tbd|to be decided|unclear|unsure|confirm|decision needed|need input/i.test(line))
+    .slice(0, 4)
+    .map((line) => line.replace(/^[-*]\s*/, ""));
+
+  const hasMeasurableSignal = /\b(\d+%|\d+\s?(ms|s|sec|seconds|min|minutes)|under\s+\d+|less than\s+\d+|at least\s+\d+)\b/i.test(normalized);
+
   return {
     user,
     action: normalizeText(action),
     outcome: normalizeText(outcome),
     constraints,
+    clarifications,
+    hasMeasurableSignal,
   };
 }
 
-function generateAcceptanceCriteria(form: FormState): string {
+function getPresetChecklistAdditions(preset: CriteriaPreset): string[] {
+  if (preset === "engineering") {
+    return [
+      "- [ ] Unit and integration tests cover critical paths",
+      "- [ ] No regression in existing workflows after release",
+      "- [ ] Logs/monitoring make failures diagnosable",
+    ];
+  }
+
+  if (preset === "api") {
+    return [
+      "- [ ] Request and response schemas match documented contract",
+      "- [ ] Invalid payloads return explicit field-level validation errors",
+      "- [ ] Error responses include stable codes and actionable messages",
+    ];
+  }
+
+  if (preset === "tech_debt") {
+    return [
+      "- [ ] Refactor maintains functional parity with previous behavior",
+      "- [ ] Complexity/readability improves in touched modules",
+      "- [ ] Rollback path is documented for safe deployment",
+    ];
+  }
+
+  return [
+    "- [ ] Criteria are understandable by product, engineering, and QA",
+    "- [ ] User-facing outcomes are explicit and testable",
+    "- [ ] Success/failure behavior is clearly defined",
+  ];
+}
+
+function getPresetGherkinEdgeCase(preset: CriteriaPreset, user: string, desc: string): string {
+  if (preset === "api") {
+    return `Given the ${user} sends an invalid API request\nWhen they attempt to ${desc}\nThen the system returns a contract-compliant validation error\nAnd no partial data is persisted`;
+  }
+
+  if (preset === "tech_debt") {
+    return `Given the ${user} triggers a legacy code path\nWhen they ${desc} after refactoring\nThen behavior remains unchanged for existing users\nAnd observability confirms no hidden regressions`;
+  }
+
+  if (preset === "engineering") {
+    return `Given dependent services are degraded\nWhen the ${user} attempts to ${desc}\nThen the system fails gracefully with clear guidance\nAnd retry/recovery behavior is deterministic`;
+  }
+
+  return `Given the ${user} triggers an unexpected condition (e.g. network error, empty state)\nWhen they attempt to ${desc}\nThen the system handles the error gracefully\nAnd the ${user} is shown meaningful next steps`;
+}
+
+function generateAcceptanceCriteria(form: FormState): { markdown: string; parsed: ParsedCriteriaInput } {
   const { featureDescription, userType, format } = form;
   const parsed = parseCriteriaInput(featureDescription, userType);
   const user = parsed.user;
@@ -72,6 +144,20 @@ function generateAcceptanceCriteria(form: FormState): string {
   const constraints = parsed.constraints.length
     ? parsed.constraints.map((line) => `- [ ] ${line}`).join("\n")
     : "- [ ] [Add any constraints, limits, or policy requirements here]";
+
+  const clarifications = parsed.clarifications.length
+    ? parsed.clarifications.map((line) => `- [ ] ${line}`).join("\n")
+    : "- [ ] [No clarifications detected. Add open questions if anything is still ambiguous.]";
+
+  const checklistAdditions = getPresetChecklistAdditions(form.preset).join("\n");
+  const presetLabel =
+    form.preset === "tech_debt"
+      ? "Tech Debt"
+      : form.preset === "api"
+      ? "API"
+      : form.preset === "engineering"
+      ? "Engineering"
+      : "Product";
 
   const gherkin = `## Acceptance Criteria (Given/When/Then)
 
@@ -93,10 +179,7 @@ And no action is taken until the issue is resolved
 
 **Edge case:**
 \`\`\`
-Given the ${user} triggers an unexpected condition (e.g. network error, empty state)
-When they attempt to ${desc}
-Then the system handles the error gracefully
-And the ${user} is shown a meaningful message with next steps
+${getPresetGherkinEdgeCase(form.preset, user, desc)}
 \`\`\``;
 
   const checklist = `## Acceptance Criteria (Checklist)
@@ -127,12 +210,60 @@ And the ${user} is shown a meaningful message with next steps
 - [ ] QA verified against these criteria
 - [ ] Product Owner has accepted the story
 
+**Preset-specific checks (${presetLabel}):**
+${checklistAdditions}
+
 **Business constraints from input:**
 ${constraints}`;
 
-  if (format === "gherkin") return gherkin;
-  if (format === "checklist") return checklist;
-  return `${gherkin}\n\n---\n\n${checklist}`;
+  const commonSections = `\n\n## Clarifications Needed\n${clarifications}\n\n## Preset Guidance\n- Preset: ${presetLabel}`;
+
+  let markdown = "";
+
+  if (format === "gherkin") markdown = `${gherkin}${commonSections}`;
+  else if (format === "checklist") markdown = `${checklist}${commonSections}`;
+  else markdown = `${gherkin}\n\n---\n\n${checklist}${commonSections}`;
+
+  return { markdown, parsed };
+}
+
+function scoreAcceptanceCriteria(markdown: string, parsed: ParsedCriteriaInput, format: OutputFormat): CriteriaQualityResult {
+  const criteria: QualityCriterion[] = [
+    { label: "Clear user/actor defined", met: parsed.user.trim().length >= 2 },
+    { label: "Action and expected outcome specified", met: parsed.action.length >= 8 && parsed.outcome.length >= 8 },
+    {
+      label: "Gherkin scenarios included",
+      met: format === "checklist" || /Given[\s\S]*When[\s\S]*Then/i.test(markdown),
+    },
+    {
+      label: "Checklist depth included",
+      met: format === "gherkin" || (markdown.match(/- \[ \]/g) ?? []).length >= 8,
+    },
+    {
+      label: "Error handling covered",
+      met: /error|validation|fails gracefully|unexpected condition/i.test(markdown),
+    },
+    {
+      label: "Constraints captured",
+      met: markdown.includes("Business constraints from input"),
+    },
+    {
+      label: "Clarifications section included",
+      met: markdown.includes("## Clarifications Needed"),
+    },
+    {
+      label: "Measurable signal present",
+      met: parsed.hasMeasurableSignal || /under\s+\d+|latency|kpi|metric|percent|%/i.test(markdown),
+    },
+  ];
+
+  const metCount = criteria.filter((item) => item.met).length;
+  const score = Math.round((metCount / criteria.length) * 100);
+  let grade: CriteriaQualityResult["grade"] = "Needs Work";
+  if (score >= 85) grade = "Excellent";
+  else if (score >= 65) grade = "Good";
+
+  return { score, grade, criteria };
 }
 
 export default function AcceptanceCriteriaGenerator() {
@@ -140,11 +271,13 @@ export default function AcceptanceCriteriaGenerator() {
     featureDescription: "",
     userType: "",
     format: "both",
+    preset: "product",
   });
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [quality, setQuality] = useState<CriteriaQualityResult | null>(null);
 
   useEffect(() => {
     // Reset for when AI mode is re-enabled
@@ -160,8 +293,18 @@ export default function AcceptanceCriteriaGenerator() {
     if (!form.featureDescription.trim()) return;
     setError("");
     // Always use local mode (AI mode not yet available)
-    trackEvent("generator_run", { tool: "acceptance_criteria", mode: "local", format: form.format });
-    setOutput(generateAcceptanceCriteria(form));
+    trackEvent("generator_run", { tool: "acceptance_criteria", mode: "local", format: form.format, preset: form.preset });
+    const generated = generateAcceptanceCriteria(form);
+    const qualityResult = scoreAcceptanceCriteria(generated.markdown, generated.parsed, form.format);
+    setOutput(generated.markdown);
+    setQuality(qualityResult);
+    trackEvent("ticket_quality_scored", {
+      tool: "acceptance_criteria",
+      mode: "local",
+      score: qualityResult.score,
+      grade: qualityResult.grade,
+      preset: form.preset,
+    });
   };
 
   const handleCopy = async () => {
@@ -188,7 +331,7 @@ export default function AcceptanceCriteriaGenerator() {
         <p className="text-xs text-gray-400 mt-1">Works with short prompts or pasted meeting/chat transcripts.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
           <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1">
             User type
@@ -218,6 +361,24 @@ export default function AcceptanceCriteriaGenerator() {
             <option value="both">Both (Given/When/Then + Checklist)</option>
             <option value="gherkin">Given/When/Then only</option>
             <option value="checklist">Checklist only</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="preset" className="block text-sm font-medium text-gray-700 mb-1">
+            Preset
+          </label>
+          <select
+            id="preset"
+            name="preset"
+            value={form.preset}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          >
+            <option value="product">Product</option>
+            <option value="engineering">Engineering</option>
+            <option value="api">API</option>
+            <option value="tech_debt">Tech Debt</option>
           </select>
         </div>
       </div>
@@ -261,6 +422,44 @@ export default function AcceptanceCriteriaGenerator() {
 
       {output && (
         <div className="mt-6">
+          {quality && (
+            <div className="mb-3 rounded-lg border border-gray-200 bg-white p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-700">Criteria Quality Score</p>
+                <span
+                  className={`text-xs px-2 py-1 rounded font-semibold ${
+                    quality.grade === "Excellent"
+                      ? "bg-green-100 text-green-700"
+                      : quality.grade === "Good"
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-amber-100 text-amber-700"
+                  }`}
+                >
+                  {quality.score}/100 · {quality.grade}
+                </span>
+              </div>
+              <div className="h-2 w-full rounded bg-gray-100 mb-3">
+                <div
+                  className={`h-2 rounded transition-all ${
+                    quality.score >= 85
+                      ? "bg-green-500"
+                      : quality.score >= 65
+                      ? "bg-blue-500"
+                      : "bg-amber-500"
+                  }`}
+                  style={{ width: `${quality.score}%` }}
+                />
+              </div>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+                {quality.criteria.map((item) => (
+                  <li key={item.label} className="flex items-center gap-1.5">
+                    <span className={item.met ? "text-green-600" : "text-amber-600"}>{item.met ? "✓" : "!"}</span>
+                    <span>{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700">Generated Acceptance Criteria</label>
             <button

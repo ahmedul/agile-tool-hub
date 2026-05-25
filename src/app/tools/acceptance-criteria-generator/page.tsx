@@ -14,6 +14,8 @@ const faqItems = [
   { question: "Is this tool free?", answer: "Yes, completely free. No login or signup required." },
   { question: "What is Local mode?", answer: "Local mode uses deterministic parsing in your browser — your data never leaves your computer." },
   { question: "Is AI mode available?", answer: "AI mode is coming soon! It will generate better criteria from messy notes and chat transcripts. We'll announce when it's ready." },
+  { question: "What are presets?", answer: "Presets tailor criteria generation for Product, Engineering, API, or Tech Debt work so your output better matches the task type." },
+  { question: "What is the Criteria Quality Score?", answer: "It evaluates whether your criteria include clear actors, testable outcomes, error handling, constraints, and clarifications before you copy to Jira." },
   { question: "What's the difference between Given/When/Then and checklist format?", answer: "Given/When/Then (Gherkin) is best for BDD workflows and teams using tools like Cucumber. Checklist format is simpler and works well for most Scrum teams in Jira. When in doubt, use both — the tool generates both by default." },
   { question: "Should I edit the output?", answer: "Yes — the generated criteria use placeholder text. You must replace the generic conditions with specific, testable values relevant to your feature before using them in a ticket." },
   { question: "Can I paste this directly into Jira?", answer: "Yes. Copy and paste into the Jira description or acceptance criteria field. Markdown formatting renders correctly in Jira." },
