@@ -137,6 +137,8 @@ Adding a `.mdx` file to `src/content/{type}/` automatically adds it to the listi
 
 ## Roadmap — ~2 hrs/day, May–Aug 2026
 
+**Strategic Focus:** SEO & organic traffic first. Defer Stripe billing & Pro features to Q3 2026.
+
 Progress key: ✅ Done · ⏳ Planned
 
 ### Positioning update (added May 24, 2026)
@@ -146,6 +148,15 @@ Primary wedge for this project:
 - Jira-ready ticket quality toolkit for software teams.
 - Keep Agile/Scrum coverage, but prioritize bug reports, user stories, acceptance criteria, QA handoff, and API requirements.
 - Win with practical output quality, not broad generic Agile content.
+
+### SEO Strategy: High-Intent Keywords
+
+**Biggest opportunities (US search volume):**
+- "Jira ticket template" — 1,200+/mo ✅ (Complete Jira Ticket Template done)
+- "API requirements template" — 300+/mo ✅ (API Requirements template done)
+- "QA handoff template" — 100+/mo ⏳ (Phase 2)
+- "Epic template" — 150+/mo ⏳ (Phase 2)
+- "Definition of ready" — 200+/mo ✅ (DoR Template done)
 
 ### Priority fixes before judging 3-month results
 
@@ -159,6 +170,8 @@ Primary wedge for this project:
 | Add analytics events (copy, generate, session created, feedback click) | ✅ (8 event types: generator_run, output_copy, session_created, template_copy, output_feedback, feedback_text_submitted) |
 | Add output usefulness feedback prompt | ✅ (Yes/No buttons + free-text "What was missing?" form) |
 | Search title polish pass (remove duplicated brand patterns) | ✅ |
+| Google Search Console setup & monitoring | ⏳ (Priority for June) |
+| Bing Webmaster Tools setup | ⏳ (Priority for June) |
 
 ### Month 1 — May 2026 (Foundation + first tools)
 
@@ -174,45 +187,47 @@ Primary wedge for this project:
 | May 25–31 | Planning Poker session persistence fix (localStorage restore on refresh) | ✅ |
 | May 25–31 | Measurement setup: Google Search Console, Bing Webmaster Tools, event tracking review, sitemap checks | ⏳ |
 
-### Month 2 — June 2026 (Conversion + focused SEO)
+### Month 2 — June 2026 (SEO content sprint + tool pairing)
 
 | Week | Goal | Status |
 |---|---|---|
-| Jun 1–7 | Daily Standup Generator, Velocity Tracker tool (client-side) | ✅ (Daily Standup template done; generator & Velocity Tracker pending) |
-| Jun 8–14 | Publish high-intent pages only (Jira/API/QA ticket quality topics) | ✅ (Jira, API, QA templates published) |
-| Jun 15–21 | Ticket quality score v1 in Bug Report Converter + search title polish | ✅ (completed early on May 25) |
-| Jun 22–30 | Stripe billing integration (server-side plan enforcement) | ⏳ |
+| Jun 1–7 | **QA Content Phase:** QA to Dev Handoff Template, QA Handoff Guide, Bug Severity & Priority Guide | ⏳ |
+| Jun 8–14 | **Epic & Planning Phase:** Epic Template + Breakdown Guide, Backlog Refinement Template | ⏳ |
+| Jun 15–21 | **Tool Building:** Daily Standup Generator (pair with template), Velocity Tracker tool | ⏳ |
+| Jun 22–30 | **SEO Setup:** Google Search Console verification, Bing Webmaster setup, internal linking audit, meta description optimization | ⏳ |
 
-### Month 3 — July 2026 (Double down on winner)
+### Month 3 — July 2026 (Double down on winners + content depth)
 
 | Week | Goal | Status |
 |---|---|---|
-| Jul 1–7 | Review analytics: identify the top-performing tool/page by usage and retention | ⏳ |
-| Jul 8–14 | Improve winner tool 3x (quality, UX, export formats, trust) | ⏳ |
-| Jul 15–21 | Add export formats for top workflow (Jira, GitHub Issues, Linear) | ⏳ |
-| Jul 22–31 | Backlink outreach + launch push for the standout tool | ⏳ |
+| Jul 1–7 | GA4 analysis: identify top-performing tool/page by CTR, session duration, copy rate | ⏳ |
+| Jul 8–14 | Expand winner content: add 3 new guides/examples for top 2 keywords; improve existing weak pages | ⏳ |
+| Jul 15–21 | **Export Formats:** Add Jira, GitHub Issues, Linear export for top tools (Bug Report Converter, User Story Generator) | ⏳ |
+| Jul 22–31 | Backlink outreach + LinkedIn/Twitter launch push for standout tool | ⏳ |
 
-### August 2026 onwards — Monetisation + growth
+### August 2026 onwards — Growth & scale
 
 | Item | Status |
 |---|---|
-| Google AdSense (once 1k+ daily sessions) | ⏳ |
-| Stripe billing + server-side plan enforcement for AI mode | ⏳ |
-| Pro tier design (saved sessions, team settings, export) | ⏳ |
+| Reach 1k+ daily sessions target (trigger for AdSense) | ⏳ |
+| Stripe billing + server-side plan enforcement for AI mode | ⏳ (deferred to Q3) |
+| Pro tier design (saved sessions, team settings, export) | ⏳ (deferred to Q3) |
 | Email list / newsletter (Agile tip of the week) | ⏳ |
 | LinkedIn + Twitter presence for tool launches | ⏳ |
 
 ---
 
-## Content targets by end of August
+## Content targets by end of August (SEO focus)
 
-| Section | Now | Target |
-|---|---|---|
-| Templates | 15 | 20 |
-| Guides | 10 | 14 |
-| Examples | 7 | 16 |
-| Docs | 5 | 8 |
-| Tools | 6 | 10 |
+| Section | Now | Target | Why |
+|---|---|---|---|
+| Templates | 15 | 25 | Capture all high-intent Jira/QA/Planning keywords |
+| Guides | 10 | 18 | Deep content for each keyword (how-to + best practices) |
+| Examples | 7 | 20 | Real-world examples for each tool (boost CTR + internal linking) |
+| Docs | 5 | 10 | Foundational/glossary content for long-tail keywords |
+| Tools | 6 | 8 | Daily Standup Generator, Velocity Tracker (pair with guides) |
+
+**Total content pages:** 37 → 81 (2.2x growth by Aug 31)
 
 ---
 
