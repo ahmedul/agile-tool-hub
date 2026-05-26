@@ -3,25 +3,23 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import CopyButton from "./CopyButton";
+import {
+  appendStorySummary,
+  deriveRecommendedEstimate,
+  PLANNING_POKER_CARDS,
+  resetVotes,
+  upsertMyVote,
+  upsertUnvoted,
+  upsertVoted,
+  type CardValue,
+  type Vote,
+  type ParticipantState,
+  type StorySummary,
+} from "@/lib/planningPoker";
 
-const CARDS = [1, 2, 3, 5, 8, 13, 21, "?"] as const;
 const ANIMAL_AVATARS = ["🐶", "🐱", "🦊", "🐼", "🐨", "🐯", "🦁", "🐸", "🐵", "🦉"] as const;
 const HERO_AVATARS = ["🦸", "🦸‍♀️", "🛡️", "⚡", "🔥", "🌟", "🧠", "🦾", "🛰️", "🕶️"] as const;
-type CardValue = (typeof CARDS)[number];
-type NumericCardValue = Exclude<CardValue, "?">;
-type Vote = CardValue | null;
 type AvatarTheme = "animals" | "heroes";
-
-interface Participant {
-  name: string;
-  hasVoted: boolean;
-  vote: Vote;
-}
-
-interface StorySummary {
-  name: string;
-  estimate: Vote;
-}
 
 function hashKey(value: string): number {
   let hash = 0;
@@ -37,20 +35,11 @@ function getAvatar(uid: string, theme: AvatarTheme): string {
   return list[hashKey(uid) % list.length];
 }
 
-function deriveRecommendedEstimate(votes: Vote[]): Vote {
-  const numericVotes = votes.filter(
-    (v): v is NumericCardValue => typeof v === "number"
-  );
-  if (numericVotes.length === 0) return votes.includes("?") ? "?" : null;
-
-  return numericVotes.reduce((max, current) => (current > max ? current : max), numericVotes[0]);
-}
-
 export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) {
   const [nameInput, setNameInput] = useState("");
   const [joined, setJoined] = useState(false);
   const [myVote, setMyVote] = useState<Vote>(null);
-  const [participants, setParticipants] = useState<Record<string, Participant>>({});
+  const [participants, setParticipants] = useState<Record<string, ParticipantState>>({});
   const [currentStory, setCurrentStory] = useState("");
   const [storyInput, setStoryInput] = useState("");
   const [revealed, setRevealed] = useState(false);
@@ -74,6 +63,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
   useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
   useEffect(() => { revealedRef.current = revealed; }, [revealed]);
+  useEffect(() => {
+    localStorage.setItem(`pp_stories_${sessionId}`, JSON.stringify(stories));
+  }, [stories, sessionId]);
 
   const joinChannel = useCallback(
     (name: string) => {
@@ -97,7 +89,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         .on("presence", { event: "sync" }, () => {
           const state = channel.presenceState<{ userId: string; name: string }>();
           setParticipants((prev) => {
-            const next: Record<string, Participant> = {};
+            const next: Record<string, ParticipantState> = {};
             for (const [key, presences] of Object.entries(state)) {
               const p = presences[0] as { userId: string; name: string } | undefined;
               if (p) {
@@ -121,24 +113,12 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         // Someone voted (no value revealed)
         .on("broadcast", { event: "voted" }, ({ payload }) => {
           const { userId, name } = payload as { userId: string; name?: string };
-          if (!userId) return;
-          setParticipants((prev) => ({
-            ...prev,
-            [userId]: prev[userId]
-              ? { ...prev[userId], hasVoted: true }
-              : { name: name ?? "Participant", hasVoted: true, vote: null },
-          }));
+          setParticipants((prev) => upsertVoted(prev, userId, name));
         })
         // Someone unvoted
         .on("broadcast", { event: "unvoted" }, ({ payload }) => {
           const { userId, name } = payload as { userId: string; name?: string };
-          if (!userId) return;
-          setParticipants((prev) => ({
-            ...prev,
-            [userId]: prev[userId]
-              ? { ...prev[userId], hasVoted: false }
-              : { name: name ?? "Participant", hasVoted: false, vote: null },
-          }));
+          setParticipants((prev) => upsertUnvoted(prev, userId, name));
         })
         // Story name set
         .on("broadcast", { event: "story" }, ({ payload }) => {
@@ -197,37 +177,20 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             vote: Vote;
             name?: string;
           };
-          if (!userId) return;
-          setParticipants((prev) => ({
-            ...prev,
-            [userId]: prev[userId]
-              ? { ...prev[userId], vote }
-              : { name: name ?? "Participant", hasVoted: vote !== null, vote },
-          }));
+          setParticipants((prev) => upsertMyVote(prev, userId, vote, name));
         })
         // Next round — resets all state for everyone
         .on("broadcast", { event: "next_story" }, ({ payload }) => {
           const story = payload.story as string | undefined;
           const estimate = payload.estimate as Vote;
-          if (story && estimate !== null) {
-            setStories((prev) => {
-              const alreadyLogged = prev.some((item) => item.name === story && item.estimate === estimate);
-              return alreadyLogged ? prev : [...prev, { name: story, estimate }];
-            });
-          }
+          setStories((prev) => appendStorySummary(prev, story, estimate));
           setRevealed(false);
           setMyVote(null);
           myVoteRef.current = null;
           setCurrentStory("");
           setStoryInput("");
           setFinalEstimate(null);
-          setParticipants((prev) => {
-            const next: Record<string, Participant> = {};
-            for (const [k, p] of Object.entries(prev)) {
-              next[k] = { ...p, hasVoted: false, vote: null };
-            }
-            return next;
-          });
+          setParticipants((prev) => resetVotes(prev));
         })
         // Re-vote for same story
         .on("broadcast", { event: "revote" }, () => {
@@ -235,13 +198,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           setMyVote(null);
           myVoteRef.current = null;
           setFinalEstimate(null);
-          setParticipants((prev) => {
-            const next: Record<string, Participant> = {};
-            for (const [k, p] of Object.entries(prev)) {
-              next[k] = { ...p, hasVoted: false, vote: null };
-            }
-            return next;
-          });
+          setParticipants((prev) => resetVotes(prev));
         })
         .subscribe(async (status, err) => {
           console.log("[poker] status:", status, err ?? "");
@@ -276,6 +233,19 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     userIdRef.current = uid;
 
     const savedName = localStorage.getItem("pp_name");
+    const savedStories = localStorage.getItem(`pp_stories_${sessionId}`);
+    
+    if (savedStories && !autoJoinedRef.current) {
+      try {
+        const parsed = JSON.parse(savedStories) as StorySummary[];
+        if (Array.isArray(parsed)) {
+          setStories(parsed);
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    }
+    
     if (savedName && !autoJoinedRef.current) {
       autoJoinedRef.current = true;
       setNameInput(savedName);
@@ -284,7 +254,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       setJoined(true);
       joinChannel(savedName);
     }
-  }, [joinChannel]);
+  }, [joinChannel, sessionId]);
 
   useEffect(() => () => { channelRef.current?.unsubscribe(); }, []);
 
@@ -457,7 +427,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Your vote</p>
           <div className="flex flex-wrap gap-3">
-            {CARDS.map((card) => (
+            {PLANNING_POKER_CARDS.map((card) => (
               <button
                 key={card}
                 onClick={() => handleVote(card)}
@@ -576,7 +546,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             <div className="flex items-center gap-3 flex-wrap">
               <span className="text-sm text-gray-600 font-medium shrink-0">Final estimate:</span>
               <div className="flex gap-1.5 flex-wrap">
-                {CARDS.map((card) => (
+                {PLANNING_POKER_CARDS.map((card) => (
                   <button
                     key={card}
                     onClick={() => setFinalEstimate(finalEstimate === card ? null : card)}

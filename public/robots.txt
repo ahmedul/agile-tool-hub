@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://agiletoolhub.com
+
+# Sitemaps
+Sitemap: https://agiletoolhub.com/sitemap.xml
