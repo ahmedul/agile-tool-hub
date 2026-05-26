@@ -79,10 +79,14 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const userIdRef = useRef<string>("");
   const myNameRef = useRef("");
   const myVoteRef = useRef<Vote>(null);
+  const currentStoryRef = useRef("");
+  const revealedRef = useRef(false);
   const autoJoinedRef = useRef(false);
 
   useEffect(() => { setSessionUrl(window.location.href); }, []);
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
+  useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
+  useEffect(() => { revealedRef.current = revealed; }, [revealed]);
 
   const joinChannel = useCallback(
     (name: string) => {
@@ -147,6 +151,37 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           setCurrentStory(name);
           setStoryInput(name);
         })
+        // New client requests current room state after joining.
+        .on("broadcast", { event: "request_state" }, ({ payload }) => {
+          const { requesterId } = payload as { requesterId: string };
+          if (!requesterId || requesterId === userIdRef.current) return;
+
+          channelRef.current?.send({
+            type: "broadcast",
+            event: "state_snapshot",
+            payload: {
+              targetId: requesterId,
+              story: currentStoryRef.current,
+              revealed: revealedRef.current,
+            },
+          });
+        })
+        .on("broadcast", { event: "state_snapshot" }, ({ payload }) => {
+          const { targetId, story, revealed } = payload as {
+            targetId: string;
+            story?: string;
+            revealed?: boolean;
+          };
+          if (targetId !== userIdRef.current) return;
+
+          if (story && !currentStoryRef.current) {
+            setCurrentStory(story);
+            setStoryInput(story);
+          }
+          if (typeof revealed === "boolean") {
+            setRevealed(revealed);
+          }
+        })
         // Reveal triggered — every client (including sender via self:true) sends their actual vote
         .on("broadcast", { event: "reveal" }, () => {
           setRevealed(true);
@@ -192,6 +227,12 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           if (status === "SUBSCRIBED") {
             setConnStatus("connected");
             await channel.track({ userId: uid, name });
+            // Ask existing members for current story/reveal state for late joins.
+            channel.send({
+              type: "broadcast",
+              event: "request_state",
+              payload: { requesterId: uid },
+            });
           } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
             setConnStatus("error");
           }
