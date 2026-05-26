@@ -5,8 +5,11 @@ import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import CopyButton from "./CopyButton";
 
 const CARDS = [1, 2, 3, 5, 8, 13, 21, "?"] as const;
+const ANIMAL_AVATARS = ["🐶", "🐱", "🦊", "🐼", "🐨", "🐯", "🦁", "🐸", "🐵", "🦉"] as const;
+const HERO_AVATARS = ["🦸", "🦸‍♀️", "🛡️", "⚡", "🔥", "🌟", "🧠", "🦾", "🛰️", "🕶️"] as const;
 type CardValue = (typeof CARDS)[number];
 type Vote = CardValue | null;
+type AvatarTheme = "animals" | "heroes";
 
 interface Participant {
   name: string;
@@ -19,6 +22,20 @@ interface StorySummary {
   estimate: Vote;
 }
 
+function hashKey(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function getAvatar(uid: string, theme: AvatarTheme): string {
+  const list = theme === "animals" ? ANIMAL_AVATARS : HERO_AVATARS;
+  return list[hashKey(uid) % list.length];
+}
+
 export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) {
   const [nameInput, setNameInput] = useState("");
   const [joined, setJoined] = useState(false);
@@ -27,6 +44,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const [currentStory, setCurrentStory] = useState("");
   const [storyInput, setStoryInput] = useState("");
   const [revealed, setRevealed] = useState(false);
+  const [avatarTheme, setAvatarTheme] = useState<AvatarTheme>("animals");
   const [stories, setStories] = useState<StorySummary[]>([]);
   const [finalEstimate, setFinalEstimate] = useState<Vote>(null);
   const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
@@ -126,7 +144,12 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         .on("broadcast", { event: "next_story" }, ({ payload }) => {
           const story = payload.story as string | undefined;
           const estimate = payload.estimate as Vote;
-          if (story) setStories((prev) => [...prev, { name: story, estimate: estimate ?? null }]);
+          if (story && estimate !== null) {
+            setStories((prev) => {
+              const alreadyLogged = prev.some((item) => item.name === story && item.estimate === estimate);
+              return alreadyLogged ? prev : [...prev, { name: story, estimate }];
+            });
+          }
           setRevealed(false);
           setMyVote(null);
           myVoteRef.current = null;
@@ -190,7 +213,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   };
 
   const handleVote = (card: CardValue) => {
-    if (revealed) return;
+    if (revealed || !currentStory.trim()) return;
     const newVote: Vote = myVote === card ? null : card;
     const wasVoted = myVote !== null;
     const isVoted = newVote !== null;
@@ -221,11 +244,13 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   };
 
   const handleReveal = () => {
+    if (!currentStory.trim()) return;
     // self:true — we receive "reveal" back, set revealed, and broadcast "my_vote"
     channelRef.current?.send({ type: "broadcast", event: "reveal", payload: {} });
   };
 
   const handleNextStory = () => {
+    if (!currentStory.trim() || finalEstimate === null) return;
     // self:true — we receive "next_story" back and reset state uniformly
     channelRef.current?.send({
       type: "broadcast",
@@ -237,7 +262,12 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const participantList = Object.entries(participants);
   const votedCount = participantList.filter(([, p]) => p.hasVoted).length;
   const totalCount = participantList.length;
-  const canReveal = myVote !== null || votedCount > 0;
+  const hasStory = currentStory.trim().length > 0;
+  const canReveal = hasStory && (myVote !== null || votedCount > 0);
+  const totalPoints = stories
+    .filter((s) => typeof s.estimate === "number")
+    .reduce((acc, s) => acc + (s.estimate as number), 0);
+  const unresolvedStories = stories.filter((s) => s.estimate === "?").length;
 
   // ── Name entry screen ──────────────────────────────────────────
   if (!joined) {
@@ -346,6 +376,33 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
             Team — {votedCount}/{totalCount} voted
           </p>
+          <div className="mb-3 flex items-center gap-2">
+            <span className="text-xs text-gray-500">Card theme:</span>
+            <button
+              type="button"
+              onClick={() => setAvatarTheme("animals")}
+              className={[
+                "px-2 py-1 text-xs rounded border",
+                avatarTheme === "animals"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-600 border-gray-300",
+              ].join(" ")}
+            >
+              Animals
+            </button>
+            <button
+              type="button"
+              onClick={() => setAvatarTheme("heroes")}
+              className={[
+                "px-2 py-1 text-xs rounded border",
+                avatarTheme === "heroes"
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-600 border-gray-300",
+              ].join(" ")}
+            >
+              Heroes
+            </button>
+          </div>
           {participantList.length === 0 ? (
             <p className="text-sm text-gray-400">Waiting for teammates to join…</p>
           ) : (
@@ -354,7 +411,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 <div key={uid} className="flex flex-col items-center gap-1.5">
                   <div
                     className={[
-                      "w-14 h-20 rounded-xl border-2 flex items-center justify-center text-xl font-bold transition-all",
+                      "relative w-14 h-20 rounded-xl border-2 flex items-center justify-center text-xl font-bold transition-all",
                       revealed && p.vote !== null
                         ? "bg-white border-green-400 text-gray-900 shadow"
                         : revealed
@@ -364,6 +421,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                             : "bg-gray-100 border-gray-200 text-gray-300",
                     ].join(" ")}
                   >
+                    <span className="absolute -top-2 -right-2 text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center">
+                      {getAvatar(uid, avatarTheme)}
+                    </span>
                     {revealed ? (p.vote ?? "–") : p.hasVoted ? "✓" : "·"}
                   </div>
                   <span className="text-xs text-gray-500 max-w-[56px] truncate text-center">
@@ -383,7 +443,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             disabled={!canReveal}
             className="px-8 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            {!canReveal
+            {!hasStory
+              ? "Set story first…"
+              : !canReveal
               ? "Pick a card first…"
               : votedCount === totalCount && totalCount > 0
                 ? "Reveal Cards ✓"
@@ -422,6 +484,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
               </div>
               <button
                 onClick={handleNextStory}
+                disabled={finalEstimate === null || !currentStory.trim()}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shrink-0"
               >
                 Next Story →
@@ -437,6 +500,10 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           <div className="px-4 py-3 border-b border-gray-100">
             <p className="font-semibold text-gray-900 text-sm">Session Log</p>
             <p className="text-xs text-gray-400">{stories.length} stories estimated</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Total pts: <strong>{totalPoints}</strong>
+              {unresolvedStories > 0 ? ` · Unresolved: ${unresolvedStories}` : ""}
+            </p>
           </div>
           <div className="overflow-y-auto max-h-[60vh] p-3 space-y-2">
             {stories.length === 0 ? (
@@ -460,11 +527,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             <div className="px-4 py-3 border-t border-gray-100">
               <p className="text-xs text-gray-500">
                 Total pts:{" "}
-                <strong>
-                  {stories
-                    .filter((s) => typeof s.estimate === "number")
-                    .reduce((acc, s) => acc + (s.estimate as number), 0)}
-                </strong>
+                <strong>{totalPoints}</strong>
               </p>
             </div>
           )}
