@@ -120,17 +120,25 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         // ── Broadcasts: all game state ─────────────────────────────
         // Someone voted (no value revealed)
         .on("broadcast", { event: "voted" }, ({ payload }) => {
-          const { userId } = payload as { userId: string };
-          setParticipants((prev) =>
-            prev[userId] ? { ...prev, [userId]: { ...prev[userId], hasVoted: true } } : prev,
-          );
+          const { userId, name } = payload as { userId: string; name?: string };
+          if (!userId) return;
+          setParticipants((prev) => ({
+            ...prev,
+            [userId]: prev[userId]
+              ? { ...prev[userId], hasVoted: true }
+              : { name: name ?? "Participant", hasVoted: true, vote: null },
+          }));
         })
         // Someone unvoted
         .on("broadcast", { event: "unvoted" }, ({ payload }) => {
-          const { userId } = payload as { userId: string };
-          setParticipants((prev) =>
-            prev[userId] ? { ...prev, [userId]: { ...prev[userId], hasVoted: false } } : prev,
-          );
+          const { userId, name } = payload as { userId: string; name?: string };
+          if (!userId) return;
+          setParticipants((prev) => ({
+            ...prev,
+            [userId]: prev[userId]
+              ? { ...prev[userId], hasVoted: false }
+              : { name: name ?? "Participant", hasVoted: false, vote: null },
+          }));
         })
         // Story name set
         .on("broadcast", { event: "story" }, ({ payload }) => {
@@ -175,15 +183,27 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           channelRef.current?.send({
             type: "broadcast",
             event: "my_vote",
-            payload: { userId: userIdRef.current, vote: myVoteRef.current },
+            payload: {
+              userId: userIdRef.current,
+              vote: myVoteRef.current,
+              name: myNameRef.current,
+            },
           });
         })
         // Actual vote (only exchanged at reveal time)
         .on("broadcast", { event: "my_vote" }, ({ payload }) => {
-          const { userId, vote } = payload as { userId: string; vote: Vote };
-          setParticipants((prev) =>
-            prev[userId] ? { ...prev, [userId]: { ...prev[userId], vote } } : prev,
-          );
+          const { userId, vote, name } = payload as {
+            userId: string;
+            vote: Vote;
+            name?: string;
+          };
+          if (!userId) return;
+          setParticipants((prev) => ({
+            ...prev,
+            [userId]: prev[userId]
+              ? { ...prev[userId], vote }
+              : { name: name ?? "Participant", hasVoted: vote !== null, vote },
+          }));
         })
         // Next round — resets all state for everyone
         .on("broadcast", { event: "next_story" }, ({ payload }) => {
@@ -300,13 +320,13 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       channelRef.current?.send({
         type: "broadcast",
         event: "voted",
-        payload: { userId: userIdRef.current },
+        payload: { userId: userIdRef.current, name: myNameRef.current },
       });
     } else if (!isVoted && wasVoted) {
       channelRef.current?.send({
         type: "broadcast",
         event: "unvoted",
-        payload: { userId: userIdRef.current },
+        payload: { userId: userIdRef.current, name: myNameRef.current },
       });
     }
   };
