@@ -217,6 +217,51 @@ Primary wedge for this project:
 
 ---
 
+## Next 14 Days Execution Checklist (May 27-Jun 9)
+
+Goal: ship high-intent SEO pages in clusters (template + guide + examples), then tighten internal linking and indexation.
+
+### Week 1 (May 27-Jun 2): QA + Bug Workflow Cluster
+
+| Day | Deliverables (publish order) | File targets |
+|---|---|---|
+| Day 1 | QA to Dev Handoff template | `src/content/templates/qa-to-dev-handoff-template.mdx` |
+| Day 2 | QA handoff implementation guide | `src/content/guides/qa-handoff-checklist-for-jira-teams.mdx` |
+| Day 3 | Bug severity vs priority guide | `src/content/guides/bug-severity-vs-priority-jira-guide.mdx` |
+| Day 4 | API bug ticket example | `src/content/examples/api-bug-ticket-example.mdx` |
+| Day 5 | Mobile crash bug example | `src/content/examples/mobile-crash-jira-ticket-example.mdx` |
+| Day 6 | Internal linking pass for new QA pages (8-12 links/page) | Update pages above + `src/app/templates/page.tsx` + `src/app/guides/page.tsx` + `src/app/examples/page.tsx` |
+| Day 7 | Metadata/title optimization + final proof pass | Update frontmatter in all new files |
+
+### Week 2 (Jun 3-Jun 9): Epic + Planning Cluster
+
+| Day | Deliverables (publish order) | File targets |
+|---|---|---|
+| Day 8 | Epic template for Jira | `src/content/templates/epic-template-jira.mdx` |
+| Day 9 | Task breakdown template | `src/content/templates/task-breakdown-template.mdx` |
+| Day 10 | Backlog refinement template | `src/content/templates/backlog-refinement-template.mdx` |
+| Day 11 | Epic breakdown guide | `src/content/guides/how-to-break-down-epics-into-user-stories.mdx` |
+| Day 12 | Story estimation guide (advanced) | `src/content/guides/story-point-estimation-guide-with-examples.mdx` |
+| Day 13 | Sprint goal examples | `src/content/examples/sprint-goal-examples-for-product-teams.mdx` |
+| Day 14 | Indexation + measurement pass: sitemap, GSC inspect/request indexing, GA4 baseline snapshot | `public/sitemap.xml`, `public/sitemap-0.xml`, GA4 + GSC dashboards |
+
+### Done Criteria (for each published page)
+
+- Primary keyword in title, H1, intro paragraph, and slug
+- Meta description includes concrete outcome and CTA to a related tool
+- At least 8 internal links: 3 templates, 3 guides/examples, 2 tool links
+- One copy action or tool CTA above the fold
+- Included in listing pages and sitemap after deployment
+
+### KPI Checkpoint (Jun 10)
+
+- Indexed new pages: target 80%+ indexed in GSC
+- Organic impressions: +30% vs May 26 baseline
+- Tool click-through from content pages: 10%+ on new pages
+- Copy events (`template_copy` or `output_copy`): +25% vs previous 14 days
+
+---
+
 ## Content targets by end of August (SEO focus)
 
 | Section | Now | Target | Why |
