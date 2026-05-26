@@ -43,20 +43,7 @@ function deriveRecommendedEstimate(votes: Vote[]): Vote {
   );
   if (numericVotes.length === 0) return votes.includes("?") ? "?" : null;
 
-  const counts = new Map<NumericCardValue, number>();
-  for (const v of numericVotes) {
-    counts.set(v, (counts.get(v) ?? 0) + 1);
-  }
-
-  let mode: NumericCardValue = numericVotes[0];
-  let maxCount = 0;
-  for (const [value, count] of counts.entries()) {
-    if (count > maxCount || (count === maxCount && value < mode)) {
-      mode = value;
-      maxCount = count;
-    }
-  }
-  return mode;
+  return numericVotes.reduce((max, current) => (current > max ? current : max), numericVotes[0]);
 }
 
 export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) {
@@ -222,6 +209,20 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             return next;
           });
         })
+        // Re-vote for same story
+        .on("broadcast", { event: "revote" }, () => {
+          setRevealed(false);
+          setMyVote(null);
+          myVoteRef.current = null;
+          setFinalEstimate(null);
+          setParticipants((prev) => {
+            const next: Record<string, Participant> = {};
+            for (const [k, p] of Object.entries(prev)) {
+              next[k] = { ...p, hasVoted: false, vote: null };
+            }
+            return next;
+          });
+        })
         .subscribe(async (status, err) => {
           console.log("[poker] status:", status, err ?? "");
           if (status === "SUBSCRIBED") {
@@ -335,6 +336,11 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       event: "next_story",
       payload: { story: currentStory, estimate: resolvedEstimate },
     });
+  };
+
+  const handleRevote = () => {
+    if (!currentStory.trim()) return;
+    channelRef.current?.send({ type: "broadcast", event: "revote", payload: {} });
   };
 
   const participantList = Object.entries(participants);
@@ -566,6 +572,12 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 ))}
               </div>
               <button
+                onClick={handleRevote}
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors shrink-0"
+              >
+                Re-vote
+              </button>
+              <button
                 onClick={handleNextStory}
                 disabled={!currentStory.trim()}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shrink-0"
@@ -576,7 +588,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 {finalEstimate !== null
                   ? `Using selected: ${finalEstimate}`
                   : recommendedEstimate !== null
-                    ? `Auto estimate: ${recommendedEstimate}`
+                    ? `Auto estimate (highest): ${recommendedEstimate}`
                     : "Select an estimate or reveal votes"}
               </span>
             </div>
