@@ -204,11 +204,13 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
   // Init: stable userId + auto-rejoin from localStorage
   useEffect(() => {
-    let uid = sessionStorage.getItem("pp_uid");
-    if (!uid) {
-      uid = Math.random().toString(36).slice(2, 11);
-      sessionStorage.setItem("pp_uid", uid);
-    }
+    // Use a fresh per-tab id to avoid duplicate-tab identity collisions.
+    // Duplicate tabs can inherit sessionStorage values, which causes two users
+    // to share one participant record and makes vote indicators confusing.
+    const uid =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     userIdRef.current = uid;
 
     const savedName = localStorage.getItem("pp_name");
@@ -466,6 +468,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   <span className="text-xs text-gray-500 max-w-[56px] truncate text-center">
                     {p.name}
                     {uid === userIdRef.current ? " (you)" : ""}
+                  </span>
+                  <span className="text-[10px] text-gray-400">
+                    {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
                   </span>
                 </div>
               ))}
