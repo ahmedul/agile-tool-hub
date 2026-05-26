@@ -1,0 +1,303 @@
+---
+title: "API Requirements for Jira Tickets"
+description: "A comprehensive guide for documenting API requirements in Jira tickets. Learn how to define endpoints, request/response schemas, authentication, and error handling."
+slug: "api-requirements-for-jira-tickets"
+category: "Guides"
+keywords:
+  - api requirements jira
+  - api specification jira ticket
+  - how to document api
+  - api ticket template
+  - api design jira
+relatedLinks:
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "API Requirements Template"
+    href: "/templates/api-requirements-jira-template"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+API requirements are the bridge between product vision and backend implementation. A poorly specified API wastes engineering time on clarifications; a well-specified one accelerates development.
+
+This guide covers how to document API requirements in Jira tickets so your backend engineers have everything they need on day one.
+
+## 1. Start with a Clear User Story
+
+**Format:**
+```
+As a [client app / third-party service / internal team],
+I want to [call an API endpoint to perform X action],
+so that [I can achieve business outcome Y without manual work].
+```
+
+**Example:**
+```
+As the mobile app frontend,
+I want to call a POST /api/orders endpoint with order items,
+so that I can submit customer orders without manual database entry.
+```
+
+**Why this matters:** It clarifies who will use the API and what problem it solves. Backend engineers understand the *intent*, not just the mechanics.
+
+---
+
+## 2. Specify the Endpoint(s) with HTTP Method and Path
+
+List every endpoint involved in the feature, with clear naming conventions:
+
+```
+POST /api/v1/orders
+GET /api/v1/orders/{orderId}
+PUT /api/v1/orders/{orderId}
+DELETE /api/v1/orders/{orderId}
+```
+
+**Naming conventions:**
+- Use **plural nouns** for resource collections: `/api/orders` (not `/api/createOrder`)
+- Use **HTTP verbs** for actions: POST (create), GET (read), PUT (update), DELETE (remove)
+- Include **version prefix**: `/api/v1/` to support future API versions without breaking clients
+- Use **path parameters** for resource IDs: `{orderId}` (not `orderId=123` in URL)
+
+**Anti-pattern:**
+```
+/api/createOrder          ← verb in URL (confusing)
+/api/get-all-orders       ← verb + hyphenated (inconsistent)
+/orders?id=123            ← query string for unique resource (use path param instead)
+```
+
+---
+
+## 3. Document Request Schema (Headers, Body, Query Params)
+
+### Headers
+
+List required and optional HTTP headers:
+
+```
+Content-Type: application/json          (required)
+Authorization: Bearer {jwt_token}       (required)
+X-Request-ID: {uuid}                    (optional, for tracing)
+X-Idempotency-Key: {uuid}               (optional, for retry safety)
+```
+
+### Query Parameters
+
+List for GET/DELETE operations:
+
+```
+GET /api/v1/orders?status=pending&limit=10&offset=0
+
+- status (optional, enum): pending, completed, cancelled
+- limit (optional, integer): max results per page, default 20, max 100
+- offset (optional, integer): for pagination, default 0
+```
+
+### Request Body
+
+Provide a JSON schema example:
+
+```json
+POST /api/v1/orders
+
+{
+  "customerId": "cust_12345",           // required, string, UUID
+  "items": [
+    {
+      "productId": "prod_abc123",       // required, string, UUID
+      "quantity": 5,                     // required, integer, >= 1
+      "unitPrice": 29.99                // required, decimal, > 0
+    }
+  ],
+  "shippingAddress": {
+    "street": "123 Main St",            // required, string
+    "city": "San Francisco",            // required, string
+    "state": "CA",                       // required, string, 2-char code
+    "postalCode": "94102",              // required, string
+    "country": "US"                      // required, string, 2-char ISO
+  },
+  "notes": "Handle with care"           // optional, string, max 500 chars
+}
+```
+
+---
+
+## 4. Document Response Schema
+
+### Success Response (2xx)
+
+```json
+HTTP 201 Created
+
+{
+  "id": "order_xyz789",
+  "customerId": "cust_12345",
+  "items": [...],
+  "subtotal": 149.95,
+  "tax": 12.50,
+  "total": 162.45,
+  "status": "pending",
+  "createdAt": "2026-05-26T14:32:00Z",
+  "updatedAt": "2026-05-26T14:32:00Z"
+}
+```
+
+### Error Responses (4xx, 5xx)
+
+Specify error codes your API can return:
+
+```json
+HTTP 400 Bad Request
+
+{
+  "error": "INVALID_REQUEST",
+  "message": "Missing required field: customerId",
+  "details": {
+    "field": "customerId",
+    "reason": "required"
+  }
+}
+```
+
+```json
+HTTP 401 Unauthorized
+
+{
+  "error": "INVALID_TOKEN",
+  "message": "Authorization header missing or expired"
+}
+```
+
+```json
+HTTP 409 Conflict
+
+{
+  "error": "DUPLICATE_REQUEST",
+  "message": "Order already processed with this idempotency key",
+  "existingOrderId": "order_xyz789"
+}
+```
+
+---
+
+## 5. Specify Authentication & Authorization
+
+### Authentication
+
+Clearly state **how** clients authenticate:
+
+```
+- Method: JWT Bearer token
+- Header: Authorization: Bearer {token}
+- Token lifetime: 1 hour
+- Refresh endpoint: POST /api/v1/auth/refresh
+- Scope: Requires `orders:write` permission
+```
+
+### Authorization
+
+State **who** can call this endpoint:
+
+```
+- Admin: Full access (create, read, update, delete)
+- Customer: Can only read/update their own orders
+- Guest: No access
+```
+
+---
+
+## 6. Acceptance Criteria for API Tickets
+
+Use this format so engineers know exactly when the ticket is done:
+
+```
+☐ POST /api/v1/orders accepts valid request and returns 201 Created
+☐ POST /api/v1/orders returns 400 Bad Request if required field missing
+☐ POST /api/v1/orders returns 401 Unauthorized if token invalid or expired
+☐ POST /api/v1/orders returns 409 Conflict if idempotency key already seen
+☐ Response includes valid JSON schema matching documented schema
+☐ All responses include X-Request-ID header for tracing
+☐ Database transaction rolls back if validation fails (atomicity)
+☐ Endpoint performance < 200ms p95 for typical order (5 items)
+☐ Load test: endpoint handles 1000 requests/second without degradation
+☐ API docs (OpenAPI/Swagger) auto-generated and up-to-date
+```
+
+---
+
+## 7. Common Mistakes to Avoid
+
+| Mistake | Impact | Fix |
+|---------|--------|-----|
+| **Ambiguous parameter types** — "price: number" | Engineer guesses (decimal vs int, currency) | Specify: "price: decimal with 2 decimals, cents as minor units" |
+| **Missing error cases** — Only document happy path | 50% of code handles errors, causes surprises | List 5-10 common error scenarios with exact error codes |
+| **No pagination docs** — API returns 100k results | Frontend breaks, database overloads | Specify limit/offset OR cursor-based pagination with defaults |
+| **Vague auth requirements** — "Use JWT" | Each engineer implements differently | Specify: "Bearer token in Authorization header, scopes required, lifetime" |
+| **No rate limiting stated** — Client builds for unlimited throughput | API crashes under load, client fails silently | Specify: "100 req/min per API key, returns 429 Too Many Requests" |
+
+---
+
+## 8. Use the API Requirements Template
+
+The [API Requirements Template](/templates/api-requirements-jira-template) provides a structured format you can copy-paste into Jira tickets. It covers:
+
+- Endpoint definitions
+- Request/response schemas
+- Authentication & authorization
+- Error codes
+- Performance requirements
+- Acceptance criteria
+
+**Alternatively,** use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) with the **API** preset — it will auto-generate testing criteria specific to API contracts.
+
+---
+
+## 9. Real-World Example
+
+**Jira Ticket: "Create Order API Endpoint"**
+
+```
+AS: Mobile app frontend
+WANT: POST /api/v1/orders endpoint
+SO THAT: Users can submit orders without manual entry
+
+ENDPOINT:
+POST /api/v1/orders
+
+REQUEST:
+{
+  "customerId": "cust_12345",
+  "items": [{"productId": "prod_abc", "quantity": 2}],
+  "shippingAddress": {...}
+}
+
+RESPONSE (201):
+{
+  "id": "order_xyz789",
+  "status": "pending",
+  "total": 159.99
+}
+
+ERRORS:
+- 400: Missing customerId
+- 401: Invalid JWT token
+- 409: Duplicate order (idempotency key)
+
+AC:
+☐ Returns 201 with order object on valid request
+☐ Returns 400 if customerId missing
+☐ Returns 401 if Authorization header invalid
+☐ Response < 200ms p95
+```
+
+This ticket gives backend engineers everything needed to implement, test, and deploy.
+
+---
+
+## Key Takeaway
+
+**API specs in Jira aren't marketing documents — they're contracts.** Be specific: exact field names, data types, error codes, authentication, performance targets. Over-specify > under-specify.
+
+The time you invest in clarity upfront saves engineering sprints downstream.

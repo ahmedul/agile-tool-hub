@@ -1,0 +1,408 @@
+---
+title: "Acceptance Criteria Patterns & Examples"
+description: "Learn different acceptance criteria formats (Gherkin, checklist, specification) with real examples across product features, APIs, and edge cases."
+slug: "acceptance-criteria-patterns-and-examples"
+category: "Guides"
+keywords:
+  - acceptance criteria examples
+  - acceptance criteria format
+  - gherkin examples
+  - BDD examples
+  - how to write acceptance criteria
+relatedLinks:
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "Acceptance Criteria Examples"
+    href: "/content/examples/acceptance-criteria-examples-for-api"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+Acceptance criteria (AC) are the bridge between product requirement and "done." Poor AC lead to:
+- Developers building the wrong thing
+- QA spending hours testing unclear requirements
+- Surprises on demo day
+- Disputes over whether the ticket is actually complete
+
+This guide shows the AC patterns that work — and when to use each one.
+
+---
+
+## 1. The Gherkin Format (Given-When-Then)
+
+**Best for:** Complex workflows, multi-step processes, edge cases
+
+Gherkin is the BDD (Behavior-Driven Development) format. It reads like English but runs as automated tests.
+
+### Example 1: Login with Retry Logic
+
+```gherkin
+Scenario: User logs in with correct credentials
+  Given the user is on the login page
+  And the login service is available
+  When the user enters email "alice@example.com"
+  And enters password "SecurePass123"
+  And clicks the Login button
+  Then the user is redirected to /dashboard
+  And the session token is stored in localStorage
+  And the user's name appears in the header
+
+Scenario: User sees error after 3 failed attempts
+  Given the user is on the login page
+  When the user enters incorrect password 3 times
+  Then the login button is disabled
+  And an error message displays: "Account locked for 15 minutes"
+  And a reset link is emailed to the account
+
+Scenario: User session expires during active use
+  Given the user is logged in
+  And their session has been idle for > 30 minutes
+  When the user clicks any button
+  Then they are redirected to /login
+  And a message displays: "Your session expired"
+```
+
+**Why this works:** Each scenario is independently testable. QA can automate these with Cucumber or Playwright. Developers know exactly what to build.
+
+---
+
+### Example 2: API Endpoint with Multiple Status Codes
+
+```gherkin
+Scenario: Valid order submission
+  Given a customer with valid billing address
+  When they POST to /api/orders with valid request body
+  Then HTTP status 201 Created is returned
+  And response includes order ID
+  And response includes total price
+  And order is created in database
+
+Scenario: Missing required field in request
+  Given a customer submitting an order
+  When they POST to /api/orders without customer_id
+  Then HTTP status 400 Bad Request is returned
+  And response includes error: "customer_id required"
+  And no order is created
+
+Scenario: Insufficient inventory
+  Given a product has 5 units in stock
+  When a customer orders 10 units
+  Then HTTP status 422 Unprocessable Entity is returned
+  And response includes error: "Only 5 units available"
+  And order is not created
+```
+
+**Why this works:** Each status code is explicit. Backend engineers know what to validate. QA can test happy path + error paths systematically.
+
+---
+
+## 2. The Checklist Format (Numbered/Bulleted)
+
+**Best for:** Feature flags, UI changes, straightforward requirements
+
+Checklist AC are simpler to write and useful for rapid development.
+
+### Example 3: Dashboard Navigation Update
+
+```
+Acceptance Criteria:
+☐ Sidebar displays 8 menu items (Home, Tickets, Reports, Analytics, Team, Settings, Help, Logout)
+☐ Active page is highlighted in blue
+☐ Hovering over menu item shows tooltip with description
+☐ Menu collapses to icons on screens < 768px width
+☐ Clicking menu item navigates to page (URL updates)
+☐ Menu selection persists across page refresh
+☐ Logout clears session and redirects to /login
+☐ Mobile menu is hamburger icon that opens/closes on tap
+```
+
+**Why this works:** Simple, visual, easy for QA to verify manually. No "Given-When-Then" needed.
+
+---
+
+### Example 4: Performance Requirements
+
+```
+Acceptance Criteria:
+☐ API response time p95 < 200ms (measured via APM)
+☐ Dashboard loads in < 3 seconds (Lighthouse LCP)
+☐ Database queries cached (Redis) with 5-minute TTL
+☐ Concurrent user test (1000 users) completes without errors
+☐ Memory usage doesn't exceed 512MB during load test
+☐ No N+1 queries in database logs
+```
+
+**Why this works:** Clear targets. Can be automated in CI/CD via performance testing.
+
+---
+
+### Example 5: Data Validation Rules
+
+```
+Acceptance Criteria:
+☐ Email field accepts only valid email format (RFC 5322)
+☐ Phone number must be 10 digits (US format)
+☐ Password must be ≥ 12 characters, include uppercase + lowercase + number + symbol
+☐ Date fields accept MM/DD/YYYY or MM-DD-YYYY format
+☐ Credit card field accepts Visa, Mastercard, Amex only
+☐ Invalid input shows inline error message (red text)
+☐ Error clears when user corrects input
+☐ Form cannot be submitted until all errors are resolved
+```
+
+**Why this works:** Specific validation rules. QA can test each one independently.
+
+---
+
+## 3. The Specification Format (Detailed Prose)
+
+**Best for:** Complex domain logic, multi-stakeholder requirements
+
+Use when Gherkin or checklists aren't enough detail.
+
+### Example 6: Refund Policy Logic
+
+```
+Acceptance Criteria - Refund Processing:
+
+1. Refund Eligibility:
+   - Order must be < 30 days old
+   - Order status must be "Delivered" or "Return Initiated"
+   - If status is "Delivered," customer must initiate return within 30 days
+   - If status is "Return Initiated," seller has 10 days to approve/reject
+   - Digital products are non-refundable
+   - Final sale items (clearance) are non-refundable
+
+2. Refund Amount Calculation:
+   - Full refund: original price - restocking fee (15%)
+   - Partial refund: only for damaged/defective items (customer provides photos)
+   - Original shipping is not refunded
+   - Taxes are refunded based on state tax rate at purchase date
+
+3. Return Shipping:
+   - Seller provides prepaid shipping label (FedEx or UPS)
+   - Customer has 14 days to ship item back
+   - Item must arrive in "like new" condition (original packaging, tags attached)
+   - If customer returns shipping label unused, $5 penalty deducted
+
+4. Refund Payment:
+   - Refund processed to original payment method (card, PayPal, etc.)
+   - Refund appears in customer account within 3–5 business days
+   - Card processors may hold funds longer (contact card issuer)
+   - Refund confirmation email sent within 1 hour
+
+5. Edge Cases:
+   - Partial payment (card + store credit): Refund goes to card first, rest to store credit
+   - Layaway orders: Refund sent to original payment method
+   - Gift purchases: Refund as store credit (recipient can't refund to stranger's card)
+```
+
+**Why this works:** Every edge case is spelled out. Engineers don't guess. Legal/finance can review before implementation.
+
+---
+
+## 4. Hybrid Format: Gherkin + Checklist
+
+**Best for:** Most real-world tickets
+
+Mix both formats for clarity + coverage.
+
+### Example 7: Two-Factor Authentication
+
+```gherkin
+Scenario: User enables 2FA via authenticator app
+  Given user is logged in and on Security settings
+  When user clicks "Enable Two-Factor Authentication"
+  Then QR code is displayed
+  And user is instructed to scan QR code with Google Authenticator or Authy
+  And a backup code list (8 codes) is displayed
+  And user is prompted to confirm by entering 6-digit code from app
+  When user enters correct code
+  Then 2FA is marked as "Enabled"
+  And confirmation email is sent
+```
+
+**Checklist for Edge Cases:**
+
+```
+Acceptance Criteria:
+☐ If user enters incorrect 6-digit code, error message shown (max 3 attempts)
+☐ After 3 failed attempts, setup is cancelled and user must restart
+☐ Backup codes can be downloaded as .txt file
+☐ If user loses authenticator phone, they can sign in with backup code
+☐ Using a backup code marks it as "used" (can't reuse)
+☐ User can disable 2FA, which requires entering current password
+☐ When 2FA enabled, login flow adds "Enter 6-digit code" step
+☐ If user doesn't have app installed, link to Google Authenticator App Store provided
+```
+
+**Why this works:** Happy path is clear (Gherkin); edge cases are explicit (checklist).
+
+---
+
+## 5. When to Use Each Format
+
+| Format | Complexity | Use When | Example |
+|--------|-----------|----------|---------|
+| **Gherkin** | Medium-High | Multi-step workflows, edge cases need clarity | Login flow, API endpoints, workflows |
+| **Checklist** | Low-Medium | Simple features, UI changes, straightforward rules | Form validation, dashboard updates, data rules |
+| **Specification** | High | Complex domain logic, regulatory requirements | Refund policy, pricing rules, financial calculations |
+| **Hybrid** | Any | Most real-world tickets (simple path + edge cases) | 2FA, payments, admin actions |
+
+---
+
+## 6. Common AC Anti-Patterns
+
+### ❌ Too Vague
+
+```
+Acceptance Criteria:
+☐ The system should work well
+☐ Users should be able to log in
+☐ The dashboard should load fast
+```
+
+**Problem:** "work well," "should be able," and "fast" are subjective. No way to verify "done."
+
+**✅ Better:**
+```
+Acceptance Criteria:
+☐ User can enter email and password and click Login
+☐ Valid credentials redirect to /dashboard within 3 seconds
+☐ Invalid credentials show error: "Email or password incorrect"
+☐ After 3 failed attempts, account locks for 15 minutes
+```
+
+---
+
+### ❌ Implementation Details (Not Requirements)
+
+```
+Acceptance Criteria:
+☐ Use Redis for caching
+☐ Refactor LoginComponent to functional component
+☐ Add PropTypes validation
+```
+
+**Problem:** These are HOW to build it, not WHAT to build.
+
+**✅ Better:**
+```
+Acceptance Criteria:
+☐ Login response time < 200ms p95 (measured via APM)
+☐ Invalid credentials show error within 1 second
+☐ User session persists across browser refresh
+☐ Type safety validated (PropTypes or TypeScript)
+```
+
+---
+
+### ❌ Untestable Assertions
+
+```
+Acceptance Criteria:
+☐ User experience is improved
+☐ Code is maintainable
+☐ System is scalable
+```
+
+**Problem:** No way to measure or verify these. How do you know when you're "done"?
+
+**✅ Better:**
+```
+Acceptance Criteria:
+☐ Task completion time decreased by ≥ 20% (measured via user study)
+☐ Code coverage ≥ 90%
+☐ System handles 10x current load without degradation (load test)
+```
+
+---
+
+## 7. Using the Acceptance Criteria Generator
+
+The [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) can help by:
+
+1. **Choosing the right format** — Select Gherkin (BDD) or Checklist based on ticket type
+2. **Selecting domain** — Product/Engineering/API/Tech Debt presets generate domain-specific AC
+3. **Generating drafts** — Paste a vague requirement, get structured AC
+4. **Scoring quality** — Tool rates AC on clarity, testability, coverage
+
+**Pro tip:** Use the **API preset** for endpoint tickets (auto-generates status code scenarios), **Product preset** for customer-facing features.
+
+---
+
+## Checklist: Is Your AC Complete?
+
+```
+☐ Each criterion is independently testable (doesn't depend on others)
+☐ No subjective language ("should," "might," "generally")
+☐ Includes happy path (normal case)
+☐ Includes error cases (invalid input, failures)
+☐ Includes edge cases (boundary conditions, race conditions)
+☐ Performance targets specified (if relevant)
+☐ QA can automate testing (or at least verify manually without ambiguity)
+☐ Developer can implement without asking clarifying questions
+```
+
+---
+
+## Real-World Example: Complete Ticket with AC
+
+**Jira Ticket: "Add Remember Me checkbox to login form"**
+
+**User Story:**
+```
+As a user logging in frequently,
+I want to check "Remember Me" on login,
+so that my next login skips the password step (uses stored credential).
+```
+
+**Acceptance Criteria (Hybrid):**
+
+```gherkin
+Scenario: User checks "Remember Me" and later logs in
+  Given the user checks "Remember Me" on login
+  When they successfully log in
+  Then the cookie "rememberMe" is set to expire in 30 days
+  And on next visit within 30 days, they bypass login form
+
+Scenario: User does not check "Remember Me"
+  Given the user does NOT check "Remember Me"
+  When they log in successfully
+  Then the session cookie expires when browser closes
+  And on next visit, login form is shown
+
+Scenario: User logs out
+  Given user checked "Remember Me" previously
+  When they click Logout
+  Then the "rememberMe" cookie is deleted
+  And on next visit, login form is shown
+```
+
+**Checklist for Security & Edge Cases:**
+
+```
+Acceptance Criteria:
+☐ "Remember Me" checkbox appears below password field
+☐ Checkbox is NOT checked by default (security)
+☐ Cookie is secure (HTTPS only, HttpOnly flag set)
+☐ Cookie includes CSRF token to prevent session hijacking
+☐ User can manually clear "Remember Me" in settings
+☐ If user changes password, old "Remember Me" cookie is invalidated
+☐ Inactive session (no activity for 24 hours) requires re-login
+☐ QA test on desktop, mobile, and tablet browsers
+```
+
+---
+
+## Key Takeaway
+
+**Great AC are specific, testable, and exhaustive.** They answer:
+- ✅ What should happen? (happy path)
+- ✅ What happens if X goes wrong? (error cases)
+- ✅ What about this weird edge case? (boundaries)
+- ✅ How do we know it's done? (metrics)
+
+Write AC like this, and your team will ship faster with fewer surprises and rework.

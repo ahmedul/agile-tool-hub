@@ -1,0 +1,333 @@
+---
+title: "User Story Examples for Different Domains"
+description: "Real-world user story examples across product features, engineering tasks, and tech debt. Learn the patterns that work for each domain."
+slug: "user-story-examples-for-different-domains"
+category: "Guides"
+keywords:
+  - user story examples
+  - user story template examples
+  - how to write user stories
+  - user story patterns
+  - acceptance criteria examples
+relatedLinks:
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "User Story Examples"
+    href: "/content/examples/user-story-examples-for-login-page"
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+User stories are the most versatile tool in agile teams — but they're often written poorly. The format is simple: "As [user], I want [action], so that [value]." The challenge is knowing *how* to apply it across different types of work.
+
+This guide shows real examples across product features, engineering improvements, and tech debt — so you can see the patterns that work.
+
+---
+
+## 1. Product Features (Customer-Facing)
+
+### Example 1: E-Commerce Checkout
+
+```
+As a customer purchasing items,
+I want to save multiple shipping addresses to my account,
+so that I can quickly select a saved address during checkout instead of re-typing.
+
+Acceptance Criteria:
+☐ User can add up to 5 shipping addresses
+☐ Each address includes: name, street, city, state, ZIP, country
+☐ User can mark one address as "default"
+☐ During checkout, default address pre-fills, user can change it
+☐ User can edit/delete existing addresses
+☐ After adding address, page re-displays with confirmation message
+☐ Form validates address completeness before save
+```
+
+**Pattern:** Customer problem → Time savings → Measurable impact (10 seconds saved per repeat purchase)
+
+---
+
+### Example 2: SaaS Dashboard
+
+```
+As a project manager viewing sprint progress,
+I want to see velocity trend charts (past 5 sprints),
+so that I can forecast whether we'll hit the sprint goal by Friday.
+
+Acceptance Criteria:
+☐ Dashboard displays line chart with velocity for past 5 sprints
+☐ Chart shows sprint names on x-axis, story points on y-axis
+☐ Hovering over data point displays exact velocity number
+☐ If < 5 sprints exist, show all available data
+☐ Chart updates automatically when sprint closes
+☐ Chart is responsive (fits mobile/tablet/desktop)
+☐ Slow query (< 200ms) to fetch velocity data
+```
+
+**Pattern:** Manager workflow → Decision enablement → Concrete metric (velocity forecasting)
+
+---
+
+### Example 3: Mobile App Feature
+
+```
+As an app user in a noisy environment,
+I want to enable haptic feedback for notifications,
+so that I can feel alerts even when phone is on silent mode.
+
+Acceptance Criteria:
+☐ Settings screen includes "Notification Haptics" toggle
+☐ When enabled, app triggers haptic pulse on notification
+☐ Setting persists across app sessions
+☐ Works on iOS 12+ and Android 8+
+☐ If device doesn't support haptics, setting is hidden
+☐ Toggle has clear label and tooltip
+```
+
+**Pattern:** User context (noisy environment) → Feature request → Device capability awareness
+
+---
+
+## 2. Engineering Tasks (Infrastructure/Quality)
+
+### Example 4: Performance Optimization
+
+```
+As a backend engineer,
+I want to add Redis caching to the /api/user/profile endpoint,
+so that average response time drops from 800ms to < 100ms and database load decreases.
+
+Acceptance Criteria:
+☐ Redis layer caches user profile for 5 minutes
+☐ Cache key includes userId to isolate per-user data
+☐ On profile update, cache invalidates immediately
+☐ Response time p95 < 100ms (measured via APM)
+☐ Database queries to user_profiles table drop by 70%+
+☐ Cache hit rate > 80% during load testing
+☐ Graceful fallback: if Redis unavailable, queries database directly
+```
+
+**Pattern:** Technical problem → Measurable outcome (response time, DB load) → Fallback strategy
+
+---
+
+### Example 5: Security Hardening
+
+```
+As the security team,
+I want to enforce HTTPS-only communication and add HSTS headers,
+so that we prevent man-in-the-middle attacks on user sessions.
+
+Acceptance Criteria:
+☐ All HTTP requests redirect to HTTPS
+☐ Strict-Transport-Security header set to 1 year
+☐ Header includes includeSubdomains directive
+☐ SSL/TLS certificate valid for primary and wildcard domains
+☐ Security scan (e.g., SSL Labs) rates site as A+ (no downgrade vectors)
+☐ No mixed content warnings in browser console
+```
+
+**Pattern:** Risk → Security mechanism → Compliance verification
+
+---
+
+### Example 6: Dependency Upgrade
+
+```
+As a backend engineer,
+I want to upgrade Next.js from 15.x to 16.x,
+so that we get performance improvements and security patches included in the new release.
+
+Acceptance Criteria:
+☐ package.json updated to Next.js 16.x
+☐ npm test suite passes (no regressions)
+☐ All route handlers still work (e2e tests pass)
+☐ Build time doesn't increase > 5%
+☐ Deployment completes successfully on staging
+☐ No breaking changes in API used by codebase (or updated)
+☐ Release notes reviewed for deprecated features
+```
+
+**Pattern:** Maintenance task → Verification → Risk mitigation (ensure no regressions)
+
+---
+
+## 3. Tech Debt (Refactoring/Cleanup)
+
+### Example 7: Code Refactoring
+
+```
+As a frontend engineer,
+I want to extract the form validation logic into a reusable hook,
+so that new forms automatically use the same validation rules and reduce code duplication by 40%.
+
+Acceptance Criteria:
+☐ New useFormValidation() hook handles common patterns (email, phone, password strength)
+☐ Existing forms updated to use the hook (LoginForm, SignupForm, ProfileForm)
+☐ Validation errors display consistently across all forms
+☐ Hook exported from /src/hooks/ and documented
+☐ Unit tests cover 5+ validation scenarios
+☐ Form component code reduced by 40% (measured by line count)
+☐ No regression in form validation behavior
+```
+
+**Pattern:** DRY principle → Reusability → Metrics (code duplication, lines of code)
+
+---
+
+### Example 8: Database Optimization
+
+```
+As a data engineer,
+I want to add database indices on frequently-queried columns,
+so that slow queries execute < 100ms instead of 2+ seconds.
+
+Acceptance Criteria:
+☐ Index added on (user_id, created_at) in orders table
+☐ Index added on email in users table
+☐ Query plans reviewed to confirm index usage (EXPLAIN ANALYZE)
+☐ Top 5 slow queries now execute < 100ms
+☐ Query performance metrics dashboard updated
+☐ Backup taken before index creation
+☐ Index creation time < 5 minutes (zero-downtime)
+```
+
+**Pattern:** Performance blocker → Index addition → Query plan verification
+
+---
+
+### Example 9: Test Coverage
+
+```
+As a QA engineer,
+I want to add unit tests to the UserStoryGenerator component,
+so that regressions in parsing or quality scoring are caught before deployment.
+
+Acceptance Criteria:
+☐ Unit tests cover 5+ edge cases (empty input, incident emails, templates)
+☐ Tests verify quality score calculation
+☐ Tests verify parsing accuracy (title, description, AC extraction)
+☐ Code coverage for UserStoryGenerator component ≥ 90%
+☐ npm test passes locally and in CI
+☐ Test execution time < 5 seconds
+```
+
+**Pattern:** Quality goal → Test scenarios → Coverage metric
+
+---
+
+## 4. Anti-Patterns (What NOT to Do)
+
+### ❌ Too Vague
+
+```
+As a user,
+I want the system to be faster,
+so that I have a better experience.
+```
+
+**Problem:** "faster" and "better experience" are unmeasurable. How fast? What metrics?
+
+**✅ Better:**
+```
+As a mobile user on 4G,
+I want the dashboard to load in < 3 seconds,
+so that I can check status without waiting.
+
+Acceptance Criteria:
+☐ Dashboard Largest Contentful Paint (LCP) < 3 seconds on 4G (Lighthouse)
+☐ First Contentful Paint (FCP) < 1.5 seconds
+☐ Time to Interactive (TTI) < 5 seconds
+```
+
+---
+
+### ❌ Task Disguised as Story
+
+```
+As a developer,
+I want to refactor the LoginComponent class,
+so that the code is cleaner.
+```
+
+**Problem:** "refactor" is already a task; "cleaner" is not measurable.
+
+**✅ Better:**
+```
+As a new developer joining the team,
+I want to understand the login flow quickly,
+so that I can fix login bugs without deep investigation.
+
+Acceptance Criteria:
+☐ LoginComponent reduced from 400 lines to < 200 lines
+☐ Logic separated into composable functions (useAuth, useFormValidation)
+☐ Code documented with JSDoc comments
+☐ New developer can trace auth flow in < 15 minutes
+```
+
+---
+
+### ❌ Technical Jargon Only
+
+```
+As a backend,
+I want to implement cursor-based pagination on the orders endpoint,
+so that offset-based pagination is eliminated.
+```
+
+**Problem:** No business context; unclear why this matters.
+
+**✅ Better:**
+```
+As a mobile client querying large datasets,
+I want cursor-based pagination on the orders endpoint,
+so that I can reliably fetch large result sets without gaps (offset queries are unreliable with inserts).
+
+Acceptance Criteria:
+☐ GET /api/v1/orders accepts cursor parameter
+☐ Response includes next_cursor for pagination
+☐ Cursor remains valid even if inserts occur between pages
+☐ Mobile client updated to use cursor pagination
+☐ Response time < 200ms p95 per page
+```
+
+---
+
+## 5. Using the User Story Generator
+
+For most of these examples, you could use the [User Story Generator](/tools/user-story-generator) to:
+
+1. Paste incident emails or rough requirements
+2. Select the relevant domain (product, engineering, tech debt)
+3. Get a structured story with pre-drafted acceptance criteria
+4. Refine based on your team's needs
+
+**Pro tip:** Use the **incident mode** if you're converting error reports or support tickets into stories — it auto-detects outages and adjusts the story type (Task vs Story).
+
+---
+
+## Key Patterns Across All Examples
+
+| Type | Audience | Measurable Outcome | AC Focus |
+|------|----------|-------------------|----------|
+| **Product Feature** | End user | Time saved, revenue impact, user satisfaction | User workflows, edge cases |
+| **Engineering Task** | Developer/Ops | Performance, security, reliability metrics | Technical validation, tests |
+| **Tech Debt** | Developer | Code quality, maintainability, velocity increase | Metrics, coverage, regression tests |
+
+---
+
+## Checklist: Is Your User Story Complete?
+
+```
+☐ User role clearly defined (who benefits?)
+☐ Action is specific and measurable (not "improve," but "cache 5 minutes")
+☐ Business value stated (not just "so that it works," but "so that we save X")
+☐ AC are testable (each can be verified as done/not-done)
+☐ AC include edge cases, errors, and performance targets
+☐ Uncertainty noted (blockers, dependencies, questions)
+☐ Estimation is possible (enough detail for engineer to estimate)
+```
+
+Write stories like this, and your team will ship faster with fewer surprises.
