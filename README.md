@@ -63,7 +63,7 @@ OPENAI_API_KEY=<key>
 
 Adding a `.mdx` file to `src/content/{type}/` automatically adds it to the listing page. No code changes needed.
 
-### Templates (12)
+### Templates (15)
 
 | Slug | URL |
 |---|---|
@@ -79,18 +79,24 @@ Adding a `.mdx` file to `src/content/{type}/` automatically adds it to the listi
 | sprint-planning-template | /templates/sprint-planning-template |
 | daily-standup-template | /templates/daily-standup-template |
 | kanban-board-template | /templates/kanban-board-template |
+| complete-jira-ticket-template | /templates/complete-jira-ticket-template |
+| api-requirements-jira-template | /templates/api-requirements-jira-template |
+| definition-of-ready-template | /templates/definition-of-ready-template |
 
-### Guides (7)
+### Guides (10)
 
 | Slug | URL |
 |---|---|
 | how-to-write-a-good-jira-ticket | /guides/how-to-write-a-good-jira-ticket |
 | bug-report-vs-jira-ticket | /guides/bug-report-vs-jira-ticket |
 | how-to-write-acceptance-criteria | /guides/how-to-write-acceptance-criteria |
+| acceptance-criteria-patterns-and-examples | /guides/acceptance-criteria-patterns-and-examples |
 | how-to-run-a-sprint-retrospective | /guides/how-to-run-a-sprint-retrospective |
 | how-to-write-a-feature-request | /guides/how-to-write-a-feature-request |
 | agile-vs-waterfall | /guides/agile-vs-waterfall |
 | kanban-vs-scrum | /guides/kanban-vs-scrum |
+| api-requirements-for-jira-tickets | /guides/api-requirements-for-jira-tickets |
+| user-story-examples-for-different-domains | /guides/user-story-examples-for-different-domains |
 
 ### Examples (7)
 
@@ -164,14 +170,16 @@ Primary wedge for this project:
 | May 24 | Planning Poker, Sprint Capacity Calculator, Retrospective Board (real-time) | ✅ |
 | May 24 | AI mode foundation with monthly quota + pricing page | ✅ |
 | May 24 | Contextual CTAs, copy buttons, About/Privacy pages, GA4 tracking, feedback forms | ✅ |
+| May 25–31 | Complete Jira Ticket Template, API Requirements Template, Definition of Ready Template (SEO priority) | ✅ |
+| May 25–31 | Planning Poker session persistence fix (localStorage restore on refresh) | ✅ |
 | May 25–31 | Measurement setup: Google Search Console, Bing Webmaster Tools, event tracking review, sitemap checks | ⏳ |
 
 ### Month 2 — June 2026 (Conversion + focused SEO)
 
 | Week | Goal | Status |
 |---|---|---|
-| Jun 1–7 | Daily Standup Generator, Velocity Tracker tool (client-side) | ⏳ |
-| Jun 8–14 | Publish high-intent pages only (Jira/API/QA ticket quality topics) | ⏳ |
+| Jun 1–7 | Daily Standup Generator, Velocity Tracker tool (client-side) | ✅ (Daily Standup template done; generator & Velocity Tracker pending) |
+| Jun 8–14 | Publish high-intent pages only (Jira/API/QA ticket quality topics) | ✅ (Jira, API, QA templates published) |
 | Jun 15–21 | Ticket quality score v1 in Bug Report Converter + search title polish | ✅ (completed early on May 25) |
 | Jun 22–30 | Stripe billing integration (server-side plan enforcement) | ⏳ |
 
@@ -200,8 +208,8 @@ Primary wedge for this project:
 
 | Section | Now | Target |
 |---|---|---|
-| Templates | 12 | 20 |
-| Guides | 7 | 14 |
+| Templates | 15 | 20 |
+| Guides | 10 | 14 |
 | Examples | 7 | 16 |
 | Docs | 5 | 8 |
 | Tools | 6 | 10 |
