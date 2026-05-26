@@ -63,6 +63,23 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
   useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
   useEffect(() => { revealedRef.current = revealed; }, [revealed]);
+  
+  // Restore saved stories on mount (before any other effects)
+  useEffect(() => {
+    const savedStories = localStorage.getItem(`pp_stories_${sessionId}`);
+    if (savedStories) {
+      try {
+        const parsed = JSON.parse(savedStories) as StorySummary[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setStories(parsed);
+        }
+      } catch {
+        // Ignore parse errors
+      }
+    }
+  }, [sessionId]);
+  
+  // Persist stories to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem(`pp_stories_${sessionId}`, JSON.stringify(stories));
   }, [stories, sessionId]);
@@ -233,18 +250,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     userIdRef.current = uid;
 
     const savedName = localStorage.getItem("pp_name");
-    const savedStories = localStorage.getItem(`pp_stories_${sessionId}`);
-    
-    if (savedStories && !autoJoinedRef.current) {
-      try {
-        const parsed = JSON.parse(savedStories) as StorySummary[];
-        if (Array.isArray(parsed)) {
-          setStories(parsed);
-        }
-      } catch {
-        // Ignore parse errors
-      }
-    }
     
     if (savedName && !autoJoinedRef.current) {
       autoJoinedRef.current = true;
@@ -254,7 +259,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       setJoined(true);
       joinChannel(savedName);
     }
-  }, [joinChannel, sessionId]);
+  }, [joinChannel]);
 
   useEffect(() => () => { channelRef.current?.unsubscribe(); }, []);
 
