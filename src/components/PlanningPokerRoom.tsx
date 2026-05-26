@@ -236,7 +236,16 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   };
 
   const handleVote = (card: CardValue) => {
-    if (revealed || !currentStory.trim()) return;
+    if (revealed) return;
+
+    if (!currentStory.trim()) {
+      const draftStory = storyInput.trim();
+      if (!draftStory) return;
+      // Smooth UX: first vote can promote typed draft into the active story.
+      setCurrentStory(draftStory);
+      channelRef.current?.send({ type: "broadcast", event: "story", payload: { name: draftStory } });
+    }
+
     const newVote: Vote = myVote === card ? null : card;
     const wasVoted = myVote !== null;
     const isVoted = newVote !== null;
@@ -383,13 +392,14 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
               <button
                 key={card}
                 onClick={() => handleVote(card)}
-                disabled={revealed}
+                disabled={revealed || !hasStory}
+                title={!hasStory ? "Set a story first to enable voting" : undefined}
                 className={[
                   "w-14 h-20 rounded-xl border-2 text-xl font-bold transition-all duration-150",
                   myVote === card
                     ? "bg-blue-600 border-blue-600 text-white shadow-lg scale-105"
                     : "bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:shadow-md",
-                  revealed ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+                  revealed || !hasStory ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
                 ].join(" ")}
               >
                 {card}
