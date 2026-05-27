@@ -1,0 +1,380 @@
+---
+title: "Backlog Refinement Template for Agile Teams"
+description: "A template and agenda for running effective backlog refinement sessions. Includes story breakdown, estimation, prioritization, and discussion frameworks."
+slug: "backlog-refinement-template"
+category: "Templates"
+keywords:
+  - backlog refinement template
+  - backlog grooming agenda
+  - sprint planning preparation
+  - jira backlog
+  - story estimation
+relatedLinks:
+  - title: "How to Break Down Epics Into User Stories"
+    href: "/guides/how-to-break-down-epics-into-user-stories"
+  - title: "Story Points Explained"
+    href: "/docs/story-points-explained"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Epic Template for Jira"
+    href: "/templates/epic-template-jira"
+  - title: "Task Breakdown Template"
+    href: "/templates/task-breakdown-template"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Planning Poker"
+    href: "/tools/planning-poker"
+---
+
+## Backlog Refinement Template
+
+Backlog refinement (also called "grooming") is where the team prepares upcoming work for sprint planning. Use this template to run effective refinement sessions.
+
+---
+
+## Meeting Basics
+
+**Meeting Type:** Backlog Refinement / Backlog Grooming  
+**Frequency:** 1x per week (typically mid-sprint)  
+**Duration:** 60-90 minutes  
+**Attendees:** Product Owner, Tech Lead, 3-5 developers, QA (optional)  
+**Tools:** Jira, Planning Poker tool, video call  
+
+---
+
+## Pre-Refinement Checklist (Before Meeting)
+
+**Product Owner prepares (2 hours before):**
+- [ ] Review top 10 backlog items
+- [ ] Ensure each item has clear title and description
+- [ ] Add acceptance criteria where missing
+- [ ] Add wireframes/mockups if available
+- [ ] Remove duplicate or outdated items
+- [ ] Rank priorities (most important at top)
+
+**Tech Lead prepares (2 hours before):**
+- [ ] Review technical feasibility of top items
+- [ ] Identify blockers or dependencies
+- [ ] Note any architectural decisions needed
+- [ ] Add technical notes to complex stories
+- [ ] Flag items that need design/security review
+
+---
+
+## Meeting Agenda
+
+### 1. Kickoff (5 min)
+
+**Purpose:** Align team on goals for this session.
+
+```
+"Today we're refining the top 15 backlog items for next sprint. 
+Our goal is to have 8-10 stories ready for sprint planning on Thursday.
+Let's make sure we understand each one and can estimate it."
+```
+
+**Outcome:** Team understands which items to discuss.
+
+---
+
+### 2. Product Owner Context (5-10 min)
+
+**Purpose:** Explain business priorities and strategy.
+
+**Talking points:**
+- [ ] Why are these items prioritized?
+- [ ] What customer/business problem do they solve?
+- [ ] Any blockers from a business perspective?
+- [ ] Timeline pressures?
+
+**Example:**
+```
+"Our top 3 priorities this month are: 
+1. OAuth login (3 customers requested, high-traffic feature)
+2. Mobile export (mobile users frustrated with current process)
+3. Analytics dashboard (internal metrics need visibility)
+
+We're holding back on the redesign (good to have, but not urgent)."
+```
+
+---
+
+### 3. Story-by-Story Discussion
+
+**For each story:**
+
+**A. Product Owner Presents (2-3 min)**
+- Title & description
+- Why it matters (business value)
+- Success metrics
+- Any open questions?
+
+**B. Team Asks Clarifying Questions (2-3 min)**
+```
+"How does this integrate with the existing feature?"
+"Is there a design mockup?"
+"Any security considerations?"
+"What's the expected user impact?"
+"Do we need QA for this?"
+```
+
+**C. Tech Lead/Engineer Identifies Tasks (2-3 min)**
+```
+"We'd need: API endpoint, frontend component, unit tests, docs.
+Any blockers I see: we'd need database schema changes (DBA involvement).
+Complexity: medium (we've done similar before)."
+```
+
+**D. Team Estimates Story Points (3-5 min)**
+
+Use Planning Poker tool for unbiased estimates:
+- [ ] Each person votes independently
+- [ ] If divergence (1-8 points), discuss and re-vote
+- [ ] Aim for rough agreement within 1 step on Fibonacci scale
+- [ ] If still unclear, note as "needs refinement" and defer
+
+**Example conversation:**
+```
+Product: "OAuth signup via Google"
+Engineer 1: Votes 8 points (worried about integration bugs)
+Engineer 2: Votes 5 points (straightforward, uses existing library)
+Engineer 3: Votes 5 points
+
+Lead: "Why 8? Let's discuss."
+Engineer 1: "Google API changes are risky. Rate limiting, retries..."
+Engineer 2: "We've done OAuth before. Probably 3-5 days tops."
+
+Final vote: All agree on 5 points.
+```
+
+**E. Acceptance Criteria Check (1-2 min)**
+- [ ] Does the story have clear, testable acceptance criteria?
+- [ ] Are edge cases covered?
+- [ ] Is the definition of "done" clear?
+
+If not, note for product owner to refine before sprint planning.
+
+---
+
+### 4. Dependency Mapping (5-10 min)
+
+**For stories with dependencies:**
+
+```
+Story A (Database schema changes)  ← blocks → Story B (API endpoint)
+                                                  ↓
+                                           Story C (Frontend)
+```
+
+**Identify:**
+- [ ] Which stories must be done first?
+- [ ] Which stories can be done in parallel?
+- [ ] Any external dependencies (design, security review, DBA)?
+- [ ] Any version/platform incompatibilities?
+
+---
+
+### 5. Definition of Ready Checklist (2-3 min, per story)
+
+**Before a story is "ready for sprint," it must have:**
+
+- [ ] Title is clear (starts with user-facing outcome, not "Fix bug")
+- [ ] Description explains "why" (business value)
+- [ ] Acceptance criteria are specific & testable
+- [ ] Story points estimated by team
+- [ ] No dependencies are blocking
+- [ ] (If needed) Design mockups or wireframes attached
+- [ ] (If needed) Security/privacy review noted
+- [ ] Product owner confirmed priority
+- [ ] Team has no major questions
+
+If any box is unchecked, story stays in "Needs Refinement" column.
+
+---
+
+### 6. Prioritization Check (3-5 min)
+
+**Are top items actually the most important?**
+
+```
+Product Owner: "Should this OAuth story be #1, or should we do 
+the mobile export first? Mobile users are loudly asking for it..."
+
+Team: "OAuth would unlock 3 customers. Mobile export is nice-to-have 
+but only affects 5 users. I'd say OAuth first."
+
+Product Owner: "Agreed. Let's keep it #1."
+```
+
+**Note:** Priorities can shift based on team feedback or technical discoveries.
+
+---
+
+### 7. Blockers & Risks (5 min)
+
+**Highlight anything that could derail sprint planning:**
+
+```
+- We're waiting on design mockups (ETA Monday)
+- Security review of payment flow still pending
+- Database migration needs DBA (not allocated yet)
+- API rate limits from third-party service (may need workaround)
+```
+
+**Action items:**
+- [ ] Who will unblock each item?
+- [ ] What's the timeline?
+- [ ] Do we push these stories to next sprint if unblocked?
+
+---
+
+### 8. Refinement Completion Check (5 min)
+
+**Before ending the meeting:**
+
+```
+Going into sprint planning, do we have:
+✓ 8-10 stories estimated
+✓ Clear acceptance criteria for each
+✓ No stories blocked by external dependencies
+✓ Team confidence that stories are "sprintable" (5-13 points each)
+✓ Clear priorities
+✓ No unknowns that would derail sprint
+```
+
+If not all ✓, continue refinement or defer stories to next sprint.
+
+---
+
+### 9. Parking Lot & Takeaways (5 min)
+
+**Questions that came up but aren't urgent:**
+
+```
+Parking Lot:
+- "Should we add dark mode support?" → Research for next refine
+- "Can we optimize the checkout flow?" → Roadmap item for Q3
+- "What about API rate limits?" → DBA to investigate
+```
+
+**Action Items:**
+- [ ] Tech lead: Investigate API rate limits (by Wed)
+- [ ] Product: Get design mockups (by Monday)
+- [ ] Ops: Allocate DBA for schema review (ASAP)
+
+---
+
+## Story Template (Quick Reference)
+
+During refinement, ensure each story looks like this:
+
+```
+Title: "As a user, I can sign up via Google OAuth"
+
+Description:
+Users currently must create a password. They're asking for 
+social login options (especially Google). This will reduce 
+signup friction and boost sign-ups by ~10%.
+
+Acceptance Criteria:
+- [ ] User sees "Sign up with Google" button on signup page
+- [ ] Clicking button opens Google OAuth consent screen
+- [ ] After consent, user account created with Google profile data
+- [ ] User logged in and redirected to dashboard
+- [ ] Email verified automatically from Google profile
+- [ ] Existing email accounts can link Google later
+
+Story Points: 5
+Depends On: None (OAuth library already integrated from previous work)
+```
+
+---
+
+## Common Refinement Issues & Solutions
+
+| Issue | Solution |
+|---|---|
+| **Stories too big** | Break into smaller stories (each 2-5 points ideally) |
+| **Stories unclear** | Product owner explains business value, team asks questions |
+| **No acceptance criteria** | Pause & write them together (5 min) |
+| **Disagreement on points** | Use planning poker, discuss discrepancies |
+| **Too many blockers** | Defer to next sprint, focus on what's ready now |
+| **People quiet/not engaged** | Call on individuals, ask "Do you agree?" vs assumptions |
+| **Meeting running over** | Timebox: 60-90 min max. Defer complex items. |
+
+---
+
+## Sample Refinement Output (15 Stories Refined)
+
+```
+Ready for Next Sprint (10 stories):
+- PROJ-141: OAuth Google signup — 5 pts
+- PROJ-142: Forgot password email — 3 pts
+- PROJ-143: Mobile app responsive design — 8 pts
+- PROJ-144: Analytics dashboard v1 — 5 pts
+- PROJ-145: Database backup automation — 5 pts
+- PROJ-146: User profile page — 2 pts
+- PROJ-147: Email notification preferences — 3 pts
+- PROJ-148: API rate limiting — 3 pts
+- PROJ-149: Improve error messages — 2 pts
+- PROJ-150: Dark mode toggle — 5 pts
+
+Total Points Ready: 41 points (good for 2 sprints at 20 pts/sprint)
+
+Needs Refinement (3 stories):
+- PROJ-151: "Admin dashboard" — needs mockups (ETA Friday)
+- PROJ-152: "Payment v2" — needs security review (ETA next week)
+- PROJ-153: "Bulk export" — story too vague, needs breakdown
+
+Not Ready / Deferred:
+- PROJ-154: "Redesign UI" — not prioritized, hold in backlog
+- PROJ-155: "Dark mode v2" — can wait, similar to PROJ-150
+```
+
+---
+
+## Facilitation Tips
+
+**Keep it moving:**
+- Timebox each story (5-7 min max)
+- Use planning poker to avoid endless discussion
+- If disagreement continues, defer and revisit
+
+**Psychological safety:**
+- Encourage questions ("No such thing as a dumb question")
+- Value all voices (junior devs often see issues seniors miss)
+- Normalize changing priorities ("We learn new info, plans shift")
+
+**Engagement:**
+- Rotate who presents stories (not just product owner)
+- Ask engineers "What questions do you have?" not "Do you understand?"
+- Call on quieter people by name
+
+---
+
+## Post-Refinement (After Meeting)
+
+**Product Owner:**
+- [ ] Update Jira with final estimates
+- [ ] Mark stories as "Ready for Sprint"
+- [ ] Note any risks/blockers in ticket descriptions
+
+**Tech Lead:**
+- [ ] Share notes on dependencies & technical concerns
+- [ ] Flag blockers to relevant teams (design, security, DBA)
+- [ ] Confirm sprint planning is on track
+
+**Team:**
+- [ ] Ask questions async if anything is still unclear
+- [ ] Review blocked items before sprint planning
+
+---
+
+## Next: Sprint Planning
+
+Once backlog refinement is done and stories are "Ready", you're prepared for sprint planning (typically 1-2 days before sprint starts).
+
+See: [Sprint Planning Template](/templates/sprint-planning-template)
+
