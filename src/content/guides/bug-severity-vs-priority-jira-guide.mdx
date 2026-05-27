@@ -1,0 +1,381 @@
+---
+title: "Bug Severity vs Priority: A Jira Guide for Software Teams"
+description: "Understand the difference between bug severity and priority in Jira. Learn how to classify bugs, assign levels correctly, and triage your backlog effectively."
+slug: "bug-severity-vs-priority-jira-guide"
+category: "Guides"
+keywords:
+  - bug severity priority jira
+  - how to prioritize bugs
+  - jira bug classification
+  - bug severity levels
+  - jira priority levels
+relatedLinks:
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "QA Handoff Checklist"
+    href: "/guides/qa-handoff-checklist-for-jira-teams"
+  - title: "QA to Dev Handoff Template"
+    href: "/templates/qa-to-dev-handoff-template"
+  - title: "Bug Report to Jira Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+---
+
+## Bug Severity vs Priority: What's the Difference?
+
+Many teams confuse **severity** (how bad is the bug?) and **priority** (how soon should we fix it?). These are two separate dimensions that work together to determine when a bug gets fixed.
+
+### Quick Definition
+
+| Dimension | Question | Focus | Owner |
+|---|---|---|---|
+| **Severity** | How serious is the impact? | Technical impact on users/system | QA / Product |
+| **Priority** | When should we fix it? | Business/timeline impact | Managers / Dev team lead |
+
+---
+
+## Bug Severity Levels
+
+**Severity** describes the technical impact of the bug. It's usually set by QA when reporting.
+
+### Severity 1: Critical (P0)
+
+**Impact:** System-wide failure. Users cannot use the product at all.
+
+**Examples:**
+- App crashes on startup
+- Database corrupted (data loss)
+- Payment processing down (revenue loss)
+- Login completely broken for all users
+- API returns 500 errors for all requests
+
+**Fix Timeline:** Immediately (within hours)
+
+```
+Example Jira Ticket:
+Title: "Login API returns 500 error for all users"
+Severity: Critical
+Priority: Highest
+Description: All users unable to authenticate. Production down.
+```
+
+---
+
+### Severity 2: High (Major)
+
+**Impact:** Core feature is broken or severely degraded. Many users affected.
+
+**Examples:**
+- Dashboard loads but missing critical data
+- Search returns incorrect results
+- Export function produces corrupted files
+- Performance issue: page load time > 10 seconds
+- Data not syncing between app and server
+- User permissions misconfigured (non-admin users have admin access)
+
+**Fix Timeline:** Same day if possible (within 24 hours)
+
+```
+Example Jira Ticket:
+Title: "Dashboard data not syncing for 20% of users"
+Severity: High
+Priority: High
+Description: Users see stale data. Refresh works but sync broken.
+```
+
+---
+
+### Severity 3: Medium (Minor)
+
+**Impact:** Feature works but has issues. Workaround exists. Small user group affected.
+
+**Examples:**
+- UI element misaligned on certain screen sizes
+- Button text is confusing but functionality works
+- Report exports but headers are wrong
+- Autocomplete dropdown sometimes shows duplicates
+- Email notification delayed by 5-10 minutes
+- Performance issue: page load time is 3-4 seconds (expected 1-2)
+
+**Fix Timeline:** This sprint or next sprint (within days/week)
+
+```
+Example Jira Ticket:
+Title: "Dashboard filters reset when changing tabs"
+Severity: Medium
+Priority: Medium
+Description: Filters clear unexpectedly. Users can set them again. Workaround: don't switch tabs.
+```
+
+---
+
+### Severity 4: Low (Cosmetic)
+
+**Impact:** UI/UX polish. No functionality broken. Nice-to-fix.
+
+**Examples:**
+- Typo in error message
+- Icon doesn't match other icons
+- Font weight inconsistent
+- Spacing slightly off between elements
+- Tooltip wording could be clearer
+- Color contrast could be better
+
+**Fix Timeline:** When time allows (next month or later)
+
+```
+Example Jira Ticket:
+Title: "Typo in Settings page: 'Prefrence' should be 'Preference'"
+Severity: Low
+Priority: Low
+Description: No functional impact.
+```
+
+---
+
+## Bug Priority Levels (in Jira)
+
+**Priority** describes when the bug should be fixed based on business impact and timeline. It's usually set by managers or dev team leads.
+
+### Priority 1: Highest
+
+**Business Impact:** Revenue loss, legal/security risk, customer churn risk.
+
+**Timeline:** Fix immediately, deploy today if possible.
+
+**When to use:**
+- Customer-facing bug affecting paid features
+- Security vulnerability (authentication bypass, data leak)
+- SLA violation (service reliability)
+- High-visibility customer / enterprise client affected
+- Marketing campaign blocked
+
+```
+Example Jira Ticket:
+Title: "Pro tier users cannot access export feature (revenue impact)"
+Priority: Highest
+Severity: High
+Description: Core feature customers paid for is broken.
+```
+
+---
+
+### Priority 2: High
+
+**Business Impact:** Customer impact but not immediate revenue loss.
+
+**Timeline:** Fix this week.
+
+**When to use:**
+- Critical workflow broken but workaround exists
+- Multiple customer support tickets about same issue
+- Beta/early-access users blocked
+- Performance severely degraded (> 50% slower than baseline)
+- Known issue causing customer frustration
+
+```
+Example Jira Ticket:
+Title: "Dashboard refresh sometimes missing recent data"
+Priority: High
+Severity: High
+Description: 5 customers reported this week. Manual refresh works.
+```
+
+---
+
+### Priority 3: Medium
+
+**Business Impact:** Minor customer frustration or internal efficiency loss.
+
+**Timeline:** Fix this sprint or next.
+
+**When to use:**
+- Feature works but UX is awkward
+- Internal tool slightly broken (productivity impact)
+- Performance noticeably slower but acceptable
+- Low-impact data inconsistency
+- Small subset of users affected
+
+```
+Example Jira Ticket:
+Title: "Admin panel takes 3 seconds to load (was <1 second)"
+Priority: Medium
+Severity: Medium
+Description: Works but slower than before. Affects internal team.
+```
+
+---
+
+### Priority 4: Low
+
+**Business Impact:** None or very minor.
+
+**Timeline:** Fix when time allows.
+
+**When to use:**
+- Nice-to-fix cosmetic issues
+- Extremely rare edge case
+- Internal process improvement
+- Polish for future major release
+
+```
+Example Jira Ticket:
+Title: "Settings page: notification icon misaligned by 2px"
+Priority: Low
+Severity: Low
+Description: No functional impact.
+```
+
+---
+
+## How Severity and Priority Work Together
+
+Think of it like hospital triage:
+
+| Severity | Priority | Scenario | Action |
+|---|---|---|---|
+| **Critical** | Highest | Patient dying NOW | Emergency surgery immediately |
+| **Critical** | High | Patient needs immediate surgery but ER is full | In queue, but as soon as slot opens |
+| **High** | Highest | Major surgery needed, patient is deteriorating | Schedule today if possible |
+| **High** | Medium | Major issue but stable, planned surgery | Schedule this week |
+| **Medium** | High | Broken arm, severe pain, but not life-threatening | Today if time, tomorrow ok |
+| **Medium** | Medium | Broken arm, can wait a few days | This week |
+| **Low** | Medium | Sprained ankle, very annoying but functional | This week when convenient |
+| **Low** | Low | Paper cut | When someone has time |
+
+---
+
+## Real-World Example: How to Classify a Bug
+
+### Scenario: "Payment confirmation page is blank"
+
+**First, determine Severity:**
+- Users cannot complete purchases
+- Core functionality broken
+- Affects all users trying to buy
+- **→ Severity: Critical (P0)** ✓
+
+**Next, determine Priority:**
+- Is this in production? Yes, live on the website
+- How many customers affected? All new orders (revenue loss)
+- Can users work around it? No
+- **→ Priority: Highest** ✓
+
+**Final Classification:**
+```
+Title: "Payment confirmation page blank—all users affected"
+Severity: Critical
+Priority: Highest
+Action: Fix immediately, deploy ASAP
+```
+
+---
+
+### Another Scenario: "Typo in export file header"
+
+**First, determine Severity:**
+- Export still works
+- Functionality is fine
+- Only cosmetic
+- **→ Severity: Low** ✓
+
+**Next, determine Priority:**
+- How many customers notice? Very few (internal teams only)
+- Revenue impact? None
+- Customer pain? Minimal
+- **→ Priority: Low** ✓
+
+**Final Classification:**
+```
+Title: "Typo in export header: 'Prefrence' instead of 'Preference'"
+Severity: Low
+Priority: Low
+Action: Fix when time allows
+```
+
+---
+
+## Jira Field Setup: How to Use This in Your Workflow
+
+### Jira Custom Field Setup
+
+In **Jira → Project Settings → Fields**, add/configure:
+
+```
+Field: Severity
+Type: Dropdown / Radio
+Options:
+  - Critical (P0)
+  - High (P1)
+  - Medium (P2)
+  - Low (P3)
+
+Field: Priority (built-in)
+Type: Dropdown
+Options:
+  - Highest
+  - High
+  - Medium
+  - Low
+  - Lowest
+```
+
+### Jira Automation Rule (Optional but Helpful)
+
+```
+IF ticket is labeled "qa-handoff" AND severity = "Critical"
+THEN set priority = "Highest" AND assign to [Dev Lead] AND notify [Dev Team]
+```
+
+---
+
+## Team Decision: Severity vs Priority Matrix
+
+Use this to align your team on how severity and priority relate:
+
+| Severity | Typical Priority | Reason |
+|---|---|---|
+| Critical | Highest/High | Critical bugs should be fixed ASAP |
+| High | High/Medium | High severity usually deserves quick fix, unless deprioritized |
+| Medium | Medium/Low | Medium severity can wait depending on business impact |
+| Low | Low | Low severity almost never urgent |
+
+**Exception:** A Low severity bug in a critical customer's high-profile feature might have **High priority**.
+
+---
+
+## Best Practices
+
+### During Bug Reporting (QA)
+- ✅ Set Severity based on technical impact (use the definitions above)
+- ✅ Include concrete examples (number of users affected, exact scenarios)
+- ✅ Provide environment details (OS, browser, version)
+- ❌ Don't guess priority—that's the dev team's decision
+
+### During Bug Triage (Dev Team)
+- ✅ Review QA's severity assessment; adjust if needed
+- ✅ Set priority based on business impact + timeline
+- ✅ Discuss high-priority bugs in team sync
+- ✅ Use priority to sort sprint backlog
+- ❌ Don't confuse severity with priority
+
+### When Deploying
+- ✅ Fix all "Highest" priority bugs before any release
+- ✅ Fix "High" priority bugs before going to production
+- ✅ "Medium" can go to staging for team to test
+- ✅ "Low" can be backlog
+
+---
+
+## Common Questions
+
+**Q: Can a bug be Low severity but High priority?**  
+A: Yes. Example: Typo in company name on homepage (Low severity), but the CEO is visiting this week (High priority). Fix it!
+
+**Q: Who decides priority?**  
+A: Usually the product manager or dev team lead, based on business input.
+
+**Q: Should Severity and Priority always be the same?**  
+A: No. They're independent dimensions. Most Critical bugs are Highest priority, but not always.
+
+**Q: What if we disagree on priority?**  
+A: Have a quick sync with the dev lead and product manager. Discuss the business impact and timeline, then align on next steps.
