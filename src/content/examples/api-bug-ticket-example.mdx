@@ -1,0 +1,311 @@
+---
+title: "API Bug Ticket Example: Authentication Endpoint Returning 500"
+description: "A real-world example of a well-written Jira bug ticket for an API issue. Includes reproduction steps, environment details, error logs, and expected vs actual behavior."
+slug: "api-bug-ticket-example"
+category: "Examples"
+keywords:
+  - api bug ticket
+  - jira bug report example
+  - api error jira
+  - bug ticket template example
+  - authentication bug
+relatedLinks:
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Bug Severity vs Priority Guide"
+    href: "/guides/bug-severity-vs-priority-jira-guide"
+  - title: "Bug Report to Jira Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+  - title: "API Requirements Template"
+    href: "/templates/api-requirements-jira-template"
+---
+
+## Real-World Example: API Bug Ticket (Authentication Endpoint)
+
+Below is a well-written Jira bug ticket for an API issue. Use it as a template for documenting API bugs clearly.
+
+---
+
+## Jira Ticket: Full Text
+
+```
+Title: "POST /auth/login returns 500 error for OAuth users (Google sign-up)"
+
+Type: Bug
+Severity: Critical ⚠️ (All OAuth users unable to authenticate)
+Priority: Highest 🔴 (Production-blocking, revenue impact)
+Assignee: @backend-team-lead
+Labels: api, authentication, oauth, blocker, qa-handoff
+Estimation: 5 points
+
+---
+
+## Summary
+
+Users attempting to sign up via Google OAuth receive a generic "500 Internal Server Error" response. Sign-up with email/password works fine. Only Google OAuth is affected.
+
+---
+
+## Environment
+
+Build/Version: v2.4.1 (build #5847)
+Deployed To: Production
+Tested Date: 2026-05-26
+Tested Time: 14:30-15:45 UTC
+Environment: Production (live.example.com)
+
+---
+
+## Severity Assessment
+
+- **Impact:** All users attempting Google OAuth sign-up are blocked
+- **Affected Users:** Anyone new trying to register via Google (estimates 30-40% of sign-ups use OAuth)
+- **Revenue Impact:** Sign-up flow broken = lost users during peak hours
+- **Workaround:** None (email sign-up still works, but not for users who prefer OAuth)
+- **Severity Level:** CRITICAL
+
+---
+
+## Priority Assessment
+
+- Production outage affecting sign-up flow
+- High traffic during morning hours (30+ attempts/minute failing)
+- New user acquisition blocked
+- No workaround
+- **Priority Level:** HIGHEST
+
+---
+
+## Steps to Reproduce
+
+1. Go to: https://live.example.com/signup
+2. Click "Sign up with Google"
+3. Complete Google OAuth consent screen
+4. After OAuth redirect back to app
+5. User sees: Generic error page "500 - Internal Server Error"
+6. No new account created
+7. User cannot access app
+
+---
+
+## Expected Behavior
+
+1. User completes Google OAuth
+2. App creates new user account with Google profile data (name, email, avatar)
+3. App logs user in automatically
+4. User redirected to dashboard
+5. User can access app normally
+
+---
+
+## Actual Behavior
+
+1. User completes Google OAuth consent
+2. App receives OAuth token from Google
+3. App attempts to create user account
+4. App returns HTTP 500 error to browser
+5. User sees: "500 - Internal Server Error"
+6. No account created
+7. User cannot access app
+8. App logs do not show clear error message (see Logs below)
+
+---
+
+## API Response (Failed)
+
+**Request:**
+```
+POST /api/auth/oauth/callback
+Content-Type: application/json
+
+{
+  "provider": "google",
+  "code": "4/0AX4XFWQ...",
+  "redirect_uri": "https://live.example.com/auth/callback"
+}
+```
+
+**Response:**
+```
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{
+  "error": "Internal Server Error",
+  "message": "Something went wrong",
+  "timestamp": "2026-05-26T14:32:15.231Z"
+}
+```
+
+⚠️ **Issue:** Error message is too generic—no indication of root cause.
+
+---
+
+## Error Logs
+
+**From: CloudWatch Logs (May 26, 14:30-15:45 UTC)**
+
+```
+[ERROR] 2026-05-26T14:32:15.231Z - POST /api/auth/oauth/callback
+Error: TypeError: Cannot read property 'email' of undefined
+  at /app/src/auth/oauth.service.ts:145:22
+  at processTicket (/app/src/utils/async.ts:82:15)
+  at async handler (/app/src/auth/oauth.service.ts:134:15)
+
+Stack:
+  oauth.service.ts:145 (fetchUserProfile)
+  oauth.service.ts:134 (handleOAuthCallback)
+  routes.ts:203 (POST /api/auth/oauth/callback)
+
+Input: {
+  "provider": "google",
+  "code": "4/0AX4XFWQ...",
+  "access_token": "ya29.a0ASFS..."
+}
+```
+
+**Analysis:**
+- Code is trying to read `.email` from an undefined object
+- Likely the Google API response parsing is failing
+- Happens at line 145 in `oauth.service.ts` in the `fetchUserProfile` function
+
+---
+
+## Reproduction Data
+
+**Test Accounts Used:**
+- Google account: qa-google-001@gmail.com
+- Password: [redacted]
+
+**Test Results:**
+- First attempt: 14:32 UTC - 500 error ✗
+- Second attempt (5 min later): 14:37 UTC - 500 error ✗
+- Third attempt (different Google account): 14:42 UTC - 500 error ✗
+- Email sign-up (same session): 14:45 UTC - Works ✓
+- Facebook OAuth (same session): 14:48 UTC - Works ✓
+
+**Conclusion:** Google OAuth specifically is broken. Other auth methods work.
+
+---
+
+## Tested Variations
+
+| Variation | Result | Notes |
+|---|---|---|
+| Google OAuth on Chrome/Mac | ❌ Fails 500 | Consistent failure |
+| Google OAuth on Firefox/Mac | ❌ Fails 500 | Same error |
+| Google OAuth on Safari/iPhone | ❌ Fails 500 | Tested on iPhone 12 Pro |
+| Email sign-up | ✅ Works | No issues |
+| Facebook OAuth | ✅ Works | No issues |
+| GitHub OAuth | ✅ Works | No issues |
+
+---
+
+## Possible Root Causes
+
+Based on error logs, likely causes (QA hypothesis):
+
+1. **Google API Response Format Changed** — Google might have updated their OAuth token response format, and the code expects the old format
+2. **Missing or Incorrect Google Client ID** — Configuration might be pointing to wrong credentials
+3. **Google API Rate Limit** — Google service might be throttling requests (but would expect 429, not 500)
+4. **Database Connection Issue** — Account creation might be failing silently before returning error
+
+---
+
+## Related Issues
+
+- [Related ticket if applicable]
+- Customer support escalation (5+ users reporting in past hour)
+
+---
+
+## Attachments
+
+- **Screenshot 1:** Sign-up page error state (screenshot.png)
+- **Screenshot 2:** Browser console showing failed POST request (console-error.png)
+- **Log file:** Full error stack from CloudWatch (app-logs-2026-05-26.txt)
+- **Network trace:** HAR file showing OAuth callback request (oauth-callback-trace.har)
+
+---
+
+## Suggested Approach (QA Investigation)
+
+- [ ] Check Google OAuth configuration in staging/prod (client ID, secret)
+- [ ] Compare Google API response format between v2.3.0 (working) vs v2.4.1 (broken)
+- [ ] Check if recent commits changed OAuth parsing logic
+- [ ] Test with Google's OAuth Playground to verify credentials
+- [ ] Add more detailed error logging to `oauth.service.ts:145`
+
+---
+
+## QA Testing Plan (After Fix)
+
+Once dev deploys a fix:
+- [ ] Test Google OAuth on Chrome, Firefox, Safari (desktop)
+- [ ] Test Google OAuth on iPhone, Android (mobile)
+- [ ] Test multiple Google accounts
+- [ ] Test concurrent requests (multiple users signing up simultaneously)
+- [ ] Verify new account is created in database
+- [ ] Verify user is logged in after OAuth redirect
+- [ ] Verify user data (name, email, avatar) from Google matches
+
+---
+
+## Communication
+
+**Reported by:** @qa-engineer-john  
+**Reported Date:** 2026-05-26 at 15:45 UTC  
+**Ticket Created:** 2026-05-26 at 16:00 UTC  
+**Urgency:** CRITICAL - Production outage  
+
+**Slack:** Notified #engineering-team and @backend-lead  
+**Status:** Waiting for dev to acknowledge
+
+---
+
+## Sign-Off
+
+**QA Engineer:** John Smith (@qa-engineer-john)  
+**Date:** 2026-05-26  
+**Confidence Level:** Very High (100% reproducible, clear error logs)  
+
+---
+
+## What Makes This Bug Ticket Good
+
+✅ **Clear Title** — Exactly what's broken and who's affected  
+✅ **Severity & Priority Set** — Receiver knows this is urgent  
+✅ **Exact Steps** — Dev can follow them without asking  
+✅ **Environment Details** — Build number, deployment, tested date/time  
+✅ **Error Logs** — Shows the exact stack trace and line number  
+✅ **API Details** — Request/response format visible  
+✅ **Evidence** — Screenshots, network traces attached  
+✅ **Test Variations** — Shows other auth methods work (narrows scope)  
+✅ **Workarounds** — Shows email auth works (users not completely blocked)  
+✅ **Hypothesis** — QA suggests possible causes  
+✅ **Testing Plan** — Tells dev how to verify the fix  
+
+---
+
+## What to Avoid
+
+❌ **Vague title** — "Login broken" (too generic)  
+❌ **Missing logs** — Just "I got an error"  
+❌ **No steps** — "Sometimes it fails"  
+❌ **Wrong environment** — Testing on staging but reporting as production  
+❌ **No severity** — Reader doesn't know if this is critical  
+❌ **Unrelated info** — "This also happens with the dashboard" (separate ticket)  
+❌ **Personal frustration** — "This is unacceptable!" (unprofessional)  
+❌ **Blame** — "Backend team didn't test this" (not productive)  
+
+---
+
+## Key Takeaway
+
+A good API bug ticket tells the story:
+1. **What** is broken (title + summary)
+2. **How** to see it (steps to reproduce)
+3. **Where** it happens (environment + build)
+4. **Why** it matters (severity + impact)
+5. **What** changed (logs + recent changes)
+6. **How** to fix it (logs point to exact line, hypothesis on cause)
