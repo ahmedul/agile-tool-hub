@@ -1,0 +1,517 @@
+---
+title: "Code Review Examples: Performance Review Case Studies"
+description: "Real-world code review examples showing performance improvements, N+1 query fixes, and optimization techniques with before/after comparisons."
+slug: "code-review-examples-performance"
+category: "Examples"
+keywords:
+  - code review examples
+  - performance optimization
+  - database optimization
+  - N+1 query problem
+  - code refactoring examples
+relatedLinks:
+  - title: "Code Review Template"
+    href: "/templates/code-review-template"
+  - title: "Code Review Best Practices"
+    href: "/guides/code-review-best-practices-for-teams"
+  - title: "Pull Request Review Checklist"
+    href: "/guides/pull-request-review-checklist"
+  - title: "Security Code Review Template"
+    href: "/templates/security-code-review-template"
+  - title: "Story Point Estimation Guide"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "How to Break Down Epics"
+    href: "/guides/how-to-break-down-epics-into-user-stories"
+  - title: "Task Breakdown Template"
+    href: "/templates/task-breakdown-template"
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+---
+
+## Code Review Examples: Performance Case Studies
+
+Real-world code review scenarios showing how to identify and fix performance problems.
+
+---
+
+## Example 1: N+1 Query Problem in User Listing
+
+### The PR
+
+```javascript
+// ❌ BEFORE: User listing endpoint
+app.get('/api/users', async (req, res) => {
+  const users = await User.find().limit(20);
+  
+  // Add post count for each user
+  const usersWithPosts = users.map(async (user) => {
+    const postCount = await Post.countDocuments({ userId: user._id });
+    return { ...user.toObject(), postCount };
+  });
+  
+  res.json(await Promise.all(usersWithPosts));
+});
+```
+
+### The Review
+
+```
+🔴 PERFORMANCE: N+1 Query Problem
+
+Line 4-6: For each user, you're making a database query to count posts.
+With 20 users, that's 1 + 20 = 21 queries total.
+
+As the user list grows, this will slow down exponentially:
+- 100 users = 101 queries
+- 1000 users = 1001 queries
+
+Impact: User list page loads in ~2 seconds instead of ~50ms
+
+Fix: Use aggregation to count posts efficiently in a single query
+
+After fix, test query time improvement:
+- Before: ~2000ms for 20 users
+- Target: ~50ms for 20 users
+```
+
+### The Fix
+
+```javascript
+// ✅ AFTER: Efficient aggregation
+app.get('/api/users', async (req, res) => {
+  const usersWithPosts = await User.aggregate([
+    { $limit: 20 },
+    {
+      $lookup: {
+        from: 'posts',
+        localField: '_id',
+        foreignField: 'userId',
+        as: 'posts'
+      }
+    },
+    {
+      $addFields: {
+        postCount: { $size: '$posts' }
+      }
+    },
+    {
+      $project: { posts: 0 }  // Don't return full posts array
+    }
+  ]);
+  
+  res.json(usersWithPosts);
+});
+```
+
+### Performance Results
+
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Query count | 21 queries | 1 query | 95% fewer |
+| Load time (20 users) | 2000ms | 50ms | 40x faster ✅ |
+| Database CPU | High | Low | Reduced ✅ |
+| User satisfaction | "Page is slow" | Instant load | Fixed ✅ |
+
+---
+
+## Example 2: Memory Leak in Event Listener
+
+### The PR
+
+```javascript
+// ❌ BEFORE: Memory leak with event listeners
+class NotificationManager {
+  constructor() {
+    this.notifications = [];
+  }
+  
+  subscribe(userId, callback) {
+    // Every time we subscribe, add listener
+    document.addEventListener('notification', (event) => {
+      if (event.userId === userId) {
+        callback(event);
+      }
+    });
+  }
+}
+
+// Usage:
+const manager = new NotificationManager();
+manager.subscribe(123, (notif) => console.log(notif));
+manager.subscribe(123, (notif) => console.log(notif));  // Oops, 2nd listener never removed
+manager.subscribe(123, (notif) => console.log(notif));  // 3rd listener never removed
+```
+
+### The Review
+
+```
+🟠 MEMORY LEAK: Event listeners never removed
+
+Line 7-12: Every call to subscribe() adds a new listener but 
+never removes old ones.
+
+Problem:
+1. User navigates to notifications page
+2. Page subscribes to user 123 events
+3. Page unloads (navigate to home)
+4. Old listener still in memory
+5. Repeat 50 times = 50 listeners accumulate
+6. Eventually browser slows down
+
+Fix: 
+- Store listener reference so we can remove it later
+- Call removeEventListener on unsubscribe
+- Use a WeakMap to avoid memory leaks
+```
+
+### The Fix
+
+```javascript
+// ✅ AFTER: Proper cleanup
+class NotificationManager {
+  constructor() {
+    this.listeners = new Map();  // Track listeners
+  }
+  
+  subscribe(userId, callback) {
+    const listener = (event) => {
+      if (event.userId === userId) {
+        callback(event);
+      }
+    };
+    
+    // Store reference so we can remove it later
+    if (!this.listeners.has(userId)) {
+      this.listeners.set(userId, []);
+    }
+    this.listeners.get(userId).push(listener);
+    
+    // Add listener
+    document.addEventListener('notification', listener);
+  }
+  
+  unsubscribe(userId) {
+    // Remove all listeners for this user
+    const listeners = this.listeners.get(userId) || [];
+    listeners.forEach(listener => {
+      document.removeEventListener('notification', listener);
+    });
+    this.listeners.delete(userId);
+  }
+}
+
+// Usage:
+const manager = new NotificationManager();
+manager.subscribe(123, (notif) => console.log(notif));
+// ... later when user navigates away:
+manager.unsubscribe(123);  // Clean up! ✅
+```
+
+### Results
+
+| Metric | Before | After | Impact |
+|--------|--------|-------|--------|
+| Listeners per page | ~50 accumulated | Cleaned up | No memory leak ✅ |
+| Memory after 50 pages | ~50MB wasted | ~0MB extra | Freed ✅ |
+| Browser performance | Sluggish after 1hr | Stays fast | Fixed ✅ |
+
+---
+
+## Example 3: Inefficient String Concatenation
+
+### The PR
+
+```javascript
+// ❌ BEFORE: Inefficient string building
+function formatUserCSV(users) {
+  let csv = '';
+  
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    csv += user.id + ',' + user.email + ',' + user.name + '\n';
+  }
+  
+  return csv;
+}
+
+// Exporting 10,000 users:
+// 10,000 iterations × 3 concatenations = 30,000 string operations
+```
+
+### The Review
+
+```
+🟠 PERFORMANCE: String concatenation in loop
+
+Line 6: Building strings with += in a loop is inefficient.
+
+Each += operation:
+1. Creates a new string object
+2. Copies old string content
+3. Appends new content
+4. Discards old string object
+
+With 10,000 users, that's 30,000 temporary objects created and 
+discarded. Very wasteful!
+
+Impact: CSV export takes ~500ms instead of ~10ms
+
+Fix: Use array.join() instead
+```
+
+### The Fix
+
+```javascript
+// ✅ AFTER: Efficient array join
+function formatUserCSV(users) {
+  const rows = users.map(user =>
+    `${user.id},${user.email},${user.name}`
+  );
+  
+  return rows.join('\n');
+}
+
+// Or using a library:
+import { stringify } from 'csv-stringify/sync';
+function formatUserCSV(users) {
+  return stringify(users, {
+    header: true,
+    columns: ['id', 'email', 'name']
+  });
+}
+```
+
+### Performance Results
+
+| Operation | Before | After | Improvement |
+|-----------|--------|-------|------------|
+| Export 10k users | 500ms | 10ms | 50x faster ✅ |
+| Memory allocations | 30k temporary strings | 1 final string | Reduced ✅ |
+| GC pressure | High | Low | Better GC ✅ |
+
+---
+
+## Example 4: Blocking Synchronous Operation
+
+### The PR
+
+```javascript
+// ❌ BEFORE: Synchronous file read blocks everything
+app.get('/api/reports/:id', (req, res) => {
+  // This blocks the entire server!
+  const reportData = fs.readFileSync(`./reports/${req.params.id}.txt`);
+  
+  // While this file reads, all other requests are waiting
+  res.json({ report: reportData });
+});
+
+// Request 1 hits endpoint: File read starts, takes 500ms
+// Request 2 hits endpoint: BLOCKED for 500ms until Request 1 finishes
+// Request 3 hits endpoint: BLOCKED for 1000ms (waiting for 1 and 2)
+```
+
+### The Review
+
+```
+🔴 PERFORMANCE: Synchronous blocking operation
+
+Line 3: fs.readFileSync() blocks the entire Node.js event loop.
+
+Impact:
+- With 100 concurrent requests, last request waits 50+ seconds
+- API becomes unusable under load
+- Users see "connection timeout"
+
+Fix: Use async/await with fs.promises
+```
+
+### The Fix
+
+```javascript
+// ✅ AFTER: Non-blocking async read
+app.get('/api/reports/:id', async (req, res) => {
+  try {
+    const reportData = await fs.promises.readFile(
+      `./reports/${req.params.id}.txt`,
+      'utf-8'
+    );
+    res.json({ report: reportData });
+  } catch (error) {
+    res.status(404).json({ error: 'Report not found' });
+  }
+});
+
+// Request 1 hits endpoint: Async file read starts
+// Request 2 hits endpoint: Also starts async file read (doesn't wait!)
+// Request 3 hits endpoint: Also starts async file read
+// All 3 read in parallel, each gets response in ~500ms
+```
+
+### Performance Results
+
+| Scenario | Before | After | Impact |
+|----------|--------|-------|--------|
+| 1 request | 500ms | 500ms | Same ✅ |
+| 10 concurrent | 5000ms (5 sec) | 500ms | 10x faster ✅ |
+| 100 concurrent | 50,000ms (50 sec) | 500ms | 100x faster ✅ |
+| Server responsiveness | Freezes on load | Stays responsive | Fixed ✅ |
+
+---
+
+## Example 5: Unnecessary Data Fetching
+
+### The PR
+
+```javascript
+// ❌ BEFORE: Fetch all data, then filter
+app.get('/api/active-users', async (req, res) => {
+  // Load ALL 100,000 users into memory
+  const allUsers = await User.find();
+  
+  // Filter in application code
+  const activeUsers = allUsers
+    .filter(u => u.lastLogin > Date.now() - 30*24*60*60*1000)
+    .filter(u => u.status === 'active')
+    .slice(0, 20);
+  
+  res.json(activeUsers);
+});
+
+// This loads 100,000 users just to return 20!
+```
+
+### The Review
+
+```
+🟠 PERFORMANCE: Unnecessary data transfer
+
+Line 3-4: Query fetches ALL 100k users, then filters in Node.js
+
+Problem:
+- Loads 100,000 user objects into memory (~50MB)
+- Filters applied after data loaded
+- Returns only 20 users
+- Wasted memory and network bandwidth
+
+Fix: Push filter to database query
+```
+
+### The Fix
+
+```javascript
+// ✅ AFTER: Filter in database query
+app.get('/api/active-users', async (req, res) => {
+  const thirtyDaysAgo = new Date(Date.now() - 30*24*60*60*1000);
+  
+  // Database returns only matching records
+  const activeUsers = await User.find({
+    lastLogin: { $gt: thirtyDaysAgo },
+    status: 'active'
+  })
+  .limit(20)
+  .lean();  // Return plain objects, not Mongoose docs
+  
+  res.json(activeUsers);
+});
+```
+
+### Performance Results
+
+| Metric | Before | After | Impact |
+|--------|--------|-------|--------|
+| Data transferred | ~50MB | ~5KB | 10,000x less ✅ |
+| Memory used | ~50MB | ~50KB | Nearly freed ✅ |
+| Query time | 1000ms | 50ms | 20x faster ✅ |
+| Response time | 1500ms | 100ms | Significantly faster ✅ |
+
+---
+
+## Example 6: Missing Database Index
+
+### The PR
+
+```javascript
+// ❌ BEFORE: Query without index
+app.get('/api/users/:email', async (req, res) => {
+  // Searches all 100k users without index
+  const user = await User.findOne({ email: req.params.email });
+  
+  res.json(user);
+});
+
+// Database must scan every single row = slow!
+```
+
+### The Review
+
+```
+🟠 PERFORMANCE: Missing database index
+
+Line 3: Query searches email field, but no index exists.
+
+Database must do full table scan:
+- Scans 100,000 rows
+- Checks if email matches
+- Takes ~1000ms
+
+With index:
+- Database jumps to email = 'user@example.com'
+- Instant lookup
+- Takes ~1ms
+
+Fix: Add index on email field in database schema
+```
+
+### The Fix
+
+```javascript
+// ✅ AFTER: Add index to schema
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    index: true,  // Create index on this field
+  },
+  name: String,
+  status: String,
+});
+
+// Then query runs 1000x faster:
+const user = await User.findOne({ email: req.params.email });
+```
+
+### Performance Results
+
+| Metric | Before | After | Impact |
+|--------|--------|-------|--------|
+| Query time | 1000ms | 1ms | 1000x faster ✅ |
+| CPU usage | High (full scan) | Low (index lookup) | Reduced ✅ |
+| Scalability | Slower with more data | Stays fast | Fixed ✅ |
+
+---
+
+## Performance Review Checklist
+
+When reviewing code, ask:
+
+- [ ] **Loops**: Are we querying database inside a loop (N+1)?
+- [ ] **Memory**: Are we holding references that should be cleaned up?
+- [ ] **Strings**: Are we concatenating in a loop (use join)?
+- [ ] **Async**: Any synchronous blocking operations?
+- [ ] **Queries**: Are we fetching too much data?
+- [ ] **Indexes**: Do we have database indexes on queried fields?
+- [ ] **Caching**: Should we cache frequently-accessed data?
+- [ ] **Streaming**: Should we stream large data instead of loading all at once?
+
+---
+
+## Key Takeaways
+
+1. **Test performance** — Use profiler to measure before/after
+2. **Push filtering to database** — Don't fetch all data then filter
+3. **Use async/await** — Never block the event loop
+4. **Clean up resources** — Remove listeners, close connections
+5. **Batch operations** — Reduce number of queries
+6. **Add indexes** — Let database optimize lookups
+7. **Monitor in production** — Real-world usage reveals bottlenecks
+

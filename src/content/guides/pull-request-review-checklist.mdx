@@ -1,0 +1,395 @@
+---
+title: "Pull Request Checklist: Code Review Best Practices for Teams"
+description: "A comprehensive guide on writing great pull requests and conducting effective code reviews. Includes PR dos/don'ts, review checklist, and handling feedback."
+slug: "pull-request-review-checklist"
+category: "Guides"
+keywords:
+  - pull request checklist
+  - code review checklist
+  - pr review process
+  - github pull request guidelines
+  - code review process
+relatedLinks:
+  - title: "Code Review Template"
+    href: "/templates/code-review-template"
+  - title: "Code Review Best Practices"
+    href: "/guides/code-review-best-practices-for-teams"
+  - title: "Security Code Review Template"
+    href: "/templates/security-code-review-template"
+  - title: "API Requirements Template"
+    href: "/templates/api-requirements-jira-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Task Breakdown Template"
+    href: "/templates/task-breakdown-template"
+  - title: "Complete Jira Ticket Template"
+    href: "/templates/complete-jira-ticket-template"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+---
+
+## Pull Request Checklist: Complete Guide
+
+A well-written PR and thorough code review are essential for code quality, knowledge sharing, and catching bugs early.
+
+---
+
+## Writing a Great PR
+
+### Step 1: PR Title & Description
+
+**Title** (Required):
+- Clear and descriptive (not "Fix stuff" or "Updates")
+- Start with type: `feat:`, `fix:`, `docs:`, `refactor:`
+- Reference Jira ticket: `PROJ-123: Add OAuth login`
+
+**Description** (Required):
+```markdown
+## What does this PR do?
+Adds OAuth login support for Google and GitHub, reducing 
+signup friction for new users.
+
+## Why?
+Currently users must create passwords, which causes 23% of 
+signups to abandon before completion. OAuth reduces friction 
+and improves conversion.
+
+## How?
+- Integrate with Google OAuth API
+- Integrate with GitHub OAuth API  
+- Auto-populate user profile from OAuth provider
+- Handle token refresh and expiration
+
+## Related ticket
+Closes PROJ-123
+
+## Testing
+- Tested OAuth flow on Chrome, Safari, mobile
+- Tested error case: OAuth provider down
+- Tested token refresh after expiration
+
+## Deployment notes
+- Requires GOOGLE_OAUTH_CLIENT_ID environment variable
+- Requires GITHUB_OAUTH_CLIENT_ID environment variable
+- No database migrations needed
+```
+
+---
+
+## Pre-PR Checklist (Before Submitting)
+
+### Code Quality
+
+- [ ] Code builds without errors: `npm run build`
+- [ ] Linter passes: `npm run lint`
+- [ ] No console.log() statements left in code
+- [ ] No commented-out code blocks
+- [ ] No debugging breakpoints or debugger statements
+- [ ] Variable names are descriptive (not `x`, `temp`, `data`)
+- [ ] Functions do one thing (single responsibility)
+- [ ] No duplicate code (DRY principle)
+
+### Testing
+
+- [ ] Unit tests written for new functions: `npm test`
+- [ ] Tests cover happy path AND error cases
+- [ ] Test coverage > 80% for modified files
+- [ ] All tests passing locally: `npm test -- --coverage`
+- [ ] Manual testing completed in local environment
+- [ ] Tested in staging environment if available
+
+### Documentation
+
+- [ ] Code comments explain "why" not "what"
+- [ ] Complex logic commented
+- [ ] README updated if behavior changed
+- [ ] API documentation updated if needed
+- [ ] Jira ticket updated with implementation notes
+
+### Security & Performance
+
+- [ ] No hardcoded secrets (API keys, passwords)
+- [ ] User input validated
+- [ ] SQL injection risks addressed
+- [ ] XSS prevention considered
+- [ ] No N+1 query problems
+- [ ] Database queries optimized
+- [ ] No noticeable performance degradation
+
+### Dependencies
+
+- [ ] New dependencies discussed in Slack/ticket
+- [ ] Package size reasonable (not huge bloat)
+- [ ] No security vulnerabilities: `npm audit`
+- [ ] Lock file updated: `package-lock.json`
+
+---
+
+## Submitting the PR
+
+**Before clicking "Create Pull Request":**
+
+1. **Rebase on main**: Ensure you're up-to-date
+   ```bash
+   git fetch origin
+   git rebase origin/main
+   ```
+
+2. **Sign commits** (if required by team)
+   ```bash
+   git commit -S -m "feat: add OAuth login"
+   ```
+
+3. **Push to feature branch**
+   ```bash
+   git push origin feature/oauth-login
+   ```
+
+4. **Fill in PR template completely** — Don't skip sections
+
+5. **Request reviewers** — Assign 1-2 people
+   - At least 1 senior engineer (for new features)
+   - At least 1 person familiar with the code area
+
+6. **Link to Jira ticket** — In PR description or as a comment
+
+7. **Set labels**: `urgent`, `bug`, `feature`, `documentation`, `refactor`
+
+---
+
+## Code Review Checklist (For Reviewers)
+
+### Understanding the Change (5 min)
+
+- [ ] I understand what the PR does
+- [ ] I understand why this change is needed
+- [ ] PR title and description are clear
+- [ ] Jira ticket is linked and describes context
+- [ ] Changes are reasonably scoped (not doing 5 things)
+
+### Functionality (10 min)
+
+- [ ] Feature works as described
+- [ ] Error handling for common cases (network fail, timeout, invalid input)
+- [ ] No obvious bugs or edge cases missed
+- [ ] Doesn't break existing features (test suite passes)
+- [ ] Performance acceptable (no noticeable slowdown)
+
+### Code Quality (10 min)
+
+- [ ] Code is readable and self-documenting
+- [ ] Variable/function names are clear
+- [ ] No code duplication (DRY)
+- [ ] Follows team code style
+- [ ] Complexity reasonable (not over-engineered)
+- [ ] Comments explain "why" not "what"
+
+### Security (5 min)
+
+- [ ] No secrets committed
+- [ ] User input validated/sanitized
+- [ ] SQL injection risks addressed
+- [ ] XSS prevention considered
+- [ ] Auth/authorization checks in place
+
+### Performance (5 min)
+
+- [ ] No N+1 queries
+- [ ] Database queries optimized
+- [ ] No unnecessary loops
+- [ ] No memory leaks
+- [ ] Load time acceptable
+
+### Testing (5 min)
+
+- [ ] Tests added for new functionality
+- [ ] Test coverage > 80%
+- [ ] Tests are meaningful (test behavior, not implementation)
+- [ ] All tests passing
+- [ ] Edge cases tested
+
+### Documentation (2 min)
+
+- [ ] Code comments sufficient
+- [ ] README updated if needed
+- [ ] API docs updated if needed
+- [ ] Jira ticket updated
+
+---
+
+## Responding to Review Comments
+
+### Author's Responsibilities
+
+**Do:**
+- ✅ Read all comments carefully
+- ✅ Respond to each comment, even if just "Done"
+- ✅ Ask clarifying questions
+- ✅ Make requested changes on new commits (don't rewrite history)
+- ✅ Push changes and re-request review
+- ✅ Merge only after all requested changes are made
+
+**Don't:**
+- ❌ Dismiss feedback without discussion
+- ❌ Force merge without reviewer approval
+- ❌ Take comments personally (they're about code, not you)
+- ❌ Make massive changes without explaining
+
+### Example: Handling Feedback
+
+```markdown
+Reviewer: "Line 45: This query looks like it might have N+1 problem"
+
+Author response:
+"You're right! I'll optimize using .includes(:posts).
+Pushed fix to this PR. Query time: 50ms → 5ms. Thanks!"
+```
+
+---
+
+## Common PR Mistakes & How to Avoid
+
+| Mistake | Example | Fix |
+|---------|---------|-----|
+| **Too large** | 500+ lines changed | Split into smaller PRs: feature + tests + docs |
+| **Mixed concerns** | Adds feature + refactors unrelated code | Keep PRs focused on one thing |
+| **Poor description** | "Updates" | Explain what, why, and how to test |
+| **No tests** | New feature, zero test coverage | Aim for > 80% coverage |
+| **Slow response** | No response to feedback for days | Aim for 24h review turnaround |
+| **Rewrite history** | Force push after feedback | Add new commits, let history stay |
+| **Merge without approval** | Merge button clicked too early | Wait for all requested changes + approval |
+| **No manual testing** | "Tested locally" but unclear how | Describe exact steps to reproduce |
+
+---
+
+## PR Review Best Practices
+
+### For Authors
+
+1. **Small PRs** (200-400 lines) → Reviewed faster + higher quality
+2. **Clear description** → Reviewers understand context immediately
+3. **Self-review first** → Catch obvious errors before submission
+4. **Annotate changes** → Add comments to tricky lines in PR
+5. **Test thoroughly** → Don't rely on reviewers to find bugs
+6. **Ask for help** → If stuck, comment and ask for guidance
+
+### For Reviewers
+
+1. **Review within 24 hours** → Don't block teammates
+2. **Be constructive** → Suggest improvements, don't criticize
+3. **Approve what's good** → Don't nitpick style if functionality is sound
+4. **Priority matters** → Security > Performance > Style
+5. **Ask questions** → Understand the "why" before approving
+6. **Test locally** → Run the code if it's complex
+7. **Respect expertise** → Don't override domain expert judgment
+
+---
+
+## Review Turn-Around Times
+
+**Target SLA (Service Level Agreement):**
+
+| Priority | Response Time | Approval Time |
+|----------|---------------|---------------|
+| Urgent (hotfix/prod bug) | 2 hours | Same day |
+| High (feature deadline) | 4 hours | 1 day |
+| Normal (regular feature) | 24 hours | 2-3 days |
+| Low (docs, refactor) | 3 days | 1 week |
+
+---
+
+## Approval & Merge
+
+**When to Approve:**
+- ✅ All comments resolved
+- ✅ All tests passing
+- ✅ No security issues
+- ✅ Performance acceptable
+- ✅ Code is readable
+
+**When to Request Changes:**
+- Functional bugs discovered
+- Security vulnerability found
+- Performance regression
+- Missing tests
+- Violates team standards
+
+**Merge Process:**
+1. Author addresses all feedback
+2. Reviewer approves
+3. Author merges to main
+4. CI/CD pipeline runs (tests, deploy to staging)
+5. Monitoring confirms deployment successful
+6. Close Jira ticket
+
+---
+
+## Example: Bad PR vs Good PR
+
+### ❌ Bad PR
+
+```
+Title: Fix stuff
+Description: Updates database layer
+Files: 50+
+Lines: 1200+
+Comments: None
+Tests: None
+Linked ticket: None
+Reviewers: Unassigned
+Status: Ready to merge but pending review
+```
+
+### ✅ Good PR
+
+```
+Title: fix: optimize user query to prevent N+1 problem
+Description:
+  ## What
+  Adds .includes(:posts) to user query, reducing query time 
+  from 1000ms to 50ms for user listing page.
+  
+  ## Why  
+  Performance complaint from customers: "User list loads slowly"
+  Root cause: N+1 query (1 query per user for posts)
+  
+  ## Testing
+  Tested locally: Query time benchmark shows 95% improvement
+  No page display changes observed
+  
+  Related: PROJ-456
+
+Files: 3 (user_controller.rb, user_controller_spec.rb, README.md)
+Lines: 45 changed, 12 added, 8 removed
+Comments: Explains the optimization on line 23
+Tests: New test added for this optimization
+Linked ticket: PROJ-456 ✅
+Reviewers: @senior-dev @database-expert
+```
+
+---
+
+## Automation & Tools
+
+**Tools to make PR review easier:**
+
+- **Linting**: eslint, prettier (catch style issues automatically)
+- **Testing**: Jest, RSpec (ensure tests run before review)
+- **Security scanning**: npm audit, OWASP scanner
+- **Performance**: Lighthouse, k6 (catch regressions)
+- **Code quality**: Sonarqube, Codeclimate
+- **Merge protection**: Require 2 approvals, all tests passing
+
+---
+
+## Key Takeaway
+
+**PR review is not about finding faults — it's about:**
+- Catching bugs before production
+- Sharing knowledge across the team
+- Maintaining code quality
+- Preventing technical debt
+- Supporting junior developers
+
+Make it constructive, make it fast, make it a learning opportunity.
+

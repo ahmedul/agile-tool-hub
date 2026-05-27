@@ -1,0 +1,379 @@
+---
+title: "Security Code Review Template for Teams"
+description: "A security-focused code review template for identifying vulnerabilities. Covers authentication, authorization, data protection, input validation, and compliance."
+slug: "security-code-review-template"
+category: "Templates"
+keywords:
+  - security code review
+  - security checklist
+  - code security review
+  - vulnerability assessment
+  - security best practices
+relatedLinks:
+  - title: "Code Review Template"
+    href: "/templates/code-review-template"
+  - title: "Code Review Best Practices"
+    href: "/guides/code-review-best-practices-for-teams"
+  - title: "Pull Request Review Checklist"
+    href: "/guides/pull-request-review-checklist"
+  - title: "API Requirements Template"
+    href: "/templates/api-requirements-jira-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Complete Jira Ticket Template"
+    href: "/templates/complete-jira-ticket-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+---
+
+## Security Code Review Template
+
+Use this checklist when reviewing PRs that touch authentication, user data, payments, or security-sensitive code.
+
+---
+
+## PR Information
+
+**Ticket**: [Link to Jira ticket]
+**PR**: [GitHub URL]
+**Type**: Feature / Bug Fix / Refactor / Security Patch
+**Reviewer**: [Your name]
+**Date**: [YYYY-MM-DD]
+
+---
+
+## High-Risk Assessment
+
+**Is this high-security risk?** Yes / No
+
+If YES, checklist items marked 🔴 are REQUIRED before approval.
+
+**Risk areas:**
+- Authentication/login
+- Authorization/permissions
+- Payment processing
+- User data handling (PII)
+- API security
+- External API integration
+- Database access
+- Secrets management
+
+---
+
+## Authentication & Identity
+
+### Session Management
+
+- [ ] Sessions use secure cookies (HttpOnly, Secure flags set)
+- [ ] Session timeout is configured (30-60 min typical)
+- [ ] Sessions invalidate on logout
+- [ ] Sessions invalidate on password change
+- [ ] CSRF tokens present for state-changing operations
+- [ ] No sensitive data in JWT payload (JWTs are readable!)
+
+Example violation:
+```javascript
+// ❌ Bad: Storing password in JWT
+const token = jwt.sign({ userId: 123, password: 'secret' }, secret)
+
+// ✅ Good: Only store user ID, not sensitive data
+const token = jwt.sign({ userId: 123 }, secret)
+```
+
+### Password Management
+
+- [ ] Passwords hashed with bcrypt/scrypt (not MD5 or SHA1)
+- [ ] Password reset tokens are random and expire
+- [ ] Password reset links expire (15-30 min)
+- [ ] Password requirements enforced (8+ chars, mixed case, etc.)
+- [ ] No password hints in recovery email
+- [ ] Passwords never logged
+
+### Multi-Factor Authentication (MFA)
+
+- [ ] MFA supported for sensitive accounts
+- [ ] MFA codes are time-bound (30 sec typical)
+- [ ] MFA codes can't be reused
+- [ ] Backup codes generated for account recovery
+
+---
+
+## Authorization & Permissions
+
+### Access Control
+
+- [ ] 🔴 Users can only access their own data (unless admin)
+- [ ] 🔴 Role-based access control (RBAC) enforced
+- [ ] 🔴 Admin endpoints require admin role
+- [ ] Permission checks on every endpoint (not just UI)
+- [ ] Permissions re-checked on every request (no trust the client)
+
+Example violation:
+```javascript
+// ❌ Bad: Trusting client to send correct user ID
+app.get('/users/:id/profile', (req, res) => {
+  User.findById(req.params.id)  // What if user sends ?id=999
+})
+
+// ✅ Good: Always use authenticated user
+app.get('/users/me/profile', (req, res) => {
+  User.findById(req.user.id)  // Use session/JWT user ID
+})
+```
+
+### Data Visibility
+
+- [ ] List endpoints paginated (not exposing 1M records)
+- [ ] Users see only their data in lists/exports
+- [ ] Admin export doesn't include others' data
+- [ ] API responses don't leak user IDs/data of other users
+
+---
+
+## Input Validation & Injection Attacks
+
+### SQL Injection Prevention
+
+- [ ] 🔴 All database queries parameterized (no string concatenation)
+- [ ] 🔴 User input never concatenated into SQL
+
+Example violation:
+```sql
+-- ❌ Bad: SQL injection risk
+SELECT * FROM users WHERE email = 'user_input_here'
+
+-- ✅ Good: Parameterized query
+SELECT * FROM users WHERE email = ?
+params: [userEmail]
+```
+
+### XSS (Cross-Site Scripting) Prevention
+
+- [ ] 🔴 User input sanitized before displaying in HTML
+- [ ] 🔴 No innerHTML with user data
+- [ ] 🔴 Content Security Policy (CSP) headers set
+- [ ] 🔴 Third-party scripts reviewed
+
+Example violation:
+```javascript
+// ❌ Bad: XSS risk
+document.getElementById('output').innerHTML = userInput
+
+// ✅ Good: Escape user input
+document.getElementById('output').textContent = userInput
+```
+
+### Command Injection Prevention
+
+- [ ] System commands don't include user input
+- [ ] If necessary, use allowlist (whitelist of permitted values)
+- [ ] Child processes spawned safely (not shell=True)
+
+### Data Format Validation
+
+- [ ] Email inputs validated as email format
+- [ ] Phone numbers validated
+- [ ] URLs validated (don't blindly follow user URLs)
+- [ ] File uploads validated (type, size)
+- [ ] Numeric inputs bounded
+
+---
+
+## Data Protection
+
+### Encryption
+
+- [ ] 🔴 Sensitive data encrypted at rest (PII, payment info, secrets)
+- [ ] 🔴 Encryption keys rotated regularly
+- [ ] 🔴 Encryption keys stored separately from encrypted data
+- [ ] Data in transit uses TLS/HTTPS (not HTTP)
+- [ ] Database connections encrypted
+
+### Secrets Management
+
+- [ ] 🔴 No hardcoded secrets in code (API keys, passwords, tokens)
+- [ ] 🔴 Secrets stored in environment variables or secrets manager
+- [ ] 🔴 Secrets not logged to stdout/files
+- [ ] 🔴 Secrets not in error messages shown to users
+
+Example violation:
+```javascript
+// ❌ Bad: Hardcoded API key
+const apiKey = 'sk_live_xyz123'
+
+// ✅ Good: Use environment variable
+const apiKey = process.env.STRIPE_API_KEY
+```
+
+### PII Handling
+
+- [ ] Personal data collected only if necessary
+- [ ] Minimal data retention (delete after not needed)
+- [ ] Data purge policies documented
+- [ ] User can export their data (GDPR)
+- [ ] User can delete their account and data
+- [ ] Audit logs track data access
+
+---
+
+## API Security
+
+### Rate Limiting
+
+- [ ] Rate limiting on authentication endpoints (prevent brute force)
+- [ ] Rate limiting on sensitive operations (payment, exports)
+- [ ] Rate limiting message includes remaining quota
+
+### API Keys & Tokens
+
+- [ ] API keys can be rotated
+- [ ] API keys have expiration dates
+- [ ] API keys have scope restrictions
+- [ ] API keys not exposed in client-side code
+- [ ] Bearer tokens in Authorization header (not URL params)
+
+### CORS & Headers
+
+- [ ] CORS headers only allow trusted domains
+- [ ] X-Content-Type-Options: nosniff set
+- [ ] X-Frame-Options: DENY set
+- [ ] Strict-Transport-Security set (HTTPS enforcement)
+- [ ] Referrer-Policy set to prevent data leakage
+
+---
+
+## Logging & Monitoring
+
+- [ ] 🔴 Security events logged (failed login, unauthorized access)
+- [ ] 🔴 Logs don't contain sensitive data (passwords, tokens)
+- [ ] Logs retained and monitored for suspicious patterns
+- [ ] Alerts configured for security events
+- [ ] Error messages don't leak system details to users
+
+Example violation:
+```javascript
+// ❌ Bad: Logs contain sensitive data
+logger.info(`User logged in with password: ${password}`)
+
+// ✅ Good: Only log what's necessary
+logger.info(`User ${userId} logged in successfully`)
+```
+
+---
+
+## Dependency Security
+
+- [ ] 🔴 npm audit run: No HIGH/CRITICAL vulnerabilities
+- [ ] 🔴 Dependencies up-to-date (not using ancient versions)
+- [ ] New dependencies approved by security team
+- [ ] Vendored dependencies reviewed
+
+---
+
+## Compliance & Regulations
+
+### GDPR (if EU users)
+
+- [ ] Users can access their data
+- [ ] Users can export their data
+- [ ] Users can delete their data
+- [ ] Data retention policy documented
+- [ ] Privacy policy clear and up-to-date
+
+### CCPA (if California users)
+
+- [ ] Similar to GDPR requirements
+- [ ] Do Not Track (DNT) requests honored
+
+### PCI DSS (if handling payments)
+
+- [ ] Never store full credit card numbers
+- [ ] Use Stripe/payment processor tokens
+- [ ] PCI compliance audit done annually
+
+---
+
+## Deployment Security
+
+- [ ] Environment-specific secrets (dev != prod)
+- [ ] Staging environment is production-like
+- [ ] Secrets not in deployment logs
+- [ ] Rollback plan for security issues
+- [ ] Monitoring active immediately after deploy
+
+---
+
+## Security Review Decision
+
+### ✅ Approved
+
+```
+All security checklist items pass. No vulnerabilities identified. 
+Approved for merge.
+```
+
+### ⚠️ Minor Issues
+
+```
+Found 2 minor issues:
+
+1. Line 45: Rate limiting missing on /login endpoint
+   - Add: rateLimit({ windowMs: 15*60*1000, max: 5 })
+   
+2. Line 89: Error message leaks DB details to user
+   - Change: "Invalid email" (don't say "Email not found in DB")
+
+After fixes, approved.
+```
+
+### 🔴 BLOCKING Issues
+
+```
+CANNOT APPROVE. Security vulnerabilities found:
+
+1. SQL Injection (Line 120): User input in raw query
+   User.findByEmail("SELECT * FROM users WHERE email='"+email+"'")
+   
+   Fix: Use parameterized query
+   
+2. XSS (Line 200): User data in innerHTML
+   document.innerHTML = userData.comment
+   
+   Fix: Use textContent or DOMPurify
+   
+3. Hardcoded API Key (Line 10): Stripe key in source
+   const stripeKey = 'sk_live_123'
+   
+   Fix: Move to environment variable
+
+These are critical security issues. Do not merge until fixed.
+```
+
+---
+
+## Follow-Up
+
+**After merge:**
+- [ ] Deploy to staging
+- [ ] Run security scan (OWASP ZAP, Burp Suite)
+- [ ] Monitor logs for suspicious activity
+- [ ] Add to security audit trail
+- [ ] Schedule security review if high-risk
+
+---
+
+## Common Security Issues & Fixes
+
+| Issue | Example | Fix |
+|-------|---------|-----|
+| **SQL Injection** | `SELECT * FROM users WHERE id = '${id}'` | Use parameterized queries |
+| **XSS** | `element.innerHTML = userInput` | Use textContent or sanitize |
+| **CSRF** | No CSRF token on forms | Add CSRF token to all state-changing operations |
+| **Auth bypass** | `if (role === 'admin')` checked client-side | Check on server every request |
+| **Hardcoded secrets** | `const apiKey = 'sk_live_123'` | Use environment variables |
+| **Weak crypto** | `md5(password)` | Use bcrypt, scrypt, or argon2 |
+| **No rate limit** | Anyone can brute force login | Add rate limiting + monitoring |
+| **PII in logs** | `logger.info(userData)` | Only log what's necessary, sanitize |
+

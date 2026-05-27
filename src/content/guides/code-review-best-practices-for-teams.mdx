@@ -1,0 +1,424 @@
+---
+title: "Code Review Best Practices: Tips for Teams & Reviewers"
+description: "Expert guide on conducting effective code reviews. Includes culture tips, handling disagreements, scaling reviews for teams, and avoiding common pitfalls."
+slug: "code-review-best-practices-for-teams"
+category: "Guides"
+keywords:
+  - code review best practices
+  - code review culture
+  - peer review
+  - technical review process
+  - code quality
+relatedLinks:
+  - title: "Pull Request Review Checklist"
+    href: "/guides/pull-request-review-checklist"
+  - title: "Code Review Template"
+    href: "/templates/code-review-template"
+  - title: "Security Code Review Template"
+    href: "/templates/security-code-review-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+  - title: "Task Breakdown Template"
+    href: "/templates/task-breakdown-template"
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+---
+
+## Code Review Best Practices: Building a Strong Review Culture
+
+Code review is one of the highest-ROI activities for catching bugs, sharing knowledge, and maintaining code quality. But it only works with the right culture and practices.
+
+---
+
+## The Mindset: Reviews Aren't Criticism
+
+**Wrong way to think about code review:**
+```
+Reviewer: "This code is terrible. How did you write this?"
+Author: *feels defensive and offended*
+```
+
+**Right way to think about code review:**
+```
+Reviewer: "I see you used a loop here. Have you considered 
+using .map() for better readability? I think it would be clearer."
+Author: "Good point! I'll update it."
+```
+
+---
+
+## Core Principles
+
+### 1. Reviews Are About Code, Not People
+
+- Focus on the code, not the developer
+- Say: "This loop could be clearer with .map()"
+- Don't say: "You should know how to write clear code"
+
+### 2. Reviews Are Two-Way
+
+- Reviewer teaches author
+- Author teaches reviewer (sometimes!)
+- Both learn from the discussion
+
+### 3. Reviews Reduce Risk
+
+- Catch bugs before production
+- Prevent technical debt
+- Protect team from mistakes
+
+### 4. Reviews Build Culture
+
+- Model the behavior you want
+- Be kind and constructive
+- Praise good code
+- Admit when you're wrong
+
+---
+
+## For Reviewers: Do's & Don'ts
+
+### ✅ DO
+
+**Do be specific**
+```
+✅ "Line 45: This query has an N+1 problem. When you iterate 
+users, the posts are fetched individually. Try using 
+.includes(:posts) instead."
+
+❌ "This is inefficient"
+```
+
+**Do suggest improvements**
+```
+✅ "Consider using .map() here for better readability:
+users.map { |u| u.name }
+instead of:
+result = []
+users.each { |u| result << u.name }
+"
+
+❌ "This is bad code"
+```
+
+**Do ask questions**
+```
+✅ "What about when the API is down? Have you tested that case?"
+
+❌ "You didn't handle errors"
+```
+
+**Do praise good code**
+```
+✅ "Great error handling here. I really like how you're 
+catching timeout exceptions and retrying."
+
+❌ [Silent approval]
+```
+
+**Do prioritize issues**
+- 🔴 Security vulnerabilities → MUST fix
+- 🟠 Performance regressions → Should fix
+- 🟡 Code style → Nice to have
+
+### ❌ DON'T
+
+**Don't nitpick style**
+```
+❌ "You used 'data' as a variable name. That's too generic"
+✅ "Consider renaming 'data' to 'usersList' for clarity"
+```
+
+**Don't demand perfection**
+```
+❌ "This code isn't perfect, I won't approve"
+✅ "Good work overall. I have 2 suggestions to improve clarity"
+```
+
+**Don't approve without reading**
+```
+❌ *Glances at PR for 30 seconds, approves*
+✅ *Reads code, runs locally, understands the change*
+```
+
+**Don't make it personal**
+```
+❌ "You always write code like this"
+✅ "This pattern appears a few times. Let's discuss best practices"
+```
+
+---
+
+## For Authors: How to Receive Feedback
+
+### ✅ DO
+
+**Do listen with an open mind**
+- Reviewer might be right
+- Reviewer might have a different perspective
+- Hear them out before deciding
+
+**Do ask clarifying questions**
+```
+Author: "I'm not sure I understand. Can you explain 
+what the N+1 problem is in this context?"
+
+Reviewer: "Sure! Every time we loop through users, 
+we're fetching their posts one at a time..."
+```
+
+**Do thank the reviewer**
+```
+"Great catch! I didn't notice that edge case. Updated and pushed."
+```
+
+**Do respond to all comments**
+```
+Even if just: "Done ✅" or "Will address in next PR"
+```
+
+### ❌ DON'T
+
+**Don't argue about style**
+```
+❌ Author: "I prefer writing it this way"
+✅ Author: "Got it, I'll follow the team standard"
+```
+
+**Don't ignore feedback**
+```
+❌ Push new changes without addressing comments
+✅ Address comments + push new commits
+```
+
+**Don't rewrite history**
+```
+❌ Force push after feedback (git push -f)
+✅ Add new commits (let history show the discussion)
+```
+
+**Don't take it personally**
+```
+❌ "They hate my code"
+✅ "They're helping me improve"
+```
+
+---
+
+## Handling Disagreements
+
+**What if you disagree with reviewer feedback?**
+
+### Step 1: Understand Their Perspective
+```
+Reviewer: "This should use immutability, not mutation"
+Author: "I don't understand why immutability matters here?"
+
+Reviewer: "Because mutable code can cause bugs in concurrent 
+contexts. If two threads modify the same object..."
+Author: "Ah, I see the risk now"
+```
+
+### Step 2: Discuss Trade-Offs
+```
+Author: "I understand the benefit, but it requires a refactor. 
+Given our sprint deadline, should we defer to next sprint?"
+
+Reviewer: "Actually, it's a small change. Would take 15 min. 
+Let's do it now for long-term code health."
+```
+
+### Step 3: Make a Decision
+```
+- If reviewer is more experienced → defer to their judgment
+- If it's truly a tough call → ask tech lead for tiebreaker
+- If you're right → politely explain why
+- If unclear → move forward with reviewer's suggestion
+```
+
+---
+
+## Scaling Code Review for Teams
+
+### Small Team (3-5 people)
+
+**Process:**
+- Everyone reviews everyone's code
+- 1 approval required to merge
+- Review SLA: 24 hours
+
+**Tools:**
+- GitHub PRs + Slack notifications
+
+### Medium Team (5-15 people)
+
+**Process:**
+- Assign 1-2 reviewers per PR (rotate)
+- 2 approvals required for production code
+- Review SLA: 24 hours (emergency hotfix: 1 hour)
+
+**Tools:**
+- GitHub CODEOWNERS (auto-assign reviewers)
+- Automated testing (run tests before review)
+- Slack integration (notify team of reviews)
+
+### Large Team (15+ people)
+
+**Process:**
+- Dedicated review groups by domain (backend, frontend, infra)
+- 2 approvals from domain experts
+- Optional 3rd approval from architecture lead
+- Review SLA: 24 hours for normal, 2 hours for hotfixes
+
+**Tools:**
+- Gerrit or similar for large-scale review
+- Automated quality gates (tests + linting required)
+- Review tracking dashboard
+- Monthly review metrics (average time, approval rate)
+
+---
+
+## Review Metrics to Track
+
+**Good metrics:**
+- Average review time (target: < 24 hours)
+- Bugs found in review vs production (should find most before shipping)
+- Code coverage (target: > 80%)
+- Review approval rate (team health indicator)
+
+**Bad metrics:**
+- Number of approvals (doesn't measure quality)
+- Lines of code reviewed (doesn't measure depth)
+- Speed of review (faster isn't always better)
+
+---
+
+## Common Code Review Mistakes
+
+| Mistake | Impact | Fix |
+|---------|--------|-----|
+| **No time for reviews** | PRs pile up, team blocked | Make review a priority (SLA: 24h) |
+| **Perfectionism** | Reviews never end | Know when "good enough" is done |
+| **Bottlenecks** | Only 1-2 people review | Rotate reviewers, spread responsibility |
+| **Toxicity** | Team morale suffers | Model constructive feedback |
+| **Rubber stamping** | Bugs ship to production | Require genuine code reading |
+| **Personal attacks** | Team conflict | Focus on code, not person |
+| **Scope creep** | PR reviews take hours | Limit PRs to 300-400 lines |
+
+---
+
+## Fostering a Strong Review Culture
+
+### 1. Make It Psychological Safe
+
+```
+Team lead: "Code review is about catching bugs and learning together, 
+not about judging code. It's expected that every PR has feedback. 
+Good code gets better through review."
+```
+
+### 2. Praise Good Practices
+
+```
+Reviewer: "Love how you added the error handling here. 
+You caught an edge case I would have missed. Great defensive coding!"
+```
+
+### 3. Admit Mistakes
+
+```
+Reviewer: "I suggested using .map() but now I see your approach is 
+clearer for this use case. My mistake—your original version is better."
+```
+
+### 4. Learn From Reviews
+
+```
+Team: "In standup, let's discuss code review patterns. 
+How can we improve?"
+```
+
+### 5. Invest in Tool s
+
+```
+- Enforce linting automatically (don't review style)
+- Run tests automatically (don't review test coverage)
+- Use CODEOWNERS to route reviews
+- Integrate with Slack for quick feedback
+```
+
+---
+
+## Review Checklist (Quick Reference)
+
+**When reviewing code, ask:**
+
+1. **Does it work?** ✅ Feature behaves as described
+2. **Is it secure?** ✅ No vulnerabilities
+3. **Is it performant?** ✅ No regressions
+4. **Is it tested?** ✅ Coverage > 80%
+5. **Is it clear?** ✅ Code is readable
+6. **Is it maintainable?** ✅ Follows patterns
+7. **Is it complete?** ✅ Docs updated
+
+---
+
+## Review Comments Examples
+
+### Security Issue
+```
+🔴 SECURITY: Line 45 has SQL injection risk.
+User input in raw query: SELECT * FROM users WHERE id = '+userInput
+
+Try:
+db.query('SELECT * FROM users WHERE id = ?', [userInput])
+```
+
+### Performance Issue
+```
+🟠 PERFORMANCE: This query might be slow.
+You're loading user.posts for each user in the loop (N+1).
+
+Try:
+User.all.includes(:posts)  # Load all posts at once
+```
+
+### Naming Issue
+```
+🟡 READABILITY: Variable name 'data' is too generic.
+
+Consider:
+const userData = ...  // or
+const processedOrders = ...  // depending on what it holds
+```
+
+### Good Pattern
+```
+✨ NICE: Great error handling! You caught the timeout case
+and retry with exponential backoff. Defensive coding 👍
+```
+
+---
+
+## Tools That Help
+
+**Automate what you can:**
+- ESLint / Prettier — Catch style issues automatically
+- Jest / RSpec — Run tests before review
+- npm audit — Scan for security vulnerabilities
+- Lighthouse — Check performance
+- SonarQube — Flag code smells
+- CODEOWNERS — Route reviews to experts
+
+**Use these so you can focus on logic and architecture, not style.**
+
+---
+
+## Key Takeaway
+
+Code review done well is one of the highest-ROI activities for team health, code quality, and knowledge sharing. Invest in the culture, be kind, be thorough, and make it a normal part of development.
+

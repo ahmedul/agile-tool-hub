@@ -1,0 +1,282 @@
+---
+title: "Code Review Template for Jira & GitHub Pull Requests"
+description: "A structured code review template for pull requests. Includes security checks, performance considerations, readability, testing, and documentation requirements."
+slug: "code-review-template"
+category: "Templates"
+keywords:
+  - code review template
+  - pull request template
+  - code review checklist
+  - peer review template
+  - github pull request
+relatedLinks:
+  - title: "PR Code Review Best Practices"
+    href: "/guides/code-review-best-practices-for-teams"
+  - title: "Pull Request Checklist"
+    href: "/guides/pull-request-review-checklist"
+  - title: "Security Code Review Template"
+    href: "/templates/security-code-review-template"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Complete Jira Ticket Template"
+    href: "/templates/complete-jira-ticket-template"
+  - title: "API Requirements Template"
+    href: "/templates/api-requirements-jira-template"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+---
+
+## Code Review Template
+
+Use this template to conduct thorough, consistent code reviews. This applies to all PRs regardless of size.
+
+---
+
+## PR Information
+
+**Ticket/Story**: [Link to Jira ticket]
+**PR Title**: [Clear, descriptive title]
+**PR Link**: [GitHub/GitLab URL]
+**Author**: [Developer name]
+**Reviewer**: [Your name]
+**Branch**: `feature/branch-name` → `main`
+
+---
+
+## Code Changes Summary
+
+**Files changed**: [Number]
+**Lines added**: [+500]
+**Lines deleted**: [-200]
+**Complexity**: Low / Medium / High
+
+**What does this PR do?**
+```
+[1-2 sentence description of the feature/fix]
+
+Example:
+"Adds OAuth login via Google and GitHub, reducing signup 
+friction for new users by eliminating password creation."
+```
+
+---
+
+## Functionality Check ✅
+
+- [ ] Feature works as described in Jira ticket
+- [ ] Feature tested in staging environment
+- [ ] No obvious bugs or edge cases missed
+- [ ] Handles error cases (network failure, invalid input, etc.)
+- [ ] Works on Chrome, Safari, Firefox, mobile
+- [ ] Performance acceptable (no noticeable slowdown)
+
+---
+
+## Code Quality ✅
+
+### Style & Readability
+
+- [ ] Code follows team style guide (linting passes)
+- [ ] Variable/function names are clear and descriptive
+- [ ] Complex logic has comments explaining "why" not "what"
+- [ ] Functions are reasonably sized (not 500+ lines)
+- [ ] No obvious code duplication (DRY principle)
+
+### Architecture & Design
+
+- [ ] Changes follow established patterns in codebase
+- [ ] No new dependencies added without discussion
+- [ ] Database changes are backward-compatible
+- [ ] API changes are versioned or non-breaking
+- [ ] No hardcoded values (use config/environment)
+
+### Testing ✅
+
+- [ ] Unit tests added/updated for new code
+- [ ] Test coverage > 80% for modified files
+- [ ] Tests are readable and test meaningful scenarios
+- [ ] Integration tests added if applicable
+- [ ] All tests passing locally
+
+---
+
+## Security & Performance ✅
+
+### Security
+
+- [ ] No secrets committed (API keys, passwords, tokens)
+- [ ] User input validated and sanitized
+- [ ] SQL injection risks addressed (parameterized queries)
+- [ ] XSS prevention implemented if handling HTML
+- [ ] Authentication/authorization checks in place
+- [ ] Sensitive data not logged in plaintext
+
+### Performance
+
+- [ ] No N+1 query problems
+- [ ] Database queries optimized (indexes used)
+- [ ] No unnecessary loops or recursion
+- [ ] No memory leaks detected
+- [ ] Load times acceptable for target use case
+
+### Accessibility
+
+- [ ] New UI elements have ARIA labels
+- [ ] Color alone doesn't convey information
+- [ ] Keyboard navigation works
+- [ ] Touch targets are 48px+ (mobile)
+
+---
+
+## Documentation ✅
+
+- [ ] Code comments added for complex logic
+- [ ] Jira ticket updated with completion notes
+- [ ] README updated if behavior changed
+- [ ] API documentation updated if applicable
+- [ ] Migration guide added if schema changes
+
+---
+
+## Dependencies & Conflicts
+
+**New dependencies added?** [Yes / No]
+- Package: [name]
+- Version: [1.2.3]
+- Size: [200KB]
+- Security audit: [NPM audit result / None]
+
+**Merge conflicts resolved?** [Yes / No]
+- [ ] No remaining conflicts
+- [ ] Conflict resolution reviewed by reviewer
+
+---
+
+## Deployment Considerations
+
+**Database changes?** [Yes / No]
+- [ ] Migration backward-compatible
+- [ ] Rollback plan documented
+- [ ] Data validation checks in place
+
+**Config changes?** [Yes / No]
+- [ ] Environment variables documented
+- [ ] Staging tested with new config
+- [ ] Deployment checklist updated
+
+**Breaking changes?** [Yes / No]
+- [ ] User-facing breaking changes documented
+- [ ] Deprecation warnings added if needed
+
+---
+
+## Reviewer Feedback
+
+### ✅ Approved (all checks pass)
+
+```
+LGTM! All checks pass. Merging after CI/CD completes.
+```
+
+### ⚠️ Changes Requested
+
+```
+Great implementation! I have 2 concerns:
+
+1. Line 145: The N+1 query needs optimization
+   - Suggestion: Use .include(:posts) to eager load
+   
+2. Line 203: Error handling missing for timeout case
+   - Add: catch (TimeoutError) { log and retry }
+
+After addressing these, I'll approve.
+```
+
+### ❌ Blocked (do not merge)
+
+```
+Unable to approve due to:
+
+1. Security issue (Line 89): SQL injection risk
+   - User input in raw query: User.find_by("email = '#{email}'")
+   - Fix: Use parameterized query: User.find_by(email: email)
+
+2. Missing test coverage: New API endpoint has no tests
+   - Add: Unit test for POST /api/users endpoint
+   
+3. Performance regression: Query time 50ms → 1000ms
+   - Investigate: Load test in staging to understand bottleneck
+
+Please address and push updates.
+```
+
+---
+
+## Final Approval & Merge
+
+**Reviewer Name**: _______________  
+**Date**: _______________  
+**Status**: ✅ Approved / ⚠️ Changes Requested / ❌ Blocked
+
+**Post-merge checklist**:
+- [ ] Deployed to staging
+- [ ] Smoke tests passed
+- [ ] Monitoring alerts configured
+- [ ] Team notified in Slack
+
+---
+
+## Common Code Review Comments
+
+### Performance Issues
+
+**Problem**: N+1 query pattern
+```ruby
+# ❌ Bad: Queries database for each user
+users.each do |user|
+  puts user.posts.count  # Extra query per user!
+end
+
+# ✅ Good: Load all data upfront
+users.includes(:posts).each { |user| puts user.posts.count }
+```
+
+### Security Issues
+
+**Problem**: SQL injection
+```sql
+-- ❌ Bad: User input in raw query
+SELECT * FROM users WHERE email = 'user@example.com OR 1=1'
+
+-- ✅ Good: Parameterized query
+SELECT * FROM users WHERE email = ?  [user_email]
+```
+
+### Code Duplication
+
+**Problem**: Same logic repeated
+```javascript
+// ❌ Bad: Code duplication
+function validateEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+function validatePassword(pwd) { return pwd.length >= 8; }
+// ... repeated validation in 3 places
+
+// ✅ Good: Reusable validation
+const validators = { email, password, phone };
+function validate(field, value) { return validators[field](value); }
+```
+
+---
+
+## Tips for Reviewers
+
+1. **Be constructive**: Suggest improvements, don't criticize
+2. **Ask questions**: "What about edge case X?" shows engagement
+3. **Praise good code**: Acknowledge elegant solutions
+4. **Consider context**: Understand the business need, not just code
+5. **Set priorities**: Security/data issues → Performance → Style
+6. **Test locally**: Run the code if significant changes
+7. **Timely reviews**: Respond within 24 hours to unblock authors
+
