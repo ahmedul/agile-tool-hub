@@ -1,0 +1,321 @@
+---
+title: "Task Breakdown Template for Jira"
+description: "A template for breaking down user stories into technical tasks. Helps teams identify implementation steps, dependencies, and technical requirements."
+slug: "task-breakdown-template"
+category: "Templates"
+keywords:
+  - task breakdown template
+  - jira task template
+  - user story breakdown
+  - technical task
+  - agile task management
+relatedLinks:
+  - title: "How to Break Down Epics Into User Stories"
+    href: "/guides/how-to-break-down-epics-into-user-stories"
+  - title: "Epic Template for Jira"
+    href: "/templates/epic-template-jira"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "API Requirements Template"
+    href: "/templates/api-requirements-jira-template"
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+---
+
+## Task Breakdown Template: From User Story to Implementation
+
+Use this template to decompose a user story into concrete technical tasks. Each task should be 1-2 days of work.
+
+---
+
+## Parent User Story
+
+```
+Ticket: PROJ-124
+Title: "As a user, I can upload a PDF file from my device"
+Assignee: @backend-team
+Story Points: 5
+```
+
+---
+
+## Task Breakdown
+
+**Goal:** Identify all work required to complete the user story
+
+**How to use:** List each technical step, dependency, and subtask needed.
+
+---
+
+### Task 1: Design & Plan API Endpoint
+
+**Ticket Type:** Task  
+**Assigned To:** @backend-lead  
+**Story Points:** 2  
+**Priority:** High  
+
+**Description:**
+Design the POST /api/uploads endpoint specification. Define request/response format, file size limits, error handling, and authentication requirements.
+
+**Acceptance Criteria:**
+- [ ] API spec documented in OpenAPI/Swagger format
+- [ ] Request payload defined (multipart/form-data with file, user_id, metadata)
+- [ ] Response format defined (upload_id, status, url)
+- [ ] Error cases documented (file too large, unsupported format, auth failure)
+- [ ] Rate limiting rules defined (max 100 uploads/day per user)
+- [ ] API spec reviewed and approved by tech lead
+
+**Dependencies:** None
+
+**Blocking:** Task 2 (Backend implementation)
+
+---
+
+### Task 2: Implement Backend Upload Endpoint
+
+**Ticket Type:** Task  
+**Assigned To:** @backend-engineer-1  
+**Story Points:** 3  
+**Priority:** High  
+
+**Description:**
+Implement the POST /api/uploads endpoint in Node.js. Accept file uploads, validate format, store to S3, and return upload_id.
+
+**Acceptance Criteria:**
+- [ ] Endpoint accepts multipart/form-data requests
+- [ ] File type validation (only PDF, max 50MB)
+- [ ] Files stored in S3 bucket (path: uploads/{user_id}/{timestamp}_{filename})
+- [ ] Returns 201 with upload_id and S3 URL
+- [ ] Returns 400 for invalid file type
+- [ ] Returns 413 for file too large
+- [ ] Returns 401 for unauthenticated request
+- [ ] Rate limiting enforced (100 uploads/user/day)
+- [ ] All error responses include descriptive messages
+- [ ] Unit tests written (>90% code coverage)
+
+**Dependencies:** Task 1 (API spec), Database schema for uploads table
+
+**Blocking:** Task 3 (Frontend integration)
+
+---
+
+### Task 3: Implement Frontend Upload Component
+
+**Ticket Type:** Task  
+**Assigned To:** @frontend-engineer-1  
+**Story Points:** 2  
+**Priority:** High  
+
+**Description:**
+Build React component for file upload. Include file picker, drag-and-drop, and basic validation.
+
+**Acceptance Criteria:**
+- [ ] File input element with accept="application/pdf"
+- [ ] Drag-and-drop zone working
+- [ ] Client-side validation (file type, size)
+- [ ] Shows error messages for validation failures
+- [ ] Component is accessible (ARIA labels, keyboard navigation)
+- [ ] Component responsive (works on mobile & desktop)
+- [ ] Unit tests written
+- [ ] Storybook story created for QA preview
+
+**Dependencies:** Task 2 (Backend endpoint ready)
+
+**Blocking:** Task 4 (Upload progress)
+
+---
+
+### Task 4: Add Upload Progress UI
+
+**Ticket Type:** Task  
+**Assigned To:** @frontend-engineer-1  
+**Story Points:** 1  
+**Priority:** Medium  
+
+**Description:**
+Add progress bar and upload status messages to the upload component.
+
+**Acceptance Criteria:**
+- [ ] Progress bar shows upload % complete (via XMLHttpRequest progress events)
+- [ ] Shows status text ("Uploading...", "Complete", "Failed")
+- [ ] Displays file name and size
+- [ ] Shows error message if upload fails
+- [ ] Can cancel upload in progress
+- [ ] Works on slow networks (simulate in Chrome DevTools)
+
+**Dependencies:** Task 3 (Upload component)
+
+---
+
+### Task 5: Add Error Handling & Retry Logic
+
+**Ticket Type:** Task  
+**Assigned To:** @backend-engineer-2  
+**Story Points:** 2  
+**Priority:** Medium  
+
+**Description:**
+Implement retry logic for failed uploads. Add error tracking and logging.
+
+**Acceptance Criteria:**
+- [ ] Failed uploads trigger auto-retry (exponential backoff: 1s, 2s, 4s)
+- [ ] Max 3 retry attempts before giving up
+- [ ] Each attempt is logged with timestamp and error details
+- [ ] User sees "Retrying..." status during auto-retry
+- [ ] Manual retry button available after 3 failures
+- [ ] Errors sent to error tracking service (Sentry)
+- [ ] CloudWatch logs capture all errors
+
+**Dependencies:** Tasks 2, 3, 4
+
+---
+
+### Task 6: Add Security & Validation
+
+**Ticket Type:** Task  
+**Assigned To:** @security-engineer (or backend lead)  
+**Story Points:** 2  
+**Priority:** High  
+
+**Description:**
+Add security measures: file validation, virus scanning, rate limiting, CORS headers.
+
+**Acceptance Criteria:**
+- [ ] Files scanned for malware (ClamAV or equivalent)
+- [ ] Blocked files logged and reported
+- [ ] CORS headers allow only our frontend domain
+- [ ] Rate limiting enforced (100 uploads/user/day)
+- [ ] Logs show all upload attempts
+- [ ] User cannot upload files > 50MB
+- [ ] User cannot upload non-PDF files
+- [ ] Security review completed
+
+**Dependencies:** Task 2
+
+---
+
+### Task 7: Add Monitoring & Alerts
+
+**Ticket Type:** Task  
+**Assigned To:** @devops  
+**Story Points:** 1  
+**Priority:** Medium  
+
+**Description:**
+Set up CloudWatch dashboards and alarms for upload metrics.
+
+**Acceptance Criteria:**
+- [ ] CloudWatch dashboard shows: upload success rate, avg upload time, error rate
+- [ ] Alert if upload failure rate > 5% in 5 min
+- [ ] Alert if avg upload time > 30 seconds
+- [ ] Alert if S3 storage exceeds 100GB
+- [ ] All metrics exported to Prometheus for long-term analytics
+
+**Dependencies:** Task 2 (endpoint live)
+
+---
+
+### Task 8: Documentation & Knowledge Transfer
+
+**Ticket Type:** Task  
+**Assigned To:** @tech-writer  
+**Story Points:** 1  
+**Priority:** Medium  
+
+**Description:**
+Document the upload feature for users and internal teams.
+
+**Acceptance Criteria:**
+- [ ] User-facing help article: "How to upload files"
+- [ ] Developer documentation: API spec, code examples
+- [ ] Troubleshooting guide: common errors and solutions
+- [ ] Video tutorial recorded (60 seconds)
+- [ ] Internal wiki updated with architecture diagram
+- [ ] Team trained on monitoring/alerting
+
+**Dependencies:** All technical tasks complete
+
+---
+
+## Task Dependency Diagram
+
+```
+Task 1 (API spec)
+  └─→ Task 2 (Backend) ──→ Task 3 (Frontend) ──→ Task 4 (Progress)
+          ├─→ Task 5 (Error handling)
+          ├─→ Task 6 (Security)
+          └─→ Task 7 (Monitoring)
+
+Task 8 (Docs) — starts after all tasks
+```
+
+---
+
+## Summary Table
+
+| Task | Owner | Points | Status | Depends On |
+|---|---|---|---|---|
+| API spec | @backend-lead | 2 | Ready | — |
+| Backend impl | @backend-engineer-1 | 3 | Blocked | Task 1 |
+| Frontend component | @frontend-engineer-1 | 2 | Blocked | Task 2 |
+| Upload progress | @frontend-engineer-1 | 1 | Blocked | Task 3 |
+| Error handling | @backend-engineer-2 | 2 | Blocked | Task 3 |
+| Security | @security-engineer | 2 | Blocked | Task 2 |
+| Monitoring | @devops | 1 | Blocked | Task 2 |
+| Documentation | @tech-writer | 1 | Blocked | Task 8 |
+
+**Total Story Points:** 14 (note: parent story was 5 points, but actual work is 14)
+
+---
+
+## Execution Tips
+
+**Start Date:** Monday  
+**Timeline:** 1-2 weeks depending on parallelization
+
+**Parallel work allowed:**
+- Task 1 (spec) happens first → unblocks all others
+- Task 2 (backend) & Task 3 (frontend) can happen in parallel (use mock endpoint)
+- Task 5, 6, 7 can start once Task 2 is in progress
+
+**Daily Standup Talking Points:**
+- Which tasks are blocked?
+- Any scope creep or new requirements?
+- Any technical blockers (API rate limits, dependencies)?
+- Are we on track for story completion?
+
+---
+
+## When a Task Reveals Issues
+
+**If a task uncovers new work:**
+1. Document the new work as a sub-task
+2. Estimate if it fits in the current sprint
+3. If not, add to backlog for next sprint
+4. Inform product owner of timeline impact
+
+**Example:** During Task 6, security engineer finds that ClamAV requires additional setup (expected 3 days). Options:
+- Add to this sprint (slip timeline by 3 days)
+- De-scope (use basic file validation only) & add ClamAV to next sprint
+- Discuss with product owner
+
+---
+
+## Acceptance for Entire User Story
+
+Once all 8 tasks are done, the user story is complete when:
+
+- [ ] All task acceptance criteria met
+- [ ] All code merged to main branch
+- [ ] All tests passing (unit + integration)
+- [ ] Code reviewed by 2+ engineers
+- [ ] Feature deployed to staging
+- [ ] QA testing complete (no critical bugs)
+- [ ] Ready for production deployment
+
