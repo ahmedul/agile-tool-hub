@@ -1,0 +1,248 @@
+---
+title: "QA Handoff Checklist for Jira Teams"
+description: "A step-by-step guide for QA teams to effectively hand off test results to developers. Includes communication best practices, Jira ticket creation, and sign-off procedures."
+slug: "qa-handoff-checklist-for-jira-teams"
+category: "Guides"
+keywords:
+  - qa handoff checklist
+  - qa dev communication jira
+  - quality assurance handoff
+  - testing checklist
+  - jira qa workflow
+relatedLinks:
+  - title: "QA to Dev Handoff Template"
+    href: "/templates/qa-to-dev-handoff-template"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Bug Severity vs Priority Guide"
+    href: "/guides/bug-severity-vs-priority-jira-guide"
+  - title: "QA Test Case Template"
+    href: "/templates/qa-test-case-template"
+---
+
+## QA Handoff Checklist: How to Communicate Test Results Effectively
+
+A smooth QA-to-dev handoff prevents miscommunication, rework, and delays. This guide walks through the process step-by-step.
+
+---
+
+## Before Handoff: Preparation Phase
+
+### Testing Complete & Documented
+- [ ] All test cases executed and results logged
+- [ ] Coverage matrix filled out (which features were tested)
+- [ ] All blockers identified with severity levels
+- [ ] Environment details recorded (OS, browser, build #, test data)
+- [ ] Screenshots/videos/logs attached to findings
+
+### Issues Triaged & Prioritized
+- [ ] Critical blockers separated from medium/low issues
+- [ ] Each issue has clear "steps to reproduce"
+- [ ] Known limitations documented (out of scope, environment issues, etc.)
+- [ ] Workarounds identified for user-facing issues
+
+---
+
+## Step 1: Prepare the Handoff Document
+
+Use the [QA to Dev Handoff Template](/templates/qa-to-dev-handoff-template) and fill out:
+
+```
+✓ Header: Handoff ID, feature name, date, QA engineer
+✓ Test Summary: Total cases, pass/fail/skip counts, quality gate (PASS/FAIL/CONDITIONAL)
+✓ Critical Issues: Each with test case ID, severity, steps to reproduce, environment
+✓ Medium Issues: Impact assessment, workaround, estimated effort
+✓ Low Issues: Listed but not urgent
+✓ Coverage checklist: Mark which feature areas were tested
+✓ Environment details: Exact version, browser, OS tested on
+✓ Known gaps: Features not tested in this cycle
+```
+
+---
+
+## Step 2: Create Jira Tickets for Each Issue
+
+For **every issue found**, create a dedicated Jira ticket:
+
+### Critical Blockers
+**Ticket Type:** Bug  
+**Priority:** Highest / High  
+**Summary:** "[Feature] — [Exact issue]" (e.g., "Login — OAuth redirect fails on Safari")  
+**Description:** Paste the issue details from handoff document (steps, environment, error message)  
+**Assignee:** Dev team lead or specific engineer  
+**Labels:** `qa-handoff`, `blocker`
+
+### Medium Issues
+**Ticket Type:** Bug or Task  
+**Priority:** High / Medium  
+**Summary:** "[Feature] — [Issue]"  
+**Description:** Issue details + workaround (if any)  
+**Labels:** `qa-handoff`
+
+### Low Issues
+**Ticket Type:** Task / Enhancement  
+**Priority:** Low / Lowest  
+**Summary:** "[Feature] — [Nice-to-have improvement]"  
+**Labels:** `qa-handoff`, `low-priority`
+
+### Link Issues to Feature
+```
+Add this to every bug ticket:
+  "This issue was found during QA testing of [Feature/Sprint]."
+  Link to: Story / Feature ticket
+  Link from: [Link to handoff document in Jira or shared space]
+```
+
+---
+
+## Step 3: Validate the Handoff
+
+Before sending to dev team:
+
+- [ ] Every critical issue has a Jira ticket assigned to a developer
+- [ ] Jira ticket titles are clear and searchable (someone can find them 3 months later)
+- [ ] Steps to reproduce are exact enough that a dev can follow them without asking
+- [ ] All attachments (screenshots, videos, logs) are linked in tickets
+- [ ] Environment is documented (build number, browser, OS)
+- [ ] No vague language ("sometimes it breaks", "usually works", etc.)
+
+---
+
+## Step 4: Send the Handoff Notification
+
+### Create a Slack or Email Message
+
+```
+Subject: QA Handoff Complete — [Feature/Sprint Name]
+
+Hi [Dev Team],
+
+QA testing is complete for [Feature/Sprint Name]. Results and findings are ready for dev.
+
+📊 Summary:
+  • Total test cases: [#]
+  • Pass rate: [%]
+  • Quality gate: PASS / CONDITIONAL / FAIL
+
+🔴 Critical Blockers: [#] (must fix before release)
+🟠 Medium Issues: [#] (this sprint if possible)
+🟡 Low Issues: [#] (can defer)
+
+📋 All issues are in Jira under labels: qa-handoff
+
+🔗 Handoff Document: [Link to shared document or Jira Epic]
+
+Next sync: [Date/Time]
+Questions? Reach out to me directly.
+
+Thanks,
+[QA Engineer Name]
+```
+
+### Include Links
+- Link to the handoff document (shared spreadsheet, wiki page, or Jira Epic)
+- Link to Jira filter showing all `qa-handoff` tickets
+- Link to test results / coverage report (if applicable)
+
+---
+
+## Step 5: Facilitate Q&A
+
+### Be Available for Questions
+- [ ] Scheduled a sync with dev team for handoff review
+- [ ] Available for follow-ups on unclear reproduction steps
+- [ ] Ready to clarify priority/severity if dev questions it
+
+### During the Sync
+- Walk through critical blockers first
+- Explain the business impact of each issue
+- Offer to help reproduce any issue on your test setup
+- Confirm dev's understanding of environment/data setup
+- Agree on a timeline for dev to review and start fixing
+
+---
+
+## Step 6: Track Resolution & Follow-up
+
+### Create a Tracking Spreadsheet
+| Issue | Severity | Dev Assigned | Status | ETA | Notes |
+|---|---|---|---|---|---|
+| Login OAuth fail | Critical | @john | In Progress | Today | Needs review |
+| Dashboard lag | Medium | @sarah | Not Started | Tomorrow | Performance issue |
+
+### Monitor Progress
+- [ ] Check Jira tickets daily for status updates
+- [ ] Follow up on blockers that are delayed
+- [ ] Update stakeholders on fix timeline
+- [ ] Identify if any issues need to be deprioritized
+
+---
+
+## Step 7: Verify Fixes & Close the Loop
+
+### Once Dev Says "Fix is Ready"
+- [ ] Retest the exact scenario that failed
+- [ ] Verify the fix works on the same environment
+- [ ] Check for any new issues introduced by the fix
+- [ ] Close the Jira ticket with comment: "Verified on [version], fix confirmed working"
+
+### Final Handoff Report
+- [ ] All critical blockers resolved ✓
+- [ ] Medium issues resolved or deferred (document why)
+- [ ] Low issues deferred with sign-off
+- [ ] Create summary: "QA Sign-off: Feature X is ready for [staging/prod]"
+
+---
+
+## Common QA-to-Dev Handoff Mistakes (Avoid These)
+
+❌ **Vague reproduction steps** — "It crashes sometimes"  
+✅ **Exact steps** — "Steps: 1. Open app, 2. Click 'Settings', 3. Select 'Dark Mode', 4. App crashes on iPhone 12 Pro Max on iOS 17.2"
+
+❌ **Missing environment details** — "Bug appears in Safari"  
+✅ **Full environment** — "Safari 17.2 on macOS 14.5, app v1.2.3 build 567, test user: admin@example.com"
+
+❌ **No severity level** — "There's a problem with the API"  
+✅ **Clear priority** — "CRITICAL: API returns 500 errors on 10% of requests during peak hours (affects all users)"
+
+❌ **Issues buried in chat** — "I found 5 things during testing"  
+✅ **Organized tickets** — 5 separate Jira tickets, each with priority and assignee
+
+❌ **No follow-up** — Hand off and disappear  
+✅ **Active follow-up** — Monitor progress, retest fixes, verify closure
+
+---
+
+## When to Call Emergency Escalation
+
+If you find a critical blocker **after handoff has already happened**, immediately:
+1. Create the Jira ticket with **CRITICAL** priority
+2. Tag the dev team lead directly in Slack
+3. Call a quick sync (15 min) to review
+4. Offer to pair with dev to reproduce
+
+Don't wait for the daily sync if the issue blocks the release.
+
+---
+
+## Template Checklist for Your Team
+
+Save this as a standing process:
+
+**Before Handoff:**
+- [ ] All test results documented
+- [ ] Issues triaged by severity
+- [ ] Screenshots/logs attached
+- [ ] Environment recorded
+
+**During Handoff:**
+- [ ] Jira tickets created for all issues
+- [ ] Handoff notification sent to dev team
+- [ ] Sync scheduled to review findings
+- [ ] Q&A round completed
+
+**After Handoff:**
+- [ ] Progress tracked in Jira
+- [ ] Follow-ups sent for delayed fixes
+- [ ] Fixes re-tested and verified
+- [ ] Final sign-off given
