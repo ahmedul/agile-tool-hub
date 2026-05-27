@@ -1,0 +1,533 @@
+---
+title: "How to Break Down Epics Into User Stories: Step-by-Step Guide"
+description: "A comprehensive guide for breaking down large epics into smaller, sprintable user stories. Includes real examples, slicing strategies, and common pitfalls to avoid."
+slug: "how-to-break-down-epics-into-user-stories"
+category: "Guides"
+keywords:
+  - epic breakdown
+  - user story breakdown
+  - how to break down epics
+  - epic slicing
+  - story decomposition
+relatedLinks:
+  - title: "Epic Template for Jira"
+    href: "/templates/epic-template-jira"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Task Breakdown Template"
+    href: "/templates/task-breakdown-template"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "Story Points Explained"
+    href: "/docs/story-points-explained"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Backlog Refinement Template"
+    href: "/templates/backlog-refinement-template"
+---
+
+## Breaking Down Epics Into User Stories: The Complete Guide
+
+Epics are big. User stories fit in sprints. The bridge between them is decomposition — breaking large features into smaller, valuable pieces. This guide teaches you how.
+
+---
+
+## Why Break Down Epics?
+
+**Without breakdown:**
+- Epics stay in the backlog for months
+- Team can't start work (too big)
+- No clear progress (is it 20% done? 80%?)
+- Stakeholders confused ("When will it ship?")
+
+**With good breakdown:**
+- Stories fit in 1-2 sprints
+- Team can start immediately
+- Progress is measurable (X stories done, Y remaining)
+- Stakeholders see incremental value
+
+---
+
+## The Problem: Epics Are Too Big
+
+Here's a real epic:
+
+```
+Epic: "Users should be able to export data in multiple formats"
+
+Why it's too big:
+- "Formats" plural = CSV, Excel, JSON, PDF?
+- "Export data" = which data? All? Filtered?
+- "Users" = all users or paid-tier only?
+- No clear "done" — where's the acceptance criteria?
+
+Team asks: "What's the first story? Where do we start?"
+```
+
+**Without breakdown, nobody moves.**
+
+---
+
+## Breaking Down: Three Core Strategies
+
+### Strategy 1: Break by Feature/Format (Happy Path First)
+
+**Best for:** Multi-format exports, multi-platform builds, feature flagging
+
+**Idea:** Deliver the core format first, then variations.
+
+**Example:**
+
+```
+Epic: Export data in multiple formats (CSV, Excel, JSON, PDF)
+
+Story 1: Export data as CSV
+  "As a user, I can export my data as a CSV file"
+  Acceptance Criteria:
+  - [ ] File includes all columns
+  - [ ] File named with timestamp
+  - [ ] Downloads to user's device
+  - [ ] Works with 10k+ rows
+  ✓ Simplest format (no styling)
+  ✓ Technically easiest
+  ✓ Most used format
+  → Ship FIRST
+
+Story 2: Export data as Excel
+  "As a user, I can export my data as an Excel file"
+  Acceptance Criteria:
+  - [ ] File includes all columns
+  - [ ] Columns auto-sized
+  - [ ] Header row formatted (bold)
+  - [ ] Works with 10k+ rows
+  → Ship SECOND (reuse CSV logic, add styling)
+
+Story 3: Export data as JSON
+  "As a developer, I can export my data as JSON for integration"
+  → Ship THIRD
+
+Story 4: Export data as PDF
+  "As a user, I can export my data as a PDF report"
+  → Ship LAST (most complex, adds styling/pagination)
+```
+
+**Why this order?**
+- CSV: Enables basic value (data available in spreadsheet format)
+- Excel: Adds polish (formatting)
+- JSON: Unlocks integrations
+- PDF: Premium feature (last because highest complexity)
+
+---
+
+### Strategy 2: Break by User Role/Persona
+
+**Best for:** Features used by different user types (admin, user, guest)
+
+**Idea:** Deliver each role's version separately.
+
+**Example:**
+
+```
+Epic: Admin dashboard showing team analytics
+
+Story 1: Team lead can view their team's metrics
+  "As a team lead, I can see my team's productivity metrics"
+  Acceptance Criteria:
+  - [ ] Shows tasks completed this week
+  - [ ] Shows avg story points/sprint
+  - [ ] Shows open issues count
+  ✓ Scope: 1 team only
+  ✓ Metrics: ~5 key metrics
+  → Ship FIRST
+
+Story 2: Manager can view cross-team benchmarks
+  "As a manager, I can compare team metrics across departments"
+  Acceptance Criteria:
+  - [ ] Shows top 3 teams by velocity
+  - [ ] Shows dept-level trends
+  - [ ] Compares to company average
+  → Ship SECOND (reuse Story 1 metrics, add comparison)
+
+Story 3: Admin can manage dashboard settings
+  "As an admin, I can customize which metrics appear on dashboards"
+  Acceptance Criteria:
+  - [ ] Can toggle metric visibility
+  - [ ] Can set alert thresholds
+  → Ship THIRD
+```
+
+---
+
+### Strategy 3: Break by Data Scope
+
+**Best for:** Features that work on different datasets (all data, filtered data, realtime data)
+
+**Idea:** Start simple (1 user's data), expand scope.
+
+**Example:**
+
+```
+Epic: Realtime notifications for team events
+
+Story 1: User sees their own events (basic polling)
+  "As a user, I can see notifications when assigned a task"
+  Acceptance Criteria:
+  - [ ] Notification appears when task assigned to me
+  - [ ] Shows task title and assignee
+  - [ ] Checks for new events every 5 seconds
+  ✓ Data scope: 1 user, 1 event type
+  ✓ No realtime infrastructure needed (polling ok)
+  → Ship FIRST
+
+Story 2: User sees team events (polling + filtering)
+  "As a user, I can see notifications for my team's activity"
+  Acceptance Criteria:
+  - [ ] Shows tasks assigned to anyone on my team
+  - [ ] Can filter by event type (assigned, commented, etc)
+  - [ ] Polls every 5 seconds
+  → Ship SECOND (expands scope to team)
+
+Story 3: Realtime push notifications (websocket)
+  "As a user, I receive instant notifications via Websocket"
+  Acceptance Criteria:
+  - [ ] Events delivered within 1 second (vs 5 sec polling)
+  - [ ] Uses Supabase realtime or Socket.io
+  - [ ] Works on web & mobile
+  → Ship THIRD (infrastructure upgrade, same UX)
+```
+
+---
+
+## The Decomposition Process: 7 Steps
+
+### Step 1: Understand the Epic (5 min)
+
+**Questions to ask:**
+```
+"What problem does this epic solve?"
+"Who benefits?"
+"What's the business outcome?"
+"Are there any hard constraints (timeline, budget)?"
+"What's the minimum viable feature?"
+```
+
+**Example:**
+```
+Epic: "Bulk edit tasks in Jira"
+Problem: Users manually click each task to update fields (tedious, error-prone)
+Who: Power users managing >10 tasks at once
+Outcome: Save 20 min/day on task updates
+Timeline: Ship by end of Q2
+Minimum viable: Bulk update status + assignee
+```
+
+### Step 2: Identify the User Value
+
+**For each story, ask: "What user value does this unlock?"**
+
+```
+Good story: "User can export data as CSV"
+  → User value: Data available for analysis in Excel
+
+Bad story: "Implement database indexing for performance"
+  → No user value (it's a technical task, not a story)
+```
+
+**If a story has no user value, make it a task under another story.**
+
+### Step 3: Find the Slice Lines
+
+**Where can you "cut" this epic into pieces?**
+
+Look for natural boundaries:
+
+```
+Epic: Upload & process PDFs for data extraction
+
+Slice 1: Upload PDFs (UI + storage)
+  - File picker
+  - Drag & drop
+  - Store to S3
+  
+Slice 2: Extract data (OCR processing)
+  - Call Google Vision API
+  - Parse returned data
+  
+Slice 3: Review & correct (UI for user feedback)
+  - Show extracted data
+  - Let user fix errors
+  - Save corrections
+
+Slice 4: Confirmation & triggers (email & workflow)
+  - Email confirmation to user
+  - Trigger downstream workflows
+```
+
+**Each slice = 1-2 stories (5-13 points each)**
+
+### Step 4: Write the First Story (Happy Path)
+
+**Start with the simplest, core value:**
+
+```
+Temp Epic: Upload & process PDFs
+
+What's the core value? → User can upload a file
+
+Story 1: "As a user, I can upload a PDF from my device"
+  Description: Enable users to start the upload process
+  
+  Acceptance Criteria:
+  - [ ] Page has file input (accept="application/pdf")
+  - [ ] Drag & drop area functional
+  - [ ] Client-side validation (PDF only, <50MB)
+  - [ ] Button shows "Upload" and is enabled after file selection
+  - [ ] Button disabled for non-PDF files
+  
+  Story Points: 2
+  
+  NOT INCLUDED (save for next stories):
+  - OCR processing (that's Story 2)
+  - Data extraction logic (Story 2/3)
+  - Email notifications (Story 4)
+```
+
+### Step 5: Write Follow-On Stories
+
+**Each next story builds on the previous, adding one capability:**
+
+```
+Story 2: "As a system, I process uploaded PDFs and extract text"
+  Depends on: Story 1 (upload works)
+  Acceptance Criteria:
+  - [ ] Call Google Vision API on file upload
+  - [ ] Store extracted text in database
+  - [ ] Handle API failures (show user error message)
+  - [ ] Extract works for PDFs up to 50MB
+  
+  Story Points: 5
+
+Story 3: "As a user, I can review and correct extracted data"
+  Depends on: Story 2 (extraction works)
+  Acceptance Criteria:
+  - [ ] Display extracted data in form
+  - [ ] Allow user to edit each field
+  - [ ] Save corrections
+  - [ ] Show accuracy confidence score
+  
+  Story Points: 5
+```
+
+### Step 6: Identify & Extract Tasks
+
+**Some work is technical, not user value:**
+
+```
+These are TASKS (not stories):
+- "Set up Google Vision API credentials"
+- "Configure S3 bucket for uploads"
+- "Add database migration for PDF_UPLOADS table"
+- "Write unit tests for data parser"
+
+These become subtasks under Story 1, 2, or 3:
+
+Story 2 → Subtask: "Configure Google Vision API"
+Story 2 → Subtask: "Add unit tests for OCR parsing"
+```
+
+### Step 7: Validate & Prioritize
+
+**Before finalizing, ask:**
+
+```
+[ ] Each story has clear user value?
+[ ] Stories are 5-13 points? (Smaller stories = 2-3 points ok for first story)
+[ ] No major dependencies blocking Story 1?
+[ ] Team confident they can estimate each?
+[ ] Stories are in order (dependencies respected)?
+[ ] Total points reasonable for team velocity?
+```
+
+---
+
+## Common Pitfalls & How to Avoid Them
+
+| Pitfall | Example | Fix |
+|---|---|---|
+| **Story too big** | "Build entire checkout flow" | Split into: payment method selection → address entry → review → confirm |
+| **Story too small** | "Update button color to blue" | Combine with related work or make it a task |
+| **Story unclear** | "Improve performance" | Rewrite as: "As user, checkout loads in <2 sec (vs 8 sec)" |
+| **No acceptance criteria** | "Add user profile page" | Add criteria: page shows name, email, avatar, settings link |
+| **Technical instead of user value** | "Refactor authentication module" | Reframe: "As user, I can stay logged in for 30 days without re-authenticating" |
+| **Dependencies blocking Story 1** | "Story 1 needs DBA schema changes" | Start with simpler story that doesn't need DBA, defer schema to Story 2 |
+| **Forgot edge cases** | "Export data" (doesn't handle empty data) | Add: "If no data, show helpful message, offer sample export" |
+
+---
+
+## Real Example: Decomposing a Full Epic
+
+### Original Epic
+
+```
+Epic: "Implement advanced filtering for task board"
+
+Description: Users want to filter tasks by multiple criteria
+(status, assignee, date range, priority, custom fields).
+Board should remember filters on refresh.
+```
+
+### Breaking It Down
+
+**Step 1: Understand**
+- Problem: Users manually scroll through 100+ tasks to find what they need
+- User: Team members needing to focus on relevant tasks
+- Outcome: Find tasks 10x faster
+- MVP: Filter by status + assignee
+
+**Step 2-3: Find slices**
+```
+Slice A: Single filter (status)
+Slice B: Multiple filters (status + assignee)
+Slice C: Filter persistence (localStorage)
+Slice D: Advanced filters (date range, custom fields)
+```
+
+**Step 4-7: Write stories**
+
+```
+Story 1 (Slice A): "As user, I can filter tasks by status"
+  [ ] Dropdown shows status options (Todo, In Progress, Done)
+  [ ] Clicking status hides other tasks
+  [ ] Clear filter button visible
+  Points: 3
+  Depends on: Nothing
+
+Story 2 (Slice B): "As user, I can filter by multiple criteria"
+  [ ] Filter UI shows status + assignee dropdowns
+  [ ] Both filters work together (AND logic)
+  [ ] Can clear individual filters
+  Points: 5
+  Depends on: Story 1
+
+Story 3 (Slice C): "As user, my filters are remembered on page reload"
+  [ ] Filters saved to localStorage
+  [ ] On page load, apply stored filters
+  [ ] Clear all button resets localStorage
+  Points: 2
+  Depends on: Story 2
+
+Story 4 (Slice D): "As power user, I can filter by date range"
+  [ ] Add date picker inputs (from, to)
+  [ ] Filter tasks between dates
+  [ ] Works with other filters
+  Points: 5
+  Depends on: Story 2
+
+Story 5 (Slice D): "As admin, I can filter by custom field values"
+  [ ] Show custom fields as filter options
+  [ ] Support text, dropdown, date custom fields
+  Points: 5
+  Depends on: Story 4
+
+Total: 5 stories, 20 points, 2-3 sprints to complete
+```
+
+---
+
+## Acceptance Criteria Inheritance
+
+**When breaking down, acceptance criteria cascade:**
+
+```
+Epic-level criteria (all stories must meet these):
+  ✓ Works in Chrome, Safari, Firefox
+  ✓ Mobile responsive
+  ✓ Performance: <100ms to render 1000 tasks
+  ✓ Accessible (WCAG 2.1 AA)
+
+Story 1 criteria (specific to this story):
+  ✓ Status filter dropdown works
+  ✓ (+ all epic-level criteria apply here too)
+
+Story 2 criteria (adds more requirements):
+  ✓ Multiple filters work simultaneously
+  ✓ (+ all Story 1 criteria + epic criteria apply)
+```
+
+---
+
+## Tips for Smooth Decomposition
+
+**Use collaborative tools:**
+- Whiteboard/Miro: Draw user flows, identify slices
+- Jira board: Create stories, link as subtasks
+- Planning poker: Estimate each story immediately
+
+**Involve the team:**
+- Product owner explains "why"
+- Developers suggest technical slices
+- QA identifies edge cases
+- Designer reviews UX implications
+
+**Start small:**
+- First story should be very doable (2-3 points)
+- Builds team confidence
+- Unblocks work immediately
+- Generates early feedback
+
+**Iterate:**
+- Plan 2-3 stories in detail
+- Leave 2-3 stories as "rough outline"
+- Refine as you learn
+
+---
+
+## Example: Before & After Decomposition
+
+### Before (Epic, Undecomposed)
+
+```
+Epic: PROJ-100 - Notification System
+Description: Add notifications to the platform
+Status: Backlog for 3 months
+Team reaction: "This is huge. Where do we even start?"
+```
+
+### After (Decomposed into Stories)
+
+```
+Story PROJ-101: Email notifications on task assignment (3 pts)
+Story PROJ-102: In-app notification bell icon (2 pts)
+Story PROJ-103: Notification preferences (settings page) (5 pts)
+Story PROJ-104: Realtime websocket updates (8 pts)
+Story PROJ-105: Mobile push notifications (5 pts)
+
+Sprint 31: Ship PROJ-101, PROJ-102 (5 pts)
+Sprint 32: Ship PROJ-103, PROJ-104 (13 pts)
+Sprint 33: Ship PROJ-105 (5 pts)
+
+Epic complete in 3 sprints with incremental value each sprint.
+```
+
+---
+
+## Next Steps
+
+1. **Review your backlog:** Find epics that have been sitting for >3 sprints
+2. **Pick one:** Start decomposing using the 7-step process
+3. **Involve the team:** Run a refinement session with this epic
+4. **Estimate:** Use planning poker for each story
+5. **Ship Story 1:** Get core value delivered this sprint
+6. **Iterate:** Refine remaining stories based on learnings
+
+---
+
+## Related Resources
+
+- [Epic Template for Jira](/templates/epic-template-jira)
+- [User Story Template](/templates/user-story-template)
+- [Task Breakdown Template](/templates/task-breakdown-template)
+- [Story Points Explained](/docs/story-points-explained)
+
