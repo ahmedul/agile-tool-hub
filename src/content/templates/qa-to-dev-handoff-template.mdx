@@ -1,0 +1,167 @@
+---
+title: "QA to Dev Handoff Template for Jira Teams"
+description: "A structured QA to dev handoff template for clear communication between QA and development teams. Includes test results, blockers, environment details, and reproduction steps."
+slug: "qa-to-dev-handoff-template"
+category: "Templates"
+keywords:
+  - qa to dev handoff
+  - qa handoff template
+  - qa dev communication
+  - jira qa template
+  - bug handoff process
+relatedLinks:
+  - title: "QA Handoff Checklist for Jira Teams"
+    href: "/guides/qa-handoff-checklist-for-jira-teams"
+  - title: "Bug Severity vs Priority Guide"
+    href: "/guides/bug-severity-vs-priority-jira-guide"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "QA Test Case Template"
+    href: "/templates/qa-test-case-template"
+---
+
+## QA to Dev Handoff Template
+
+Use this template when handing off QA findings to the development team. Clarity here prevents back-and-forth questions and speeds up bug fixes.
+
+---
+
+## Handoff Header
+
+```
+QA Handoff ID: QA-HO-[DATE]-[#]
+Feature / Sprint: [Sprint name or feature title]
+QA Engineer: [Name]
+Date of Testing: [YYYY-MM-DD]
+Testing Status: [ ] Complete  [ ] In Progress  [ ] On Hold (reason: ___)
+```
+
+---
+
+## Test Execution Summary
+
+```
+Total Test Cases Executed: [#]
+Passed: [#]  |  Failed: [#]  |  Blocked/Skipped: [#]
+
+Test Coverage: [ ] Happy Path  [ ] Edge Cases  [ ] Error Scenarios  [ ] Performance
+
+Overall Quality Gate: [ ] PASS (ready to deploy)  [ ] FAIL (blockers exist)  [ ] CONDITIONAL (minor issues)
+```
+
+---
+
+## Critical Issues / Blockers
+
+**These must be fixed before release.**
+
+### Issue #1
+```
+Test Case: [TC-ID or scenario name]
+Severity: CRITICAL / HIGH
+Description: [What happened vs what should happen]
+
+Steps to Reproduce:
+1. [First action]
+2. [Second action]
+3. [Expected vs actual result]
+
+Environment: [OS, browser, app version, build #]
+Attachments: [Screenshots, logs, video]
+Jira Ticket (if created): [Link]
+```
+
+### Issue #2
+```
+[Repeat format above]
+```
+
+---
+
+## Medium Priority Issues
+
+**Should be fixed this sprint, but not blockers.**
+
+```
+Issue: [Description]
+Impact: [Which users/features are affected?]
+Workaround: [If user-facing, what's the temporary solution?]
+Estimated Effort: [Quick fix / Medium / Complex]
+Jira Ticket: [Link]
+```
+
+---
+
+## Low Priority Issues / Observations
+
+**Nice-to-have fixes; can be deferred.**
+
+- [ ] [Issue with low impact]
+- [ ] [Cosmetic issue]
+- [ ] [Performance observation]
+
+---
+
+## Testing Environment Details
+
+```
+Build / Version Tested: [e.g., v1.2.3 #567]
+Browser / Client: [e.g., Chrome 125, Firefox 126]
+OS: [e.g., Windows 11, macOS 14.5]
+Device: [Desktop / Mobile / Tablet]
+Network Conditions: [Normal / Throttled]
+Database: [Staging / Test / Prod-mirror]
+Test Data Used: [Standard test user / Custom scenario]
+```
+
+---
+
+## Coverage By Feature Area
+
+```
+[ ] Authentication & Login
+[ ] Dashboard & Navigation
+[ ] Core Workflows
+[ ] Admin Panel
+[ ] API Endpoints
+[ ] Mobile Responsiveness
+[ ] Performance (load times, memory)
+[ ] Security & Permissions
+[ ] Data Integrity
+[ ] Accessibility (WCAG 2.1)
+```
+
+---
+
+## Known Issues Not Tested
+
+```
+- [Feature area that was out of scope]
+- [Feature still under development]
+- [Known limitation in test environment]
+```
+
+---
+
+## Sign-Off & Next Steps
+
+```
+QA Engineer: ________________  Date: __________
+Dev Lead Acknowledgment: _______________  Date: __________
+
+Next Review Date: [Date for dev to share fix status]
+Communication Channel: [Slack / Jira comments / Email]
+```
+
+---
+
+## Tips for Effective Handoffs
+
+1. **Be Specific:** Include exact reproduction steps, not vague descriptions.
+2. **Attach Evidence:** Screenshots, error messages, or video recordings.
+3. **Prioritize:** Clearly mark critical blockers vs. minor issues.
+4. **Provide Context:** Explain the business impact and affected users.
+5. **Include Environment:** Always specify OS, browser, app version, and build number.
+6. **Reference Test Cases:** Link back to original test case IDs for traceability.
+7. **No Assumptions:** If you're not sure why something failed, say so—don't guess.
+8. **Suggest Fixes (Optional):** If you have ideas for how to fix it, mention them (but don't demand it).
