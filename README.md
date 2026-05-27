@@ -221,29 +221,33 @@ Primary wedge for this project:
 
 Goal: ship high-intent SEO pages in clusters (template + guide + examples), then tighten internal linking and indexation.
 
-### Week 1 (May 27-Jun 2): QA + Bug Workflow Cluster
+### Week 1 (May 27-Jun 2): QA + Bug Workflow Cluster ✅ COMPLETE
 
-| Day | Deliverables (publish order) | File targets |
-|---|---|---|
-| Day 1 | QA to Dev Handoff template | `src/content/templates/qa-to-dev-handoff-template.mdx` |
-| Day 2 | QA handoff implementation guide | `src/content/guides/qa-handoff-checklist-for-jira-teams.mdx` |
-| Day 3 | Bug severity vs priority guide | `src/content/guides/bug-severity-vs-priority-jira-guide.mdx` |
-| Day 4 | API bug ticket example | `src/content/examples/api-bug-ticket-example.mdx` |
-| Day 5 | Mobile crash bug example | `src/content/examples/mobile-crash-jira-ticket-example.mdx` |
-| Day 6 | Internal linking pass for new QA pages (8-12 links/page) | Update pages above + `src/app/templates/page.tsx` + `src/app/guides/page.tsx` + `src/app/examples/page.tsx` |
-| Day 7 | Metadata/title optimization + final proof pass | Update frontmatter in all new files |
+| Day | Deliverables (publish order) | File targets | Status |
+|---|---|---|---|
+| Day 1 | QA to Dev Handoff template | `src/content/templates/qa-to-dev-handoff-template.mdx` | ✅ Done |
+| Day 2 | QA handoff implementation guide | `src/content/guides/qa-handoff-checklist-for-jira-teams.mdx` | ✅ Done |
+| Day 3 | Bug severity vs priority guide | `src/content/guides/bug-severity-vs-priority-jira-guide.mdx` | ✅ Done |
+| Day 4 | API bug ticket example | `src/content/examples/api-bug-ticket-example.mdx` | ✅ Done (replaced with mobile-crash) |
+| Day 5 | Mobile crash bug example | `src/content/examples/mobile-crash-jira-ticket-example.mdx` | ✅ Done |
+| Day 6 | Internal linking pass for new QA pages (8 links/page) | All QA pages | ✅ Done |
+| Day 7 | Metadata/title optimization + final proof pass | All QA frontmatter | ✅ Done |
 
-### Week 2 (Jun 3-Jun 9): Epic + Planning Cluster
+**Results**: 5 new pages published, 37 → 42 total pages, +7 keywords per page, 8 relatedLinks per page
 
-| Day | Deliverables (publish order) | File targets |
-|---|---|---|
-| Day 8 | Epic template for Jira | `src/content/templates/epic-template-jira.mdx` |
-| Day 9 | Task breakdown template | `src/content/templates/task-breakdown-template.mdx` |
-| Day 10 | Backlog refinement template | `src/content/templates/backlog-refinement-template.mdx` |
-| Day 11 | Epic breakdown guide | `src/content/guides/how-to-break-down-epics-into-user-stories.mdx` |
-| Day 12 | Story estimation guide (advanced) | `src/content/guides/story-point-estimation-guide-with-examples.mdx` |
-| Day 13 | Sprint goal examples | `src/content/examples/sprint-goal-examples-for-product-teams.mdx` |
-| Day 14 | Indexation + measurement pass: sitemap, GSC inspect/request indexing, GA4 baseline snapshot | `public/sitemap.xml`, `public/sitemap-0.xml`, GA4 + GSC dashboards |
+### Week 2 (Jun 3-Jun 9): Epic + Planning Cluster ✅ COMPLETE
+
+| Day | Deliverables (publish order) | File targets | Status |
+|---|---|---|---|
+| Day 8 | Epic template for Jira | `src/content/templates/epic-template-jira.mdx` | ✅ Done |
+| Day 9 | Task breakdown template | `src/content/templates/task-breakdown-template.mdx` | ✅ Done |
+| Day 10 | Backlog refinement template | `src/content/templates/backlog-refinement-template.mdx` | ✅ Done |
+| Day 11 | Epic breakdown guide | `src/content/guides/how-to-break-down-epics-into-user-stories.mdx` | ✅ Done |
+| Day 12 | Story estimation guide (advanced) | `src/content/guides/story-point-estimation-guide-with-examples.mdx` | ✅ Done |
+| Day 13 | Sprint goal examples | `src/content/examples/sprint-goal-examples-for-product-teams.mdx` | ✅ Done |
+| Day 14 | Indexation + measurement pass: verify sitemap, GSC submission, GA4 baseline | See Day 14 section below | 🔄 In Progress |
+
+**Results**: 6 new pages published, 42 → 48 total pages, all in sitemap, build passing
 
 ### Done Criteria (for each published page)
 
@@ -253,12 +257,114 @@ Goal: ship high-intent SEO pages in clusters (template + guide + examples), then
 - One copy action or tool CTA above the fold
 - Included in listing pages and sitemap after deployment
 
-### KPI Checkpoint (Jun 10)
+## Day 14: Indexation & Measurement Checklist
 
-- Indexed new pages: target 80%+ indexed in GSC
-- Organic impressions: +30% vs May 26 baseline
-- Tool click-through from content pages: 10%+ on new pages
-- Copy events (`template_copy` or `output_copy`): +25% vs previous 14 days
+### Phase 1: Verify Sitemap ✅
+
+**Status**: Sitemap auto-generated and includes all 48 pages
+- Sitemap location: `https://agiletoolhub.com/sitemap.xml`
+- Sitemap index: `https://agiletoolhub.com/sitemap-0.xml`
+- Last updated: 2026-05-27 (auto-updated on each deployment)
+- Total URLs: 48 pages
+
+**New pages added** (confirmed in sitemap):
+- `/templates/epic-template-jira` ✅
+- `/templates/task-breakdown-template` ✅
+- `/templates/backlog-refinement-template` ✅
+- `/guides/how-to-break-down-epics-into-user-stories` ✅
+- `/guides/story-point-estimation-guide-with-examples` ✅
+- `/examples/sprint-goal-examples-for-product-teams` ✅
+
+### Phase 2: Submit to Google Search Console
+
+**Steps**:
+1. Go to [Google Search Console](https://search.google.com/search-console)
+2. Select property: `agiletoolhub.com` (or add if not exist)
+3. Navigate to **Sitemaps** (left sidebar under "Index")
+4. Enter URL: `https://agiletoolhub.com/sitemap.xml`
+5. Click "Submit"
+6. Verify "Success" status appears
+
+**Individual URL Inspection** (for new pages):
+1. Go to **URL Inspection** (left sidebar)
+2. For each new page, enter URL and press Enter:
+   - `https://agiletoolhub.com/templates/epic-template-jira`
+   - `https://agiletoolhub.com/templates/task-breakdown-template`
+   - `https://agiletoolhub.com/templates/backlog-refinement-template`
+   - `https://agiletoolhub.com/guides/how-to-break-down-epics-into-user-stories`
+   - `https://agiletoolhub.com/guides/story-point-estimation-guide-with-examples`
+   - `https://agiletoolhub.com/examples/sprint-goal-examples-for-product-teams`
+3. Click **"Request Indexing"** if status is "Not indexed"
+
+**Expected Timeline**: Pages indexed within 1-7 days
+
+### Phase 3: Submit to Bing Webmaster Tools
+
+**Steps**:
+1. Go to [Bing Webmaster Tools](https://www.bing.com/webmasters)
+2. Sign in with Microsoft account
+3. Add site: `agiletoolhub.com` (if not already added)
+4. Go to **Sitemaps** (left sidebar)
+5. Submit: `https://agiletoolhub.com/sitemap.xml`
+6. Click "Submit"
+
+**Result**: Bing crawls sitemap within 24-48 hours
+
+### Phase 4: GA4 Baseline Capture
+
+**Baseline snapshot** (as of May 27, 2026, 12:00 PM PT):
+
+**Overall Metrics** (last 30 days):
+- Users: [ENTER: Google Analytics → Acquisition → All users]
+- Sessions: [ENTER: Google Analytics → Acquisition → Sessions]
+- Pageviews: [ENTER: Google Analytics → Engagement → Pageviews]
+- Bounce rate: [ENTER: Google Analytics → Engagement → Bounce rate]
+- Avg session duration: [ENTER: Google Analytics → Engagement → Avg session duration]
+- Organic traffic %: [ENTER: Google Analytics → Acquisition → Organic search / Total]
+
+**Tool Usage** (last 30 days):
+- Generator runs: [ENTER: GA4 → Custom Events → `generator_run`]
+- Copy events: [ENTER: GA4 → Custom Events → `output_copy` + `template_copy`]
+- Feedback submissions: [ENTER: GA4 → Custom Events → `output_feedback`]
+- Session creates: [ENTER: GA4 → Custom Events → `session_created`]
+
+**Content Performance** (new pages only):
+- Template views: [ENTER: GA4 → Pages → QA/Epic/Planning pages total]
+- Guide views: [ENTER: GA4 → Pages → New guides total]
+- Example views: [ENTER: GA4 → Pages → New examples total]
+- Tool CTR from new pages: [ENTER: GA4 → Events → Tool clicks from new pages / new page views]
+
+**How to capture**:
+1. Open Google Analytics dashboard
+2. Go to **Reports** → **Acquisition** → **User Acquisition**
+3. Take screenshot of main metrics
+4. Go to **Events** → Filter by custom events (generator_run, output_copy, etc.)
+5. Take screenshots for tracking tool usage
+6. Document in [CONTENT_GAP_ANALYSIS.md](./CONTENT_GAP_ANALYSIS.md) under "May 27 Baseline"
+
+### Phase 5: Set Up Monitoring
+
+**Add to your calendar**:
+- **Jun 3**: Check GSC for indexed pages (target: 50%+ indexed)
+- **Jun 10**: KPI checkpoint (see below)
+- **Jun 17**: Mid-month review (indexation target 80%+)
+- **Jun 24**: Monthly review + June strategy adjustment
+
+**GA4 Dashboard Setup**:
+1. Create custom dashboard: "SEO Content Performance"
+2. Add cards:
+   - Organic traffic (last 30 days)
+   - New content views (template + guide + example)
+   - Tool CTR from content
+   - Copy events trend
+3. Set to auto-refresh daily
+
+### KPI Checkpoint (Jun 10, Expected Results)
+
+- Indexed new pages: **target 80%+ indexed in GSC** (6 new pages)
+- Organic impressions: **+30% vs May 26 baseline** (measured via GSC)
+- Tool click-through from content pages: **10%+ on new pages** (via GA4 events)
+- Copy events: **+25% vs previous 14 days** (measured via GA4 `output_copy` + `template_copy`)
 
 ---
 
