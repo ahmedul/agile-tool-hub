@@ -1,0 +1,243 @@
+---
+title: "Mobile App Crash Bug Ticket Example: Jira"
+description: "A real-world example of a well-written Jira bug ticket for a mobile app crash. Includes device info, crash logs, reproduction steps, and stack trace."
+slug: "mobile-crash-jira-ticket-example"
+category: "Examples"
+keywords:
+  - mobile crash bug ticket
+  - jira crash report
+  - mobile app bug example
+  - ios android crash
+  - mobile testing example
+relatedLinks:
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "Bug Severity vs Priority Guide"
+    href: "/guides/bug-severity-vs-priority-jira-guide"
+  - title: "QA to Dev Handoff Template"
+    href: "/templates/qa-to-dev-handoff-template"
+  - title: "Bug Report to Jira Converter"
+    href: "/tools/bug-report-to-jira-ticket-converter"
+---
+
+## Real-World Example: Mobile App Crash Jira Ticket
+
+Below is a well-written Jira bug ticket for a mobile app crash. Use it as a model for documenting app crashes clearly with device details and logs.
+
+---
+
+## Ticket Summary
+
+**Title:** "App crashes when opening payment screen on iOS 17 (iPhone 14 Pro)"
+
+**Type:** Bug  
+**Severity:** Critical (app unusable for affected users)  
+**Priority:** Highest (blocks payment flow)  
+**Assignee:** @mobile-team-lead  
+**Labels:** crash, ios, payment, qa-handoff, blocker  
+
+---
+
+## Description
+
+The app crashes immediately when users tap the "Proceed to Payment" button on iOS devices running iOS 17. The crash occurs 100% of the time on iPhone 14 Pro. The issue does not appear on iOS 16 or Android devices.
+
+---
+
+## Environment
+
+**App Version:** 3.2.1 (build 452)  
+**Platform:** iOS  
+**OS Version:** iOS 17.2 (latest)  
+**Device:** iPhone 14 Pro  
+**Device Memory:** 6GB  
+**Available Storage:** 8GB  
+**Network:** WiFi (5GHz)  
+**Test Date:** 2026-05-26  
+**Test Time:** 10:30-11:15 UTC  
+
+---
+
+## Steps to Reproduce
+
+1. Install app v3.2.1 on iPhone running iOS 17.2
+2. Log in with test account (qa-user@example.com / password123)
+3. Add an item to cart (e.g., $9.99 plan)
+4. Tap "Checkout" button
+5. Verify cart shows correct item and total ($9.99)
+6. Tap "Proceed to Payment" button
+7. **App crashes immediately**
+8. User returns to home screen
+9. App is closed, no error message shown
+
+---
+
+## Expected Behavior
+
+1. Payment screen should open
+2. User should see payment method selection (Apple Pay, Credit Card, etc.)
+3. User should be able to complete purchase
+4. Confirmation screen shows success
+
+---
+
+## Actual Behavior
+
+1. When user taps "Proceed to Payment"
+2. Screen briefly flashes (looks like it's loading)
+3. App closes without warning
+4. User returns to iOS home screen
+5. No error message or dialog shown
+6. Cart data is preserved (not cleared)
+
+---
+
+## Crash Log (iOS Console)
+
+**From:** Xcode console during reproduction  
+**Time:** 2026-05-26 10:32:15.456 UTC
+
+```
+exception: fatal exception
+name: NSInvalidArgumentError
+reason: 'Invalid payment amount: nil'
+callstack:
+  0   CoreFoundation 0x1b3c92130
+  1   libobjc.A.dylib 0x1ac31a5e4
+  2   AppDelegate 0x1046c8f20 (PaymentViewController:viewDidLoad:)
+  3   UIKit 0x1b8e4c2f0
+  4   MyApp 0x10438f140 (PaymentViewController:initWithNibName:bundle:)
+  5   Foundation 0x1abb76120
+  6   MyApp 0x1043567c0 (CheckoutViewController:proceedToPayment:)
+```
+
+**Analysis:** Crash occurs in `PaymentViewController:viewDidLoad`. The payment amount is `nil` when passed to the payment processor. This suggests the cart total is not being properly passed between screens.
+
+---
+
+## Device Details
+
+**Device Model:** iPhone 14 Pro  
+**OS:** iOS 17.2  
+**Available RAM:** 2.8 GB free (out of 6GB)  
+**Available Storage:** 8.2 GB free (out of 128GB)  
+**Cellular Signal:** Not applicable (WiFi)  
+
+---
+
+## Reproduction Attempts
+
+| Attempt | Device | iOS Version | Result | Notes |
+|---|---|---|---|---|
+| 1 | iPhone 14 Pro | iOS 17.2 | Crash | 100% reproducible |
+| 2 | iPhone 14 Pro | iOS 17.2 | Crash | Same behavior |
+| 3 | iPhone 14 | iOS 17.1 | Crash | Also crashes on earlier iOS 17 |
+| 4 | iPhone 13 | iOS 16.7 | Works | No crash, payment succeeds |
+| 5 | iPhone 15 | iOS 17.2 | Crash | Crashes on newest device too |
+| 6 | iPad Pro | iOS 17.2 | Works | Interesting: iPad does not crash |
+
+**Conclusion:** Crash is specific to iOS 17.x on iPhone (not iPad). Issue does not occur on iOS 16.
+
+---
+
+## Supporting Evidence
+
+### Screenshot 1: Cart Screen (Before Crash)
+
+The cart screen displays correctly:
+- Item: "Premium Plan"
+- Price: $9.99
+- Total: $9.99
+- Button: "Proceed to Payment" (tappable)
+
+### Screenshot 2: iOS Crash Report
+
+iOS crash report generated after app closed.
+
+### Attachments
+
+- **Crash file:** `crash_log_2026-05-26.ips`
+- **Device console output:** `device_console.txt`
+- **Test video:** `payment_crash_demo.mov` (shows tap, flash, crash)
+- **Network trace:** `payment_flow_network.har` (shows no network errors)
+
+---
+
+## Investigation Notes
+
+**What's Interesting:**
+- Works fine on iOS 16
+- Works fine on iPad (even though iPad runs iOS 17)
+- Works fine on Android
+- Crash is immediate when entering payment screen
+- No network calls are being made (so not a server-side issue)
+
+**Hypothesis (QA):**
+- iOS 17 may have changed how view controllers handle nil values in `viewDidLoad`
+- The cart total is not being passed correctly to `PaymentViewController`
+- Possible regression in the most recent update (v3.2.1)
+
+---
+
+## Suggested Dev Investigation
+
+- [ ] Check if `PaymentViewController` expects a non-nil cart object
+- [ ] Verify cart total is being passed from `CheckoutViewController`
+- [ ] Compare v3.2.1 changes with v3.2.0 (when was this introduced?)
+- [ ] Check if iOS 17 SDK changed how views handle initialization
+- [ ] Test on Xcode simulator with iOS 17 to reproduce locally
+- [ ] Add null-safety checks before accessing cart data
+
+---
+
+## QA Testing Plan (After Fix)
+
+Once dev deploys a fix:
+- [ ] Test on iPhone 14 Pro with iOS 17.2
+- [ ] Test on iPhone 13 with iOS 17.1
+- [ ] Test on iPhone 15 with iOS 17.2
+- [ ] Test on iPad Pro with iOS 17.2
+- [ ] Test on various older iOS versions (16, 15)
+- [ ] Test on Android devices (Pixel 6, Pixel 7)
+- [ ] Test with different payment amounts ($0.99, $99.99, $999.99)
+- [ ] Test with different payment methods (Apple Pay, Card)
+- [ ] Test in low-memory conditions (force memory pressure)
+- [ ] Test with poor network connectivity
+
+---
+
+## Impact Assessment
+
+**Severity:** CRITICAL  
+- Payments completely blocked on iOS 17
+- Users cannot complete purchases
+- Revenue impact if not fixed quickly
+
+**Priority:** HIGHEST  
+- Affects all iOS 17 users with iPhone
+- Estimated 40% of user base on iOS 17
+- Payment feature is core to app monetization
+
+---
+
+## Sign-Off
+
+**QA Engineer:** Sarah Johnson (@qa-sarah)  
+**Date:** 2026-05-26 11:45 UTC  
+**Confidence:** Very High (100% reproducible across 3 devices)  
+**Follow-up Date:** 2026-05-27 (requesting dev status update)
+
+---
+
+## What Makes This Ticket Good
+
+✅ **Clear device/OS details** — Receiver knows exactly which environment to test  
+✅ **100% reproducible** — QA tried it multiple times  
+✅ **Tested across variants** — iOS 16/17, iPhone/iPad, Android  
+✅ **Crash log included** — Shows exact line where crash happens  
+✅ **Screenshots attached** — Shows the cart before crash  
+✅ **Video demo** — Shows the exact gesture and crash behavior  
+✅ **Hypotheses included** — Gives dev ideas of where to look  
+✅ **No network issues** — HAR file shows all requests succeeded  
+✅ **Testing plan included** — Tells dev how to verify fix  
+✅ **Impact is clear** — Payment flow is blocked, revenue impact explained  
