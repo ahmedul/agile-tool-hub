@@ -621,11 +621,39 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             )}
           </div>
           {stories.length > 0 && (
-            <div className="px-4 py-3 border-t border-gray-100">
+            <div className="px-4 py-3 border-t border-gray-100 space-y-2">
               <p className="text-xs text-gray-500">
                 Total pts:{" "}
                 <strong>{totalPoints}</strong>
               </p>
+              <button
+                onClick={() => {
+                  const lines = [
+                    `# Planning Poker Session`,
+                    `Date: ${new Date().toLocaleDateString()}`,
+                    `Session: ${sessionUrl}`,
+                    ``,
+                    `| Story | Estimate |`,
+                    `|-------|----------|`,
+                    ...stories.map((s) => `| ${s.name || "Untitled"} | ${s.estimate ?? "–"} |`),
+                    ``,
+                    `**Total points:** ${totalPoints}`,
+                    unresolvedStories > 0 ? `**Unresolved:** ${unresolvedStories}` : "",
+                  ].filter(Boolean);
+                  navigator.clipboard.writeText(lines.join("\n")).catch(() => {
+                    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `planning-poker-${sessionId}.md`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  });
+                }}
+                className="w-full px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+              >
+                Export Session
+              </button>
             </div>
           )}
         </div>

@@ -129,7 +129,12 @@ const NOTE_COLORS: Record<ColumnId, string> = {
 export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const [nameInput, setNameInput] = useState("");
   const [retroType, setRetroType] = useState<RetroType>("standard");
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("retro-theme") as Theme) || "light";
+    }
+    return "light";
+  });
   const [joined, setJoined] = useState(false);
   const [notes, setNotes] = useState<RetroNote[]>([]);
   const [members, setMembers] = useState<Record<string, Member>>({});
@@ -150,6 +155,9 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   // Keep notesRef in sync for use in callbacks
   useEffect(() => { notesRef.current = notes; }, [notes]);
   useEffect(() => { setSessionUrl(window.location.href); }, []);
+
+  // Persist theme preference
+  useEffect(() => { localStorage.setItem("retro-theme", theme); }, [theme]);
 
   // Initialize inputs for current retro type
   useEffect(() => {
@@ -393,6 +401,30 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     broadcast({ type: "delete_note", noteId });
   };
 
+  const handleExportNotes = () => {
+    const format = RETRO_FORMATS[retroType];
+    const lines: string[] = [`# Retro Notes — ${format.label}`, `Session: ${sessionUrl}`, `Date: ${new Date().toLocaleDateString()}`, ""];
+    for (const col of format.columns) {
+      const colNotes = notes.filter((n) => n.columnId === col.id).sort((a, b) => b.votes.length - a.votes.length);
+      lines.push(`## ${col.emoji} ${col.label}`);
+      if (colNotes.length === 0) {
+        lines.push("(no notes)");
+      } else {
+        colNotes.forEach((n) => lines.push(`- ${n.text}${n.votes.length > 0 ? ` 👍 ${n.votes.length}` : ""}`));
+      }
+      lines.push("");
+    }
+    navigator.clipboard.writeText(lines.join("\n")).catch(() => {
+      const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `retro-notes-${sessionId}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  };
+
   const handleVote = (note: RetroNote) => {
     const uid = userIdRef.current;
     const alreadyVoted = note.votes.includes(uid);
@@ -523,6 +555,14 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
             {sessionUrl}
           </span>
           <CopyButton text={sessionUrl} />
+          <button
+            onClick={handleExportNotes}
+            disabled={notes.length === 0}
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
+            title="Copy all notes to clipboard as Markdown"
+          >
+            Export
+          </button>
         </div>
       </div>
 
