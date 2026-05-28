@@ -1,0 +1,445 @@
+---
+title: "Agile Team Anti-Patterns with Real Examples: What Broken Processes Look Like"
+description: "See real-world agile team anti-patterns: failing standups, ghost retros, burnout cycles, and blocked sprints. Recognize what's broken in your team."
+slug: "agile-team-anti-patterns-examples"
+category: "Examples"
+keywords:
+  - agile team examples
+  - scrum failures
+  - agile team problems
+  - sprint failures
+  - agile culture
+  - team dysfunction
+  - agile metrics anti-patterns
+relatedLinks:
+  - title: "Agile Anti-Patterns to Avoid"
+    href: "/guides/agile-anti-patterns-to-avoid"
+  - title: "Avoiding Common Sprint Mistakes"
+    href: "/guides/avoiding-common-sprint-mistakes"
+  - title: "How to Run a Sprint Retrospective"
+    href: "/guides/how-to-run-a-sprint-retrospective"
+  - title: "Daily Standup Template"
+    href: "/templates/daily-standup-template"
+  - title: "Micromanagement in Agile Teams"
+    href: "/examples/micromanagement-in-agile-teams"
+  - title: "Scope Creep in Agile Projects"
+    href: "/examples/scope-creep-agile-projects"
+  - title: "Definition of Done Checklist"
+    href: "/templates/definition-of-done-checklist"
+  - title: "Scrum Ceremonies Explained"
+    href: "/docs/scrum-ceremonies-explained"
+---
+
+## Agile Team Anti-Patterns with Real Examples
+
+Anti-patterns sound abstract. Let's see them in the wild—what broken agile actually looks like on real teams.
+
+---
+
+## Example 1: The Silent Standups (Theater, No Substance)
+
+**The Scenario:**
+
+Team of 8 developers, one manager (Dave), daily standups at 10:00 AM.
+
+```
+Monday 10:00 AM:
+Dave: "Alright team, status updates. Go around."
+
+Alice (Backend): "I worked on the API endpoint. I'm working on 
+error handling. I'll work on tests tomorrow."
+
+Bob (Frontend): "I fixed the login bug. Working on the dialog 
+component. Will keep working on it."
+
+Sarah (DevOps): "Infrastructure updates. Same as yesterday, really."
+
+[Dave is typing in Slack, not looking up]
+
+6 minutes pass. Everyone is bored.
+
+Charlie (Junior Dev): "Um... I'm blocked on the database migration? 
+The table schema doesn't match what Alice said yesterday..."
+
+Dave: "We don't have time. Bring it up after standup."
+
+Charlie: [Stays blocked for 3 more days]
+
+10:06 AM standup ends. Nothing is solved.
+```
+
+**What's broken:**
+
+1. **No time for problem solving** — standup is a status report
+2. **Authority not present** — Dave is typing, not facilitating
+3. **Blocker not handled** — Charlie's issue buried
+4. **Theater not therapy** — people avoid raising real problems
+5. **Psychological safety broken** — junior dev raised hand, got shut down
+
+**What happened the next sprint:**
+
+- Charlie's blocked task delayed a story by 4 days
+- Bob finished login and realized he needed Alice's API work (not done)
+- Sarah discovered infrastructure issue mid-sprint
+- Velocity dropped 30% (everyone waiting on each other)
+
+---
+
+## Example 2: The Ghost Retrospective (Process Theater)
+
+**The Scenario:**
+
+Friday 4:45 PM, sprint ends. Retro scheduled for 5:00 PM.
+
+```
+5:00 PM Retro starts (15 people)
+
+Scrum Master (Tom): "What went well this sprint?"
+
+[Long silence. Dave, the manager, is also attending.]
+
+Alice: "Um... we shipped the feature?"
+
+Tom: "Good. What could be better?"
+
+Bob: "Communication could be better."
+
+[Dave leans forward, makes a note—Bob looks worried]
+
+Charlie: [Says nothing. Looks at his shoes]
+
+Sarah: "I think our process is fine."
+
+[More silence]
+
+Tom: "Okay, great. Everything's good then?"
+
+Alice, Bob, Sarah: "Yeah, everything's fine."
+
+Tom: "See you all next sprint!"
+
+5:12 PM — Retro ends. Nothing discussed. No action items.
+```
+
+**What happened after:**
+
+Monday 10:00 AM standups still fail. No one said anything because:
+
+1. **Manager in the room** — team doesn't trust they can be honest
+2. **No psychological safety** — Bob's "communication" comment made him nervous
+3. **No action items** — so nothing changes
+4. **"Fine" is not feedback** — it means people are hiding
+
+**The real problems (nobody voiced):**
+
+- Standups are pointless (wasted 5 hrs last sprint)
+- Alice is overwhelmed (too many meetings)
+- Bob's code reviews take 2+ days (blocking others)
+- Charlie is struggling on his first sprint (needs more support)
+- Sarah has a tech debt idea nobody wants to hear
+
+All these stayed buried. Sprint 2 repeated the same problems.
+
+---
+
+## Example 3: The Scope Creep Sprint
+
+**The Scenario:**
+
+Sprint starts Monday with 55 points committed.
+
+```
+MONDAY 10:00 AM Sprint Kickoff:
+Scrum Master: "We're committed to these 5 stories, 55 points total.
+sprint goal is 'Improve checkout flow.' Any questions?"
+
+Team: "Looks good."
+
+WEDNESDAY 2:00 PM:
+Dave (Manager): "Hey team, I just got an email from a VIP customer.
+They want feature X. Can we squeeze it in?"
+
+Alice: "We're at capacity... but I guess we could—"
+
+Dave: "Great. I'll add it to Jira."
+
+[Dave adds 13-point story without asking team to remove anything]
+
+THURSDAY 10:00 AM Standup:
+Tom: "Uh, Dave... we committed to 55 points. We're now at 68 points.
+That's physically impossible."
+
+Dave: "Just work faster. Crunch time."
+
+THURSDAY 5:00 PM:
+- Team in panic mode
+- Code review skipped (no time)
+- Testing skipped (no time)
+- Alice and Bob working overtime
+- Charlie goes home stressed
+
+FRIDAY 3:00 PM Sprint ends:
+- 54 of 68 points done (23 points added mid-sprint)
+- 4 bugs discovered in checkout flow (code review was skipped)
+- Two stories are incomplete
+- Velocity is meaningless (55 committed, 68 added, 54 done)
+```
+
+**What's broken:**
+
+1. **No sprint boundary** — mid-sprint additions without removal
+2. **Impossible commitments** — math doesn't work
+3. **Quality sacrificed for quantity** — skipped code review = bugs
+4. **Team burnout** — overtime and stress
+5. **Velocity is now useless** — can't predict anything
+
+**Long term consequences:**
+
+- Burnout cycle continues (team exhausted, makes mistakes, more bugs, more pressure)
+- Next sprint: senior dev quits (fed up with crunch)
+- Onboarding new person takes time they don't have
+- Velocity never stabilizes
+
+---
+
+## Example 4: The Blocked Sprint (No Cross-Training)
+
+**The Scenario:**
+
+Team of 5 has sprint story: "Set up payment system with Stripe"
+
+```
+MONDAY:
+- Alice (Expert Payment Dev): "I'll build the Stripe integration"
+- Assignment: Only Alice can work on this (she knows Stripe)
+
+WEDNESDAY:
+- Alice is sick
+- Bob is assigned to "continue payment story"
+- Bob has never used Stripe API
+- Bob spends 6+ hours trying to understand Alice's code
+- Bob asks questions—no one knows the answers
+
+THURSDAY:
+- Alice still sick
+- Bob is completely blocked
+- Story cannot progress
+- Rest of team cannot start dependent stories (waiting on payments)
+- Burndown chart freezes
+
+FRIDAY:
+- Alice returns
+- Realizes Bob's work was 80% wrong (different approach)
+- Alice reworks the code herself
+- Payment feature finishes at 4:30 PM Friday (crunch)
+```
+
+**What's broken:**
+
+1. **Knowledge silos** — only one person knows payment system
+2. **No pairing** — Alice never shared knowledge
+3. **No documentation** — payment setup not written down
+4. **Blocking dependencies** — entire sprint depends on one person
+5. **Bus factor = 1** — if Alice leaves, payment feature is gone
+
+**Long term consequences:**
+
+- When Alice gets promoted, entire payment system is a black box
+- New dev hired—takes 3+ weeks to learn payments (should be 1 week with docs)
+- Vacation time expensive (team is blocked whenever Alice is gone)
+- Alice burned out (everyone depends on her)
+
+---
+
+## Example 5: The Micromanaged Sprint (No Autonomy)
+
+**The Scenario:**
+
+Team of 4, manager (Dave), PO (Sarah). Sprint 1.
+
+```
+SPRINT PLANNING (90 mins):
+Dave: "Here are the stories I want you to build."
+[Dave has already assigned which dev builds which story]
+
+Dev 1 (Alice): "Actually, I think we should—"
+Dave: "I've thought about this. Do it my way."
+
+[Alice gets a story: "Build profile page"]
+
+WEDNESDAY STANDUP:
+Alice: "I'm building the profile page, but I think we should use 
+Apollo GraphQL instead of REST to reduce API calls."
+
+Dave: "We're using REST. I decided this."
+
+Alice: "But GraphQL would be 40% faster and—"
+
+Dave: "I don't want to hear it. Stick with REST."
+
+FRIDAY:
+[Profile page is slow, needs REST calls to fetch user + preferences + avatar]
+
+Alice: "Yeah, this is exactly why GraphQL would be better."
+
+Dave: "Then make REST calls in parallel."
+
+[Alice adds complexity to avoid GraphQL]
+
+SPRINT REVIEW:
+Dave: "See, my way worked fine."
+
+[But the page is slow, code is messy, and Alice is frustrated]
+```
+
+**What's broken:**
+
+1. **No autonomy** — Dave makes all technical decisions
+2. **No trust** — doesn't listen to team's expertise
+3. **Poor decisions** — Dave is a manager, not a principal engineer
+4. **Low morale** — Alice is shut down
+5. **Worst ideas win** — because they're the manager's ideas
+
+**Long term consequences:**
+
+- Sprint 2: Alice is quiet in meetings (learned not to speak up)
+- Technical debt accumulates (best practices ignored for Dave's ideas)
+- Team is 40% less productive (smart people not trusted)
+- High performers leave (burnout, lack of autonomy)
+- Code quality drops (no one cares anymore)
+
+---
+
+## Example 6: The Unfinished Sprint (No Definition of Done)
+
+**The Scenario:**
+
+Sprint goal: "Improve user authentication." 8 stories, 55 points.
+
+```
+MONDAY Sprint Starts:
+- Alice: "Building the login redesign (8 pts)"
+- Bob: "Building password reset flow (5 pts)"
+- Charlie: "Building two-factor auth (13 pts)"
+
+Team definition of "done": "Code written and merged"
+[No mention of tests, docs, or deployment]
+
+WEDNESDAY:
+Alice: "Login redesign is done" [Merges code to main]
+[No tests written. Works on localhost only. Not in staging.]
+
+THURSDAY:
+Bob: "Password reset is done" [Merges code]
+[Forgot to handle edge case: what if user doesn't have an email?]
+[No documentation. QA has no idea how to test it.]
+
+FRIDAY 4:00 PM Sprint Review:
+Stakeholder: "Wait, the login redesign isn't live?"
+
+Scrum Master: "It's... done, but not deployed to staging yet."
+
+Stakeholder: "But it's Friday. How is it not live?"
+
+Alice: "We merged it Monday. It should be live by now, but... 
+no one deployed it?"
+
+[Discovery: the code has a bug—crashes on Safari, and tests 
+would have caught it]
+```
+
+**What's broken:**
+
+1. **"Done" is undefined** — code merged ≠ code in production
+2. **No tests** — bugs discovered later
+3. **No deployment** — code never reaches users
+4. **No docs** — QA can't test, support can't explain it
+5. **Wasted work** — 26 points of "done" stories are now incomplete
+
+**Long term consequences:**
+
+- Each sprint, same problem: code never deployed
+- Backlog of "done" but not deployed code stacks up
+- QA has no idea what to test
+- Stakeholders think team is slow (they delivered 50 points this sprint, but only 20 are actually live)
+- Trust erodes
+
+---
+
+## Example 7: The Velocity Illusion (Climbing Velocity = Burnout Incoming)
+
+**The Scenario:**
+
+```
+SPRINT 1: 30 points delivered (team new, finding rhythm)
+SPRINT 2: 40 points delivered
+SPRINT 3: 50 points delivered
+SPRINT 4: 55 points delivered
+SPRINT 5: 60 points delivered
+
+Manager sees: "Great! Velocity is growing 10 points per sprint!"
+Manager plans: "Q3 will be 80 points per sprint!"
+Manager tells C-suite: "We're accelerating!"
+
+[But here's what's actually happening]
+
+SPRINT 3-5 (The crunch):
+- Team is working overtime
+- Code review is 1 day (should be 2) = bugs slip through
+- Testing is reduced
+- Alice is sleeping 5 hours/night
+- Bob has skipped 3 gym sessions
+- Charlie is arguing with his wife because of work stress
+
+SPRINT 6 (The crash):
+- Alice gets sick, takes a week off
+- Bob is burned out, stops caring, goes through motions
+- Charlie quits
+
+VELOCITY DROPS:
+- Sprint 6: 20 points delivered (half the team down)
+- Sprint 7: 25 points (team is demoralized, new hire onboarding)
+- Sprint 8: 30 points (new hire learning)
+
+Manager: "What happened?? Velocity collapsed!"
+Team (internally): "We were never sustainable. You pushed us too hard."
+```
+
+**What's broken:**
+
+1. **Mistaking velocity growth for improvement** — unsustainable velocity collapses
+2. **No team feedback** — ignored signs of burnout
+3. **Short-term thinking** — cramming instead of sustaining
+4. **Burnout cycle** — team burns out, quits, velocity crashes, new people need training
+5. **No learning** — same cycle repeats
+
+---
+
+## Summary: Common Team Dysfunction Patterns
+
+| Dysfunction | Symptoms | Outcome |
+|------------|----------|---------|
+| Silent standups | Blockers not raised, status-report theater | Blockers snowball, no problem-solving |
+| Ghost retros | No action items, "everything fine" | Same problems repeat every sprint |
+| Scope creep | Mid-sprint adds, impossible commitments | Burnout, low velocity, quality drops |
+| Knowledge silos | One person blocks whole team | Burnout, high turnover, bottlenecks |
+| Micromanagement | Managers make technical decisions | Poor code, low morale, top talent leaves |
+| Undefined "done" | Deployed code is surprise, not plan | Rework, bugs, wasted effort |
+| Velocity climbing | Team accelerates to burnout | Crash and burnout cycle |
+
+---
+
+## How to Diagnose Your Team
+
+Ask these questions honestly:
+
+- Do people raise blockers in standup, or do they hide problems?
+- After retro, do people remember the action items?
+- Do stories added mid-sprint get balanced (something leaves)?
+- Can someone other than the expert complete a story?
+- Do developers make technical decisions, or does management?
+- Does "done" mean in production, or just "coded"?
+- Is velocity stable, or does it yo-yo?
+
+If you answer "no" to most, you have anti-patterns. Pick one, fix it, measure it. Then tackle the next.
+

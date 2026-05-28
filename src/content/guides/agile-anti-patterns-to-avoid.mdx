@@ -1,0 +1,546 @@
+---
+title: "Agile Anti-Patterns: 10 Common Mistakes Teams Make (And How to Fix Them)"
+description: "Learn the top 10 agile anti-patterns that derail teams: scope creep, poor standups, skipped retrospectives, micromanagement, and more. Includes fixes and warning signs."
+slug: "agile-anti-patterns-to-avoid"
+category: "Guides"
+keywords:
+  - agile anti-patterns
+  - agile mistakes
+  - scrum anti-patterns
+  - agile failures
+  - sprint mistakes
+  - agile best practices
+  - agile team problems
+relatedLinks:
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+  - title: "Daily Standup Template"
+    href: "/templates/daily-standup-template"
+  - title: "How to Run a Sprint Retrospective"
+    href: "/guides/how-to-run-a-sprint-retrospective"
+  - title: "Definition of Done Checklist"
+    href: "/templates/definition-of-done-checklist"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Agile Team Anti-Patterns with Examples"
+    href: "/examples/agile-team-anti-patterns-examples"
+  - title: "Micromanagement in Agile Teams"
+    href: "/examples/micromanagement-in-agile-teams"
+  - title: "Avoiding Common Sprint Mistakes"
+    href: "/guides/avoiding-common-sprint-mistakes"
+---
+
+## Agile Anti-Patterns: 10 Common Mistakes Teams Make
+
+Agile is supposed to make teams faster, more responsive, and happier. But many teams adopt "Agile" practices without understanding their purpose—and end up making things worse.
+
+This guide covers the **10 most destructive agile anti-patterns** we see in real teams, how to spot them, and how to fix them.
+
+---
+
+## 1. Fake Standups (Theater, Not Communication)
+
+**The Problem:**
+
+Teams hold daily standups, but they're performative: developers reading status aloud, not actually solving problems.
+
+```
+Bad standup:
+👤 Alice: "I worked on login. I'm working on signup. I'll work on password reset."
+👤 Bob: "I fixed bugs. I'm fixing more bugs. I'll fix more bugs."
+👤 Manager: [Typing in Jira, not listening]
+⏱️ 15 mins wasted
+```
+
+**Why it happens:**
+- Manager uses standup as a status report tool (not a problem-solving tool)
+- No psychological safety to say "I'm blocked"
+- Standup is too large (20+ people)
+- Facilitator doesn't interrupt off-topic conversations
+
+**Warning signs:**
+- Standups run 30+ minutes
+- Same blockers mentioned 3+ days in a row without resolution
+- Team members skip standups
+- No one actually helps when someone says "blocked"
+
+**How to fix it:**
+
+Reframe the standup's purpose:
+
+```
+GOOD standup structure (15 mins max):
+
+1. What did we accomplish yesterday?
+   (Fastest person mentions it—no rambling)
+
+2. What's blocking anyone RIGHT NOW?
+   ← This is where the magic happens
+   
+   If someone says "blocked", STOP and solve it.
+   - Assign a mini-huddle after standup
+   - Pair with an expert
+   - Remove the blocker NOW
+   
+3. What are we pulling into work today?
+   (Next most urgent stories only)
+```
+
+**Action steps:**
+- Timebox to 10-15 minutes (hard stop)
+- If a standup goes long, it means you need more communication—schedule a follow-up conversation
+- Use the "blocked → solve immediately" rule religiously
+- Rotate facilitator daily (keeps it fresh)
+
+---
+
+## 2. The "Definition of Done" Doesn't Actually Define Anything
+
+**The Problem:**
+
+Teams have a DoD, but it's so vague that "done" means different things to different people.
+
+```
+Bad DoD:
+✓ Code written
+✓ Tests added
+✓ Reviewed
+
+VAGUE. What kind of tests? How many reviews? By whom?
+```
+
+**Why it happens:**
+- DoD was created once and never revisited
+- Team doesn't enforce it (devs can merge code that doesn't meet DoD)
+- DoD was written by a manager, not the team
+- No one checks DoD during sprint review
+
+**Warning signs:**
+- "But I thought that was done!" (finding bugs in "done" stories)
+- Stories move to "Done" but then have to be reopened for fixes
+- QA finds issues after stories are marked "complete"
+- Different team members have different standards
+
+**How to fix it:**
+
+Create a DoD that's actually enforceable:
+
+```
+✅ GOOD Definition of Done (specific):
+
+Code Quality:
+☑ Code reviewed by 2+ team members
+☑ Unit tests written (90%+ coverage)
+☑ All linters passing (ESLint, Prettier)
+☑ No console.error or TODO comments left in
+
+Testing:
+☑ Acceptance criteria verified by Product Owner
+☑ Manual testing on staging (not just localhost)
+☑ Edge cases tested (what breaks this?)
+☑ Works on Chrome, Firefox, Safari, Edge
+
+Performance & Security:
+☑ No performance regression (load time <+50ms)
+☑ OWASP vulnerabilities checked
+☑ Secrets not committed
+
+Deployment:
+☑ Documentation updated (README, API docs)
+☑ Migration scripts tested (if database change)
+☑ Ready to deploy to production
+☑ Rollback plan documented
+```
+
+**Action steps:**
+- Write DoD as a team (not top-down)
+- Revisit every sprint (is it realistic? Too strict?)
+- Make DoD visible (post it, link in Jira templates)
+- Automate what you can (linters, tests, security scans)
+- During standup: "Does this story meet DoD?" → if not, keep working
+
+See: [Definition of Done Checklist](/templates/definition-of-done-checklist)
+
+---
+
+## 3. Skipped or Rushed Retrospectives
+
+**The Problem:**
+
+"We don't have time for retros" or "We do it in 10 minutes." So team problems never get solved.
+
+**Why it happens:**
+- Pressure to deliver more = cut meetings first
+- Previous retros felt pointless (no action items)
+- Team lead doesn't see ROI
+- Retro becomes complaints without solutions
+
+**Warning signs:**
+- Same problems mentioned every retro ("Communication is bad")
+- No action items or they never get done
+- People are quiet in retros (low psychological safety)
+- Retro is 10 minutes followed by "anything else?" → "nope, meeting adjourned"
+
+**How to fix it:**
+
+Structure retros to actually drive change:
+
+```
+Retro format (60 mins for 8-person team):
+1. Opened: What went well? (10 mins)
+   → Do more of this
+
+2. Closed: What didn't work? (10 mins)
+   → Stop or change this
+
+3. Action: Pick 1-3 changes for next sprint (20 mins)
+   ← Only 1-3! Not 10.
+   
+4. Owners: Assign who owns each change (10 mins)
+   → Must be named (not "the team")
+   
+5. Verify: Measure it next retro (10 mins)
+   → "Did we reduce PR review time by 30%?"
+```
+
+**Action steps:**
+- Make retros non-negotiable (same priority as sprint planning)
+- Use a structured format (rose/thorn/bud, 4L's, sailboat—anything but free-form)
+- Have psychological safety (everyone talks, no blame)
+- Pick ONE action item, own it, measure it next retro
+- Celebrate wins: "We reduced PR review time from 24hrs to 6hrs!"
+
+See: [How to Run a Sprint Retrospective](/guides/how-to-run-a-sprint-retrospective)
+
+---
+
+## 4. Scope Creep (No Firm Sprint Boundary)
+
+**The Problem:**
+
+Stories are added mid-sprint. "Just one more thing." Sprint goal becomes meaningless.
+
+**Why it happens:**
+- Product Owner adds stories when things feel "slow"
+- Stakeholder urgency ("This customer needs X now!")
+- No pushback from team ("Sure, we can squeeze it in")
+- Sprint planning didn't set clear boundaries
+
+**Warning signs:**
+- Story count grows throughout sprint
+- Team misses sprint goal regularly
+- Developers say "we're too busy to plan next sprint"
+- Velocity is unpredictable (20 points one sprint, 45 the next)
+
+**How to fix it:**
+
+Create a sprint boundary:
+
+```
+SPRINT COMMITMENT RULE:
+- Sprint starts Monday
+- No stories added Tuesday–Friday (except emergencies)
+- If urgent work comes in, something must leave
+
+EMERGENCY rule (for real fires):
+- Customer production down? ✓ Add work, remove something
+- Feature request? ✗ Don't interrupt sprint
+- Buggy nice-to-have? ✗ Add to next sprint
+```
+
+**Action steps:**
+- During sprint planning, confirm: "Is this everything?" → Team says yes
+- Post sprint commitment on the board
+- When mid-sprint requests come in, use the rule above
+- Track scope creep: "Sprint intended [X] points, actually did [Y] points"
+
+See: [Avoiding Common Sprint Mistakes](/guides/avoiding-common-sprint-mistakes)
+
+---
+
+## 5. Skipped Sprint Planning
+
+**The Problem:**
+
+"We don't have time to plan, let's just start building." Team is chaotic, pulls random work, misses dependencies.
+
+**Why it happens:**
+- Time pressure (ship faster = skip planning)
+- Manager thinks planning is overhead
+- Team has done it before (feels unnecessary)
+- Bad planning experiences (long, boring meetings)
+
+**Warning signs:**
+- Mid-sprint: "Wait, this depends on that story? Nobody told me"
+- Stories are vague (no acceptance criteria)
+- Estimates are random ("I dunno, 5 points?")
+- Team doesn't know what the sprint goal is
+
+**How to fix it:**
+
+Do sprint planning, but do it right:
+
+```
+Sprint Planning (60-90 mins):
+1. Review sprint goal (what are we trying to accomplish?)
+2. Clarify stories (acceptance criteria, edge cases)
+3. Estimate (Planning Poker with the team)
+4. Commit (team says "yes, we can do this")
+5. Identify dependencies ("Story A depends on story B")
+```
+
+**Action steps:**
+- Schedule sprint planning before the sprint starts
+- Product Owner: have stories ready (refined, estimated)
+- Team: estimate together (don't let manager assign stories)
+- Don't skip it. Ever.
+
+See: [Sprint Planning Template](/templates/sprint-planning-template)
+
+---
+
+## 6. Micromanagement in Agile Clothing
+
+**The Problem:**
+
+"We're Agile now" but management still controls every decision, assigns tasks, and doesn't trust the team.
+
+**Why it happens:**
+- Manager is used to command-and-control culture
+- Lack of trust in team capabilities
+- Pressure from executives creates fear
+- Team doesn't push back (afraid of consequences)
+
+**Warning signs:**
+- Manager assigns tasks (not team)
+- No psychological safety to say "no" to manager ideas
+- Team waits for permission to do anything
+- Retros are fake ("Everything's fine") because team fears retaliation
+
+**How to fix it:**
+
+Shift from control to empowerment:
+
+```
+BEFORE (Micromanagement):
+Manager: "Alice, implement this using Redis"
+Alice: "But we should use PostgreSQL—"
+Manager: "I said Redis. Do it."
+
+AFTER (Agile Empowerment):
+Manager: "We need caching for performance. What do you recommend?"
+Alice: "PostgreSQL with query caching, or Redis. I'd suggest PostgreSQL because [reasons]"
+Manager: "Solid reasoning. Let's do it."
+```
+
+**Action steps:**
+- Let the team decide HOW (manager decides WHAT/WHY)
+- Trust the team's estimates (don't mandate dates)
+- Psychological safety: reward people for saying "no" to bad ideas
+- Read: [Micromanagement in Agile Teams](/examples/micromanagement-in-agile-teams)
+
+---
+
+## 7. No Definition of Ready (Chaos at Sprint Start)
+
+**The Problem:**
+
+Developers start sprint and immediately hit "wait, what are we building?" because stories aren't ready.
+
+**Why it happens:**
+- Product Owner doesn't prepare stories before sprint planning
+- No agreement on "ready"
+- Backlog refinement is skipped
+- Stories go straight from Backlog to Sprint without review
+
+**Warning signs:**
+- Sprint starts and team spends 3+ days clarifying stories
+- Developers ask "what's the acceptance criteria?"
+- Stories get half-built then need re-work (discovery mid-sprint)
+- Estimates change drastically mid-sprint
+
+**How to fix it:**
+
+Define when a story is "Ready for Sprint":
+
+```
+Definition of Ready:
+☑ Story title is clear and specific
+☑ User story format: "As a [user], I want [feature] so that [benefit]"
+☑ Acceptance criteria written (3-5 specific criteria)
+☑ Edge cases identified
+☑ Dependencies noted
+☑ Story sized (estimated by team)
+☑ Mocks/designs attached (if UI)
+☑ Product Owner has approved
+```
+
+**Action steps:**
+- Do backlog refinement 1-2x per sprint (before sprint planning)
+- Developer reviews story: "Is this ready?" → if not, send back
+- Product Owner prepares stories (not day-of sprint planning)
+
+---
+
+## 8. Burndown Charts Without Action
+
+**The Problem:**
+
+Burndown shows 20 points behind on Day 3, but team does nothing. Sprint fails silently.
+
+**Why it happens:**
+- Burndown is just a pretty graph (not a tool)
+- No daily check-in on burndown ("Are we on track?")
+- Team doesn't know what to do when they're behind
+- Manager doesn't escalate blockers in time
+
+**Warning signs:**
+- Burndown always drops off cliff at sprint end (panic work)
+- Team is surprised at sprint review ("Wait, we didn't deliver?")
+- Last 2 days of sprint: overtime and stress
+- Burndown is ignored (no one looks at it)
+
+**How to fix it:**
+
+Use burndown as a management tool:
+
+```
+DAILY CHECK:
+Day 1: Planned 50 points, completed 12 → on track (50÷5 days ≈ 10/day)
+Day 2: Planned 50 points, completed 20 → on track
+Day 3: Planned 50 points, completed 18 → ⚠️ behind (need 15/day min)
+
+IMMEDIATE ACTION (Day 3):
+- What's blocking progress?
+- Do we need to de-scope?
+- Can we pare down Definition of Done for this sprint?
+- Or add a team member to a story?
+```
+
+**Action steps:**
+- Check burndown daily (morning standup)
+- If behind: take action (don't wait until sprint end)
+- De-scope aggressively (better to deliver 30 points done than 50 half-done)
+
+See: [Sprint Velocity Tracking Guide](/guides/sprint-velocity-tracking-guide)
+
+---
+
+## 9. No Cross-Training (Team Silos)
+
+**The Problem:**
+
+One person knows the payment system, one knows auth, one knows notifications. If anyone is sick, team is blocked.
+
+**Why it happens:**
+- Rush to deliver (no time to teach others)
+- Specialists keep knowledge to themselves (job security)
+- Team is too small to afford knowledge sharing time
+- No deliberate knowledge sharing plan
+
+**Warning signs:**
+- "We need to wait for [person's name]" (too often)
+- Burndown freezes when someone is on vacation
+- Code review is 2+ days (only one person can review certain code)
+- New features take longer when the "expert" is busy
+
+**How to fix it:**
+
+Build cross-training into sprints:
+
+```
+PAIR PROGRAMMING:
+- Senior person + Junior person code together
+- Junior learns system, Senior learns junior's perspective
+- Next sprint: reverse roles
+
+CODE REVIEW:
+- Require code review from someone who didn't write it
+- Especially review code from the expert (forces others to learn)
+
+DOCUMENTATION:
+- Write HOW-TOs for critical systems
+- Make architecture visible (wiki, ADRs, README)
+```
+
+**Action steps:**
+- Every sprint: allocate 10-15% of time to pairing/teaching
+- Rotate knowledge (don't let one person own a system)
+- Document architecture and critical processes
+
+---
+
+## 10. Velocity Chasing (Burning Out the Team)
+
+**The Problem:**
+
+"We did 50 points last sprint, so let's commit to 60 this sprint." Team exhausted, code quality drops.
+
+**Why it happens:**
+- Stakeholder/manager assumes velocity should increase
+- Team doesn't push back ("Sure, we'll try")
+- No psychological safety to say "we're at capacity"
+- Misunderstanding of velocity (it's historical, not a promise)
+
+**Warning signs:**
+- Team working overtime regularly
+- Code quality drops sprint-over-sprint
+- Bug count increasing
+- People quit (burnout)
+- Velocity becomes unpredictable (60 one sprint, 20 the next—recovery)
+
+**How to fix it:**
+
+Stabilize velocity, don't maximize it:
+
+```
+VELOCITY is FEEDBACK, not a TARGET:
+
+Healthy velocity:
+- Consistent sprint-over-sprint
+- Team works 40 hrs/week (no crunch)
+- Code quality is high
+- Retrospectives are genuine
+
+Unhealthy velocity:
+- Climbing every sprint (unsustainable)
+- Team is tired and frustrated
+- Bug count is high
+- People are burning out
+```
+
+**Action steps:**
+- Commit to SUSTAINABLE velocity (not maximum)
+- If velocity drops: that's data (something broke, fix it—don't push harder)
+- Protect team from "just this one more story" syndrome
+- Celebrate sustainable delivery, not heroic efforts
+
+---
+
+## Summary: Anti-Pattern Prevention Checklist
+
+| Anti-Pattern | Prevention Habit |
+|--------------|-----------------|
+| Fake standups | Use standup to solve blockers, not report status |
+| Unclear DoD | Write specific DoD, enforce it, revisit each sprint |
+| Skipped retros | Retros are mandatory, pick 1-3 action items, own them |
+| Scope creep | Sprint boundary is firm, no mid-sprint adds without de-scoping |
+| Skipped planning | Plan before sprint, clarify stories, commit as team |
+| Micromanagement | Manager decides WHAT/WHY, team decides HOW |
+| No Definition of Ready | Stories refined before sprint planning |
+| Burndown ignored | Check burndown daily, take action if behind |
+| No cross-training | Pair program, rotate code reviews, document systems |
+| Velocity chasing | Aim for sustainable velocity, not maximum |
+
+---
+
+## Next Steps
+
+1. **Pick one anti-pattern** your team suffers from most
+2. **Discuss it in retrospective** — get team buy-in
+3. **Commit to ONE change** next sprint
+4. **Measure it** — did it get better?
+5. **Celebrate the win** — then tackle the next one
+
+Anti-patterns exist because teams are human. They're not character flaws—they're data points. Fix them thoughtfully, one at a time, with the team's input.
+

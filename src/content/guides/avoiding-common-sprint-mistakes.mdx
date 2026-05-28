@@ -1,0 +1,394 @@
+---
+title: "Avoiding Common Sprint Mistakes: The 7 Failures That Kill Sprints"
+description: "Learn the 7 most common sprint mistakes: unclear goals, unrefined backlog, mid-sprint chaos, missed DoD checks, and velocity crashes. How to fix them."
+slug: "avoiding-common-sprint-mistakes"
+category: "Guides"
+keywords:
+  - sprint mistakes
+  - sprint planning tips
+  - sprint failures
+  - sprint mistakes to avoid
+  - agile sprint tips
+  - sprint management
+  - how to run a successful sprint
+relatedLinks:
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Definition of Done Checklist"
+    href: "/templates/definition-of-done-checklist"
+  - title: "Daily Standup Template"
+    href: "/templates/daily-standup-template"
+  - title: "Agile Anti-Patterns to Avoid"
+    href: "/guides/agile-anti-patterns-to-avoid"
+  - title: "How to Run a Sprint Retrospective"
+    href: "/guides/how-to-run-a-sprint-retrospective"
+  - title: "Sprint Velocity Tracking Guide"
+    href: "/guides/sprint-velocity-tracking-guide"
+  - title: "Scope Creep in Agile Projects"
+    href: "/examples/scope-creep-agile-projects"
+  - title: "Sprint Review Meeting Template"
+    href: "/templates/sprint-review-meeting-template"
+---
+
+## Avoiding Common Sprint Mistakes: The 7 Failures That Kill Sprints
+
+Most sprints fail not because teams are incompetent, but because they make predictable mistakes. Here are the 7 most common ones—and how to prevent them.
+
+---
+
+## Mistake 1: Unclear or Missing Sprint Goal
+
+**The Problem:**
+
+Sprint starts and no one can articulate why. Developers pull random high-priority stories without seeing the bigger picture.
+
+```
+BAD Sprint Goal:
+"Implement features" (vague, uninspiring)
+"Finish backlog" (no direction)
+No goal at all (chaos)
+
+GOOD Sprint Goal:
+"Reduce checkout abandonment by streamlining the payment flow"
+"Enable users to manage subscription billing without contacting support"
+"Stabilize performance for users in regions with slow internet"
+```
+
+**Why it matters:**
+
+- Shared direction: team understands why they're building
+- Priority clarity: when stories conflict, goal breaks ties
+- Motivation: people work better with purpose
+- Trade-off decisions: "Should we add feature X or focus on goal Y?" → easier call
+
+**How to fix it:**
+
+During sprint planning:
+
+```
+→ PO proposes goal (1-2 sentences max)
+→ Team discusses: Is this realistic? Do we need anything else?
+→ Team commits: "Yes, we can deliver this in 1 sprint"
+→ Write it big: Post sprint goal on the board
+→ Reference it daily: "Does this story help the sprint goal?"
+```
+
+**Example goals:**
+
+- "Ship the new admin dashboard so managers can approve content from mobile"
+- "Fix the top 3 customer complaints about performance"
+- "Establish CI/CD pipeline so deploys take under 10 minutes"
+- "Onboard 5 new team members so they can deploy independently"
+
+---
+
+## Mistake 2: Unrefined Backlog (Stories Aren't Ready)
+
+**The Problem:**
+
+Sprint planning: "Let's start with this story."
+10 minutes in: "Wait, what does this even mean?"
+Developers spend 3 days clarifying instead of building.
+
+**Why it happens:**
+
+- PO didn't prepare stories before sprint
+- No backlog refinement sessions
+- Stories lack acceptance criteria
+- Acceptance criteria are vague ("it should be fast")
+- Dependencies not identified
+
+**How to fix it:**
+
+Do backlog refinement 1-2x per sprint (before sprint planning):
+
+```
+Refinement Session (1 hour):
+→ PO presents top 8-10 stories from backlog
+→ Team reads, asks clarifying questions
+→ PO answers: "What does 'fast' mean? Under 2 seconds? Under 500ms?"
+→ Team identifies risks: "Do we need database migration?"
+→ Team rough-estimates (no formal planning poker)
+→ Team marks "Ready for Sprint" or "Needs more work"
+
+Result: Sprint planning is smooth because stories are already understood
+```
+
+**Definition of Ready checklist:**
+
+- [ ] Title is clear, not vague
+- [ ] User story format: "As a [user], I want [action] so that [benefit]"
+- [ ] Acceptance criteria (3-5 specific ones)
+- [ ] Edge cases listed ("What if user has no email?")
+- [ ] Dependencies noted ("Depends on auth service")
+- [ ] Estimated by team (rough)
+- [ ] Any attached: designs, mockups, data specs
+- [ ] PO has approved
+
+---
+
+## Mistake 3: Sprint Goal Doesn't Match Stories
+
+**The Problem:**
+
+Sprint goal: "Improve user onboarding"
+Stories added: "Fix auth bug", "Refactor database", "Update footer"
+
+None of the stories help the onboarding goal. What's the plan?
+
+**Why it happens:**
+
+- PO didn't align stories with goal
+- Team added stories mid-sprint without checking
+- No one said "this doesn't fit the goal"
+- Goal was aspirational, not actually driving story selection
+
+**How to fix it:**
+
+During sprint planning, check alignment:
+
+```
+SPRINT PLANNING CHECKLIST:
+
+Sprint Goal: "Improve user onboarding"
+
+Story 1: "Build signup modal" ✅ YES (part of onboarding)
+Story 2: "Add email verification" ✅ YES (prevents bad signups)
+Story 3: "Fix login auth bug" ❌ NO (doesn't help onboarding)
+Story 4: "Create onboarding checklist" ✅ YES (guides new users)
+Story 5: "Refactor database" ❌ NO (tech debt, not onboarding)
+
+Action: Don't add Stories 3 and 5 this sprint.
+Save them for next sprint (or a different goal).
+```
+
+**Rule:**
+
+> Every story in the sprint should support the sprint goal. If a story doesn't fit the goal, it's not a sprint story.
+
+---
+
+## Mistake 4: No Estimation or Estimates Are Fiction
+
+**The Problem:**
+
+Team commits to 60 points based on optimism, not actual capacity.
+Day 3: team realizes they're 20 points behind.
+Day 5: panic, overtime, poor code.
+
+**Why it happens:**
+
+- Estimates are guesses, not based on team's actual velocity
+- No historical data (first sprint, don't know team's capacity)
+- Estimates are too optimistic ("this should be easy")
+- Manager sets target ("hit 70 points"), team estimates to match
+- Team doesn't estimate together (one person's guess is wrong)
+
+**How to fix it:**
+
+Use planning poker to estimate as a team:
+
+```
+PLANNING POKER (15 min per story):
+
+→ PO reads story
+→ Each dev picks a Fibonacci number (1, 2, 3, 5, 8, 13...)
+→ Reveal simultaneously
+   - If everyone picked same: done, that's the estimate
+   - If different: discuss why
+     👤 "I said 5 because it's straightforward"
+     👤 "I said 13 because we need new tests and a database migration"
+   → Re-vote after discussion
+
+Result: Team has thought through complexity
+```
+
+**Use historical velocity to commit:**
+
+```
+VELOCITY = average of last 3 sprints
+
+Sprint 1: 35 points delivered
+Sprint 2: 42 points delivered
+Sprint 3: 39 points delivered
+
+Velocity = (35 + 42 + 39) ÷ 3 = 38 points per sprint
+
+Sprint 4 commitment: ~38 points (realistic, not aspirational)
+```
+
+---
+
+## Mistake 5: Mid-Sprint Additions Without Removals (Scope Creep)
+
+**The Problem:**
+
+Monday: Team commits to 50 points
+Tuesday: Urgent feature request → add 15 points (no removal)
+Wednesday: Customer bug → add 10 points
+Thursday: Team realizes they're doomed
+
+**Why it happens:**
+
+- Stakeholder urgency ("This customer is important!")
+- FOMO ("We should build feature X before competitor Y")
+- No sprint boundary enforcement
+- Team doesn't push back ("Sure, we'll try")
+
+**How to fix it:**
+
+Enforce a sprint boundary:
+
+```
+MID-SPRINT REQUEST RULE:
+
+If urgent work comes in:
+→ IS THIS A REAL EMERGENCY?
+   → Production down?       YES ✓ Add it (and remove something)
+   → Customer emergency?    NO → Add to next sprint backlog
+   → Nice feature to have?  NO → Wait for next sprint
+   → Internal nice-to-have? NO → Wait
+
+→ IF ADDING WORK: Something Must Leave
+   "This customer bug is critical, so we're removing the
+   refactoring task. Refactoring moves to next sprint."
+
+→ UPDATE SPRINT GOAL IF NEEDED
+   Old goal: "Improve checkout flow"
+   New goal: "Fix checkout bug + improve checkout flow"
+```
+
+**Action:** Post the rule. Enforce it. Every time.
+
+---
+
+## Mistake 6: No Daily Check on Definition of Done
+
+**The Problem:**
+
+Friday 4:00 PM: "Is this story done?"
+Dev: "Yeah, it's coded."
+Scrum Master: "But does it meet Definition of Done?"
+Dev: "Oh... I didn't write tests. Or update docs. My bad."
+
+Story can't be marked done. Sprint goal is missed.
+
+**Why it happens:**
+
+- No Definition of Done (or it's vague)
+- DoD not checked until end of sprint
+- Pressure to deliver overrides DoD
+- No one enforces it
+
+**How to fix it:**
+
+Check DoD during standup:
+
+```
+DAILY STANDUP ADDITION:
+
+Standard questions:
+- What did I finish yesterday?
+- What am I working on today?
+- Am I blocked?
+
+NEW QUESTION:
+- If I finished something, does it meet DoD?
+  ☑ Unit tests written?
+  ☑ Code reviewed?
+  ☑ Deployed to staging?
+  ☑ Docs updated?
+  ☑ No lingering TODOs?
+
+If NO: it's not done yet. Keep working.
+```
+
+---
+
+## Mistake 7: Not Tracking Burndown (Or Ignoring It)
+
+**The Problem:**
+
+Day 1: Planned 50 points, completed 0 (expected: 10)
+Day 2: Planned 50 points, completed 8 (expected: 20)
+Day 3: Planned 50 points, completed 15 (expected: 30) ← BEHIND
+Day 4: Ignore burndown, hope things improve
+Day 5: Panic, overtime, low-quality code
+
+**Why it happens:**
+
+- Burndown chart is just a pretty graph (not used for management)
+- No daily check-in on burndown
+- Team doesn't know what to do if behind
+- Manager doesn't escalate issues early
+
+**How to fix it:**
+
+Check burndown daily and take action:
+
+```
+BURNDOWN RULE:
+
+IDEAL BURNDOWN (linear):
+Mon: 50 pts
+Tue: 40 pts (10 done per day)
+Wed: 30 pts
+Thu: 20 pts
+Fri: 10 pts
+Sprint end: 0 pts
+
+REAL BURNDOWN (if behind):
+Mon: 50 pts (0 done)
+Tue: 45 pts (5 done) ← BEHIND (should be 40)
+Wed: 42 pts (3 done) ← MORE BEHIND
+↓
+TAKE ACTION (Wed morning):
+- Identify blockers: Why only 8 points in 2 days?
+- Remove scope: De-scope 10 points of lower priority stories
+- Add help: Pair with someone to unblock work
+- Escalate: If database migration is blocked externally, flag it
+```
+
+---
+
+## Sprint Mistake Prevention Checklist
+
+| Phase | Mistake | Prevention |
+|-------|---------|-----------|
+| **Planning** | Unclear sprint goal | Write 1-2 sentence goal, post it |
+| **Planning** | Unrefined backlog | Do refinement before sprint planning |
+| **Planning** | Goal doesn't match stories | Check: every story supports goal |
+| **Planning** | Bad estimates | Use planning poker + historical velocity |
+| **Execution** | Scope creep | Enforce sprint boundary, de-scope if urgent work added |
+| **Execution** | DoD not checked | Daily standup includes "Does it meet DoD?" |
+| **Execution** | Burndown ignored | Check daily, take action if behind |
+
+---
+
+## Quick Sprint Success Checklist
+
+**Before Sprint Starts:**
+
+- [ ] Sprint goal is clear (1-2 sentences, posted)
+- [ ] Backlog is refined (stories have acceptance criteria)
+- [ ] Stories support goal (every story checked)
+- [ ] Estimates are realistic (used planning poker + velocity history)
+- [ ] Capacity is realistic (not overcommitted)
+
+**During Sprint:**
+
+- [ ] Daily standup includes blockers (solved immediately)
+- [ ] DoD is checked (every story before marking done)
+- [ ] Burndown is tracked (adjusted if behind)
+- [ ] Scope boundary is enforced (no mid-sprint adds without removals)
+- [ ] Team is healthy (no burnout signs)
+
+**End of Sprint:**
+
+- [ ] Stories meet DoD (not just "coded")
+- [ ] Sprint goal was achieved (or reason documented)
+- [ ] Velocity is recorded (for future estimation)
+- [ ] Retro is held (action items for next sprint)
+
+Follow this, and your sprint failures drop by 80%.
+
