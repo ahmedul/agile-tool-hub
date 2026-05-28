@@ -1,0 +1,290 @@
+---
+title: "Sprint Ceremony Examples: How High-Performing Teams Run Reviews and Retros"
+description: "Real examples of sprint review agendas, retrospective action items, and velocity reports from high-performing agile teams across SaaS, mobile, and enterprise."
+slug: "sprint-ceremony-examples"
+category: "Examples"
+keywords:
+  - sprint ceremony examples
+  - sprint review example
+  - sprint retrospective example
+  - agile ceremony examples
+  - sprint review agenda example
+  - retrospective action items
+relatedLinks:
+  - title: "Sprint Review Meeting Template"
+    href: "/templates/sprint-review-meeting-template"
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+  - title: "Sprint Review vs Retrospective"
+    href: "/guides/sprint-review-vs-retrospective"
+  - title: "How to Run a Sprint Retrospective"
+    href: "/guides/how-to-run-a-sprint-retrospective"
+  - title: "Sprint Velocity Tracking Guide"
+    href: "/guides/sprint-velocity-tracking-guide"
+  - title: "Sprint Goal Examples"
+    href: "/examples/sprint-goal-examples-for-product-teams"
+  - title: "Definition of Done Checklist"
+    href: "/templates/definition-of-done-checklist"
+  - title: "Retro Board Tool"
+    href: "/tools/retro-board"
+---
+
+## Sprint Ceremony Examples: Real Teams, Real Results
+
+These examples are based on common patterns from high-performing agile teams. Names are anonymized.
+
+---
+
+## Example 1: SaaS Startup — Sprint Review
+
+**Team:** 4 devs, 1 designer, 1 PO | 2-week sprints | 32-36 pts velocity
+
+### Sprint Goal
+
+> "Enable users to invite teammates and manage workspace permissions — completing the collaboration foundation for the Q2 launch."
+
+### Sprint Review Notes
+
+```
+Date: May 21, 2026
+Attendees: Dev team (5), PO, CEO, Head of Customer Success
+
+Sprint 14 Summary
+─────────────────
+Goal: Teammate invitations + workspace permissions
+Status: ACHIEVED
+
+Completed: 34 points across 6 stories
+Not completed: 1 story (5 pts) — Email notification templates
+Reason: Third-party email service API changed, required rearchitect
+Plan: Carry over to Sprint 15 with updated API integration
+
+DEMO SEQUENCE:
+1. Team member invitation flow (Sarah) ............... 10 min
+2. Role-based permissions (Junior Dev) ............... 8 min
+3. Workspace settings page (Designer) ................ 5 min
+4. Admin dashboard updates (Senior Dev) .............. 7 min
+
+STAKEHOLDER FEEDBACK:
+─────────────────────
+CEO: "The role selector is confusing. Users won't understand 'Editor' vs 'Contributor'."
+  Action: Simplify to 3 roles (Admin / Member / Viewer). PO to update tickets.
+
+Head of CS: "Customers are asking about SSO. Can we add to roadmap?"
+  Action: PO to create epic PROJ-201 for SSO. Prioritize for Q3.
+
+Head of CS: "The invitation email UX looks great. Customers will love it."
+  No action needed.
+
+BACKLOG UPDATES:
+───────────────
+New: PROJ-187 — Simplify role names (Admin/Member/Viewer) — 3 pts
+New: PROJ-201 — SSO epic (created, not yet estimated)
+Reprioritized: Email notifications moved up (blocked Q2 launch if not done)
+```
+
+### What Made This Review Work
+
+- Demo on staging, not localhost — no "it works on my machine" moments
+- CEO gave direct UX feedback that led to immediate backlog change
+- One incomplete story explained honestly with root cause, not minimized
+- Action items from feedback became Jira tickets within 24 hours
+
+---
+
+## Example 2: Mobile Team — Sprint Review
+
+**Team:** 3 iOS devs, 2 Android devs, 1 PO | 2-week sprints | 40-45 pts velocity
+
+### Sprint Review Notes
+
+```
+Sprint 8 — May 14, 2026
+Goal: "Onboarding redesign — reduce time-to-first-value under 90 seconds"
+
+STATUS: PARTIALLY ACHIEVED
+
+Completed: 38 of 44 committed points (86%)
+
+COMPLETED:
+New onboarding screens (iOS) — 13 pts
+New onboarding screens (Android) — 13 pts
+Progress bar with step indicators — 5 pts
+Skip option and resume later — 5 pts
+
+NOT COMPLETED:
+Analytics tracking for onboarding steps — 2 pts
+  Reason: Analytics SDK update caused build failures
+  Plan: Fix in Sprint 9 (top priority)
+
+A/B test framework — 8 pts (descoped mid-sprint)
+  Reason: Complexity higher than estimated
+  Plan: Break into 3 smaller stories, re-estimate in refinement
+
+DEMO FEEDBACK:
+──────────────
+Product lead: "The 5-step flow is too long. Can we get to 3 steps?"
+  Action: PO to investigate which steps can be deferred post-signup
+  New ticket: PROJ-156 (research spike, 2 pts)
+
+QA lead: "On Android, step 3 crashes on Galaxy A32"
+  Action: Android dev to investigate. Create bug PROJ-157 (severity: high)
+
+Marketing: "The new flow looks great. Will help with conversion."
+
+METRICS:
+Current onboarding completion rate: 42%
+Target: 65% by end of Q2
+Next measurement: After Sprint 9 release
+```
+
+---
+
+## Example 3: Platform Team — Sprint Retrospective
+
+**Team:** 5 backend engineers | 2-week sprints | 35-40 pts velocity
+
+### Retro Notes (Start / Stop / Continue)
+
+```
+Sprint 11 Retrospective — May 20, 2026
+Format: Start / Stop / Continue
+Duration: 75 minutes
+
+WENT WELL (Continue):
++ Daily standup actually useful — concrete blockers raised and resolved
++ New PR template reduced review comments by ~30%
++ Database migration went smoothly for first time in months
+
+DIDN'T GO WELL (Stop):
+- 3 stories blocked by Auth team for 5+ days each
+- No clear owner for DevOps tasks — they fell between the cracks
+- Code review taking 3+ days per PR — slowing everyone down
+
+IDEAS (Start):
+? Assign a "DevOps buddy" rotation for each sprint
+? Set a 24-hour review SLA — if not reviewed, pull into daily standup
+? Flag cross-team dependencies in planning, not mid-sprint
+
+ROOT CAUSES:
+Slow reviews: PRs too large (some 600+ lines), no SLA, 2 people doing all reviews
+Cross-team blocks: Requesting Auth team help mid-sprint with no lead time
+
+ACTION ITEMS (Sprint 12):
+1. DEPENDENCY FLAG — Scrum Master — Due: Sprint 12 Planning (May 23)
+   Contact Auth team before sprint starts for all dependencies
+
+2. PR SIZE LIMIT — Senior Dev — Due: May 22
+   Max 400 lines per PR via GitHub bot
+
+3. REVIEW SLA — Team agreement — Start: Sprint 12
+   All PRs get first review within 24 hours, else raised in standup
+
+TEAM HEALTH:
+Psychological safety (1-5): 4.2 avg — Up from 3.8 last sprint
+Team satisfaction (1-5): 3.6 avg — Moderate, blocked work hurting morale
+
+Last sprint action items:
+Added linting checks to CI (done)
+Moved standup to 10 AM (done)
+DB index review (not done — carrying to Sprint 12)
+```
+
+---
+
+## Example 4: Enterprise Team — Velocity Recovery
+
+**Team:** 8 devs | 2-week sprints | target 60 pts, declining to 35-40 pts
+
+### The Problem
+
+```
+Velocity trend:
+Sprint 6: 58 pts
+Sprint 7: 52 pts
+Sprint 8: 44 pts
+Sprint 9: 38 pts
+```
+
+### Retrospective Root Cause Analysis
+
+```
+Root causes identified:
+1. New compliance process added 4 hours of documentation per story
+   5-pt stories now take 8 pts of effort
+
+2. 2 senior devs on rotation for security incident response
+   Lost ~25% capacity for 3 weeks
+
+3. Story point inflation — team started giving everything 13 pts
+   "Easier to pad estimates than get questioned"
+
+4. Backlog refinement skipped for 2 sprints
+   Stories entered sprint with unclear acceptance criteria
+
+Actions taken:
+1. Re-estimate reference stories to include compliance overhead
+2. Block security rotation time in capacity planning explicitly
+3. Planning Poker session to recalibrate estimation together
+4. Reinstated weekly backlog refinement (Thursday, 30 min)
+
+Results after 3 sprints:
+Sprint 10: 45 pts (recovering)
+Sprint 11: 51 pts (near target)
+Sprint 12: 58 pts (back to target)
+```
+
+---
+
+## Example 5: What "Good" Looks Like
+
+**Team:** 5 devs, 1 PO | 2-week sprints | consistent 42-46 pts
+
+### Sprint Review Health Signals
+
+```
+Stakeholders attend every review (100% attendance)
+New backlog items created from 80%+ of feedback sessions
+Demo takes under 60 minutes for 5-6 stories
+No work-in-progress demoed — everything shown is DoD-complete
+PO accepts stories in staging before review (no surprises)
+Velocity variance: +/- 15% (predictable)
+```
+
+### Retrospective Health Signals
+
+```
+Action items tracked sprint-over-sprint
+75%+ of last sprint's actions completed before next retro
+Team satisfaction trending up (3.5 to 4.2 over 6 months)
+Different retrospective formats used to keep it fresh
+Psychological safety: 4+ out of 5 consistently
+2-3 improvements implemented per sprint
+```
+
+### 3-Month Improvement Log
+
+```
+Month 1:
+Added PR template: Review time went from 3 days to 1.5 days
+Blocked standup time (no meetings 9-11 AM)
+
+Month 2:
+Dependency tracking sheet: Zero mid-sprint blocks (was 2-3 per sprint)
+Definition of Done v2: Production bugs reduced 40%
+
+Month 3:
+Design review in refinement: Design changes in sprint dropped 60%
+No-meeting Fridays: Velocity up 8%
+```
+
+---
+
+## Key Takeaways
+
+1. **Sprint review drives product quality** — stakeholder feedback keeps the product relevant and on track
+2. **Retrospective drives team quality** — small process improvements compound over 6+ months
+3. **Skip either and you'll feel it within 2-3 sprints** — velocity drops, quality erodes, morale declines
+4. **Great retros have action items with owners** — "we should communicate better" is not an action item
+5. **Velocity is a lagging indicator** — identify root causes in retro before velocity drops further
+6. **High-performing teams invest in ceremonies** — they don't skip them "because we're busy"

@@ -1,0 +1,329 @@
+---
+title: "Sprint Velocity Tracking: How to Measure and Improve Team Velocity"
+description: "Learn how to track sprint velocity in Jira, calculate team capacity, spot trends, and use velocity to improve sprint planning accuracy. Includes velocity chart guide."
+slug: "sprint-velocity-tracking-guide"
+category: "Guides"
+keywords:
+  - sprint velocity
+  - velocity tracking agile
+  - how to measure velocity
+  - sprint velocity chart
+  - team velocity jira
+  - agile velocity calculation
+relatedLinks:
+  - title: "Story Point Estimation Guide"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Backlog Refinement Template"
+    href: "/templates/backlog-refinement-template"
+  - title: "Sprint Goal Examples"
+    href: "/examples/sprint-goal-examples-for-product-teams"
+  - title: "Sprint Review Meeting Template"
+    href: "/templates/sprint-review-meeting-template"
+  - title: "How to Break Down Epics Into User Stories"
+    href: "/guides/how-to-break-down-epics-into-user-stories"
+  - title: "Planning Poker"
+    href: "/tools/planning-poker"
+  - title: "Definition of Done Checklist"
+    href: "/templates/definition-of-done-checklist"
+---
+
+## Sprint Velocity: How to Measure and Improve Your Team's Delivery
+
+Velocity is the number of story points a team completes per sprint. It's your most reliable planning tool — when tracked correctly.
+
+---
+
+## What Is Velocity (and What It Isn't)
+
+**Velocity IS:**
+- The average story points completed per sprint over the last 3-5 sprints
+- A planning tool for forecasting how much work a team can commit to
+- A team-specific metric (not comparable across teams)
+- A leading indicator of capacity and flow
+
+**Velocity IS NOT:**
+- A measure of developer productivity or quality
+- Comparable between teams ("our velocity is 40, theirs is 80")
+- A target to be maximized (gaming velocity hurts quality)
+- Accurate for teams newer than 3-4 sprints
+
+---
+
+## How to Calculate Velocity
+
+**Formula:**
+
+`Velocity = Total completed points over N sprints / N`
+
+**Example (last 5 sprints):**
+
+| Sprint | Committed | Completed |
+|--------|-----------|-----------|
+| Sprint 8 | 42 | 38 |
+| Sprint 9 | 40 | 41 |
+| Sprint 10 | 44 | 39 |
+| Sprint 11 | 38 | 40 |
+| Sprint 12 | 42 | 43 |
+
+`Velocity = (38 + 41 + 39 + 40 + 43) / 5 = 40.2`
+
+**Round down for conservative planning:** Use 40 as your capacity for the next sprint.
+
+---
+
+## Tracking Velocity in Jira
+
+### Using Jira's Built-In Velocity Chart
+
+1. Go to your board → **Reports** → **Velocity Chart**
+2. Jira shows committed vs. completed points per sprint automatically
+3. Hover over bars to see breakdown by sprint
+
+**What to look for:**
+- Is the blue bar (committed) consistently higher than the green bar (completed)? You're over-committing.
+- Is the green bar consistently higher? You're under-committing (good for morale, bad for planning).
+- Large spikes up or down? Flag these sprints as anomalies (holidays, illness, scope changes).
+
+### Manual Velocity Spreadsheet
+
+If you're not using Jira software, track manually:
+
+```
+Sprint Velocity Log — Team: [Name]
+───────────────────────────────────────
+| Sprint | Committed | Completed | Notes |
+|--------|-----------|-----------|-------|
+| S1     | 30        | 22        | New team, calibrating |
+| S2     | 25        | 27        | Good sprint |
+| S3     | 28        | 25        | 2 members sick day 3 |
+| S4     | 28        | 30        | Clean sprint |
+| S5     | 30        | 29        | |
+|--------|-----------|-----------|-------|
+| Avg    | 28.2      | 26.6      |       |
+
+Recommended next sprint: 26-28 points
+```
+
+---
+
+## Using Velocity for Sprint Planning
+
+### Step 1: Calculate Available Capacity
+
+Before planning each sprint, adjust for holidays, time off, and part-time availability:
+
+```
+Team members: 5 devs
+Sprint duration: 10 days
+Working days per sprint: 10 days × 5 people = 50 person-days
+
+Adjustments:
+- John: 2 days PTO → -2 person-days
+- Company holiday: 1 day → -5 person-days (all 5 members)
+- Sarah: 50% on support rotation → -5 person-days
+
+Adjusted capacity: 50 - 2 - 5 - 5 = 38 person-days
+
+Capacity factor (based on historical data):
+38 / 50 = 0.76 (76% of normal sprint)
+
+Adjusted velocity: 40 × 0.76 ≈ 30 points for this sprint
+```
+
+### Step 2: Commit Based on Velocity
+
+```
+Available sprint capacity: 40 story points (normal sprint)
+
+Backlog items by priority:
+1. PROJ-101: User auth redesign — 8 pts ✅ (cumulative: 8)
+2. PROJ-102: Payment flow fix — 5 pts ✅ (cumulative: 13)
+3. PROJ-103: Dashboard widgets — 13 pts ✅ (cumulative: 26)
+4. PROJ-104: Export feature — 8 pts ✅ (cumulative: 34)
+5. PROJ-105: Email notifications — 8 pts ⚠️ (cumulative: 42 — over capacity!)
+   → Either defer or carry partial risk
+
+Conservative commit: 34 points (stop at PROJ-104)
+```
+
+### Step 3: Leave Buffer
+
+**Leave 10-15% buffer** for:
+- Unplanned bugs
+- Support tickets
+- Meetings and ceremonies
+- Technical debt cleanup
+
+```
+Velocity: 40 pts
+Buffer (15%): 6 pts
+Sprint commitment: 34 pts
+```
+
+---
+
+## Interpreting Velocity Patterns
+
+### Pattern 1: Consistent Velocity (Healthy)
+
+```
+Sprint 8:  ████████████████████ 38
+Sprint 9:  █████████████████████ 41
+Sprint 10: ████████████████████ 39
+Sprint 11: █████████████████████ 40
+
+Interpretation: Predictable team. Safe to commit to 38-40 pts per sprint.
+```
+
+### Pattern 2: Declining Velocity (Warning)
+
+```
+Sprint 8:  ████████████████████████ 48
+Sprint 9:  ██████████████████████ 43
+Sprint 10: ████████████████████ 38
+Sprint 11: ████████████████ 32
+
+Interpretation: Team under stress. Look for:
+- Increasing meetings/distractions
+- Technical debt slowing development
+- Team burnout
+- Scope inflation (stories getting bigger)
+Action: Run a team health retrospective. Reduce sprint commitment temporarily.
+```
+
+### Pattern 3: Spiking Velocity (Unreliable)
+
+```
+Sprint 8:  ████████████████████ 38
+Sprint 9:  ██████████████████████████████ 60
+Sprint 10: ██████ 18
+Sprint 11: ████████████████████████ 46
+
+Interpretation: Unpredictable flow. Common causes:
+- Inconsistent story point sizing
+- Sprint scope changes
+- External dependencies causing blocks
+Action: Tighten estimation process. Review DoD. Investigate sprint 9 vs 10 difference.
+```
+
+### Pattern 4: Steadily Increasing (Team Growing)
+
+```
+Sprint 1:  ████████ 18
+Sprint 2:  ████████████ 24
+Sprint 3:  ███████████████ 30
+Sprint 4:  ████████████████████ 38
+
+Interpretation: New team building capability. Normal for first 3-4 sprints.
+Don't set velocity-based targets during ramp-up.
+```
+
+---
+
+## Improving Team Velocity
+
+### Root Cause: Story Estimation Problems
+
+**Symptom:** Velocity varies wildly sprint to sprint
+
+**Fix:**
+- Run planning poker consistently for all stories
+- Break down stories larger than 13 points
+- Maintain reference stories ("this story is similar to PROJ-45 which was 5 pts")
+
+### Root Cause: Too Many Interruptions
+
+**Symptom:** Committed points not completed, team says they were "pulled away"
+
+**Fix:**
+- Track interrupt time in retrospective
+- Create "support rotation" so one person handles interrupts while others focus
+- Shield the team from non-sprint work during sprint
+
+### Root Cause: Dependencies on Other Teams
+
+**Symptom:** Stories blocked mid-sprint, low completion rate
+
+**Fix:**
+- Identify dependencies in sprint planning and pre-clear them
+- Add "dependency resolved" as a Definition of Ready criterion
+- Flag blockers daily in standup, escalate after 24 hours
+
+### Root Cause: Definition of Done Too Strict
+
+**Symptom:** Velocity drops after introducing DoD
+
+**Fix:**
+- This is often a good thing — you're finding quality problems sooner
+- Re-estimate stories now that DoD is factored in
+- Track "almost done" stories separately to validate your DoD calibration
+
+### Root Cause: Technical Debt
+
+**Symptom:** Velocity steadily declining over quarters
+
+**Fix:**
+- Allocate 20% of sprint capacity to tech debt (rule of thumb)
+- Create a tech debt backlog in Jira
+- Measure time-to-complete for similar stories over time as a proxy
+
+---
+
+## Velocity FAQs
+
+**Q: Should we compare velocity across teams?**
+No. Story points are relative to each team's calibration. Team A's "5 points" might be Team B's "13 points."
+
+**Q: What if a team member leaves or joins?**
+Velocity will change. Don't force the same commitment. Give 2-3 sprints to re-calibrate.
+
+**Q: Should we share velocity with management?**
+Share it as a planning input, not a performance metric. Framing matters: "We use velocity to plan how much we can commit to" vs. "We track velocity to measure output."
+
+**Q: Our velocity is low. Is that bad?**
+Not necessarily. Low velocity with high quality and predictability beats high velocity with bugs and rework. Measure outcomes, not throughput.
+
+**Q: Should we track velocity by individual developer?**
+No. Velocity is a team metric. Individual tracking creates unhealthy competition and incentivizes gaming the estimates.
+
+---
+
+## Velocity and Release Planning
+
+Velocity lets you forecast delivery dates:
+
+```
+Feature: User dashboard redesign
+Remaining backlog: 120 story points
+Current velocity: 40 points/sprint
+Sprint duration: 2 weeks
+
+Estimated sprints to complete: 120 / 40 = 3 sprints
+Estimated calendar time: 3 × 2 weeks = 6 weeks
+Projected completion: [Today + 6 weeks]
+
+With buffer (confidence interval):
+Conservative: 120 / 35 = 3.4 sprints ≈ 7 weeks
+Optimistic: 120 / 45 = 2.7 sprints ≈ 5.5 weeks
+
+Tell stakeholders: "We expect to complete by [6-7 weeks from now],
+assuming no major scope changes."
+```
+
+---
+
+## Quick Reference
+
+| Concept | Description |
+|---------|-------------|
+| **Velocity** | Avg story points completed per sprint (last 3-5 sprints) |
+| **Capacity** | Adjusted velocity based on team availability |
+| **Commitment** | Story points committed at sprint planning |
+| **Throughput** | Alternative to velocity: count of tickets, not points |
+| **Lead time** | Time from ticket created to delivered |
+| **Cycle time** | Time from ticket "In Progress" to "Done" |
+
+Use **velocity** for planning. Use **lead time** and **cycle time** for process improvement.
+

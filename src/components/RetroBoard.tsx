@@ -38,7 +38,7 @@ type BroadcastEvent =
   | { type: "add_note"; note: RetroNote }
   | { type: "delete_note"; noteId: string }
   | { type: "vote_note"; noteId: string; userId: string; action: "add" | "remove" }
-  | { type: "full_state"; notes: RetroNote[] }
+  | { type: "full_state"; notes: RetroNote[]; retroType: RetroType }
   | { type: "timer_update"; timer: TimerState }
   | { type: "phase_change"; phase: Phase };
 
@@ -149,11 +149,13 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const myNameRef = useRef("");
   const autoJoinedRef = useRef(false);
   const notesRef = useRef<RetroNote[]>([]);
+  const retroTypeRef = useRef<RetroType>("standard");
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isFirstUserRef = useRef(false);
 
-  // Keep notesRef in sync for use in callbacks
+  // Keep notesRef and retroTypeRef in sync for use in callbacks
   useEffect(() => { notesRef.current = notes; }, [notes]);
+  useEffect(() => { retroTypeRef.current = retroType; }, [retroType]);
   useEffect(() => { setSessionUrl(window.location.href); }, []);
 
   // Persist theme preference
@@ -274,6 +276,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         break;
       case "full_state":
         setNotes(event.notes);
+        if (event.retroType) setRetroType(event.retroType);
         break;
       case "timer_update":
         setTimerState(event.timer);
@@ -319,10 +322,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
           const me = (newPresences as unknown as { userId: string }[]).find(
             (p) => p.userId !== uid,
           );
-          if (me && notesRef.current.length > 0) {
+          if (me) {
             // Small delay so they're subscribed before we broadcast
             setTimeout(() => {
-              broadcast({ type: "full_state", notes: notesRef.current });
+              broadcast({ type: "full_state", notes: notesRef.current, retroType: retroTypeRef.current });
             }, 500);
           }
         })
@@ -440,79 +443,80 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
 
   if (!joined) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">🎯 Create Your Retro</h2>
-          <p className="text-gray-600 text-sm mb-6">Enter your name and choose your retrospective format</p>
+      <div className="flex items-center justify-center min-h-[60vh] p-4">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 w-full max-w-md">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Retro Board</h1>
+          <p className="text-gray-500 text-sm mb-6">Enter your name to join this session</p>
 
-          {/* Theme selector */}
-          <div className="mb-6 pb-6 border-b border-gray-200">
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Theme</label>
-            <div className="flex gap-2 flex-wrap">
-              {(Object.keys(THEMES) as Theme[]).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setTheme(t)}
-                  className={`px-4 py-2 rounded-lg font-medium text-sm capitalize transition-all ${
-                    theme === t
-                      ? "bg-blue-600 text-white ring-2 ring-blue-300"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  {t === "light" ? "☀️ Light" : t === "dark" ? "🌙 Dark" : t === "ocean" ? "🌊 Ocean" : "🌅 Sunset"}
-                </button>
-              ))}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Your Name</label>
+              <input
+                autoFocus
+                type="text"
+                placeholder="Enter your name"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && nameInput.trim() && handleJoin()}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-          </div>
 
-          {/* Name input */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Your Name</label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !inputs && handleJoin()}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-              autoFocus
-            />
-          </div>
-
-          {/* Retro format selector */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Retro Format</label>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {(Object.values(RETRO_FORMATS) as typeof RETRO_FORMATS[keyof typeof RETRO_FORMATS][]).map((format) => (
-                <button
-                  key={format.id}
-                  onClick={() => setRetroType(format.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
-                    retroType === format.id
-                      ? "bg-blue-100 border-2 border-blue-600 ring-2 ring-blue-200"
-                      : "bg-gray-50 border-2 border-gray-200 hover:bg-gray-100"
-                  }`}
-                >
-                  <p className="font-semibold text-gray-900">{format.label}</p>
-                  <p className="text-xs text-gray-600 mt-1 flex gap-2 flex-wrap">
-                    {format.columns.map((col) => (
-                      <span key={col.id} className="inline-flex items-center gap-1">
-                        {col.emoji} {col.label.split(" ")[0]}
-                      </span>
+            <details>
+              <summary className="text-sm font-medium text-gray-500 cursor-pointer select-none hover:text-gray-700 list-none flex items-center gap-1.5">
+                <span className="text-xs">▶</span>
+                Board settings (format &amp; theme)
+              </summary>
+              <div className="pt-4 mt-3 border-t border-gray-100 space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Retro Format</label>
+                  <div className="space-y-1.5 max-h-44 overflow-y-auto">
+                    {(Object.values(RETRO_FORMATS) as typeof RETRO_FORMATS[keyof typeof RETRO_FORMATS][]).map((format) => (
+                      <button
+                        key={format.id}
+                        onClick={() => setRetroType(format.id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
+                          retroType === format.id
+                            ? "bg-blue-100 border-2 border-blue-600"
+                            : "bg-gray-50 border-2 border-gray-200 hover:bg-gray-100"
+                        }`}
+                      >
+                        <span className="font-semibold text-gray-900">{format.label}</span>
+                      </button>
                     ))}
-                  </p>
-                </button>
-              ))}
-            </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Theme</label>
+                  <div className="flex gap-2 flex-wrap">
+                    {(Object.keys(THEMES) as Theme[]).map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => setTheme(t)}
+                        className={`px-3 py-1.5 rounded-lg font-medium text-sm capitalize transition-all ${
+                          theme === t
+                            ? "bg-blue-600 text-white ring-2 ring-blue-300"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                      >
+                        {t === "light" ? "☀️ Light" : t === "dark" ? "🌙 Dark" : t === "ocean" ? "🌊 Ocean" : "🌅 Sunset"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <button
+              onClick={handleJoin}
+              disabled={!nameInput.trim()}
+              className="w-full bg-blue-600 text-white rounded-lg py-3 font-semibold hover:bg-blue-700 disabled:opacity-40 transition-colors"
+            >
+              Join Session →
+            </button>
           </div>
 
-          <button
-            onClick={handleJoin}
-            disabled={!nameInput.trim()}
-            className="w-full bg-blue-600 text-white rounded-lg py-3 font-semibold hover:bg-blue-700 disabled:opacity-40 transition-colors"
-          >
-            Start Retro →
-          </button>
+          <p className="text-xs text-gray-400 text-center mt-4 font-mono break-all">{sessionId}</p>
         </div>
       </div>
     );
@@ -695,7 +699,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                         >
                           👍 {note.votes.length}
                         </button>
-                        <span className="text-xs text-gray-500">{note.authorName}</span>
+                        <span className="text-xs text-gray-500 font-medium">👤 {note.authorName}</span>
                         {isOwner && (
                           <button
                             onClick={() => handleDeleteNote(note.id)}

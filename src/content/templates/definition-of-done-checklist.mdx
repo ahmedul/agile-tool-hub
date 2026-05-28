@@ -1,0 +1,277 @@
+---
+title: "Definition of Done Checklist for Agile Teams"
+description: "A complete Definition of Done (DoD) checklist for Jira tickets, user stories, and sprints. Includes DoD vs DoR comparison and examples for different team types."
+slug: "definition-of-done-checklist"
+category: "Templates"
+keywords:
+  - definition of done
+  - definition of done checklist
+  - definition of done agile
+  - done criteria jira
+  - agile done criteria
+  - definition of done vs definition of ready
+relatedLinks:
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Sprint Review Meeting Template"
+    href: "/templates/sprint-review-meeting-template"
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "QA to Dev Handoff Template"
+    href: "/templates/qa-to-dev-handoff-template"
+  - title: "Code Review Template"
+    href: "/templates/code-review-template"
+  - title: "Pull Request Review Checklist"
+    href: "/guides/pull-request-review-checklist"
+  - title: "How to Run a Sprint Retrospective"
+    href: "/guides/how-to-run-a-sprint-retrospective"
+---
+
+## Definition of Done Checklist for Agile Teams
+
+The Definition of Done (DoD) is a shared understanding of what "complete" means for a user story, feature, or sprint. Without it, teams ship half-finished work.
+
+---
+
+## Definition of Done vs Definition of Ready
+
+Before diving in — these two are often confused:
+
+| | Definition of Ready (DoR) | Definition of Done (DoD) |
+|-|--------------------------|--------------------------|
+| **When** | Before a story enters the sprint | Before a story is marked "Done" |
+| **Purpose** | Is this story ready to be worked on? | Is this story truly finished? |
+| **Who checks** | Product Owner + Team at refinement | Developer + QA + PO at review |
+| **Gate** | Sprint planning | Sprint review / deployment |
+| **If fails** | Story goes back to backlog | Story goes back to "In Progress" |
+
+**Both are required.** DoR prevents bad stories from entering sprints. DoD prevents incomplete work from shipping.
+
+---
+
+## Story-Level Definition of Done
+
+For each individual user story / Jira ticket:
+
+### Code Quality
+
+- [ ] Code written and reviewed (minimum 1 reviewer, ideally 2)
+- [ ] Pull request approved and merged
+- [ ] No linting errors or warnings
+- [ ] No debug code or console.log() left in
+- [ ] Code follows team style guide
+
+### Testing
+
+- [ ] Unit tests written and passing
+- [ ] Integration tests passing (if applicable)
+- [ ] Manual testing completed in staging environment
+- [ ] Edge cases tested (empty state, error state, max data)
+- [ ] No regression: existing features still working
+- [ ] Test coverage maintained at team threshold (e.g., 80%)
+
+### Acceptance Criteria
+
+- [ ] All acceptance criteria from the ticket verified
+- [ ] Product Owner has reviewed and accepted the work
+- [ ] Any "out of scope" items logged as new tickets
+
+### Documentation
+
+- [ ] Code comments added for complex logic
+- [ ] API documentation updated (if API changed)
+- [ ] README updated (if setup/configuration changed)
+- [ ] Jira ticket updated with implementation notes
+
+### Deployment
+
+- [ ] Deployed to staging environment
+- [ ] No critical errors in staging logs
+- [ ] Feature toggles configured correctly
+- [ ] Rollback plan documented for risky changes
+
+### Performance & Accessibility
+
+- [ ] Page load time not degraded (run Lighthouse before/after)
+- [ ] No memory leaks introduced
+- [ ] WCAG 2.1 AA accessibility checked for UI changes
+- [ ] Mobile layout tested (if UI change)
+
+---
+
+## Sprint-Level Definition of Done
+
+For the entire sprint to be considered "Done":
+
+- [ ] All committed stories meet story-level DoD
+- [ ] Sprint goal achieved (or explicitly noted as missed with reason)
+- [ ] Increment deployed to staging (or production if CD enabled)
+- [ ] Sprint review completed with stakeholder attendance
+- [ ] Sprint retrospective completed with action items logged
+- [ ] Velocity updated in tracking tool
+- [ ] Next sprint backlog refined (top 10+ stories have DoR)
+- [ ] Technical debt items identified and logged in Jira
+- [ ] Any known bugs from this sprint logged with severity
+
+---
+
+## Definition of Done by Team Type
+
+### Frontend Team
+
+- [ ] Feature works in Chrome, Firefox, Safari (latest 2 versions)
+- [ ] Mobile responsive (375px, 768px, 1024px, 1440px)
+- [ ] Dark mode works (if supported)
+- [ ] Loading states implemented
+- [ ] Error states implemented
+- [ ] Empty states implemented
+- [ ] Analytics events tracked (if applicable)
+- [ ] No console errors in browser
+
+### Backend / API Team
+
+- [ ] API endpoints documented (Swagger / Postman collection updated)
+- [ ] Input validation implemented
+- [ ] Authentication/authorization enforced
+- [ ] Error responses follow API standard (error codes, messages)
+- [ ] Rate limiting applied to new endpoints
+- [ ] Database migrations tested (up + down)
+- [ ] Background jobs/queues tested
+- [ ] Logging added for critical paths
+
+### Mobile Team
+
+- [ ] Works on iOS 15+ and Android 10+
+- [ ] Tested on real device (not just simulator)
+- [ ] Offline state handled gracefully
+- [ ] Push notifications tested (if applicable)
+- [ ] App Store guidelines checked (if UI change)
+- [ ] Deep links working (if applicable)
+
+### Data / Analytics Team
+
+- [ ] Data pipeline validated end-to-end
+- [ ] Data quality checks implemented
+- [ ] Dashboard reflects new metrics
+- [ ] Historical data migration verified
+- [ ] Stakeholder sign-off on metric definitions
+
+---
+
+## Creating Your Team's DoD
+
+Use this template in your retrospective to agree on your DoD:
+
+```
+1. Gather team (dev, QA, PO, designer)
+
+2. Brainstorm: "What needs to be true before we call a story Done?"
+   (Have everyone write on sticky notes for 5 min)
+
+3. Group similar items together
+
+4. Vote on must-haves vs nice-to-haves
+
+5. Write the final DoD:
+   - Keep it short (10-15 items max)
+   - Make each item unambiguous (yes/no, not "mostly")
+   - Print and post on team wall or pin in Slack/Jira
+
+6. Review the DoD every 3-4 sprints in retrospective
+   - Is it too strict? (Stories constantly failing DoD)
+   - Is it too loose? (Bugs found post-sprint)
+```
+
+---
+
+## Enforcing DoD in Jira
+
+**Option 1: Checklist in ticket description**
+
+Add the DoD checklist to your Jira story template so every ticket includes it by default. Developers check off items before moving to "In Review."
+
+**Option 2: Jira automation**
+
+Create a rule: "When story moves to Done, check that all checklist items are ticked." If not, auto-move back to "In Progress" with a comment.
+
+**Option 3: Pull request template**
+
+Add DoD checklist to `.github/pull_request_template.md` so every PR must confirm DoD before merge.
+
+```markdown
+## Definition of Done
+- [ ] Tests written and passing
+- [ ] Code reviewed
+- [ ] Deployed to staging
+- [ ] PO acceptance
+- [ ] No regressions
+```
+
+**Option 4: Sprint review gate**
+
+PO reviews the DoD checklist for each story before it's demoed. If any item fails, the story is moved back to "In Progress" — not accepted.
+
+---
+
+## DoD Anti-Patterns to Avoid
+
+| Anti-pattern | Problem | Fix |
+|--------------|---------|-----|
+| **"It works on my machine"** | Not tested in shared environment | Require staging deploy before Done |
+| **PO never signs off** | Undefined acceptance | PO sign-off is a required DoD item |
+| **DoD is too long (30+ items)** | Nobody reads it | Keep to 10-15 critical items |
+| **DoD never reviewed** | Gets stale and irrelevant | Review every 3-4 sprints |
+| **Different DoD per developer** | Inconsistent quality | One team-wide DoD, reviewed together |
+| **No performance check** | Regressions ship | Add Lighthouse/k6 check to DoD |
+| **Skipping DoD for "quick fixes"** | Hotfixes introduce bugs | No exceptions; create expedited DoD |
+
+---
+
+## Example: DoD for a SaaS Startup
+
+This is what a small, fast-moving SaaS team might use:
+
+```
+Definition of Done — MyApp Team v2.1
+
+Story is Done when:
+1. ✅ Code reviewed and approved by 1 peer
+2. ✅ Unit tests cover the new code
+3. ✅ No new linting errors
+4. ✅ Deployed to staging
+5. ✅ Product Owner verified acceptance criteria
+6. ✅ No existing tests broken
+7. ✅ Jira ticket updated with completion notes
+
+Sprint is Done when:
+1. ✅ All stories meet story DoD
+2. ✅ Sprint review held with stakeholders
+3. ✅ Retrospective held with action items
+4. ✅ Velocity logged in spreadsheet
+
+Last reviewed: [Date]
+Next review: [Date + 6 weeks]
+```
+
+---
+
+## Relationship to Quality
+
+The Definition of Done is your quality gate. Teams without a DoD:
+
+- Ship bugs to production frequently
+- Have "ghost work" (stories marked done that reopen)
+- Lose stakeholder trust
+- Accumulate technical debt faster
+
+Teams with a strong DoD:
+
+- Ship reliable increments every sprint
+- Build stakeholder confidence through consistent demos
+- Spend less time on rework
+- Have clear standards that new team members can follow
+
+**Start minimal. Tighten over time.** A 5-item DoD enforced consistently beats a 30-item DoD nobody follows.
+
