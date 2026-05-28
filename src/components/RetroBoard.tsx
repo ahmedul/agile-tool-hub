@@ -102,6 +102,14 @@ const THEMES: Record<Theme, { bg: string; headerBg: string; text: string; accent
   sunset: { bg: "bg-orange-50", headerBg: "bg-orange-600", text: "text-gray-900", accent: "text-orange-700" },
 };
 
+const PHASE_HELP: Record<Phase, string> = {
+  brainstorm: "Brainstorm: everyone adds ideas independently.",
+  grouping: "Grouping: merge duplicates and cluster similar notes.",
+  discussion: "Discussion: talk through top-voted themes.",
+  action: "Action: define owners and next steps.",
+  done: "Done: board is locked; export is still available.",
+};
+
 const COLUMNS: { id: ColumnId; label: string; emoji: string; color: string; bg: string }[] = [
   { id: "went_well", label: "Went Well", emoji: "🟢", color: "text-green-700", bg: "bg-green-50 border-green-200" },
   { id: "to_improve", label: "To Improve", emoji: "🔴", color: "text-red-700", bg: "bg-red-50 border-red-200" },
@@ -152,10 +160,12 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const retroTypeRef = useRef<RetroType>("standard");
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isFirstUserRef = useRef(false);
+  const isBoardLockedRef = useRef(false);
 
   // Keep notesRef and retroTypeRef in sync for use in callbacks
   useEffect(() => { notesRef.current = notes; }, [notes]);
   useEffect(() => { retroTypeRef.current = retroType; }, [retroType]);
+  useEffect(() => { isBoardLockedRef.current = timerState.currentPhase === "done"; }, [timerState.currentPhase]);
   useEffect(() => { setSessionUrl(window.location.href); }, []);
 
   // Persist theme preference
@@ -202,6 +212,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   }, [timerState.isRunning]);
 
   const startTimer = () => {
+    if (isBoardLockedRef.current) return;
     const totalSeconds = timerDuration * 60;
     const newTimer: TimerState = { isRunning: true, remainingSeconds: totalSeconds, totalSeconds, currentPhase: timerState.currentPhase };
     setTimerState(newTimer);
@@ -209,6 +220,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   };
 
   const stopTimer = () => {
+    if (isBoardLockedRef.current) return;
     const newTimer = { ...timerState, isRunning: false };
     setTimerState(newTimer);
     broadcast({ type: "timer_update", timer: newTimer });
@@ -216,6 +228,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   };
 
   const changePhase = (phase: Phase) => {
+    if (isBoardLockedRef.current) return;
     const newTimer: TimerState = { ...timerState, currentPhase: phase, isRunning: false, remainingSeconds: 0 };
     setTimerState(newTimer);
     broadcast({ type: "phase_change", phase });
@@ -255,14 +268,17 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const applyEvent = useCallback((event: BroadcastEvent) => {
     switch (event.type) {
       case "add_note":
+        if (isBoardLockedRef.current) break;
         setNotes((prev) =>
           prev.find((n) => n.id === event.note.id) ? prev : [...prev, event.note]
         );
         break;
       case "delete_note":
+        if (isBoardLockedRef.current) break;
         setNotes((prev) => prev.filter((n) => n.id !== event.noteId));
         break;
       case "vote_note":
+        if (isBoardLockedRef.current) break;
         setNotes((prev) =>
           prev.map((n) => {
             if (n.id !== event.noteId) return n;
@@ -282,6 +298,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         setTimerState(event.timer);
         break;
       case "phase_change":
+        if (isBoardLockedRef.current && event.phase !== "done") break;
         setTimerState((prev) => ({ ...prev, currentPhase: event.phase }));
         break;
     }
@@ -385,6 +402,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   };
 
   const handleAddNote = (columnId: ColumnId) => {
+    if (isBoardLockedRef.current) return;
     const text = inputs[columnId].trim();
     if (!text) return;
     const note: RetroNote = {
@@ -401,10 +419,11 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   };
 
   const handleDeleteNote = (noteId: string) => {
+    if (isBoardLockedRef.current) return;
     broadcast({ type: "delete_note", noteId });
   };
 
-  const handleExportNotes = () => {
+  const buildExportLines = () => {
     const format = RETRO_FORMATS[retroType];
     const lines: string[] = [`# Retro Notes — ${format.label}`, `Session: ${sessionUrl}`, `Date: ${new Date().toLocaleDateString()}`, ""];
     for (const col of format.columns) {
@@ -417,6 +436,11 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
       }
       lines.push("");
     }
+    return lines;
+  };
+
+  const handleExportNotes = () => {
+    const lines = buildExportLines();
     navigator.clipboard.writeText(lines.join("\n")).catch(() => {
       const blob = new Blob([lines.join("\n")], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
@@ -428,7 +452,32 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     });
   };
 
+  const handleExportPdf = async () => {
+    const lines = buildExportLines();
+    const { jsPDF } = await import("jspdf");
+    const doc = new jsPDF();
+    const margin = 14;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const wrapped = doc.splitTextToSize(lines.join("\n"), 180) as string[];
+    let y = margin;
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+
+    wrapped.forEach((line) => {
+      if (y > pageHeight - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.text(line, margin, y);
+      y += 6;
+    });
+
+    doc.save(`retro-notes-${sessionId}.pdf`);
+  };
+
   const handleVote = (note: RetroNote) => {
+    if (isBoardLockedRef.current) return;
     const uid = userIdRef.current;
     const alreadyVoted = note.votes.includes(uid);
     broadcast({
@@ -462,30 +511,31 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
               />
             </div>
 
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Retro Template</label>
+              <div className="space-y-1.5 max-h-44 overflow-y-auto">
+                {(Object.values(RETRO_FORMATS) as typeof RETRO_FORMATS[keyof typeof RETRO_FORMATS][]).map((format) => (
+                  <button
+                    key={format.id}
+                    onClick={() => setRetroType(format.id)}
+                    className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
+                      retroType === format.id
+                        ? "bg-blue-100 border-2 border-blue-600"
+                        : "bg-gray-50 border-2 border-gray-200 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span className="font-semibold text-gray-900">{format.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <details>
               <summary className="text-sm font-medium text-gray-500 cursor-pointer select-none hover:text-gray-700 list-none flex items-center gap-1.5">
                 <span className="text-xs">▶</span>
-                Board settings (format &amp; theme)
+                Board settings (theme)
               </summary>
               <div className="pt-4 mt-3 border-t border-gray-100 space-y-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Retro Format</label>
-                  <div className="space-y-1.5 max-h-44 overflow-y-auto">
-                    {(Object.values(RETRO_FORMATS) as typeof RETRO_FORMATS[keyof typeof RETRO_FORMATS][]).map((format) => (
-                      <button
-                        key={format.id}
-                        onClick={() => setRetroType(format.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
-                          retroType === format.id
-                            ? "bg-blue-100 border-2 border-blue-600"
-                            : "bg-gray-50 border-2 border-gray-200 hover:bg-gray-100"
-                        }`}
-                      >
-                        <span className="font-semibold text-gray-900">{format.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Theme</label>
                   <div className="flex gap-2 flex-wrap">
@@ -528,6 +578,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const format = RETRO_FORMATS[retroType];
   const themeColors = THEMES[theme];
   const timerPercent = (timerState.remainingSeconds / timerState.totalSeconds) * 100 || 0;
+  const isBoardLocked = timerState.currentPhase === "done";
 
   return (
     <div className={`min-h-screen ${themeColors.bg}`}>
@@ -555,18 +606,30 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          <span className={`text-sm hidden sm:block truncate max-w-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
-            {sessionUrl}
-          </span>
-          <CopyButton text={sessionUrl} />
           <button
             onClick={handleExportNotes}
             disabled={notes.length === 0}
             className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors"
             title="Copy all notes to clipboard as Markdown"
           >
-            Export
+            Export MD
           </button>
+          <button
+            onClick={handleExportPdf}
+            disabled={notes.length === 0}
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-40 transition-colors"
+            title="Download all notes as PDF"
+          >
+            Export PDF
+          </button>
+          {!isBoardLocked && (
+            <>
+              <span className={`text-sm hidden sm:block truncate max-w-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+                {sessionUrl}
+              </span>
+              <CopyButton text={sessionUrl} />
+            </>
+          )}
         </div>
       </div>
 
@@ -598,7 +661,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
             <select
               value={timerDuration}
               onChange={(e) => setTimerDuration(parseInt(e.target.value))}
-              disabled={timerState.isRunning}
+              disabled={timerState.isRunning || isBoardLocked}
               className="px-3 py-2 rounded-lg border border-gray-300 text-sm"
             >
               {[5, 10, 15, 20, 30].map((m) => (
@@ -607,14 +670,14 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
             </select>
             <button
               onClick={startTimer}
-              disabled={timerState.isRunning}
+              disabled={timerState.isRunning || isBoardLocked}
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-40 font-semibold text-sm"
             >
               ▶ Start
             </button>
             <button
               onClick={stopTimer}
-              disabled={!timerState.isRunning}
+              disabled={!timerState.isRunning || isBoardLocked}
               className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-40 font-semibold text-sm"
             >
               ⏹ Stop
@@ -627,6 +690,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
               <button
                 key={phase}
                 onClick={() => changePhase(phase)}
+                disabled={isBoardLocked}
                 className={`px-3 py-2 rounded-lg text-xs font-semibold capitalize transition-colors ${
                   timerState.currentPhase === phase
                     ? "bg-blue-600 text-white"
@@ -636,6 +700,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                 {phase}
               </button>
             ))}
+          </div>
+
+          <div className={`w-full text-xs ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+            {PHASE_HELP[timerState.currentPhase]}
           </div>
         </div>
       </div>
@@ -664,11 +732,12 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                   value={inputs[col.id] || ""}
                   onChange={(e) => setInputs((prev) => ({ ...prev, [col.id]: e.target.value }))}
                   onKeyDown={(e) => e.key === "Enter" && handleAddNote(col.id)}
+                  disabled={isBoardLocked}
                   className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
                 />
                 <button
                   onClick={() => handleAddNote(col.id)}
-                  disabled={!inputs[col.id]?.trim()}
+                  disabled={!inputs[col.id]?.trim() || isBoardLocked}
                   className="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600 hover:bg-gray-50 disabled:opacity-40 text-lg leading-none"
                   title="Add note"
                 >
@@ -690,6 +759,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                       <div className="flex items-center gap-2 mt-2 flex-wrap">
                         <button
                           onClick={() => handleVote(note)}
+                          disabled={isBoardLocked}
                           className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full border transition-colors ${
                             myVoted
                               ? "bg-blue-600 text-white border-blue-600"
@@ -703,6 +773,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                         {isOwner && (
                           <button
                             onClick={() => handleDeleteNote(note.id)}
+                            disabled={isBoardLocked}
                             className="ml-auto text-xs text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
                             title="Delete note"
                           >

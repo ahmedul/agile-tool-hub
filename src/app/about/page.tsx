@@ -82,6 +82,26 @@ export default function AboutPage() {
             </Link>
           </li>
           <li>
+            <Link href="/tools/planning-poker" className="text-blue-600 hover:underline">
+              → Planning Poker (real-time estimation)
+            </Link>
+          </li>
+          <li>
+            <Link href="/tools/retro-board" className="text-blue-600 hover:underline">
+              → Retrospective Board (real-time team retro)
+            </Link>
+          </li>
+          <li>
+            <Link href="/tools/sprint-capacity-calculator" className="text-blue-600 hover:underline">
+              → Sprint Capacity Calculator
+            </Link>
+          </li>
+          <li>
+            <Link href="/tools/daily-standup-generator" className="text-blue-600 hover:underline">
+              → Daily Standup Generator
+            </Link>
+          </li>
+          <li>
             <Link href="/templates" className="text-blue-600 hover:underline">
               → Browse all templates
             </Link>

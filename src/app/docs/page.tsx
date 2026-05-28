@@ -16,7 +16,7 @@ export default function DocsPage() {
       <p className="text-lg text-gray-600 mb-10">
         Reference documentation on Agile, Scrum, and Jira concepts. Look up terms, processes, and best practices.
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
         {docs.map((doc) => (
           <TemplateCard key={doc.slug} title={doc.title} description={doc.description} href={`/docs/${doc.slug}`} category="Docs" />
         ))}
