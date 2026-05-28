@@ -231,6 +231,8 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     if (isBoardLockedRef.current) return;
     const newTimer: TimerState = { ...timerState, currentPhase: phase, isRunning: false, remainingSeconds: 0 };
     setTimerState(newTimer);
+    // Keep all clients in sync: moving to a new phase (especially Done) stops timer everywhere.
+    broadcast({ type: "timer_update", timer: newTimer });
     broadcast({ type: "phase_change", phase });
   };
 
@@ -299,7 +301,12 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         break;
       case "phase_change":
         if (isBoardLockedRef.current && event.phase !== "done") break;
-        setTimerState((prev) => ({ ...prev, currentPhase: event.phase }));
+        setTimerState((prev) => ({
+          ...prev,
+          currentPhase: event.phase,
+          isRunning: event.phase === "done" ? false : prev.isRunning,
+          remainingSeconds: event.phase === "done" ? 0 : prev.remainingSeconds,
+        }));
         break;
     }
   }, []);
@@ -632,6 +639,14 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
           )}
         </div>
       </div>
+
+      {isBoardLocked && (
+        <div className="px-4 pt-4">
+          <div className="max-w-7xl mx-auto rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-800 text-sm font-medium">
+            Congratulations! The retrospective is complete. You can now export your notes as Markdown or PDF.
+          </div>
+        </div>
+      )}
 
       {/* Timer & Phase Control */}
       <div className={`${theme === "dark" ? "bg-gray-800" : "bg-white"} border-b ${theme === "dark" ? "border-gray-700" : "border-gray-200"} px-4 py-4`}>
