@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Pricing | AgileToolHub",
+  title: "Pricing",
   description:
     "AgileToolHub pricing for Local and AI modes. Local mode is free forever. AI mode coming soon with paid plans.",
 };

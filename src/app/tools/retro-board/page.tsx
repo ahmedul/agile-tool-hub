@@ -6,7 +6,7 @@ import JsonLd from "@/components/JsonLd";
 import CreateRetroSession from "@/components/CreateRetroSession";
 
 export const metadata: Metadata = {
-  title: "Free Retrospective Board | Sprint Retro Tool | AgileToolHub",
+  title: "Free Retrospective Board | Sprint Retro Tool",
   description:
     "Free real-time retrospective board for Agile and Scrum teams. No login required. Create a session, share the link, and run Went Well / To Improve / Action Items retros together.",
   keywords: [

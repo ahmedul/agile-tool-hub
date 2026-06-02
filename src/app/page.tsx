@@ -5,13 +5,20 @@ import ToolCard from "@/components/ToolCard";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata, buildOrganizationSchema, KEYWORDS } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
-  title: "AgileToolHub — Free Agile, Scrum & Software Delivery Templates & Tools",
-  description:
-    "Free templates and tools for Agile teams. Generate user stories, acceptance criteria, bug reports, and Jira tickets. Track sprint velocity. Real-time planning poker and retros. No login required.",
-  keywords: KEYWORDS.homepage,
-  canonical: "https://agiletoolhub.com",
-});
+export const metadata: Metadata = {
+  ...buildMetadata({
+    title: "AgileToolHub — Free Agile, Scrum & Software Delivery Templates & Tools",
+    description:
+      "Free templates and tools for Agile teams. Generate user stories, acceptance criteria, bug reports, and Jira tickets. Track sprint velocity. Real-time planning poker and retros. No login required.",
+    keywords: KEYWORDS.homepage,
+    canonical: "https://agiletoolhub.com",
+  }),
+  // Absolute title preserves brand-first format and prevents the root layout template
+  // from appending '| AgileToolHub' a second time.
+  title: {
+    absolute: "AgileToolHub — Free Agile, Scrum & Software Delivery Templates & Tools",
+  },
+};
 
 const templates = [
   { title: "Jira Bug Report Template", description: "A structured template for clear, actionable bug reports with steps to reproduce, expected vs actual results.", href: "/templates/jira-bug-report-template", category: "Template" },

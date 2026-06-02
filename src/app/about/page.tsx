@@ -3,7 +3,7 @@ import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
-  title: "About AgileToolHub",
+  title: "About",
   description:
     "Why AgileToolHub exists: practical Jira-ready templates and tools for software teams that need cleaner tickets and smoother delivery.",
 };

@@ -3,7 +3,7 @@ import TemplateCard from "@/components/TemplateCard";
 import { getAllContent } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Agile & Scrum Docs — Reference Guides for Software Teams | AgileToolHub",
+  title: "Agile & Scrum Docs — Reference Guides for Software Teams",
   description: "Reference documentation on Agile, Scrum, and Jira concepts for software teams. Glossaries, definitions, and process breakdowns.",
 };
 

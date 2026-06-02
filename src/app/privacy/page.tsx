@@ -3,7 +3,7 @@ import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | AgileToolHub",
+  title: "Privacy Policy",
   description:
     "Privacy policy for AgileToolHub, including clear handling for Local mode and AI mode across generator tools.",
 };

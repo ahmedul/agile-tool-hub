@@ -4,7 +4,7 @@ import JsonLd from "@/components/JsonLd";
 import { buildMetadata, buildBreadcrumbSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Free Agile & Scrum Tools for Software Teams — AgileToolHub",
+  title: "Free Agile & Scrum Tools for Software Teams",
   description: "Free online tools for Agile and Scrum teams. Planning poker, user story generator, acceptance criteria, bug report converter, velocity tracker, standup generator, and retro board — no login required.",
   keywords: KEYWORDS.tools,
   canonical: "https://agiletoolhub.com/tools",

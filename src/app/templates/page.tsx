@@ -6,7 +6,7 @@ import { getAllContent } from "@/lib/content";
 import { buildMetadata, buildBreadcrumbSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Free Agile & Scrum Templates for Software Teams — AgileToolHub",
+  title: "Free Agile & Scrum Templates for Software Teams",
   description: "Browse 10+ free Jira-ready templates. Bug report, user story, acceptance criteria, retrospective, postmortem, feature request templates and more for Agile teams.",
   keywords: KEYWORDS.templates,
   canonical: "https://agiletoolhub.com/templates",
