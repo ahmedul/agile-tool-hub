@@ -11,7 +11,7 @@ export const metadata = buildMetadata({
   description:
     "Track team sprint velocity, visualize trends, forecast future sprint capacity, and improve planning accuracy. Free agile metrics tool. Export to Jira and Markdown.",
   keywords: KEYWORDS.velocityTracker,
-  canonical: "https://agile-tool-hub.vercel.app/tools/velocity-tracker",
+  canonical: "https://agiletoolhub.com/tools/velocity-tracker",
 });
 
 export default function VelocityTrackerPage() {
@@ -68,7 +68,7 @@ export default function VelocityTrackerPage() {
   const toolSchema = buildToolSchema({
     name: "Velocity Tracker",
     description: "Track team sprint velocity, visualize trends, and forecast future sprint capacity with metrics-driven planning.",
-    url: "https://agile-tool-hub.vercel.app/tools/velocity-tracker",
+    url: "https://agiletoolhub.com/tools/velocity-tracker",
     applicationCategory: "BusinessApplication",
   });
 

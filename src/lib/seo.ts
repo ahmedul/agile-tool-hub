@@ -25,7 +25,7 @@ export function buildMetadata(options: SEOMetadataOptions): Metadata {
     description,
     keywords = [],
     canonical,
-    ogImage = "https://agile-tool-hub.vercel.app/og-image.png",
+    ogImage = "https://agiletoolhub.com/og-image.png",
     ogType = "website",
     authors = ["AgileToolHub"],
     robots = "index, follow",
@@ -66,7 +66,7 @@ export interface BreadcrumbItem {
 
 export function buildBreadcrumbSchema(
   items: BreadcrumbItem[],
-  baseUrl = "https://agile-tool-hub.vercel.app"
+  baseUrl = "https://agiletoolhub.com"
 ) {
   return {
     "@context": "https://schema.org",
@@ -122,7 +122,7 @@ export function buildToolSchema(options: ToolSchemaOptions) {
     creator: options.creator || {
       "@type": "Organization",
       name: "AgileToolHub",
-      url: "https://agile-tool-hub.vercel.app",
+      url: "https://agiletoolhub.com",
     },
     isAccessibleForFree: true,
   };
@@ -136,8 +136,8 @@ export function buildOrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "AgileToolHub",
-    url: "https://agile-tool-hub.vercel.app",
-    logo: "https://agile-tool-hub.vercel.app/logo.png",
+    url: "https://agiletoolhub.com",
+    logo: "https://agiletoolhub.com/logo.png",
     description: "Free Agile, Scrum, and software delivery templates and tools",
     sameAs: [
       "https://twitter.com/agile-tool-hub",

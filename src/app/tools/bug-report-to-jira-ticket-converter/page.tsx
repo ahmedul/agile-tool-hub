@@ -10,7 +10,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Bug Report to Jira Ticket Converter — AI-Powered Free Tool",
   description: "Convert messy bug notes into a clean, structured Jira ticket in seconds. Free tool for software teams. Includes quality scoring. No login required.",
   keywords: KEYWORDS.bugReport,
-  canonical: "https://agile-tool-hub.vercel.app/tools/bug-report-to-jira-ticket-converter",
+  canonical: "https://agiletoolhub.com/tools/bug-report-to-jira-ticket-converter",
 });
 
 const faqItems = [
@@ -32,7 +32,7 @@ export default function BugReportConverterPage() {
   const toolSchema = buildToolSchema({
     name: "Bug Report to Jira Ticket Converter",
     description: "Convert messy bug notes into a clean, structured Jira ticket with quality scoring.",
-    url: "https://agile-tool-hub.vercel.app/tools/bug-report-to-jira-ticket-converter",
+    url: "https://agiletoolhub.com/tools/bug-report-to-jira-ticket-converter",
     applicationCategory: "BusinessApplication",
   });
 

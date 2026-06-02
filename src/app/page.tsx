@@ -10,7 +10,7 @@ export const metadata: Metadata = buildMetadata({
   description:
     "Free templates and tools for Agile teams. Generate user stories, acceptance criteria, bug reports, and Jira tickets. Track sprint velocity. Real-time planning poker and retros. No login required.",
   keywords: KEYWORDS.homepage,
-  canonical: "https://agile-tool-hub.vercel.app",
+  canonical: "https://agiletoolhub.com",
 });
 
 const templates = [

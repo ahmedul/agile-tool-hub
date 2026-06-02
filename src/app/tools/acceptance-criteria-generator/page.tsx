@@ -10,7 +10,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Acceptance Criteria Generator — AI-Powered Free Tool for Agile Teams",
   description: "Generate testable acceptance criteria in Given/When/Then (Gherkin) or checklist format instantly. Free tool for product managers, developers, and Scrum teams. Includes quality scoring and presets.",
   keywords: KEYWORDS.acceptanceCriteria,
-  canonical: "https://agile-tool-hub.vercel.app/tools/acceptance-criteria-generator",
+  canonical: "https://agiletoolhub.com/tools/acceptance-criteria-generator",
 });
 
 const faqItems = [
@@ -34,7 +34,7 @@ export default function AcceptanceCriteriaGeneratorPage() {
   const toolSchema = buildToolSchema({
     name: "Acceptance Criteria Generator",
     description: "Generate testable acceptance criteria in Given/When/Then (Gherkin) or checklist format with quality scoring and work-type presets.",
-    url: "https://agile-tool-hub.vercel.app/tools/acceptance-criteria-generator",
+    url: "https://agiletoolhub.com/tools/acceptance-criteria-generator",
     applicationCategory: "BusinessApplication",
   });
 

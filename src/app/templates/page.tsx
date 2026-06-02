@@ -9,7 +9,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Free Agile & Scrum Templates for Software Teams — AgileToolHub",
   description: "Browse 10+ free Jira-ready templates. Bug report, user story, acceptance criteria, retrospective, postmortem, feature request templates and more for Agile teams.",
   keywords: KEYWORDS.templates,
-  canonical: "https://agile-tool-hub.vercel.app/templates",
+  canonical: "https://agiletoolhub.com/templates",
 });
 
 export default function TemplatesPage() {

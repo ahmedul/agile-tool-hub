@@ -7,7 +7,7 @@ export const metadata: Metadata = buildMetadata({
   title: "Free Agile & Scrum Tools for Software Teams — AgileToolHub",
   description: "Free online tools for Agile and Scrum teams. Planning poker, user story generator, acceptance criteria, bug report converter, velocity tracker, standup generator, and retro board — no login required.",
   keywords: KEYWORDS.tools,
-  canonical: "https://agile-tool-hub.vercel.app/tools",
+  canonical: "https://agiletoolhub.com/tools",
 });
 
 export default function ToolsPage() {

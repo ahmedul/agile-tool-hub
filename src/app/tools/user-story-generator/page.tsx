@@ -10,7 +10,7 @@ export const metadata: Metadata = buildMetadata({
   title: "User Story Generator — AI-Powered Free Tool for Agile Teams",
   description: "Generate complete, Jira-ready user stories with acceptance criteria in seconds. Free tool for product managers, developers, and Scrum teams. Includes quality scoring and presets.",
   keywords: KEYWORDS.userStory,
-  canonical: "https://agile-tool-hub.vercel.app/tools/user-story-generator",
+  canonical: "https://agiletoolhub.com/tools/user-story-generator",
 });
 
 const faqItems = [
@@ -34,7 +34,7 @@ export default function UserStoryGeneratorPage() {
   const toolSchema = buildToolSchema({
     name: "User Story Generator",
     description: "AI-powered tool to generate complete, Jira-ready user stories with acceptance criteria, story points, and scope boundaries in seconds.",
-    url: "https://agile-tool-hub.vercel.app/tools/user-story-generator",
+    url: "https://agiletoolhub.com/tools/user-story-generator",
     applicationCategory: "BusinessApplication",
   });
 
