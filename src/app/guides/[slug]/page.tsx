@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
-import { buildMetadata } from "@/lib/seo";
+import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getAllSlugs("guides").map((slug) => ({ slug }));
@@ -36,10 +36,16 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     url: `https://agiletoolhub.com/guides/${slug}`,
     publisher: { "@type": "Organization", name: "AgileToolHub", url: "https://agiletoolhub.com" },
   };
+  const breadcrumbJsonLd = buildBreadcrumbSchema([
+    { label: "Home", href: "/" },
+    { label: "Guides", href: "/guides" },
+    { label: item.title, href: `/guides/${slug}` },
+  ]);
 
   return (
     <>
       <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ContentLayout
         title={item.title}
         description={item.description}

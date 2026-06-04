@@ -5,7 +5,7 @@ import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
 import TemplateCopyActions from "@/components/TemplateCopyActions";
-import { buildMetadata } from "@/lib/seo";
+import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 const HIGH_INTENT_TEMPLATE_SLUGS = new Set([
   "jira-bug-report-template",
@@ -90,10 +90,16 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
     url: `https://agiletoolhub.com/templates/${slug}`,
     publisher: { "@type": "Organization", name: "AgileToolHub", url: "https://agiletoolhub.com" },
   };
+  const breadcrumbJsonLd = buildBreadcrumbSchema([
+    { label: "Home", href: "/" },
+    { label: "Templates", href: "/templates" },
+    { label: item.title, href: `/templates/${slug}` },
+  ]);
 
   return (
     <>
       <JsonLd data={jsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <ContentLayout
         title={item.title}
         description={item.description}
