@@ -13,7 +13,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const item = getContentBySlug("guides", slug);
   if (!item) return {};
-  return { title: item.title, description: item.description, keywords: item.keywords };
+  return {
+    title: item.title,
+    description: item.description,
+    keywords: item.keywords,
+    alternates: { canonical: `https://agiletoolhub.com/guides/${slug}` },
+  };
 }
 
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {

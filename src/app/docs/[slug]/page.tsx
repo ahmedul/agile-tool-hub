@@ -13,7 +13,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const item = getContentBySlug("docs", slug);
   if (!item) return {};
-  return { title: item.title, description: item.description, keywords: item.keywords };
+  return {
+    title: item.title,
+    description: item.description,
+    keywords: item.keywords,
+    alternates: { canonical: `https://agiletoolhub.com/docs/${slug}` },
+  };
 }
 
 export default async function DocPage({ params }: { params: Promise<{ slug: string }> }) {
