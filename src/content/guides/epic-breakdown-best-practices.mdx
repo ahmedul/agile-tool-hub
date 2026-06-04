@@ -1,0 +1,499 @@
+---
+title: "How to Break Down Epics Into User Stories: Step-by-Step Guide"
+description: "Learn how to decompose large epics into manageable user stories and tasks. Includes real examples, acceptance criteria checklists, and estimation strategies for Agile teams."
+slug: "epic-breakdown-best-practices"
+category: "Guides"
+keywords:
+  - how to break down epics
+  - epic decomposition
+  - user story breakdown
+  - jira epic strategy
+  - story estimation from epics
+relatedLinks:
+  - title: "Epic Template for Jira"
+    href: "/templates/epic-template-jira"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Task Breakdown Template"
+    href: "/templates/task-breakdown-template"
+  - title: "Story Point Estimation Guide"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "Acceptance Criteria Patterns"
+    href: "/guides/acceptance-criteria-patterns-and-examples"
+  - title: "How to Write a Good Jira Ticket"
+    href: "/guides/how-to-write-a-good-jira-ticket"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Backlog Refinement Template"
+    href: "/templates/backlog-refinement-template"
+  - title: "Planning Poker"
+    href: "/tools/planning-poker"
+---
+
+## Why Epic Breakdown Matters
+
+Epics are too big to fit in a sprint. That's their job—they represent strategic, multi-sprint initiatives. But a monolithic epic in Jira doesn't tell engineers what to build. It takes a skilled breakdown to transform a 40-point epic into sprintable 3-8 point stories that the team can actually execute.
+
+**Bad breakdown** = vague stories, unclear acceptance criteria, estimation chaos, sprint overruns.  
+**Good breakdown** = clear stories, testable criteria, predictable velocity, delivered on time.
+
+This guide walks you through breaking down an epic systematically—and knowing when you've got it right.
+
+---
+
+## What Makes an Epic "Too Big"?
+
+An epic is breakdownable when:
+
+| Signal | Meaning |
+|---|---|
+| **20+ points** | Definitely breakdownable (max good story size is 13 points) |
+| **Unclear scope** | "Build a dashboard" vs "Add user login to dashboard" |
+| **Multiple team skills needed** | Frontend, backend, database, QA all involved (can be separate stories) |
+| **Spans multiple sprints** | More than 2 sprints → break it down |
+| **Acceptance criteria unclear** | Can't write a test without asking "what does 'good' look like?" |
+| **"And" in the description** | "Add OAuth AND migrate users AND update docs" = 3+ stories |
+
+**Example of a too-big epic:**
+```
+Title: "Improve user authentication"
+Description: "Make signup faster, add social login, improve security"
+Estimate: Unknown (exactly the problem)
+
+→ This needs to be broken into:
+  1. "Add Google OAuth login"
+  2. "Implement rate limiting on signup"
+  3. "Add password reset via email"
+```
+
+---
+
+## The Epic Breakdown Process
+
+### Step 1: Map the User Journeys
+
+Before writing stories, walk through how users will interact with the epic. This reveals natural boundaries for stories.
+
+**Example: E-commerce "Add Order History" Epic**
+
+```
+User journey:
+1. User logs in
+2. User navigates to "My Orders" page
+3. User sees list of past orders (date, total, status)
+4. User clicks an order
+5. User sees order details (items, shipping address, tracking)
+6. User can download invoice (PDF)
+7. User can file a return from order details
+```
+
+**Natural story boundaries emerge:**
+- Story 1: "Display order list with basic info"
+- Story 2: "Show order detail page"
+- Story 3: "Generate and download invoice"
+- Story 4: "Add return request flow"
+
+---
+
+### Step 2: Identify Technical Dependencies
+
+Some pieces must be built first. Map them out.
+
+**Example: "Add payment method management" epic**
+
+```
+Database layer (Lowest dependency)
+    ↓
+API endpoints (depends on DB)
+    ↓
+Frontend forms (depends on API)
+    ↓
+Payment provider integration (depends on API)
+    ↓
+Security audit (depends on all of above) (Highest dependency)
+```
+
+**Stories in order (dependency-respecting):**
+1. "Create payment method data model" (backend)
+2. "Build add/update/delete payment method API endpoints"
+3. "Frontend: payment method form UI"
+4. "Integrate Stripe payment processor"
+5. "Security review of payment storage"
+
+Stories can run in parallel only if they don't depend on each other. Story 1 blocks 2 (data model), but 3 and 4 can start in parallel after 2.
+
+---
+
+### Step 3: Write User Stories From Each Slice
+
+For each user journey or technical layer, write a standalone user story. Use the [User Story Template](/templates/user-story-template).
+
+**Pattern:** "As a [role], I want to [action], so that [benefit]"
+
+**Example stories from the order history epic:**
+
+```
+Story 1: "As a customer, I want to see a list of my past orders, 
+so that I can quickly find and re-order items."
+
+Story 2: "As a customer, I want to view details of an order 
+(items, total, shipping address, tracking), so that I can 
+reference past purchases and verify delivery."
+
+Story 3: "As a customer, I want to download my order as an invoice PDF, 
+so that I have a record for my accounting or warranty claims."
+
+Story 4: "As a customer, I want to file a return request from an order, 
+so that I can send items back without navigating through help docs."
+```
+
+**Each story should:**
+- Focus on one user-facing outcome (not "add database + API + UI")
+- Be independently valuable (could ship Story 1 alone and provide value)
+- Be testable (could a QA write acceptance criteria?)
+
+---
+
+### Step 4: Write Clear Acceptance Criteria
+
+For each story, write acceptance criteria that are:
+- **Specific** (not "works well", but "loads within 2 seconds")
+- **Testable** (QA can verify with concrete steps)
+- **Complete** (edge cases included)
+
+**Example story + acceptance criteria:**
+
+```
+Story: "As a customer, I want to see a list of my past orders"
+
+Acceptance Criteria:
+✓ User sees "My Orders" page after logging in
+✓ Page displays all orders (reverse chronological: newest first)
+✓ Each order shows: order date, order number, total amount, status (Pending/Shipped/Delivered)
+✓ Order list is paginated (20 orders per page)
+✓ User can search/filter by order date range
+✓ Empty state message if user has no orders
+✓ Page loads in <2 seconds (performance)
+✓ Mobile responsive (works on phones)
+✓ Accessibility: page navigable via keyboard, screen reader compatible
+```
+
+**If acceptance criteria are unclear**, the story isn't ready to estimate or sprint. Stop and refine.
+
+---
+
+## Real Example: Breaking Down a 40-Point Epic
+
+Let's break down a realistic epic step-by-step.
+
+### The Epic: "Add Two-Factor Authentication (2FA)"
+
+**Epic description:** "Enable users to secure their accounts with 2FA via email or SMS. Implement in Jira, add management UI, and ensure security compliance."
+
+**Initial estimate:** 40 points (way too big)
+
+---
+
+### Step 1: Map user journeys
+
+```
+Admin/Compliance perspective:
+1. Enable 2FA globally vs per-user
+2. Audit 2FA events
+
+User perspective:
+1. User enables 2FA (choose email or SMS)
+2. User logs in normally
+3. System prompts for 2FA code
+4. User enters code
+5. User logged in
+
+Backup codes:
+1. User generates backup codes
+2. User saves backup codes
+3. User uses backup code instead of SMS
+```
+
+---
+
+### Step 2: Identify dependencies
+
+```
+Database layer: Store 2FA settings, audit log
+    ↓
+Backend: Generate codes, validate codes, track attempts
+    ↓
+Email/SMS service: Send codes (external integration)
+    ↓
+Login flow: Intercept login, prompt for 2FA
+    ↓
+User settings UI: Enable/disable 2FA, manage backup codes
+    ↓
+Security audit & compliance
+```
+
+---
+
+### Step 3: Break into stories
+
+**Story 1: Add 2FA data model**
+```
+Title: "As a platform admin, I want to store user 2FA settings, 
+so that we can support 2FA on the platform."
+
+Description: Add database tables for user_mfa_settings, mfa_audit_log, backup_codes.
+
+Acceptance Criteria:
+- [ ] Database schema includes: enabled_at, method (email/sms), phone_number
+- [ ] Audit table logs: enable/disable events, code generation, login attempts
+- [ ] Can query: which users have 2FA enabled, audit trail for compliance
+- [ ] Migrations are reversible
+```
+**Estimate:** 3 points (database design is straightforward)
+
+---
+
+**Story 2: Generate and validate 2FA codes**
+```
+Title: "As a system, I need to generate and validate 2FA codes, 
+so that users can complete 2FA authentication."
+
+Description: Implement TOTP algorithm (email/SMS codes valid for 5 min, rate-limited).
+
+Acceptance Criteria:
+- [ ] Generate 6-digit code, valid for 5 minutes only
+- [ ] Code can only be used once
+- [ ] Rate limit: max 3 incorrect attempts per login
+- [ ] After 3 failures, lock 2FA for 15 minutes
+- [ ] Codes stored securely (hashed, not plain text)
+- [ ] Unit tests cover: valid code, expired code, reused code, rate limits
+```
+**Estimate:** 5 points (crypto logic, rate limiting)
+
+---
+
+**Story 3: Send 2FA code via email**
+```
+Title: "As a user enabling email 2FA, I want to receive a code 
+by email when I log in, so that I can verify my identity."
+
+Description: Integrate email service (AWS SES / SendGrid). Send code on login.
+
+Acceptance Criteria:
+- [ ] Code sent within 10 seconds of login attempt
+- [ ] Email clearly shows: code, expiration time, "didn't request this? change your password"
+- [ ] Bounce/delivery issues logged but don't block user
+- [ ] Can resend code (max 3 times per 10 min)
+- [ ] Integration tests with mock email service
+- [ ] Production uses AWS SES / SendGrid (configurable)
+```
+**Estimate:** 3 points (integrating email service)
+
+---
+
+**Story 4: Add 2FA to login flow**
+```
+Title: "As a user, I want to complete a 2FA challenge 
+when I log in with 2FA enabled, so that my account is secure."
+
+Description: Intercept login after password validation, prompt for 2FA code.
+
+Acceptance Criteria:
+- [ ] After correct password, user sees "Enter 2FA code" page
+- [ ] User can enter code from email/SMS
+- [ ] Valid code → logged in, session created
+- [ ] Invalid code → show error, allow retry (max 3)
+- [ ] Code expiration shown ("code expires in 2 min")
+- [ ] "Can't receive code?" link to resend or use backup code
+- [ ] Mobile login flow works (same UX)
+```
+**Estimate:** 5 points (login flow changes, session handling)
+
+---
+
+**Story 5: User 2FA settings UI**
+```
+Title: "As a user, I want to enable/disable 2FA and manage 
+backup codes from my account settings, so that I control my security."
+
+Description: Add settings page to enable/disable, view backup codes, resend initial setup.
+
+Acceptance Criteria:
+- [ ] Settings page shows 2FA status (enabled/disabled)
+- [ ] User can toggle 2FA on, chooses email or SMS
+- [ ] If SMS, user enters phone number (validated)
+- [ ] System generates 8 backup codes (shown once, can download as text)
+- [ ] User can disable 2FA (requires password confirmation)
+- [ ] Disable logs audit event
+- [ ] UI shows when 2FA was enabled, last code generation time
+- [ ] Works on mobile, accessible (keyboard/screen reader)
+```
+**Estimate:** 5 points (UI, form validation, backup code generation)
+
+---
+
+**Story 6: Security audit and rate limiting**
+```
+Title: "As a compliance officer, I want audit logs of all 2FA events, 
+so that we meet security compliance requirements."
+
+Description: Add audit dashboard showing 2FA activity, rate limit bad actors.
+
+Acceptance Criteria:
+- [ ] Audit log shows: enable/disable, code generation, success/failure login attempts
+- [ ] Each log entry has: timestamp, user ID, IP address, result
+- [ ] Report: "2FA adoption" (% users enabled)
+- [ ] Alert: If user has 5+ failed 2FA attempts in 1 hour, flag as potential attack
+- [ ] Rate limiting: Block IPs with >20 failed attempts in 5 min
+- [ ] Security team can export audit log
+```
+**Estimate:** 5 points (audit logic, rate limiting rules)
+
+---
+
+### Total Breakdown
+
+| Story | Title | Points | Dependency |
+|---|---|---|---|
+| 1 | 2FA data model | 3 | None |
+| 2 | Generate/validate codes | 5 | Depends on 1 |
+| 3 | Send code via email | 3 | Depends on 2 |
+| 4 | Add to login flow | 5 | Depends on 2, 3 |
+| 5 | User settings UI | 5 | Depends on 1, 2 |
+| 6 | Audit & security | 5 | Depends on 1, 4 |
+
+**Total:** 26 points (compared to 40-point epic estimate)
+
+**Sprint distribution:**
+- Sprint 1: Stories 1, 2, 3 (11 points — feasible if team is 20 pts/sprint)
+- Sprint 2: Stories 4, 5, 6 (15 points)
+
+Both sprints are under-estimated, so team has buffer for bugs/reviews.
+
+---
+
+## Common Breakdown Mistakes
+
+### ❌ Mistake 1: Stories with "And" in them
+
+```
+❌ "Build login page and email verification and reset password flow"
+   (Three stories pretending to be one)
+
+✅ Story 1: "Add email verification to signup"
+✅ Story 2: "Add password reset flow"
+✅ Story 3: "Style login page to match design system"
+```
+
+---
+
+### ❌ Mistake 2: Stories that can't be independently tested
+
+```
+❌ "Add database schema changes and backend API endpoints"
+   (QA can't test DB changes without API; API needs DB first)
+
+✅ Story 1: "Create user_preferences database schema" (dev can code + test schema)
+✅ Story 2: "Build GET/POST /user/preferences endpoints" (depends on Story 1)
+✅ Story 3: "Frontend: user preferences form" (depends on Story 2)
+```
+
+---
+
+### ❌ Mistake 3: Stories without clear acceptance criteria
+
+```
+❌ "Improve dashboard performance"
+   (Too vague. Improve *what*? By how much?)
+
+✅ "Reduce dashboard load time from 4s to 1.5s by caching user data"
+   Acceptance Criteria:
+   - [ ] Implement Redis cache for user data
+   - [ ] Dashboard loads in <1.5s (measured with 100 users)
+   - [ ] Cache invalidates when user data updates
+   - [ ] Cache hit rate > 80%
+```
+
+---
+
+### ❌ Mistake 4: Overestimating or underestimating stories
+
+**Overestimating (story too big):**
+```
+❌ "Add user profiles" — 21 points
+   This is still an epic. Break down further:
+   ✅ "Show user profile card" — 5 pts
+   ✅ "User can edit profile bio and photo" — 5 pts
+   ✅ "Add follower system" — 5 pts
+```
+
+**Underestimating (story too small):**
+```
+❌ "Fix typo in signup button" — 1 point
+   Not sprintable. Batch small fixes:
+   ✅ "Polish signup flow: fix typos, improve error messages, adjust spacing" — 2 pts
+```
+
+---
+
+## Estimation After Breakdown
+
+Once stories are written, estimate them using [Planning Poker](/tools/planning-poker):
+
+1. **Team votes independently** (no discussion, no anchoring)
+2. **If divergence** (e.g., 3 pts vs 8 pts), discuss why
+3. **Re-vote** after discussion
+4. **Aim for consensus** within 1 Fibonacci step (3-5 is ok, 3-8 is not)
+
+**Why divergence happens:**
+- Someone sees a hidden technical risk the others missed
+- Someone misunderstood the acceptance criteria
+- Story is actually too big and needs to be split
+
+**If divergence persists:** Split the story into smaller pieces or add a technical task for investigation.
+
+---
+
+## When to Stop Breaking Down
+
+You're done breaking down when every story meets these criteria:
+
+| Criterion | Check |
+|---|---|
+| **Story is 2–13 points** | Fits in one sprint, not too small |
+| **Acceptance criteria are crystal clear** | QA can test without asking questions |
+| **Story is independently deployable** | Could ship alone and provide value |
+| **Dependencies are explicit** | Team knows what must be done first |
+| **No "and" in the title** | One outcome, not multiple |
+| **Team feels confident estimating it** | No major unknowns |
+
+If any of these is "no", the story needs more refinement.
+
+---
+
+## FAQ
+
+**Q: How many stories should an epic have?**  
+A: Typically 3–8. Fewer than 3 means you don't need an epic. More than 8 probably means you're missing a logical grouping level (sub-epic).
+
+**Q: Can team members have different acceptance criteria?**  
+A: No. Acceptance criteria should be agreed upon *before* estimation. If you have "my version" and "your version", the story isn't ready to estimate.
+
+**Q: What if we estimate a story at 13 points and halfway through realize it's bigger?**  
+A: That's a learning. Pull it out, break it further, and re-estimate. It's better to discover this in refinement than mid-sprint.
+
+**Q: Should I include buffer/risk in point estimates?**  
+A: No. Estimate the actual work. If you're worried about unknowns, add a technical spike story (1-3 points) to investigate first.
+
+**Q: How do we handle "nice-to-have" acceptance criteria?**  
+A: Separate them. AC that *must* be done to call the story complete. "Nice-to-haves" become checklists for future polish or a separate story: "Polish X feature".
+
+---
+
+## Next: Sprint Planning
+
+Once your epic is broken into stories and refined, the stories are ready for sprint planning. The team picks stories from your breakdown based on sprint capacity.
+
+See: [Sprint Planning Template](/templates/sprint-planning-template)
