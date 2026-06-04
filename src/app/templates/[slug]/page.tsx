@@ -5,6 +5,7 @@ import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
 import TemplateCopyActions from "@/components/TemplateCopyActions";
+import { buildMetadata } from "@/lib/seo";
 
 const HIGH_INTENT_TEMPLATE_SLUGS = new Set([
   "jira-bug-report-template",
@@ -64,12 +65,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const item = getContentBySlug("templates", slug);
   if (!item) return {};
-  return {
+  return buildMetadata({
     title: item.title,
     description: item.description,
     keywords: item.keywords,
-    alternates: { canonical: `https://agiletoolhub.com/templates/${slug}` },
-  };
+    canonical: `https://agiletoolhub.com/templates/${slug}`,
+    ogType: "article",
+  });
 }
 
 export default async function TemplatePage({ params }: { params: Promise<{ slug: string }> }) {

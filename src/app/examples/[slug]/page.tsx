@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
+import { buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getAllSlugs("examples").map((slug) => ({ slug }));
@@ -13,12 +14,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const item = getContentBySlug("examples", slug);
   if (!item) return {};
-  return {
+  return buildMetadata({
     title: item.title,
     description: item.description,
     keywords: item.keywords,
-    alternates: { canonical: `https://agiletoolhub.com/examples/${slug}` },
-  };
+    canonical: `https://agiletoolhub.com/examples/${slug}`,
+    ogType: "article",
+  });
 }
 
 export default async function ExamplePage({ params }: { params: Promise<{ slug: string }> }) {
