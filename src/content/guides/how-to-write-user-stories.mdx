@@ -1,0 +1,332 @@
+---
+title: How to Write User Stories
+description: Master user story basics. Learn the anatomy, write compelling stories across domains, and avoid common pitfalls with acceptance criteria.
+slug: how-to-write-user-stories
+category: guides
+keywords: ["how to write user stories", "user story best practices", "as a user I want", "user story format", "user story template", "acceptance criteria"]
+relatedLinks:
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Acceptance Criteria Patterns and Examples"
+    href: "/guides/acceptance-criteria-patterns-and-examples"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Epic Breakdown Best Practices"
+    href: "/guides/epic-breakdown-best-practices"
+  - title: "How to Create and Scope Epics"
+    href: "/guides/how-to-create-and-scope-epics"
+  - title: "User Story Examples for Dashboard"
+    href: "/guides/user-story-examples-for-dashboard"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Definition of Ready Checklist"
+    href: "/templates/definition-of-ready-checklist"
+publishedDate: 2026-06-05
+---
+
+User stories are how agile teams translate customer needs into actionable work. But "we need a user story" doesn't mean teams write them well. Many stories are either too vague to build ("Make the dashboard better") or too narrow to deliver value ("Add blue border to button").
+
+This guide teaches you the craft: what makes a story *good*, how to write them across different domains, and how to avoid the patterns that derail sprints.
+
+## The User Story Anatomy: As a / I want / So that
+
+The classic template is deceptively simple:
+
+```
+As a [user type],
+I want [capability],
+So that [benefit/outcome].
+```
+
+Each part matters.
+
+### "As a [user type]"
+Identifies who benefits. Not always "user"—it's the specific role or persona.
+
+- ✓ "As a project manager..."
+- ✓ "As an API consumer..."
+- ✓ "As a customer with vision impairment..."
+- ✗ "As someone..." (too vague)
+- ✗ "As a platform..." (avoid if possible; focus on humans)
+
+### "I want [capability]"
+The *action*. What can the user do that they can't do today? Be specific but don't over-specify the *how*.
+
+- ✓ "I want to save my payment method for future purchases"
+- ✗ "I want a save button on the checkout form" (too prescriptive about UI)
+- ✗ "I want to persist data to the database" (this is implementation, not user benefit)
+
+### "So that [benefit]"
+The *why*. What problem does this solve? What becomes possible?
+
+- ✓ "...so that I can check out faster on my next purchase"
+- ✗ "...so that the team implements a feature" (not a user benefit)
+- ✗ "...so that we reduce database queries" (infrastructure concern, not user benefit)
+
+## A Complete Example
+
+Let's build a real story end-to-end:
+
+```
+As a freelancer managing multiple client projects,
+I want to filter my time entries by project and date range,
+So that I can quickly generate accurate invoices and verify my hours.
+```
+
+### Breaking it down:
+- **User type:** Freelancer (specific role, not generic "user")
+- **Capability:** Filter time entries by project and date range (specific action)
+- **Benefit:** Quickly generate accurate invoices (measurable outcome)
+
+Compare to a weaker version:
+```
+As a user,
+I want to see time entries,
+So that I can track my time.
+```
+
+This is too generic. Which user? What exactly do they do with entries? How is it different from today?
+
+## Real Examples Across Domains
+
+User stories look the same everywhere, but the context changes. Here's how to write them for different types of products:
+
+### E-Commerce Platform
+```
+As a customer,
+I want to see product reviews from other customers,
+So that I can make an informed purchase decision before buying.
+
+Acceptance Criteria:
+- Reviews display with star rating (1–5 stars)
+- Reviews sorted by "most helpful" by default
+- I can filter by rating (show only 5-star reviews, etc.)
+- I can see reviewer name, date, and review text
+```
+
+### SaaS Analytics Dashboard
+```
+As a marketing director,
+I want to export my campaign performance data as CSV,
+So that I can analyze it in Excel with my team without re-entering data.
+
+Acceptance Criteria:
+- Export button visible on campaign list
+- CSV includes: campaign name, impressions, clicks, conversion rate, cost
+- File downloads within 5 seconds
+- File name includes timestamp (e.g., campaigns_2026-06-05.csv)
+```
+
+### Mobile App (Fitness Tracker)
+```
+As a jogger,
+I want my run distance to update in real-time on my watchface,
+So that I stay motivated and can adjust my pace during the run.
+
+Acceptance Criteria:
+- Distance updates every 10 seconds during active run
+- Display shows miles to 1 decimal place
+- Works with GPS disabled if using step count
+- No battery drain > 2% per 30 minutes of running
+```
+
+### Internal API
+```
+As an API consumer,
+I want the `/users` endpoint to return pagination metadata,
+So that I can efficiently fetch large user lists without memory overload.
+
+Acceptance Criteria:
+- Response includes: total_count, page, limit, next_page_url
+- Default page size is 50 users (configurable up to 500)
+- GET /users?page=2&limit=100 returns second page
+- Cursor-based pagination option available for large datasets
+```
+
+## The Relationship Between User Stories and Epics
+
+User stories aren't standalone—they're children of epics. Understanding the relationship helps you write stories at the right level.
+
+### Epics: The "What" and "Why"
+```
+Epic: "Customers can save payment methods for faster checkout"
+Goal: Reduce checkout abandonment by 8%
+```
+
+### User Stories: The "How" (From the User's Perspective)
+```
+Story 1: "As a repeat customer, I want to save my payment method during checkout, so that I don't re-enter it next time"
+
+Story 2: "As a customer, I want to see my saved payment methods at checkout, so that I can choose the one I want quickly"
+
+Story 3: "As a customer, I want to delete a saved payment method, so that I remove old cards that no longer work"
+```
+
+Each story contributes to the epic's goal. Together, they deliver the outcome.
+
+## Common User Story Mistakes
+
+### Mistake 1: The Epic Masquerading as a Story
+```
+❌ As a customer, I want to purchase something online, so that I can shop from home.
+```
+
+This is actually an epic. It spans checkout, payment, shipping, and account management. Break it down:
+
+```
+✓ As a customer, I want to add items to a shopping cart, so that I can review my selections before paying.
+
+✓ As a customer, I want to review my cart and edit quantities, so that I can avoid mistakes.
+
+✓ As a customer, I want to enter shipping information, so that the package arrives at the correct address.
+```
+
+### Mistake 2: Missing or Vague Benefit
+```
+❌ As a user, I want a search bar, so that I can search.
+```
+
+This says *what* but not *why*. It's circular. Better:
+
+```
+✓ As a customer, I want to search for products by name or category, so that I find what I need in < 10 seconds without scrolling through thousands of items.
+```
+
+### Mistake 3: Acceptance Criteria That Are Really Design Specs
+```
+❌ Acceptance Criteria:
+- Search bar is placed in the top-right corner
+- Search bar is 300px wide
+- Results display in a grid with 3 columns
+- Font is Helvetica 14px
+```
+
+This locks the design prematurely. Instead:
+
+```
+✓ Acceptance Criteria:
+- Search returns results within 2 seconds
+- Results show product name, price, and image
+- I can sort results by relevance or price
+- I can refine results by category or price range
+```
+
+The design (placement, width, columns, font) can be decided during implementation.
+
+### Mistake 4: Acceptance Criteria That Never Mark a Story "Done"
+```
+❌ Acceptance Criteria:
+- Implement user authentication
+- Improve security
+- Handle edge cases
+```
+
+These are vague and often unrealistic to "complete." Better:
+
+```
+✓ Acceptance Criteria:
+- User can log in with email and password
+- Passwords are hashed using bcrypt before storage
+- Login endpoint returns JWT token valid for 24 hours
+- Failed login after 5 attempts temporarily locks the account for 15 minutes
+- All unit tests pass (>80% code coverage)
+```
+
+Each criterion is testable and achievable in one sprint.
+
+### Mistake 5: The Story Without a User
+```
+❌ As a system, I want to cache user data, so that queries are fast.
+```
+
+Caching is a technical decision, not a user story. This should be:
+
+```
+✓ As a customer browsing products, I want search results to load in < 1 second, so that I don't abandon my shopping.
+```
+
+Then the team decides caching is one way to achieve it. (Or database indexing. Or CDN. Details are implementation.)
+
+## Acceptance Criteria: The Story's Definition of Done
+
+Every story needs acceptance criteria—the checklist that defines "done." Good criteria are:
+
+1. **Testable:** You can verify each one (not subjective)
+2. **Achievable:** The team can complete them in one sprint
+3. **Specific:** Include numbers, data types, or exact behaviors
+
+### Example: Email Notification Story
+
+```
+As a customer,
+I want to receive an email confirmation when my order ships,
+So that I know my package is on its way and can track it.
+
+Acceptance Criteria:
+- Email is sent within 5 minutes of order shipment
+- Email includes: tracking number, carrier, estimated delivery date
+- Tracking link directs to carrier's tracking page
+- Email is personalized with customer name and order number
+- Email is not sent if customer opted out of notifications
+- Works for all carriers (UPS, FedEx, DHL, USPS)
+- Resend mechanism works if email bounces
+```
+
+Each criterion is independently verifiable. The developer and QA can run through them systematically.
+
+## Size Your Stories to Fit a Sprint
+
+A good user story should be completable in 1–3 days of focused work. If a story will take a full sprint or more, it's too big—break it down.
+
+**Rough estimates:**
+- **1–3 points:** "I can build this in a few hours" (small scope, low risk)
+- **5–8 points:** "This is a typical story, maybe a day's work" (standard scope)
+- **13+ points:** "This feels big and risky" (probably break it down)
+
+If you find yourself in a 2-week spike just to understand what the story is, it's not ready.
+
+## The User Story Lifecycle
+
+1. **Product team writes the story** (rough draft)
+2. **Team refines it** in backlog refinement (clarify scope, add acceptance criteria)
+3. **Team estimates** the story (XS/S/M/L or 1–21 points)
+4. **Developers pull it into a sprint** (now it's "committed")
+5. **Developer builds** to the acceptance criteria
+6. **QA tests** against criteria
+7. **Product reviews** and accepts or asks for changes
+8. **Story moves to "Done"**
+
+Each stage is important. A story written by product but never refined will confuse the team. A story estimated but never confirmed will blow your sprint forecast.
+
+## Quick Checklist: Is This Story Ready?
+
+Before your team commits to a sprint, verify:
+
+- ✓ **Does it follow "As a / I want / So that"?** (Or is it clearly written otherwise)
+- ✓ **Is the user type specific?** (Not just "user")
+- ✓ **Does the benefit matter?** (Would a customer care? Does it reduce friction?)
+- ✓ **Do you have 4+ acceptance criteria?** (Enough to know what "done" is)
+- ✓ **Is each criterion testable?** (Can QA verify? Not subjective?)
+- ✓ **Can your team build this in 1–3 days?** (If longer, it's too big)
+- ✓ **Are there unresolved blockers?** (Design? API documentation? Dependencies?)
+
+If you answer "no" to any, it needs more refinement before sprint.
+
+## From Story to Code
+
+Once a story is in the sprint:
+
+- Developers create a branch linked to the story (e.g., `feature/user-story-123`)
+- Developers reference the story number in commits
+- QA uses acceptance criteria as the test checklist
+- When all criteria are met and tests pass, the story is "Done"
+
+See the [Definition of Ready Checklist](/templates/definition-of-ready-checklist) for a full rundown of what makes a story ready to build.
+
+## Wrapping Up
+
+User stories are a tool for communication, not a constraint. The format ("As a...") matters less than clarity: Who benefits? What can they do? Why does it matter?
+
+Master this, and your refinement sessions get shorter, sprint commitments become reliable, and your team ships features that customers actually wanted—not what you *guessed* they wanted.
+
+Ready to write? Start with the [User Story Template](/templates/user-story-template) and run through the checklist above. Your future self will thank you at sprint review.

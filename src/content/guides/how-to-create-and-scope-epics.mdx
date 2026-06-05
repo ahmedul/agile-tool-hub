@@ -1,0 +1,219 @@
+---
+title: How to Create and Scope Epics
+description: Master epic planning and scoping. Learn when to break down epics, size them properly, and avoid common pitfalls with real Jira examples.
+slug: how-to-create-and-scope-epics
+category: guides
+keywords: ["how to create epics", "epic planning", "epic scoping", "jira epics", "breaking down epics", "epic size"]
+relatedLinks:
+  - title: "Epic Planning Template for Jira"
+    href: "/templates/epic-planning-template-jira"
+  - title: "Epic Breakdown Best Practices"
+    href: "/guides/epic-breakdown-best-practices"
+  - title: "How to Write User Stories"
+    href: "/guides/how-to-write-user-stories"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "Backlog Refinement Best Practices"
+    href: "/guides/backlog-refinement-best-practices"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Definition of Ready Checklist"
+    href: "/templates/definition-of-ready-checklist"
+  - title: "Story Point Estimation Guide with Examples"
+    href: "/guides/story-point-estimation-guide-with-examples"
+publishedDate: 2026-06-05
+---
+
+Epics are the backbone of strategic planning in Agile—they group related work around a business outcome and set direction for multiple sprints. But many teams struggle with the same question: **How do I know when something is epic-sized, and where do I draw the line?**
+
+This guide walks you through creating and scoping epics effectively, using real examples and patterns that work in practice.
+
+## What Makes a Good Epic?
+
+An epic isn't just "a big user story." It's a strategic unit of work with three defining traits:
+
+### 1. Business Outcome Focused
+An epic represents a measurable business goal, not just a feature checklist. It answers: "What value does this deliver?"
+
+**Good epic:** "Customers can checkout with saved payment methods" (outcome: faster repeat purchases, higher conversion)  
+**Bad epic:** "Build payment form" (just a task list)
+
+### 2. Right Scope
+A good epic is:
+- **Large enough to span multiple sprints** (usually 2–4 weeks minimum)
+- **Small enough to stay focused** (can be completed by one team)
+- **Testable as a whole** (you can measure success)
+
+**Too small:** "Add email validation to checkout" → This is a user story.  
+**Too big:** "Rebuild our entire payment processing stack" → This is a program/initiative.  
+**Just right:** "Support guest checkout with saved addresses" → Spans 2–3 sprints, testable, clear success criteria.
+
+### 3. Independent Yet Related Stories
+An epic should break into 4–8 related user stories that flow naturally and can be prioritized within the epic. If you can't break it into at least 2 stories without forcing it, it's probably too small.
+
+## Sizing Epics: The 40-Point Rule
+
+In most organizations, a well-scoped epic estimates to **20–50 story points** (assuming a typical sprint is 30–40 points). This naturally spans 1–2 sprints but leaves room for bug fixes and unplanned work.
+
+**Why this range?**
+- **Under 10 points:** Scope is too small; break into a single story or smaller user task
+- **20–50 points:** Sweet spot for cross-sprint planning and team focus
+- **Over 80 points:** You likely have two epics bundled together; split them
+
+### Real Example: E-Commerce Checkout Epic
+
+Let's scope a realistic epic: "Customers can save and reuse payment methods."
+
+#### Step 1: Define the Outcome
+- **Business goal:** Reduce checkout abandonment by 8%, increase repeat purchase rate
+- **User benefit:** Faster checkout on repeat purchases
+- **Measurable:** "Payment method reuse rate > 35% within 60 days of launch"
+
+#### Step 2: List all necessary stories
+1. Save payment method during checkout (5 pts)
+2. Display saved payment methods at checkout (3 pts)
+3. Allow customer to edit saved payment method (5 pts)
+4. Implement PCI compliance for stored methods (8 pts)
+5. Add payment method deletion flow (3 pts)
+6. Email notification for new saved payment method (3 pts)
+
+**Total: 27 points** → Fits in 1 sprint with room, or straddles 2 sprints if paired with other work.
+
+#### Step 3: Identify Dependencies
+- PCI compliance story (4) must complete before or during story 1 (technical foundation)
+- Stories 2–3 depend on story 1
+- Deletion (5) and email (6) are independent, can run in parallel
+
+#### Step 4: Set Acceptance Criteria for the Epic
+- ✓ New payment methods saved securely (PCI compliant)
+- ✓ Customers see saved methods at checkout
+- ✓ Can delete or edit saved methods
+- ✓ No data loss on failed deletion
+- ✓ Customer receives email confirmation
+- ✓ Payment success rate maintained (no regressions)
+
+**Epic scope is now clear:** Your team knows what "done" looks like, and each story is an actionable step toward the goal.
+
+## When to Break Down vs. Keep Together
+
+### When to Split an Epic
+Split an epic into two if:
+
+1. **It touches multiple systems** that different teams own  
+   *Example:* "Redesign user profiles" (frontend) + "Rebuild profile service" (backend) → Split.
+
+2. **There's a natural pause point** where value is delivered  
+   *Example:* "Support OAuth, implement social sharing, and add profile analytics" → Make "OAuth + social sharing" Epic 1, "analytics" Epic 2.
+
+3. **One story is blocked by external work**  
+   *Example:* "Payment processing" epic depends on a vendor integration that hasn't started. Separate concerns: one epic for your code, wait on the integration separately.
+
+4. **The team will context-switch excessively**  
+   *Example:* "Mobile app redesign" + "backend API redesign" working simultaneously = high cognitive load. Split.
+
+### When to Keep Together
+Keep stories in one epic if:
+
+1. **They share acceptance criteria** and success is measured collectively  
+   *Example:* "Support video uploads" (UI) + "Process and optimize videos" (backend) → Same epic if both ship together for feature launch.
+
+2. **Splitting would create artificial boundaries**  
+   *Example:* "Multi-language support" includes frontend strings + backend API + database schema. One epic, one team, one definition of done.
+
+3. **Dependency flow is natural** and sequencing is obvious  
+   *Example:* "Customer onboarding" has clear steps: profile → email verification → first login → tutorial. Keep together.
+
+## Common Epic Scoping Mistakes
+
+### Mistake 1: The "Kitchen Sink" Epic
+**Problem:** Everything gets bundled. "Q3 platform improvements" includes 15 unrelated stories.  
+**Symptom:** Sprint planning takes 2 hours because there's no coherent story priority within the epic.  
+**Fix:** Break by business capability. "User onboarding," "mobile performance," "API reliability" are three separate epics.
+
+### Mistake 2: Too Many Vague Acceptance Criteria
+**Problem:** Epic acceptance criteria are business abstractions with no way to test them.  
+*Example:* "Customers are happy with payment flow"  
+**Fix:** Make criteria measurable: "Payment success rate ≥ 99.2%," "P50 latency < 300ms," "Customer support tickets for payment drop 30%."
+
+### Mistake 3: Hidden Dependencies Surface Late
+**Problem:** You start sprint 2 of the epic and discover story 5 depends on a third-party API that isn't ready.  
+**Fix:** During epic refinement, explicitly map dependencies:
+- Which stories must complete before which?
+- Are there external blockers?
+- Can stories run in parallel?
+
+Document this in your epic ticket in Jira. It saves sprint planning time.
+
+### Mistake 4: Scope Creep Mid-Epic
+**Problem:** 3 sprints in, the team discovers they need to support mobile browsers. Now the epic is 100+ points.  
+**Fix:** Lock acceptance criteria in refinement. New requirements → new epic or backlog item, not mid-stream changes.
+
+## Epic Lifecycle: Refinement to Done
+
+### Phase 1: Discovery & Proposal
+- Product Manager: "We want to reduce payment abandonment"
+- Team: "What's the acceptance criteria? How do we measure success?"
+- Outcome: Epic proposal with high-level scope
+
+### Phase 2: Refinement (1–2 sessions)
+- Team breaks epic into candidate user stories
+- Identify sizing, dependencies, and unknowns
+- Mark stories "Ready for Sprint" that are clear enough
+- Mark stories "Needs Refinement" that need deeper discussion
+- Output: Epic is "Story Ready" (at least 4–5 stories are sprintable)
+
+### Phase 3: Execution (2–4 sprints)
+- Each sprint: Pull stories from epic according to team velocity
+- Mid-epic check-in: Are we on track? Do dependencies still hold?
+- Adjust if blocked or scope changes
+- Output: Stories move from "In Progress" → "Done"
+
+### Phase 4: Launch & Validation
+- Epic marked "Done" when all stories are "Done"
+- Product Manager validates acceptance criteria are met
+- Data analyst measures business outcome (e.g., "reuse rate is now 35%")
+- Output: Retrospective insight (e.g., "PCI compliance story was underestimated")
+
+## Structuring Epics in Jira
+
+In Jira, here's how to set it up:
+
+```
+Epic: "Save and reuse payment methods"
+├─ Story: "Save payment method during checkout"
+│  └─ Task: Validate card format
+│  └─ Task: Encrypt card data
+├─ Story: "Display saved methods at checkout"
+│  └─ Task: Query database for saved methods
+│  └─ Task: Render dropdown UI
+├─ Story: "Allow customer to edit saved payment method"
+│  └─ Task: Build edit form
+│  └─ Task: Validate changes
+└─ ... (more stories)
+```
+
+**Jira best practice:**
+- Epic summary: Clear business outcome (not a list of tasks)
+- Epic description: Link to business case, acceptance criteria, known dependencies
+- Link field: Set to track parent epic in each story
+- Label: Add team or OKR label for easier filtering
+
+## Checklist: Is This Epic Ready?
+
+Before your team pulls an epic into a sprint, verify:
+
+- ✓ **Can you explain it in one sentence?** (If not, scope is too broad)
+- ✓ **Can you list 4–8 related stories?** (If not, break or expand)
+- ✓ **Is the business outcome measurable?** (Specific metric, not vague)
+- ✓ **Are dependencies mapped?** (Which stories depend on which?)
+- ✓ **Do you have T-shirt sizes** (XS/S/M/L) or story points for all stories?
+- ✓ **Is there a clear start and end?** (Can you say "done"?)
+- ✓ **Will this take 2–4 sprints?** (Or adjust scope)
+
+If you answer "no" to any of these, spend 30 more minutes in refinement. It pays off.
+
+## Wrapping Up
+
+Epic scoping isn't a science—it's a skill built through iteration and feedback. Start with the 40-point rule, map dependencies, keep acceptance criteria measurable, and resist scope creep. Your team will thank you when sprint planning is 45 minutes, not 2 hours.
+
+Next step: Take your well-scoped epic into refinement and break it into sprintable stories. See [Epic Breakdown Best Practices](/guides/epic-breakdown-best-practices) for how to facilitate that conversation.
