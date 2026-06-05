@@ -162,6 +162,8 @@ export default function RetroBoardPage() {
           </h3>
           <div className="flex flex-wrap gap-3">
             {[
+              { title: "Sprint Retrospective Template", href: "/templates/sprint-retrospective-template" },
+              { title: "Definition of Done Checklist", href: "/templates/definition-of-done-checklist" },
               { title: "Planning Poker", href: "/tools/planning-poker" },
               { title: "Sprint Capacity Calculator", href: "/tools/sprint-capacity-calculator" },
               { title: "Sprint Planning Template", href: "/templates/sprint-planning-template" },
