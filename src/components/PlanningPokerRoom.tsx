@@ -431,24 +431,50 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         {/* Card hand */}
         <div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Your vote</p>
-          <div className="flex flex-wrap gap-3">
-            {PLANNING_POKER_CARDS.map((card) => (
-              <button
-                key={card}
-                onClick={() => handleVote(card)}
-                disabled={revealed || !hasStory}
-                title={!hasStory ? "Set a story first to enable voting" : undefined}
-                className={[
-                  "w-14 h-20 rounded-xl border-2 text-xl font-bold transition-all duration-150",
-                  myVote === card
-                    ? "bg-blue-600 border-blue-600 text-white shadow-lg scale-105"
-                    : "bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:shadow-md",
-                  revealed || !hasStory ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
-                ].join(" ")}
-              >
-                {card}
-              </button>
-            ))}
+          <div className="flex flex-col gap-4">
+            {/* Fibonacci cards */}
+            <div className="flex flex-wrap gap-3">
+              {PLANNING_POKER_CARDS.filter((card) => typeof card === "number" || card === "?").map((card) => (
+                <button
+                  key={card}
+                  onClick={() => handleVote(card)}
+                  disabled={revealed || !hasStory}
+                  title={!hasStory ? "Set a story first to enable voting" : undefined}
+                  className={[
+                    "w-14 h-20 rounded-xl border-2 text-xl font-bold transition-all duration-150",
+                    myVote === card
+                      ? "bg-blue-600 border-blue-600 text-white shadow-lg scale-105"
+                      : "bg-white border-gray-200 text-gray-700 hover:border-blue-400 hover:shadow-md",
+                    revealed || !hasStory ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+                  ].join(" ")}
+                >
+                  {card}
+                </button>
+              ))}
+            </div>
+            {/* Fun cards (skip/defer) */}
+            <div>
+              <p className="text-xs text-gray-400 mb-2">Skip/Defer (optional):</p>
+              <div className="flex flex-wrap gap-3">
+                {PLANNING_POKER_CARDS.filter((card) => typeof card === "string" && card !== "?").map((card) => (
+                  <button
+                    key={card}
+                    onClick={() => handleVote(card)}
+                    disabled={revealed || !hasStory}
+                    title={!hasStory ? "Set a story first to enable voting" : card === "🍺" ? "Can't estimate (need more info)" : card === "☕" ? "Too complex (needs breakdown)" : "Money/stakeholder decision"}
+                    className={[
+                      "w-14 h-20 rounded-xl border-2 text-2xl font-bold transition-all duration-150",
+                      myVote === card
+                        ? "bg-amber-100 border-amber-300 shadow-lg scale-105"
+                        : "bg-gray-50 border-gray-300 text-gray-600 hover:border-amber-300 hover:shadow-md",
+                      revealed || !hasStory ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
+                    ].join(" ")}
+                  >
+                    {card}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

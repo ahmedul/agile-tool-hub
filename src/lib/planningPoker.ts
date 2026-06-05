@@ -1,4 +1,4 @@
-export const PLANNING_POKER_CARDS = [1, 2, 3, 5, 8, 13, 21, "?"] as const;
+export const PLANNING_POKER_CARDS = [1, 2, 3, 5, 8, 13, 21, "?", "🍺", "☕", "💰"] as const;
 
 export type CardValue = (typeof PLANNING_POKER_CARDS)[number];
 export type NumericCardValue = Exclude<CardValue, "?">;
