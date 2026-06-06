@@ -1,18 +1,21 @@
+// src/hooks/useAnimation.ts
+
 import { useEffect, useState } from "react";
 
 /**
  * Hook that respects user's prefers-reduced-motion preference.
  * Returns true if animations should be enabled, false if disabled.
+ * SSR-safe with proper hydration handling.
  */
 export function useAnimation(): boolean {
-  const [animationsEnabled, setAnimationsEnabled] = useState(true);
+  const [animationsEnabled, setAnimationsEnabled] = useState(() => {
+    // SSR safety: window doesn't exist on server
+    if (typeof window === "undefined") return true;
+    // Client: check actual media query immediately
+    return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
 
   useEffect(() => {
-    // Check if user prefers reduced motion
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    setAnimationsEnabled(!prefersReduced);
-
-    // Listen for changes to motion preference
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const handleChange = (e: MediaQueryListEvent) => {
       setAnimationsEnabled(!e.matches);
