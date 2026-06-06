@@ -55,7 +55,7 @@ export default function CelebrationMoment({
         initial="initial"
         animate={animationsEnabled ? "animate" : false}
         exit="exit"
-        transition={animationsEnabled ? { duration: DURATIONS.normal } : { duration: 0 }}
+        transition={animationsEnabled ? { duration: DURATIONS.normal / 1000 } : { duration: 0 }}
       >
         <div className="bg-white rounded-2xl shadow-2xl px-8 py-6 text-center border-2 border-green-500 max-w-xs sm:max-w-sm" role="status" aria-live="polite">
           <div className="text-5xl mb-4">{emoji}</div>
