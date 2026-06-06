@@ -233,7 +233,7 @@ h3. Key Metrics
     if (metrics) {
       setOutput(generateOutput(metrics, exportFormat));
     }
-  }, [exportFormat]);
+  }, [exportFormat, metrics]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4">
@@ -432,7 +432,7 @@ h3. Key Metrics
                   >
                     {metrics.trend === "accelerating" && (
                       <p className="text-blue-900">
-                        ⚡ <strong>Your team's on a roll!</strong> Velocity up {metrics.trendPercent}% vs last sprint. Keep it going!
+                        ⚡ <strong>Your team&apos;s on a roll!</strong> Velocity up {metrics.trendPercent}% vs last sprint. Keep it going!
                       </p>
                     )}
                     {metrics.trend === "stable" && (
@@ -442,7 +442,7 @@ h3. Key Metrics
                     )}
                     {metrics.trend === "decelerating" && (
                       <p className="text-amber-900">
-                        🤔 <strong>Velocity dipped this sprint.</strong> What slowed you down? Let's improve next time.
+                        🤔 <strong>Velocity dipped this sprint.</strong> What slowed you down? Let&apos;s improve next time.
                       </p>
                     )}
                   </motion.div>
