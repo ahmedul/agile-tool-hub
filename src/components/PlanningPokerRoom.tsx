@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAnimation } from "@/hooks/useAnimation";
+import { ANIMATION_VARIANTS, DURATIONS, STAGGER_CONTAINER, STAGGER_ITEM } from "@/lib/animations";
 import CopyButton from "./CopyButton";
+import CelebrationMoment from "@/components/CelebrationMoment";
 import {
   appendStorySummary,
   deriveRecommendedEstimate,
@@ -50,6 +54,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const [sessionUrl, setSessionUrl] = useState(
     `https://agiletoolhub.com/tools/planning-poker/${sessionId}`,
   );
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationMessage, setCelebrationMessage] = useState("");
+  const animationsEnabled = useAnimation();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
   const userIdRef = useRef<string>("");
@@ -63,7 +70,22 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
   useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
   useEffect(() => { revealedRef.current = revealed; }, [revealed]);
-  
+
+  // Check for consensus when votes are revealed
+  useEffect(() => {
+    if (!revealed) return;
+
+    const nonNullVotes = Object.values(participants)
+      .map(p => p.vote)
+      .filter(v => v !== null);
+
+    if (nonNullVotes.length > 1 && new Set(nonNullVotes).size === 1) {
+      // Consensus detected - trigger celebration
+      setCelebrationMessage("Perfect consensus! Your team's in sync 🎯");
+      setShowCelebration(true);
+    }
+  }, [revealed, participants]);
+
   // Restore saved stories on mount (before any other effects)
   useEffect(() => {
     const savedStories = localStorage.getItem(`pp_stories_${sessionId}`);
@@ -433,7 +455,13 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Your vote</p>
           <div className="flex flex-col gap-4">
             {/* Fibonacci cards */}
-            <div className="flex flex-wrap gap-3">
+            <motion.div
+              className="flex flex-wrap gap-3"
+              variants={ANIMATION_VARIANTS.slideIn}
+              initial="initial"
+              animate={animationsEnabled ? "animate" : false}
+              transition={{ duration: DURATIONS.normal / 1000 }}
+            >
               {PLANNING_POKER_CARDS.filter((card) => typeof card === "number" || card === "?").map((card) => (
                 <button
                   key={card}
@@ -451,14 +479,20 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   {card}
                 </button>
               ))}
-            </div>
+            </motion.div>
             {/* Fun cards (skip/defer) */}
             <div>
               <p className="text-xs text-gray-400 mb-2">Skip/Defer (optional):</p>
-              <div className="flex flex-wrap gap-3">
+              <motion.div
+                className="flex flex-wrap gap-3"
+                variants={STAGGER_CONTAINER}
+                initial="initial"
+                animate={animationsEnabled ? "animate" : false}
+              >
                 {PLANNING_POKER_CARDS.filter((card) => typeof card === "string" && card !== "?").map((card) => (
-                  <button
+                  <motion.button
                     key={card}
+                    variants={STAGGER_ITEM}
                     onClick={() => handleVote(card)}
                     disabled={revealed || !hasStory}
                     title={!hasStory ? "Set a story first to enable voting" : card === "🍺" ? "Can't estimate (need more info)" : card === "☕" ? "Too complex (needs breakdown)" : "Money/stakeholder decision"}
@@ -471,9 +505,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                     ].join(" ")}
                   >
                     {card}
-                  </button>
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -513,9 +547,18 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           {participantList.length === 0 ? (
             <p className="text-sm text-gray-400">Waiting for teammates to join…</p>
           ) : (
-            <div className="flex flex-wrap gap-4">
+            <motion.div
+              className="flex flex-wrap gap-4"
+              variants={STAGGER_CONTAINER}
+              initial="initial"
+              animate={animationsEnabled ? "animate" : false}
+            >
               {participantList.map(([uid, p]) => (
-                <div key={uid} className="flex flex-col items-center gap-1.5">
+                <motion.div
+                  key={uid}
+                  variants={STAGGER_ITEM}
+                  className="flex flex-col items-center gap-1.5"
+                >
                   <div
                     className={[
                       "relative w-14 h-20 rounded-xl border-2 flex items-center justify-center text-xl font-bold transition-all",
@@ -540,9 +583,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   <span className="text-[10px] text-gray-400">
                     {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
                   </span>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
 
@@ -558,8 +601,8 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
               : !canReveal
               ? "Pick a card first…"
               : votedCount === totalCount && totalCount > 0
-                ? "Reveal Cards ✓"
-                : `Reveal Cards (${votedCount}/${totalCount})`}
+                ? "Everyone's voted! Ready to reveal? 👀"
+                : `${votedCount}/${totalCount} voted — let's go! 🚀`}
           </button>
         ) : (
           <div className="space-y-4">
@@ -684,6 +727,17 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           )}
         </div>
       </aside>
+
+      {/* Celebration moment */}
+      <AnimatePresence>
+        {showCelebration && (
+          <CelebrationMoment
+            message={celebrationMessage}
+            emoji="🎯"
+            onComplete={() => setShowCelebration(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
