@@ -5,7 +5,7 @@ import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import CopyButton from "./CopyButton";
 import { useAnimation } from "@/hooks/useAnimation";
-import { ANIMATION_VARIANTS, DURATIONS, STAGGER_ITEM } from "@/lib/animations";
+import { ANIMATION_VARIANTS, DURATIONS, STAGGER_ITEM, EASINGS } from "@/lib/animations";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -766,7 +766,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
 
               {/* Notes */}
               <div className="flex flex-col gap-2 overflow-y-auto max-h-96">
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                   {colNotes.map((note, idx) => {
                     const myVoted = note.votes.includes(userIdRef.current);
                     const isOwner = note.authorId === userIdRef.current;
@@ -777,7 +777,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                         initial="initial"
                         animate="animate"
                         exit="exit"
-                        transition={{ duration: DURATIONS.normal / 1000, delay: idx * 0.05 }}
+                        transition={{ duration: DURATIONS.normal / 1000, delay: idx * 0.05, ease: EASINGS.smooth }}
                         className={`rounded-lg border ${NOTE_COLORS[col.id]} p-3 group relative hover:shadow-md transition-shadow`}
                       >
                         <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{note.text}</p>
@@ -829,8 +829,19 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         );
         return isComplete ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={animationsEnabled ? {
+              initial: { opacity: 0, y: 20 },
+              animate: { opacity: 1, y: 0 },
+              exit: { opacity: 0, y: 20 }
+            } : {
+              initial: {},
+              animate: {},
+              exit: {}
+            }}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={animationsEnabled ? { duration: DURATIONS.normal / 1000 } : { duration: 0 }}
             className="mt-6 mx-4 max-w-7xl mb-6 p-4 bg-blue-100 border-l-4 border-blue-600 rounded text-blue-900 flex items-start gap-3"
           >
             <span className="text-xl flex-shrink-0">✓</span>
