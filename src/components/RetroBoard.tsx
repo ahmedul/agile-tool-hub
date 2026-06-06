@@ -2,7 +2,10 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
+import { motion, AnimatePresence } from "framer-motion";
 import CopyButton from "./CopyButton";
+import { useAnimation } from "@/hooks/useAnimation";
+import { ANIMATION_VARIANTS, DURATIONS, STAGGER_ITEM } from "@/lib/animations";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -151,6 +154,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const [timerState, setTimerState] = useState<TimerState>({ isRunning: false, remainingSeconds: 600, totalSeconds: 600, currentPhase: "brainstorm" });
   const [timerDuration, setTimerDuration] = useState(10); // minutes
   const [inputs, setInputs] = useState<Record<ColumnId, string>>({} as Record<ColumnId, string>);
+  const animationsEnabled = useAnimation();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
   const userIdRef = useRef<string>("");
@@ -762,48 +766,80 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
 
               {/* Notes */}
               <div className="flex flex-col gap-2 overflow-y-auto max-h-96">
-                {colNotes.map((note) => {
-                  const myVoted = note.votes.includes(userIdRef.current);
-                  const isOwner = note.authorId === userIdRef.current;
-                  return (
-                    <div
-                      key={note.id}
-                      className={`rounded-lg border ${NOTE_COLORS[col.id]} p-3 group relative hover:shadow-md transition-shadow`}
-                    >
-                      <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{note.text}</p>
-                      <div className="flex items-center gap-2 mt-2 flex-wrap">
-                        <button
-                          onClick={() => handleVote(note)}
-                          disabled={isBoardLocked}
-                          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full border transition-colors ${
-                            myVoted
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
-                          }`}
-                          title={myVoted ? "Remove vote" : "Vote for this"}
-                        >
-                          👍 {note.votes.length}
-                        </button>
-                        <span className="text-xs text-gray-500 font-medium">👤 {note.authorName}</span>
-                        {isOwner && (
+                <AnimatePresence>
+                  {colNotes.map((note, idx) => {
+                    const myVoted = note.votes.includes(userIdRef.current);
+                    const isOwner = note.authorId === userIdRef.current;
+                    return (
+                      <motion.div
+                        key={note.id}
+                        variants={animationsEnabled ? ANIMATION_VARIANTS.slideIn : { initial: {}, animate: {}, exit: {} }}
+                        initial="initial"
+                        animate="animate"
+                        exit="exit"
+                        transition={{ duration: DURATIONS.normal / 1000, delay: idx * 0.05 }}
+                        className={`rounded-lg border ${NOTE_COLORS[col.id]} p-3 group relative hover:shadow-md transition-shadow`}
+                      >
+                        <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{note.text}</p>
+                        <div className="flex items-center gap-2 mt-2 flex-wrap">
                           <button
-                            onClick={() => handleDeleteNote(note.id)}
+                            onClick={() => handleVote(note)}
                             disabled={isBoardLocked}
-                            className="ml-auto text-xs text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Delete note"
+                            className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full border transition-colors ${
+                              myVoted
+                                ? "bg-blue-600 text-white border-blue-600"
+                                : "bg-white text-gray-600 border-gray-300 hover:border-blue-400"
+                            }`}
+                            title={myVoted ? "Remove vote" : "Vote for this"}
                           >
-                            ✕
+                            👍 {note.votes.length}
                           </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                          <span className="text-xs text-gray-500 font-medium">👤 {note.authorName}</span>
+                          {isOwner && (
+                            <button
+                              onClick={() => handleDeleteNote(note.id)}
+                              disabled={isBoardLocked}
+                              className="ml-auto text-xs text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Delete note"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+
+                {colNotes.length === 0 && (
+                  <div className="text-center py-12 text-gray-400">
+                    <p className="text-lg">✨ Add something great here →</p>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Board completion hint */}
+      {(() => {
+        const isComplete = format.columns.every((col) =>
+          notes.some((n) => n.columnId === col.id),
+        );
+        return isComplete ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 mx-4 max-w-7xl mb-6 p-4 bg-blue-100 border-l-4 border-blue-600 rounded text-blue-900 flex items-start gap-3"
+          >
+            <span className="text-xl flex-shrink-0">✓</span>
+            <div>
+              <strong>Board is complete!</strong> Ready to wrap up? <strong>Screenshot this moment</strong> to share with your team.
+            </div>
+          </motion.div>
+        ) : null;
+      })()}
 
       {/* Member list footer */}
       {memberList.length > 0 && (
