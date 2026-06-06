@@ -14,6 +14,10 @@ import {
 } from "recharts";
 import OutputFeedback from "@/components/OutputFeedback";
 import CopyButton from "@/components/CopyButton";
+import { motion } from "framer-motion";
+import { useAnimation } from "@/hooks/useAnimation";
+import { ANIMATION_VARIANTS, DURATIONS } from "@/lib/animations";
+import CelebrationMoment from "@/components/CelebrationMoment";
 
 interface Sprint {
   name: string;
@@ -50,6 +54,9 @@ export default function VelocityTracker() {
   const [exportFormat, setExportFormat] = useState<"markdown" | "jira">(
     "markdown"
   );
+  const [showMilestoneAnimation, setShowMilestoneAnimation] = useState(false);
+  const [milestoneMessage, setMilestoneMessage] = useState("");
+  const animationsEnabled = useAnimation();
 
   // Calculate velocity metrics
   const calculateMetrics = (sprintList: Sprint[]): VelocityMetrics => {
@@ -171,6 +178,20 @@ h3. Key Metrics
     const newMetrics = calculateMetrics(updatedSprints);
     setMetrics(newMetrics);
     setOutput(generateOutput(newMetrics, exportFormat));
+
+    // Check if forecast was met (team completed >= forecast from previous sprint)
+    if (updatedSprints.length >= 2) {
+      const previousMetrics = calculateMetrics(updatedSprints.slice(0, -1));
+      if (
+        newSprint.completedPoints >= previousMetrics.forecast &&
+        newSprint.completedPoints > 0
+      ) {
+        setMilestoneMessage(
+          `🎯 Forecast met! Team completed ${newSprint.completedPoints} pts vs ${previousMetrics.forecast} pts forecasted.`
+        );
+        setShowMilestoneAnimation(true);
+      }
+    }
 
     trackEvent("generator_run", {
       tool: "velocity_tracker",
@@ -327,46 +348,104 @@ h3. Key Metrics
               {metrics && (
                 <>
                   {/* Key Metrics */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg">
-                      <div className="text-sm text-gray-600">Current Velocity</div>
-                      <div className="text-3xl font-bold text-blue-700">
-                        {metrics.velocities[metrics.velocities.length - 1]}
-                      </div>
-                      <div className="text-xs text-gray-600 mt-1">points</div>
-                    </div>
+                  <div className="grid grid-cols-3 gap-6">
+                    {/* Current Velocity */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: DURATIONS.normal / 1000 }}
+                      className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200"
+                    >
+                      <p className="text-gray-600 text-sm font-semibold">Current Velocity</p>
+                      <motion.p
+                        className="text-3xl font-bold text-blue-600 mt-2"
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        {metrics.velocities[metrics.velocities.length - 1]} pts
+                      </motion.p>
+                    </motion.div>
 
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg">
-                      <div className="text-sm text-gray-600">Average Velocity</div>
-                      <div className="text-3xl font-bold text-purple-700">
-                        {metrics.averageVelocity}
-                      </div>
-                      <div className="text-xs text-gray-600 mt-1">points</div>
-                    </div>
+                    {/* Average Velocity */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: DURATIONS.normal / 1000, delay: 0.1 }}
+                      className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200"
+                    >
+                      <p className="text-gray-600 text-sm font-semibold">Average Velocity</p>
+                      <motion.p
+                        className="text-3xl font-bold text-purple-600 mt-2"
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        {metrics.averageVelocity} pts
+                      </motion.p>
+                    </motion.div>
 
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg">
-                      <div className="text-sm text-gray-600">Trend</div>
-                      <div className="text-2xl font-bold text-green-700">
-                        {metrics.trend === "accelerating"
-                          ? "📈"
-                          : metrics.trend === "decelerating"
-                            ? "📉"
-                            : "➡️"}
-                      </div>
-                      <div className="text-xs text-gray-600 mt-1">
-                        {metrics.trendPercent > 0 ? "+" : ""}
-                        {metrics.trendPercent}%
-                      </div>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg">
-                      <div className="text-sm text-gray-600">Forecast</div>
-                      <div className="text-3xl font-bold text-orange-700">
-                        {metrics.forecast}
-                      </div>
-                      <div className="text-xs text-gray-600 mt-1">points</div>
-                    </div>
+                    {/* Trend */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: DURATIONS.normal / 1000, delay: 0.2 }}
+                      className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-lg border border-green-200"
+                    >
+                      <p className="text-gray-600 text-sm font-semibold">Trend</p>
+                      <motion.div
+                        className="text-2xl font-bold mt-2"
+                        animate={metrics.trend === "accelerating" ? { scale: [1, 1.1, 1] } : {}}
+                        transition={{ duration: 0.5, repeat: metrics.trend === "accelerating" ? 2 : 0 }}
+                      >
+                        {metrics.trend === "accelerating" && <span className="text-green-600">📈 +{metrics.trendPercent}%</span>}
+                        {metrics.trend === "stable" && <span className="text-gray-600">📊 Stable</span>}
+                        {metrics.trend === "decelerating" && <span className="text-amber-600">📉 -{Math.abs(metrics.trendPercent)}%</span>}
+                      </motion.div>
+                    </motion.div>
                   </div>
+
+                  {/* Forecast */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: DURATIONS.normal / 1000, delay: 0.3 }}
+                    className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-lg border border-orange-200"
+                  >
+                    <p className="text-gray-600 text-sm font-semibold">Next Sprint Forecast</p>
+                    <motion.p
+                      className="text-3xl font-bold text-orange-600 mt-2"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5, duration: DURATIONS.normal / 1000 }}
+                    >
+                      {metrics.forecast} pts
+                    </motion.p>
+                  </motion.div>
+
+                  {/* Personality Copy */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: DURATIONS.normal / 1000, delay: 0.4 }}
+                    className="p-4 bg-blue-50 border-l-4 border-blue-600 rounded"
+                  >
+                    {metrics.trend === "accelerating" && (
+                      <p className="text-blue-900">
+                        ⚡ <strong>Your team's on a roll!</strong> Velocity up {metrics.trendPercent}% vs last sprint. Keep it going!
+                      </p>
+                    )}
+                    {metrics.trend === "stable" && (
+                      <p className="text-gray-700">
+                        📊 <strong>Steady as it goes.</strong> Consistent velocity is gold for planning.
+                      </p>
+                    )}
+                    {metrics.trend === "decelerating" && (
+                      <p className="text-amber-900">
+                        🤔 <strong>Velocity dipped this sprint.</strong> What slowed you down? Let's improve next time.
+                      </p>
+                    )}
+                  </motion.div>
 
                   {/* Chart */}
                   <div className="bg-gray-50 p-4 rounded-lg">
@@ -386,6 +465,10 @@ h3. Key Metrics
                           stroke="#2563eb"
                           strokeWidth={2}
                           name="Completed Points"
+                          isAnimationActive={animationsEnabled}
+                          animationDuration={DURATIONS.deliberate / 1000}
+                          dot={{ r: 5 }}
+                          activeDot={{ r: 7 }}
                         />
                         <Line
                           type="monotone"
@@ -394,6 +477,10 @@ h3. Key Metrics
                           strokeWidth={2}
                           strokeDasharray="5 5"
                           name="Planned Points"
+                          isAnimationActive={animationsEnabled}
+                          animationDuration={DURATIONS.deliberate / 1000}
+                          dot={{ r: 5 }}
+                          activeDot={{ r: 7 }}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -443,6 +530,15 @@ h3. Key Metrics
 
               <OutputFeedback tool="velocity_tracker" />
             </div>
+          )}
+
+          {/* Milestone Celebration */}
+          {showMilestoneAnimation && (
+            <CelebrationMoment
+              message={milestoneMessage}
+              emoji="🎯"
+              onComplete={() => setShowMilestoneAnimation(false)}
+            />
           )}
         </div>
       </div>
