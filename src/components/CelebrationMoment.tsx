@@ -33,13 +33,13 @@ export default function CelebrationMoment({
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration, onComplete]);
+  }, [duration]);
 
   if (!isVisible) return null;
 
   return (
     <>
-      {showConfetti && animationsEnabled && (
+      {showConfetti && animationsEnabled && typeof window !== 'undefined' && (
         <Confetti
           width={window.innerWidth}
           height={window.innerHeight}
@@ -53,11 +53,11 @@ export default function CelebrationMoment({
         className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
         variants={ANIMATION_VARIANTS.scaleIn}
         initial="initial"
-        animate="animate"
+        animate={animationsEnabled ? "animate" : false}
         exit="exit"
-        transition={{ duration: DURATIONS.normal }}
+        transition={animationsEnabled ? { duration: DURATIONS.normal } : { duration: 0 }}
       >
-        <div className="bg-white rounded-2xl shadow-2xl px-8 py-6 text-center border-2 border-green-500 max-w-sm">
+        <div className="bg-white rounded-2xl shadow-2xl px-8 py-6 text-center border-2 border-green-500 max-w-xs sm:max-w-sm" role="status" aria-live="polite">
           <div className="text-5xl mb-4">{emoji}</div>
           <p className="text-xl font-semibold text-gray-900">{message}</p>
         </div>
