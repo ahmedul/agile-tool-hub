@@ -1,0 +1,515 @@
+---
+title: "How to Run Effective Daily Standups: Best Practices & Anti-Patterns"
+description: "Master the daily standup format that actually works. Learn timeboxing rules, the three-question framework, remote best practices, and how to avoid 15-minute time wasters."
+slug: "how-to-run-effective-standups"
+category: "Guides"
+keywords:
+  - daily standup best practices
+  - effective standup meetings
+  - how to run standup
+  - agile standup format
+  - scrum standup rules
+relatedLinks:
+  - title: "Daily Standup Template"
+    href: "/templates/daily-standup-template"
+  - title: "Daily Standup Generator"
+    href: "/tools/daily-standup-generator"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+  - title: "Retrospective Board Tool"
+    href: "/tools/retro-board"
+  - title: "How to Write Sprint Goals"
+    href: "/guides/how-to-write-sprint-goals"
+  - title: "Avoiding Common Sprint Mistakes"
+    href: "/guides/avoiding-common-sprint-mistakes"
+  - title: "Definition of Ready Best Practices"
+    href: "/guides/definition-of-ready-best-practices"
+---
+
+## What Is a Daily Standup?
+
+A **daily standup** is a 15-minute all-hands meeting held once per day (usually at 9:30 AM or 10 AM).
+
+Its purpose: **Synchronize the team** on progress, blockers, and direction. Nothing more.
+
+It's **not** a status report to management. It's **not** a deep technical discussion. It's **not** a planning session.
+
+---
+
+## Why Daily Standups Matter
+
+### Without Standups
+
+```
+Monday: Dev 1 starts building feature X
+Dev 2 starts on feature Y (which depends on X)
+Dev 3 starts on feature Z
+
+Wednesday: Dev 2 discovers X isn't ready
+Dev 3 realizes Z needs input from both
+Nobody talked, so we're blocked together
+
+Wasted: 2 days of Dev 2's and Dev 3's time
+```
+
+---
+
+### With Standups
+
+```
+Monday 9:30 AM: Standup
+Dev 1: "Starting feature X, will finish Wednesday"
+Dev 2: "I'm waiting on X before I start Y, so I'll tackle tech debt first"
+Dev 3: "Starting Z, but need clarification on scope from PO"
+PO: "Let's clarify Z right after standup"
+
+Monday 10 AM: Quick clarification meeting with Dev 3
+Tuesday: Dev 1 is ahead of schedule on X
+Dev 2 finishes tech debt, starts Y prep
+Wednesday: X done, Y ready to start
+
+Result: Zero surprise blockers. Clear dependencies flagged early.
+```
+
+---
+
+## The Three-Question Standup Format
+
+The most effective standup follows **three questions** from each team member:
+
+### 1. "What did I complete yesterday?"
+
+**Purpose:** Share progress. Keep it brief.
+
+```
+✓ "I finished the login form and got QA approval."
+✓ "I reviewed 3 PRs and merged the auth middleware."
+
+✗ "I worked on stuff all day" (vague)
+✗ "Fixed bug 1, then bug 2, then bug 3..." (too detailed)
+```
+
+**Real example:**
+```
+"Yesterday I implemented the password reset email flow and got it working end-to-end."
+```
+
+---
+
+### 2. "What will I work on today?"
+
+**Purpose:** Communicate direction. Let team see dependencies forming.
+
+```
+✓ "Today I'm writing tests for the reset flow and then pairing with QA to verify."
+✓ "Today I'll start the billing page and unblock Dev 3."
+
+✗ "Stuff" (vague)
+✗ "I'll work on 12 different things" (scatter focus)
+```
+
+**Real example:**
+```
+"Today I'm finishing the validation logic and then reviewing Dev 2's PR for the email service."
+```
+
+---
+
+### 3. "Do I have blockers?"
+
+**Purpose:** Flag obstacles **immediately** so the team can help.
+
+```
+✓ "Blocked: I need API credentials from Ops to test Stripe integration."
+✓ "Blocked: Waiting on product clarification on the export format."
+✓ "Blocked: The database migration has a lock issue on staging."
+
+✗ (Not sharing blockers, discovering them later)
+✗ "I'm not blocked but also not sure what to do next" (decision paralysis, not a blocker)
+```
+
+**Real example:**
+```
+"Blocked: I need access to the production logs from Ops to debug the API timeout issue."
+```
+
+---
+
+## The 15-Minute Timebox Rule
+
+A standup should **never** exceed 15 minutes.
+
+### How to Timecheck It
+
+**For a 6-person team:**
+- Total time: 15 minutes
+- Per person: ~2.5 minutes
+- Actual speaking time: 1.5 minutes (leave buffer for questions)
+
+**For a 10-person team:**
+- Total time: 15 minutes
+- Per person: ~1.5 minutes
+- Actual speaking time: 1 minute (tight but doable)
+
+### ✓ How to Enforce the Timebox
+
+```
+Scrum Master or Tech Lead: "We're at 14 minutes. 
+Dev 6, quick version please."
+
+Dev 6: "Finished X, doing Y today, no blockers."
+
+Tech Lead: "Good, standup done. 
+Dev 3, your blocker about database access — 
+let's chat after standup with Ops."
+```
+
+### ❌ What Not to Do
+
+```
+Dev 1: "OK so yesterday I was working on the login form. 
+First I had to understand the existing auth system, 
+which was built 3 years ago and has some legacy code. 
+I refactored a bit, then realized the password hashing 
+wasn't compatible with our new requirements, so I had 
+to research bcrypt vs argon2, and then I decided to 
+use argon2 because..."
+
+Tech Lead: (internal screaming) "Let's circle back on this."
+```
+
+---
+
+## The Anatomy of a 15-Minute Standup
+
+Here's exactly how to structure it:
+
+```
+9:30 AM — Meeting starts (1 min setup)
+9:31 AM — Person 1 (1 min)
+9:32 AM — Person 2 (1 min)
+9:33 AM — Person 3 (1 min)
+9:34 AM — Person 4 (1 min)
+9:35 AM — Person 5 (1 min)
+9:36 AM — Person 6 (1 min)
+9:37 AM — Quick blocker discussion (if any) (3 min)
+9:40 AM — Sprint goal or team context reminder (optional) (1 min)
+9:41 AM — Done
+
+Real elapsed time: 11 minutes
+Buffer time: 4 minutes (for unexpected discussion)
+Total: 15 minutes
+```
+
+---
+
+## Common Standup Anti-Patterns (And How to Fix Them)
+
+### ❌ Anti-Pattern 1: The 45-Minute Problem Solver
+
+```
+Dev 1: "Blocked: The database query is slow."
+Manager: "What's the query? Let me see the code. 
+Have you tried indexing? Let's debug this right now."
+
+Whole team: (waiting)
+Everyone else's standups: skipped or delayed
+```
+
+**Fix:** "Let's solve this after standup. 
+Standup is about flagging blockers, not solving them."
+
+---
+
+### ❌ Anti-Pattern 2: The Status Report to Management
+
+```
+Manager: "So what did everyone do? I need a report."
+Dev 1: "I finished Story 1, worked on Story 2..."
+Dev 2: "I was on Story 3..."
+Manager: (taking notes)
+
+This is a standup, not a status meeting.
+Standup is for the team, by the team.
+```
+
+**Fix:** Management sits in, but doesn't drive. 
+If they need a status report, that's separate (async, via email or dashboard).
+
+---
+
+### ❌ Anti-Pattern 3: The Standup That Becomes Sprint Planning
+
+```
+Dev 1: "OK, so for today, I think I should do X or maybe Y..."
+Tech Lead: "Let's think through the architecture..."
+Dev 2: "Wait, didn't we decide to do Z last sprint?"
+Manager: "Let's refine the sprint backlog..."
+
+45 minutes later...
+```
+
+**Fix:** "If we're re-planning, let's schedule a separate 30-minute session. 
+Standup is status + blockers, not planning."
+
+---
+
+### ❌ Anti-Pattern 4: The Vanishing Standup
+
+```
+Monday: "Let's do standup at 9:30 AM"
+Tuesday: One dev is in a client call, standup skipped
+Wednesday: "Let's move it to 10 AM"
+Thursday: Someone forgets, starts at 10:15
+Friday: Half the team is remote, half in office, 
+nobody knows if standup is happening
+
+Result: No consistency, no trust
+```
+
+**Fix:** Same time, same place, every day.
+- If someone's in a client call, they block the time.
+- If someone's out sick, standup still happens (one person talks for them).
+- Set a calendar invite with 100% attendance expectation.
+
+---
+
+### ❌ Anti-Pattern 5: The Standup Without a Goal
+
+```
+Dev 1: "Did X, doing Y"
+Dev 2: "Did Z, doing W"
+Manager: "Good, moving on"
+
+But nobody remembers: Why are we doing these things?
+What's our north star?
+```
+
+**Fix:** Start every standup with the sprint goal.
+```
+Tech Lead: "Sprint goal: Ship self-service password reset 
+so support handles fewer reset tickets. 
+Let's see how we're tracking."
+
+Now every standup update connects to the goal.
+```
+
+---
+
+## Remote Standup Best Practices
+
+Standups are **harder** remote. Here's how to make them work:
+
+### ✓ Remote Rule 1: Video On
+
+```
+❌ Video off, audio only: People multitask, miss dependencies
+✓ Video on: Real-time body language, eye contact, engagement
+
+Use a tool that enforces video: Zoom, Google Meet, etc.
+```
+
+---
+
+### ✓ Remote Rule 2: Dedicated Standup Room (Calendar)
+
+```
+Put it on everyone's calendar as a 15-minute block.
+No overlapping meetings, no "I'll dial in after this call."
+
+Calendar invite = commitment
+```
+
+---
+
+### ✓ Remote Rule 3: Share the Sprint Board
+
+```
+Show Jira / Linear / whatever board you use on screen.
+Let people point to tickets while speaking.
+
+Audio alone is easy to zone out.
+Visuals anchor the conversation.
+```
+
+---
+
+### ✓ Remote Rule 4: Rotate Who Kicks It Off
+
+```
+Monday: Dev 1 leads
+Tuesday: Dev 2 leads
+Wednesday: Dev 3 leads
+
+Prevents the scrum master from drowning.
+Spreads ownership.
+```
+
+---
+
+### ✓ Remote Rule 5: Record It (For Async Teams)
+
+```
+If your team spans time zones, record standups.
+Post a 2-minute recap by noon for people in other zones.
+
+Example recap:
+"Team shipped password reset email flow.
+Blocker: Ops access needed for Stripe keys (by EOD).
+All on track for sprint goal."
+```
+
+---
+
+## Standup Blockers: How to Handle Them
+
+When someone says "I'm blocked," **don't solve it in standup.**
+
+### ✓ Right Way
+
+```
+Dev 1: "I'm blocked waiting for the API auth changes from Dev 2."
+Tech Lead: "When will those be done?"
+Dev 2: "By EOD today, probably 3 PM."
+Dev 1: "OK, I'll work on tests meanwhile. 
+Let's sync at 3:30 PM when it's done."
+Tech Lead: "Noted."
+
+Standup: 2 minutes for blocker discussion.
+Action: 1 conversation offline.
+Result: Blocker resolved.
+```
+
+---
+
+### ❌ Wrong Way
+
+```
+Dev 1: "I'm blocked on API auth."
+Tech Lead: "Let's debug it now."
+Manager: "What's the issue?"
+Dev 2: "Well, the auth middleware needs..."
+Everyone: (20-minute deep dive)
+
+Standup became a problem-solving session.
+Other 3 people's standups didn't happen.
+```
+
+---
+
+## When Standups Go Wrong
+
+### ❌ Problem: Standup Happens, But Nothing Changes
+
+```
+Dev 1: "I'm blocked on database access."
+(Standup ends)
+Dev 1 is still blocked 3 days later.
+
+Root cause: Blocker was flagged but never acted on.
+
+Fix: Scrum master or tech lead owns follow-up.
+"Dev 1 flagged blocker at standup. 
+I'll ping Ops right now and get back to Dev 1 by noon."
+```
+
+---
+
+### ❌ Problem: Team Stops Showing Up
+
+```
+Standups are boring / too long / pointless
+Team starts skipping
+Standup dies
+
+Root cause: Standups weren't delivering value.
+
+Fix: Make them matter.
+- Keep them at 15 minutes (ruthlessly)
+- Escalate blockers immediately
+- Tie standups to sprint goal
+- Let team decide: "Should we keep standups?" 
+  (They'll say yes if they're run well)
+```
+
+---
+
+### ❌ Problem: Standups Are Only for Managers
+
+```
+Manager attends standup.
+Developers start posturing / over-explaining.
+"Um, I was productive, I swear!"
+
+Root cause: Standup is now a performance evaluation, 
+not a sync.
+
+Fix: Make it clear: Standup is for the team.
+Managers can listen, but standups are led by the team.
+If a manager starts interrogating, stop them: 
+"Let's keep standups focused on blockers, not reports."
+```
+
+---
+
+## Standup Agenda Template
+
+Use this template every day:
+
+```
+1. Sprint goal reminder (1 min)
+   "Remember, we're shipping password reset this sprint."
+
+2. Team updates (1 min per person)
+   - Yesterday: what I finished
+   - Today: what I'm doing
+   - Blockers: anything stopping me
+
+3. Blocker resolution (2–3 min)
+   - List all blockers
+   - Assign owner to each
+   - Set follow-up time
+
+4. Done (15 min total)
+```
+
+---
+
+## FAQ on Daily Standups
+
+**Q: Should every team have standups?**  
+A: Yes. Even distributed, async teams benefit from a written standup 
+(post updates to Slack daily). Synchronous standups are best if possible.
+
+**Q: What if someone is off-site / sick / on vacation?**  
+A: Standup still happens. Someone (scrum master or their buddy) 
+covers for them in 1 sentence: "Dev 1 is out, no update."
+
+**Q: Can we skip standup on Friday?**  
+A: No, not recommended. Friday often surfaces end-of-sprint blockers. 
+Keep it consistent.
+
+**Q: Should standups include product/design/QA?**  
+A: Yes, if they're part of the sprint. Everyone on the sprint team 
+should attend and share updates.
+
+**Q: What if we have a big blocker at standup?**  
+A: Flag it, assign an owner, set a follow-up (don't solve it in standup). 
+"Dev 1 + Ops: 10 AM sync on the database access issue."
+
+**Q: Can we do standups async (Slack)?**  
+A: If your team is distributed across time zones, yes. 
+But synchronous standups (video) are 3x better for building team cohesion.
+
+---
+
+## Next: Retrospectives and Sprint Planning
+
+After daily standups, the sprint ends with a retrospective.
+
+See:
+- [Sprint Retrospective Template](/templates/sprint-retrospective-template)
+- [Retrospective Board Tool](/tools/retro-board)
+- [Sprint Planning Template](/templates/sprint-planning-template)

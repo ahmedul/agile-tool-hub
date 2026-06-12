@@ -1,0 +1,562 @@
+---
+title: "Definition of Ready Best Practices: When Stories Are Actually Ready"
+description: "Master DoR (Definition of Ready) — the quality checklist that stops half-baked stories from entering sprints. Learn what goes in, how to measure it, and when to flex."
+slug: "definition-of-ready-best-practices"
+category: "Guides"
+keywords:
+  - definition of ready
+  - DoR checklist
+  - sprint ready criteria
+  - agile user stories
+  - story refinement
+relatedLinks:
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Backlog Refinement Best Practices"
+    href: "/guides/backlog-refinement-best-practices"
+  - title: "How to Write User Stories"
+    href: "/guides/how-to-write-user-stories"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Sprint Planning Template"
+    href: "/templates/sprint-planning-template"
+  - title: "How to Break Down Epics Into User Stories"
+    href: "/guides/how-to-break-down-epics-into-user-stories"
+  - title: "Story Point Estimation Guide"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "Accepting Criteria Patterns and Examples"
+    href: "/guides/acceptance-criteria-patterns-and-examples"
+---
+
+## What Is Definition of Ready?
+
+**Definition of Ready (DoR)** is a checklist of criteria that a story must meet **before** it enters a sprint.
+
+It's the team's quality gate for the backlog.
+
+A story is "ready" when:
+- Product understands it
+- Dev can build it
+- QA can test it
+- It's estimated
+- There are no hidden gotchas
+
+---
+
+## Why Definition of Ready Matters
+
+### Without DoR
+
+```
+Sprint Planning, Monday 10 AM:
+
+Dev 1: "So what's this story? 'Improve user dashboard'?"
+PO: "Yeah, make it better."
+Dev 1: "Better how? Performance? Features? Design?"
+PO: "Um, good question. Design team hasn't signed off yet."
+Dev 2: "OK, how many points is it?"
+PO: "Don't know, never estimated it."
+QA: "How do I test this?"
+Dev 3: "This needs backend changes. Have we talked to Ops?"
+
+Standup: Nobody knows what they're building
+Result: Story starts, hits surprise after surprise, slips
+```
+
+---
+
+### With DoR
+
+```
+Sprint Planning, Monday 10 AM:
+
+Dev 1: "OK, story: 'Improve dashboard loading time to <2s'"
+Dev 1: (reads story) — Title, user value, acceptance criteria, tech scope clear
+Dev 2: "Who estimated it?" Story: "5 points, estimated by backend team"
+QA: (reads test plan) — "3 test scenarios, one for edge case"
+Dev 3: "Backend scope?" Story: "Documented. No ops changes needed."
+
+Standup: Everyone understands it
+Result: Story starts smoothly, ships on time
+```
+
+---
+
+## DoR vs Definition of Done
+
+People confuse these two. Here's the difference:
+
+| Aspect | Definition of Ready | Definition of Done |
+|--------|-------|--------|
+| **When applied** | Before sprint (backlog) | After sprint (story is done) |
+| **Who checks it** | PO + Refinement team | Dev + QA |
+| **Purpose** | Prevent half-baked stories from entering sprint | Ensure story meets quality before shipping |
+| **Example** | Story has clear acceptance criteria | Story passed tests, code reviewed, docs updated |
+
+---
+
+## The Core Definition of Ready Checklist
+
+Every story must pass this checklist before entering a sprint:
+
+### 1. **Title is Clear and User-Focused**
+
+```
+✓ "As a user, I want to save my favorites so I can access them quickly"
+✓ "Reduce dashboard load time from 4s to 2s"
+
+✗ "Do the thing"
+✗ "Implement feature X" (no user value stated)
+```
+
+---
+
+### 2. **User Value is Explicit**
+
+The story answers: "Why does this matter? Who benefits?"
+
+```
+✓ "So support doesn't handle 50+ password reset tickets per week"
+✓ "So users don't abandon their carts due to slow checkout"
+
+✗ (No value stated)
+```
+
+---
+
+### 3. **Acceptance Criteria Are Written**
+
+Acceptance criteria (ACs) define "done." Without them, dev + QA disagree on success.
+
+```
+✓ Given: User is on login page
+  When: User clicks "Forgot Password"
+  Then: Email arrives in <2 minutes
+
+✓ Test on Chrome, Firefox, Safari (explicit browsers)
+
+✗ (No acceptance criteria listed)
+```
+
+---
+
+### 4. **Story Is Estimated**
+
+The team has estimated the story (in points). Dev and QA agree on scope.
+
+```
+✓ "5 points (estimated by backend + frontend leads)"
+
+✗ "Not estimated yet" (can't plan with this)
+```
+
+---
+
+### 5. **Dependencies Are Documented**
+
+The story lists any blockers or dependencies.
+
+```
+✓ "Depends on API auth changes (Story #123, ETA Thursday)"
+✓ "Needs Ops to create DB indexes (already requested)"
+✓ "Blocked on design mockup (coming by EOD Tuesday)"
+
+✗ (Hidden dependencies discovered mid-sprint)
+```
+
+---
+
+### 6. **Tech Scope is Clear (For Dev)**
+
+Dev knows what they're building, not guessing.
+
+```
+✓ "Frontend: React component + form validation"
+  "Backend: REST endpoint, returns JSON array"
+  "Database: Add 'favorites' column to users table"
+
+✗ (PO describes it in business terms, dev has to guess the tech)
+```
+
+---
+
+### 7. **Test Plan Is Outlined**
+
+QA knows how to test it, not guessing.
+
+```
+✓ "Happy path: User adds 3 favorites, sees them on profile"
+  "Edge case: User adds 100+ items, check performance"
+  "Error case: User has no favorites, show 'empty state'"
+
+✗ (QA starts sprint not knowing how to test)
+```
+
+---
+
+### 8. **No Surprises (Discovery Complete)**
+
+The team has done basic discovery. No hidden unknowns.
+
+```
+✓ "We know this needs a DB migration, impact is low"
+✓ "Design mockup is approved, no blocked waiting"
+
+✗ (Mid-sprint: "Wait, we need to redo the entire backend?")
+```
+
+---
+
+## How to Build Your Team's Definition of Ready
+
+Every team's DoR is different. Build yours based on your team's size, maturity, and tech stack.
+
+### For a Small Team (3–4 people)
+
+Keep it lean. 5 items, not 20.
+
+```
+DoR Checklist:
+☐ Title is clear
+☐ User value stated
+☐ Acceptance criteria written
+☐ Story estimated (points)
+☐ No obvious blockers
+```
+
+---
+
+### For a Mid-Size Team (5–10 people)
+
+Add structure. 8–10 items.
+
+```
+DoR Checklist:
+☐ Title is clear and user-focused
+☐ User value is explicit
+☐ Acceptance criteria written and detailed
+☐ Story estimated and agreed by team
+☐ Dependencies listed
+☐ Tech scope described (what needs to be built)
+☐ Test plan outlined (how to test)
+☐ Design approved (if applicable)
+☐ No blockers / dependencies unblocked
+☐ Story is not a duplicate or related to another story
+```
+
+---
+
+### For a Large Team (10+ people, distributed)
+
+Add accountability. Include who's responsible.
+
+```
+DoR Checklist:
+☐ Title is clear and user-focused
+☐ User value is explicit (who benefits, why)
+☐ Acceptance criteria written (detailed, testable)
+☐ Story estimated (points) by tech lead or estimation team
+☐ Dependencies listed (other stories, ops changes, design, etc.)
+☐ Tech scope documented (frontend, backend, database, etc.)
+☐ Test plan outlined (happy path, edge cases, error cases)
+☐ Design approved (if applicable)
+☐ Ops or infra sign-off (if applicable)
+☐ Story is not a duplicate
+☐ Owner assigned (who will take this?)
+☐ No critical blockers
+```
+
+---
+
+## Real DoR Examples
+
+### Example 1: Frontend Story
+
+```
+Title: "As a user, I want to see my saved favorites on my profile 
+so I can quickly access them"
+
+User Value: "Reduces time to find frequently used items by 80%"
+
+Acceptance Criteria:
+☐ Favorites section appears on profile page
+☐ Shows max 10 favorites
+☐ Clicking a favorite navigates to the item
+☐ 'Remove favorite' button works
+☐ Favorites persist after refresh
+☐ Works on mobile (iPhone 13+, Android 12+)
+
+Estimate: 5 points
+
+Dependencies:
+- API endpoint for fetching favorites (Story #234)
+- Need product sign-off on UI layout (Figma link: [link])
+
+Tech Scope:
+- React component (Profile > Favorites section)
+- State management (Redux or Context)
+- API call to GET /favorites
+
+Test Plan:
+- Happy path: Add 5 favorites, remove 1, verify list updates
+- Edge case: Add 50 favorites, check pagination
+- Error case: API is down, show error message
+- Mobile: Test on iPhone and Android (responsive)
+
+Blocker: None
+Status: Ready for sprint ✓
+```
+
+---
+
+### Example 2: Backend Story
+
+```
+Title: "Add database indexes on user_id and created_at columns 
+in orders table to improve query performance"
+
+User Value: "Orders page loads in <2s instead of 8s, improving 
+user experience for power users who review many orders"
+
+Acceptance Criteria:
+☐ Indexes created on (user_id, created_at)
+☐ Query plan shows index usage (verified with EXPLAIN)
+☐ Load test: 1000 queries complete in <1s
+☐ No regression in other queries (full test suite passes)
+☐ Backup verified after deployment
+
+Estimate: 3 points
+
+Dependencies:
+- Need Ops approval for production deployment (already approved)
+- Staging environment prepared (already done)
+
+Tech Scope:
+- SQL: CREATE INDEX idx_orders_user_created ON orders(user_id, created_at)
+- Load testing: Use existing test suite
+- No application code changes
+
+Test Plan:
+- Query performance: Verify EXPLAIN shows index usage
+- No regression: Run full test suite
+- Staging: Deploy and verify 1000 sample queries complete <1s
+
+Blocker: None
+Status: Ready for sprint ✓
+```
+
+---
+
+## Common DoR Mistakes
+
+### ❌ Mistake 1: DoR Is a Checklist But Not Enforced
+
+```
+Story has no acceptance criteria.
+Team writes it on DoR: "☐ Acceptance criteria written"
+
+But it's not actually written, so they check it off anyway.
+
+Result: Story enters sprint undefined.
+
+Fix: Enforce DoR. If story doesn't meet criteria, it doesn't enter sprint.
+Say it out loud: "This story isn't ready. Let's park it and finish 
+it next refinement session."
+```
+
+---
+
+### ❌ Mistake 2: DoR Is Too Rigid
+
+```
+New feature: "Add a button to delete favorite"
+Standard DoR says: "Story estimated, dependencies listed, 
+tech scope documented, test plan outlined"
+
+But it's a 1-hour feature. 
+DoR takes 2 hours to complete.
+
+Result: Team does DoR as busy work, hates it.
+
+Fix: Flex your DoR based on story size.
+- Tiny stories (1–2 pts): Minimal DoR (title, AC, estimate)
+- Medium stories (3–5 pts): Full DoR
+- Epic stories (8+ pts): Break into smaller stories first
+```
+
+---
+
+### ❌ Mistake 3: DoR Doesn't Prevent Real Problems
+
+```
+Story: "Improve dashboard performance"
+DoR: ☐ Title ☐ Estimate ☐ Acceptance Criteria
+
+Sprint starts. Dev discovers:
+- Design mockup isn't done
+- Backend API doesn't exist yet
+- Ops needs to provision new server
+
+These weren't in DoR.
+
+Fix: Add to your DoR whatever surprises you mid-sprint.
+If design is always a blocker → add it to DoR.
+If ops changes are common → add it to DoR.
+```
+
+---
+
+### ❌ Mistake 4: DoR Takes Longer Than Building
+
+```
+PO spends 3 hours writing perfect DoR for a 2-hour story.
+
+Result: DoR is overhead, team resents it.
+
+Fix: DoR should take 10–20% of story time to write, not more.
+If DoR is taking hours, the story is too big → split it.
+```
+
+---
+
+## How to Introduce DoR to Your Team
+
+If your team doesn't have DoR yet:
+
+### Week 1: Introduce the Concept
+
+```
+"Starting next sprint, we're using Definition of Ready.
+It's a simple checklist to make sure stories are actually buildable.
+
+This should reduce surprises and rework."
+```
+
+---
+
+### Week 2: Run a Refinement Session
+
+```
+Pick one upcoming story.
+Go through your DoR together:
+
+"Title clear? ✓
+User value clear? ✗ (let's add it)
+Acceptance criteria? ✗ (let's write them)
+..."
+
+This gives the team practice.
+```
+
+---
+
+### Week 3: Start Enforcing It
+
+```
+Sprint planning:
+
+Tech Lead: "Is this story ready?"
+(Team checks DoR)
+Team: "Nope, acceptance criteria aren't clear."
+Tech Lead: "OK, we'll finish this in refinement tomorrow. 
+This story enters sprint only when it's ready."
+```
+
+---
+
+## DoR and Refinement Meetings
+
+Refinement is where DoR comes alive.
+
+### Refinement Meeting Agenda
+
+```
+1. Pick a story from the backlog
+2. PO explains the feature in business terms
+3. Team asks questions:
+   - What's the user value?
+   - What's the success metric?
+   - Any dependencies?
+   - Design ready?
+4. Team estimates (in points)
+5. Team fills in DoR:
+   ☐ Title ☐ Acceptance Criteria ☐ Tech Scope ☐ Test Plan
+6. Move to "Ready" column
+7. Repeat with next story
+```
+
+---
+
+## When to Flex Your DoR
+
+Not every story needs the full DoR. Flex based on size and risk:
+
+### Small Story (1–2 points)
+
+```
+Full DoR: Overkill
+Flex DoR:
+☐ Title is clear
+☐ Acceptance criteria written
+☐ Estimated
+→ Done, move on
+```
+
+---
+
+### Medium Story (3–5 points)
+
+```
+Full DoR: Do everything
+☐ Title ☐ User value ☐ AC ☐ Estimate ☐ Dependencies 
+☐ Tech scope ☐ Test plan ☐ No blockers
+```
+
+---
+
+### High-Risk Story (anything that touches payments, security, auth)
+
+```
+Full DoR + extra scrutiny
+All above, plus:
+☐ Security review (if applicable)
+☐ Compliance check (if applicable)
+☐ Architecture review (if applicable)
+```
+
+---
+
+## FAQ on Definition of Ready
+
+**Q: Who fills out the DoR checklist?**  
+A: Product owner drafts it, team refines it. It's a collaboration.
+
+**Q: Can we use a tool to track DoR?**  
+A: Yes. Jira, Linear, GitHub Projects can all track custom fields.
+Add a "DoR Status" field: Not Ready / In Progress / Ready
+
+**Q: What if a story becomes unready mid-sprint?**  
+A: Pull it out. Finish whatever AC you can, park the rest.
+"This turns out to be bigger than estimated. Let's continue next sprint."
+
+**Q: Should stories be estimated before or after DoR?**  
+A: After. The team can't estimate until the story is clear.
+
+**Q: What if we have unclear stories and no time for refinement?**  
+A: Protect refinement time. It saves 3x the time in rework later.
+"1 hour of refinement now = 3 hours of saved rework in sprint."
+
+**Q: Can Definition of Ready help with remote teams?**  
+A: Absolutely. DoR forces clarity, which is crucial for async / distributed teams.
+Written AC and tech scope = no misunderstandings across time zones.
+
+---
+
+## Next: Sprint Planning and Backlog Refinement
+
+Ready stories enter sprint planning.
+
+See:
+- [Sprint Planning Template](/templates/sprint-planning-template)
+- [Backlog Refinement Best Practices](/guides/backlog-refinement-best-practices)
+- [How to Write Acceptance Criteria](/guides/how-to-write-acceptance-criteria)
