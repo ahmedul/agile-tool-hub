@@ -8,6 +8,17 @@ const nextConfig: NextConfig = {
   trailingSlash: false,
   redirects: async () => [
     {
+      source: "/:path*",
+      has: [
+        {
+          type: "host",
+          value: "www.agiletoolhub.com",
+        },
+      ],
+      destination: "https://agiletoolhub.com/:path*",
+      permanent: true,
+    },
+    {
       source: "/:path+/",
       destination: "/:path+",
       permanent: true,
