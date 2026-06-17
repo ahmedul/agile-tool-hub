@@ -3,6 +3,8 @@ import Link from "next/link";
 import TemplateCard from "@/components/TemplateCard";
 import ToolCard from "@/components/ToolCard";
 import JsonLd from "@/components/JsonLd";
+import HeroSection from "@/components/HeroSection";
+import FeaturedCard from "@/components/FeaturedCard";
 import { buildMetadata, buildOrganizationSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -35,60 +37,70 @@ export default function Home() {
   return (
     <>
       <JsonLd data={organizationSchema} />
-      <section className="bg-gray-50 border-b border-gray-200 py-16 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Create better Jira tickets, bug reports, and Agile templates in minutes
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Free templates and simple tools for software teams that want clearer tickets, better acceptance criteria, and smoother delivery.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
-            <Link href="/templates" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-              Browse Templates
-            </Link>
-            <Link href="/tools/planning-poker" className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-              Try Planning Poker
-            </Link>
-            <Link href="/tools/user-story-generator" className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-white transition-colors">
-              User Story Generator
-            </Link>
-            <Link href="/tools/bug-report-to-jira-ticket-converter" className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-semibold hover:bg-white transition-colors">
-              Bug Report Converter
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HeroSection
+        title="Create better Jira tickets, bug reports, and Agile templates in minutes"
+        description="Free templates and simple tools for software teams that want clearer tickets, better acceptance criteria, and smoother delivery."
+        gradientFrom="from-blue-600"
+        gradientTo="to-blue-100"
+        ctaButtons={[
+          { label: "Browse Templates", href: "/templates", variant: "primary" },
+          { label: "Try Planning Poker", href: "/tools/planning-poker", variant: "secondary" },
+          { label: "User Story Generator", href: "/tools/user-story-generator", variant: "outline" },
+          { label: "Bug Report Converter", href: "/tools/bug-report-to-jira-ticket-converter", variant: "outline" },
+        ]}
+      />
 
-      <section className="max-w-6xl mx-auto px-4 py-14">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Popular Templates</h2>
-          <Link href="/templates" className="text-blue-600 hover:underline text-sm font-medium">View all →</Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {templates.map((t) => (
-            <TemplateCard key={t.href} {...t} />
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-gray-50 border-y border-gray-200 py-14 px-4">
+      <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Free Tools</h2>
-            <Link href="/tools" className="text-blue-600 hover:underline text-sm font-medium">View all →</Link>
+          <h2 className="text-3xl font-bold text-gray-900 mb-10">Popular Templates</h2>
+
+          {/* Featured Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+            <FeaturedCard
+              {...templates[0]}
+              category="Template"
+              accentColor="blue"
+            />
+            <FeaturedCard
+              {...templates[1]}
+              category="Template"
+              accentColor="orange"
+            />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <ToolCard
+
+          {/* Standard Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {templates.slice(2).map((t) => (
+              <TemplateCard key={t.href} {...t} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-gray-50 border-y border-gray-200 py-16 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-900 mb-10">Free Tools</h2>
+
+          {/* Featured Tools */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+            <FeaturedCard
               title="Bug Report to Jira Ticket Converter"
               description="Paste messy bug notes and get a clean, structured Jira ticket instantly."
               href="/tools/bug-report-to-jira-ticket-converter"
+              category="Tool"
+              accentColor="blue"
             />
-            <ToolCard
+            <FeaturedCard
               title="User Story Generator"
               description="Describe your feature and get a complete, Jira-ready user story with acceptance criteria instantly."
               href="/tools/user-story-generator"
+              category="Tool"
+              accentColor="orange"
             />
+          </div>
+
+          {/* Standard Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <ToolCard
               title="Acceptance Criteria Generator"
               description="Generate testable acceptance criteria in Given/When/Then or checklist format in seconds."
