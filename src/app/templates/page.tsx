@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import TemplateCard from "@/components/TemplateCard";
+import HeroSection from "@/components/HeroSection";
+import FeaturedCard from "@/components/FeaturedCard";
 import JsonLd from "@/components/JsonLd";
 import { getAllContent } from "@/lib/content";
 import { buildMetadata, buildBreadcrumbSchema, KEYWORDS } from "@/lib/seo";
@@ -22,21 +24,40 @@ export default function TemplatesPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
-      <div className="max-w-6xl mx-auto px-4 py-12">
-      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Free Agile & Scrum Templates</h1>
-      <p className="text-lg text-gray-600 mb-10">Copy-paste templates for software teams. Structured, practical, and ready to use in Jira, Notion, or any tool.</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {templates.map((t) => (
-          <TemplateCard key={t.slug} title={t.title} description={t.description} href={`/templates/${t.slug}`} category={t.category} />
-        ))}
-      </div>
-      <div className="mt-12 border-t border-gray-200 pt-8">
+      <HeroSection
+        title="Save time. Use proven templates for every ceremony."
+        description="Structured templates for sprint planning, retrospectives, user stories, bug reports, and more."
+        gradientFrom="from-blue-600"
+        gradientTo="to-blue-100"
+      />
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        {/* Featured Cards (top 2) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+          {templates.slice(0, 2).map((t, idx) => (
+            <FeaturedCard
+              key={t.slug}
+              title={t.title}
+              description={t.description}
+              href={`/templates/${t.slug}`}
+              category={t.category}
+              accentColor={idx % 2 === 0 ? "blue" : "orange"}
+            />
+          ))}
+        </div>
+
+        {/* Standard Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {templates.slice(2).map((t) => (
+            <TemplateCard key={t.slug} title={t.title} description={t.description} href={`/templates/${t.slug}`} category={t.category} />
+          ))}
+        </div>
+      </section>
+      <div className="max-w-6xl mx-auto px-4 mt-12 border-t border-gray-200 pt-8">
         <h2 className="text-lg font-semibold text-gray-800 mb-3">Looking for examples or guides?</h2>
         <div className="flex gap-4">
           <Link href="/examples" className="text-blue-600 hover:underline">Browse Examples →</Link>
           <Link href="/guides" className="text-blue-600 hover:underline">Read Guides →</Link>
         </div>
-      </div>
       </div>
     </>
   );
