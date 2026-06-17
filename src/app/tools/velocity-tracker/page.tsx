@@ -178,6 +178,8 @@ export default function VelocityTrackerPage() {
           <RelatedLinks
             links={[
               { title: "Sprint Velocity Tracking Guide", href: "/guides/sprint-velocity-tracking-guide" },
+              { title: "Sprint Capacity Planning Guide", href: "/guides/sprint-capacity-planning-guide" },
+              { title: "Story Point Estimation Guide", href: "/guides/story-point-estimation-guide-with-examples" },
               { title: "Sprint Planning Template", href: "/templates/sprint-planning-template" },
               { title: "Sprint Capacity Calculator", href: "/tools/sprint-capacity-calculator" },
               { title: "Daily Standup Generator", href: "/tools/daily-standup-generator" },

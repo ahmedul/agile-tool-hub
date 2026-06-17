@@ -80,6 +80,7 @@ export default function SprintCapacityPage() {
           </h3>
           <div className="flex flex-wrap gap-3">
             {[
+              { title: "Sprint Capacity Planning Guide", href: "/guides/sprint-capacity-planning-guide" },
               { title: "Planning Poker", href: "/tools/planning-poker" },
               { title: "Sprint Planning Template", href: "/templates/sprint-planning-template" },
               { title: "Story Points Explained", href: "/docs/story-points-explained" },
