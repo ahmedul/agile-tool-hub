@@ -5,7 +5,7 @@ import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import CopyButton from "./CopyButton";
 import { useAnimation } from "@/hooks/useAnimation";
-import { ANIMATION_VARIANTS, DURATIONS, STAGGER_ITEM, EASINGS } from "@/lib/animations";
+import { ANIMATION_VARIANTS, DURATIONS, EASINGS } from "@/lib/animations";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -113,12 +113,6 @@ const PHASE_HELP: Record<Phase, string> = {
   done: "Done: board is locked; export is still available.",
 };
 
-const COLUMNS: { id: ColumnId; label: string; emoji: string; color: string; bg: string }[] = [
-  { id: "went_well", label: "Went Well", emoji: "🟢", color: "text-green-700", bg: "bg-green-50 border-green-200" },
-  { id: "to_improve", label: "To Improve", emoji: "🔴", color: "text-red-700", bg: "bg-red-50 border-red-200" },
-  { id: "action_items", label: "Action Items", emoji: "🔵", color: "text-blue-700", bg: "bg-blue-50 border-blue-200" },
-];
-
 const NOTE_COLORS: Record<ColumnId, string> = {
   went_well: "bg-green-100 border-green-300",
   to_improve: "bg-red-100 border-red-300",
@@ -135,6 +129,15 @@ const NOTE_COLORS: Record<ColumnId, string> = {
   glad: "bg-green-100 border-green-300",
 };
 
+function makeInputsForType(type: RetroType): Record<ColumnId, string> {
+  const format = RETRO_FORMATS[type];
+  const next: Record<ColumnId, string> = {} as Record<ColumnId, string>;
+  format.columns.forEach((col) => {
+    next[col.id] = "";
+  });
+  return next;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function RetroBoard({ sessionId }: { sessionId: string }) {
@@ -150,10 +153,23 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const [notes, setNotes] = useState<RetroNote[]>([]);
   const [members, setMembers] = useState<Record<string, Member>>({});
   const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
-  const [sessionUrl, setSessionUrl] = useState(`https://agiletoolhub.com/tools/retro-board/${sessionId}`);
+  const [sessionUrl] = useState(() =>
+    typeof window !== "undefined"
+      ? window.location.href
+      : `https://agiletoolhub.com/tools/retro-board/${sessionId}`,
+  );
+  const [currentUserId] = useState(() => {
+    if (typeof window === "undefined") return "";
+    let uid = sessionStorage.getItem(`retro-uid-${sessionId}`);
+    if (!uid) {
+      uid = crypto.randomUUID();
+      sessionStorage.setItem(`retro-uid-${sessionId}`, uid);
+    }
+    return uid;
+  });
   const [timerState, setTimerState] = useState<TimerState>({ isRunning: false, remainingSeconds: 600, totalSeconds: 600, currentPhase: "brainstorm" });
   const [timerDuration, setTimerDuration] = useState(10); // minutes
-  const [inputs, setInputs] = useState<Record<ColumnId, string>>({} as Record<ColumnId, string>);
+  const [inputs, setInputs] = useState<Record<ColumnId, string>>(makeInputsForType("standard"));
   const animationsEnabled = useAnimation();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -163,27 +179,45 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const notesRef = useRef<RetroNote[]>([]);
   const retroTypeRef = useRef<RetroType>("standard");
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isFirstUserRef = useRef(false);
   const isBoardLockedRef = useRef(false);
+  const noteSequenceRef = useRef(0);
+
+  // ── Broadcast helpers ──────────────────────────────────────────────────────
+
+  const broadcast = useCallback((payload: BroadcastEvent) => {
+    channelRef.current?.send({ type: "broadcast", event: payload.type, payload });
+  }, []);
 
   // Keep notesRef and retroTypeRef in sync for use in callbacks
   useEffect(() => { notesRef.current = notes; }, [notes]);
   useEffect(() => { retroTypeRef.current = retroType; }, [retroType]);
   useEffect(() => { isBoardLockedRef.current = timerState.currentPhase === "done"; }, [timerState.currentPhase]);
-  useEffect(() => { setSessionUrl(window.location.href); }, []);
 
   // Persist theme preference
   useEffect(() => { localStorage.setItem("retro-theme", theme); }, [theme]);
 
-  // Initialize inputs for current retro type
-  useEffect(() => {
-    const format = RETRO_FORMATS[retroType];
-    const newInputs: Record<ColumnId, string> = {} as Record<ColumnId, string>;
-    format.columns.forEach((col) => {
-      newInputs[col.id] = "";
-    });
-    setInputs(newInputs);
-  }, [retroType]);
+  const playSound = () => {
+    try {
+      type WebkitAudioWindow = Window & {
+        webkitAudioContext?: typeof AudioContext;
+      };
+      const audioWindow = window as WebkitAudioWindow;
+      const AudioCtor = window.AudioContext ?? audioWindow.webkitAudioContext;
+      if (!AudioCtor) return;
+      const audioContext = new AudioCtor();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.value = 800;
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.5);
+    } catch {
+      // Fallback: silent
+    }
+  };
 
   // ── Timer management ──────────────────────────────────────────────────────
 
@@ -213,7 +247,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     return () => {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [timerState.isRunning]);
+  }, [broadcast, playSound, timerState.isRunning]);
 
   const startTimer = () => {
     if (isBoardLockedRef.current) return;
@@ -240,34 +274,11 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     broadcast({ type: "phase_change", phase });
   };
 
-  const playSound = () => {
-    try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-      oscillator.frequency.value = 800;
-      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (e) {
-      // Fallback: silent
-    }
-  };
-
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
-
-  // ── Broadcast helpers ──────────────────────────────────────────────────────
-
-  const broadcast = useCallback((payload: BroadcastEvent) => {
-    channelRef.current?.send({ type: "broadcast", event: payload.type, payload });
-  }, []);
 
   // ── Apply incoming events to state ─────────────────────────────────────────
 
@@ -298,7 +309,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         break;
       case "full_state":
         setNotes(event.notes);
-        if (event.retroType) setRetroType(event.retroType);
+        if (event.retroType) {
+          setRetroType(event.retroType);
+          setInputs(makeInputsForType(event.retroType));
+        }
         break;
       case "timer_update":
         setTimerState(event.timer);
@@ -381,12 +395,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   // ── Mount: init userId, auto-rejoin from localStorage ─────────────────────
 
   useEffect(() => {
-    let uid = sessionStorage.getItem(`retro-uid-${sessionId}`);
-    if (!uid) {
-      uid = crypto.randomUUID();
-      sessionStorage.setItem(`retro-uid-${sessionId}`, uid);
-    }
-    userIdRef.current = uid;
+    userIdRef.current = currentUserId;
 
     const savedName = localStorage.getItem(`retro-name-${sessionId}`);
     if (savedName && !autoJoinedRef.current) {
@@ -399,7 +408,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     return () => {
       channelRef.current?.unsubscribe();
     };
-  }, [joinChannel, sessionId]);
+  }, [currentUserId, joinChannel, sessionId]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -410,6 +419,11 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     localStorage.setItem(`retro-name-${sessionId}`, name);
     setJoined(true);
     joinChannel(name);
+  };
+
+  const handleRetroTypeChange = (nextType: RetroType) => {
+    setRetroType(nextType);
+    setInputs(makeInputsForType(nextType));
   };
 
   const handleAddNote = (columnId: ColumnId) => {
@@ -423,7 +437,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
       authorId: userIdRef.current,
       authorName: myNameRef.current,
       votes: [],
-      createdAt: Date.now(),
+      createdAt: ++noteSequenceRef.current,
     };
     broadcast({ type: "add_note", note });
     setInputs((prev) => ({ ...prev, [columnId]: "" }));
@@ -528,7 +542,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                 {(Object.values(RETRO_FORMATS) as typeof RETRO_FORMATS[keyof typeof RETRO_FORMATS][]).map((format) => (
                   <button
                     key={format.id}
-                    onClick={() => setRetroType(format.id)}
+                    onClick={() => handleRetroTypeChange(format.id)}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
                       retroType === format.id
                         ? "bg-blue-100 border-2 border-blue-600"
@@ -768,8 +782,8 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
               <div className="flex flex-col gap-2 overflow-y-auto max-h-96">
                 <AnimatePresence mode="wait">
                   {colNotes.map((note, idx) => {
-                    const myVoted = note.votes.includes(userIdRef.current);
-                    const isOwner = note.authorId === userIdRef.current;
+                    const myVoted = currentUserId ? note.votes.includes(currentUserId) : false;
+                    const isOwner = currentUserId ? note.authorId === currentUserId : false;
                     return (
                       <motion.div
                         key={note.id}

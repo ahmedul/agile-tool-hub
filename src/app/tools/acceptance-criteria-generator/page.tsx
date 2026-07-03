@@ -77,7 +77,7 @@ export default function AcceptanceCriteriaGeneratorPage() {
           <h2 className="text-xl font-bold text-gray-900 mb-4">What makes good acceptance criteria?</h2>
           <ul className="space-y-2 text-gray-600 text-sm list-disc list-inside">
             <li><strong>Testable</strong> — a QA engineer can write a test case from each criterion</li>
-            <li><strong>Specific</strong> — no ambiguity about what "done" means</li>
+            <li><strong>Specific</strong> — no ambiguity about what &quot;done&quot; means</li>
             <li><strong>Written before dev starts</strong> — not after, when it becomes documentation</li>
             <li><strong>Covers error states</strong> — not just the happy path</li>
             <li><strong>Agreed by the whole team</strong> — dev, QA, and product all sign off</li>

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 import {
   LineChart,
@@ -16,7 +16,7 @@ import OutputFeedback from "@/components/OutputFeedback";
 import CopyButton from "@/components/CopyButton";
 import { motion } from "framer-motion";
 import { useAnimation } from "@/hooks/useAnimation";
-import { ANIMATION_VARIANTS, DURATIONS } from "@/lib/animations";
+import { DURATIONS } from "@/lib/animations";
 import CelebrationMoment from "@/components/CelebrationMoment";
 
 interface Sprint {
@@ -49,8 +49,6 @@ export default function VelocityTracker() {
   const [plannedPoints, setPlannedPoints] = useState("");
   const [completedPoints, setCompletedPoints] = useState("");
   const [teamSize, setTeamSize] = useState("");
-  const [metrics, setMetrics] = useState<VelocityMetrics | null>(null);
-  const [output, setOutput] = useState("");
   const [exportFormat, setExportFormat] = useState<"markdown" | "jira">(
     "markdown"
   );
@@ -158,6 +156,15 @@ h3. Key Metrics
     }
   };
 
+  const metrics = useMemo(
+    () => (sprints.length > 0 ? calculateMetrics(sprints) : null),
+    [sprints],
+  );
+  const output = useMemo(
+    () => (metrics ? generateOutput(metrics, exportFormat) : ""),
+    [metrics, exportFormat],
+  );
+
   // Add sprint
   const handleAddSprint = () => {
     if (!plannedPoints || !completedPoints || !teamSize) {
@@ -174,10 +181,6 @@ h3. Key Metrics
 
     const updatedSprints = [...sprints, newSprint];
     setSprints(updatedSprints);
-
-    const newMetrics = calculateMetrics(updatedSprints);
-    setMetrics(newMetrics);
-    setOutput(generateOutput(newMetrics, exportFormat));
 
     // Check if forecast was met (team completed >= forecast from previous sprint)
     if (updatedSprints.length >= 2) {
@@ -210,30 +213,7 @@ h3. Key Metrics
   const handleRemoveSprint = (index: number) => {
     const updatedSprints = sprints.filter((_, i) => i !== index);
     setSprints(updatedSprints);
-
-    if (updatedSprints.length > 0) {
-      const newMetrics = calculateMetrics(updatedSprints);
-      setMetrics(newMetrics);
-      setOutput(generateOutput(newMetrics, exportFormat));
-    } else {
-      setMetrics(null);
-      setOutput("");
-    }
   };
-
-  // Initial calculation on mount
-  useEffect(() => {
-    const initialMetrics = calculateMetrics(sprints);
-    setMetrics(initialMetrics);
-    setOutput(generateOutput(initialMetrics, exportFormat));
-  }, []);
-
-  // Update output when format changes
-  useEffect(() => {
-    if (metrics) {
-      setOutput(generateOutput(metrics, exportFormat));
-    }
-  }, [exportFormat, metrics]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4">

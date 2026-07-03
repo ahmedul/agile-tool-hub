@@ -127,7 +127,7 @@ export default function PlanningPokerPage() {
           <div className="prose prose-gray max-w-none">
             <p>
               The biggest estimation problem in sprint planning is <strong>anchoring bias</strong>.
-              When someone senior says "this is an 8" before others have thought it through, the
+              When someone senior says &quot;this is an 8&quot; before others have thought it through, the
               rest of the team anchors around that number rather than forming independent estimates.
             </p>
             <p>

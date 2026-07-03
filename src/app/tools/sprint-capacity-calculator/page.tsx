@@ -67,7 +67,7 @@ export default function SprintCapacityPage() {
           Sprint Capacity Calculator
         </h1>
         <p className="text-lg text-gray-600 mb-8 pb-8 border-b border-gray-200">
-          Enter your team's availability and velocity to get a realistic sprint commitment in story points. No login required.
+          Enter your team&apos;s availability and velocity to get a realistic sprint commitment in story points. No login required.
         </p>
 
         <SprintCapacityCalculator />

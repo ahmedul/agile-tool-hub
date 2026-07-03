@@ -76,12 +76,12 @@ export default function UserStoryGeneratorPage() {
       <div className="mt-10">
         <h2 className="text-xl font-bold text-gray-900 mb-4">What makes a good user story?</h2>
         <ul className="space-y-2 text-gray-600 text-sm list-disc list-inside">
-          <li><strong>User-centric</strong> — written from the user's perspective, not the developer's</li>
-          <li><strong>Specific title</strong> — anyone reading the backlog knows exactly what it's about</li>
-          <li><strong>Clear business value</strong> — the "so that" explains why it matters</li>
+          <li><strong>User-centric</strong> — written from the user&apos;s perspective, not the developer&apos;s</li>
+          <li><strong>Specific title</strong> — anyone reading the backlog knows exactly what it&apos;s about</li>
+          <li><strong>Clear business value</strong> — the &quot;so that&quot; explains why it matters</li>
           <li><strong>Testable acceptance criteria</strong> — QA can write test cases from them</li>
           <li><strong>Appropriately sized</strong> — completable within one sprint; if not, split it</li>
-          <li><strong>Independent</strong> — doesn't depend on another story being done first</li>
+          <li><strong>Independent</strong> — doesn&apos;t depend on another story being done first</li>
         </ul>
       </div>
 

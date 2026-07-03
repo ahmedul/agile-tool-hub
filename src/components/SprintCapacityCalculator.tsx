@@ -212,7 +212,7 @@ export default function SprintCapacityCalculator() {
         </p>
         <p>
           <strong>Velocity (pts/day)</strong> varies by role and seniority. A reasonable default is 2 pts/day
-          for a developer. Adjust based on your team's historical sprint data.
+          for a developer. Adjust based on your team&apos;s historical sprint data.
         </p>
       </div>
     </div>

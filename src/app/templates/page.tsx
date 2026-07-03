@@ -16,6 +16,16 @@ export const metadata: Metadata = buildMetadata({
 
 export default function TemplatesPage() {
   const templates = getAllContent("templates");
+  const priorityTemplateSlugs = [
+    "complete-jira-ticket-template",
+    "api-requirements-jira-template",
+  ];
+  const prioritizedTemplates = [
+    ...priorityTemplateSlugs
+      .map((slug) => templates.find((t) => t.slug === slug))
+      .filter((t): t is NonNullable<typeof t> => Boolean(t)),
+    ...templates.filter((t) => !priorityTemplateSlugs.includes(t.slug)),
+  ];
   const breadcrumbSchema = buildBreadcrumbSchema([
     { label: "Home", href: "/" },
     { label: "Templates", href: "/templates" },
@@ -33,7 +43,7 @@ export default function TemplatesPage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         {/* Featured Cards (top 2) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
-          {templates.slice(0, 2).map((t, idx) => (
+          {prioritizedTemplates.slice(0, 2).map((t, idx) => (
             <FeaturedCard
               key={t.slug}
               title={t.title}
@@ -47,7 +57,7 @@ export default function TemplatesPage() {
 
         {/* Standard Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {templates.slice(2).map((t) => (
+          {prioritizedTemplates.slice(2).map((t) => (
             <TemplateCard key={t.slug} title={t.title} description={t.description} href={`/templates/${t.slug}`} category={t.category} />
           ))}
         </div>

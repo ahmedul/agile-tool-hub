@@ -18,9 +18,6 @@ export function useAnimation(): boolean {
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    // Check initial state to sync with actual media query (corrects hydration mismatch)
-    setAnimationsEnabled(!mediaQuery.matches);
-
     const handleChange = (e: MediaQueryListEvent) => {
       setAnimationsEnabled(!e.matches);
     };

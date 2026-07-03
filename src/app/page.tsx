@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 };
 
 const templates = [
+  { title: "Complete Jira Ticket Template", description: "One master Jira template for bugs, stories, tasks, and improvements with clear acceptance criteria.", href: "/templates/complete-jira-ticket-template", category: "Template" },
+  { title: "API Requirements Template", description: "Document API endpoints, auth, request/response schema, errors, and testing criteria in Jira.", href: "/templates/api-requirements-jira-template", category: "Template" },
   { title: "Jira Bug Report Template", description: "A structured template for clear, actionable bug reports with steps to reproduce, expected vs actual results.", href: "/templates/jira-bug-report-template", category: "Template" },
   { title: "User Story Template", description: "Write better user stories with acceptance criteria, story points, and clear business value.", href: "/templates/user-story-template", category: "Template" },
   { title: "Acceptance Criteria Template", description: "Define clear, testable acceptance criteria that your whole team understands.", href: "/templates/acceptance-criteria-template", category: "Template" },

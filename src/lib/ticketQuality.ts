@@ -153,7 +153,14 @@ export function scoreAcceptanceCriteria(
 export function scoreTicket(
   toolType: ToolType,
   markdown: string,
-  context?: Record<string, any>
+  context?: {
+    hasMeasurableOutcome?: boolean;
+    dependencies?: string[];
+    format?: "gherkin" | "checklist" | "both";
+    hasUser?: boolean;
+    clarifications?: string[];
+    hasMeasurableSignal?: boolean;
+  }
 ): QualityResult {
   if (toolType === "bug_report") {
     return scoreBugReport(markdown);

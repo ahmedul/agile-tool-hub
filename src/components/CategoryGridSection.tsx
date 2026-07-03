@@ -1,13 +1,11 @@
-import { ReactNode } from "react";
-
 type AccentColor = "blue" | "orange";
 
-interface CategoryGridSectionProps {
+interface CategoryGridSectionProps<TItem extends Record<string, unknown>> {
   title: string;
-  items: Array<Record<string, any>>;
+  items: TItem[];
   featuredCount?: number;
-  CardComponent: React.ComponentType<any>;
-  FeaturedCardComponent?: React.ComponentType<any>;
+  CardComponent: React.ComponentType<TItem>;
+  FeaturedCardComponent?: React.ComponentType<TItem & { accentColor: AccentColor }>;
 }
 
 export default function CategoryGridSection({
@@ -16,7 +14,7 @@ export default function CategoryGridSection({
   featuredCount = 2,
   CardComponent,
   FeaturedCardComponent,
-}: CategoryGridSectionProps) {
+}: CategoryGridSectionProps<Record<string, unknown>>) {
   // Ensure featuredCount is within valid range (0-2)
   const validFeaturedCount = Math.min(Math.max(featuredCount, 0), 2);
 

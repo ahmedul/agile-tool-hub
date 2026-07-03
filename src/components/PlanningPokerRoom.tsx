@@ -48,14 +48,31 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const [storyInput, setStoryInput] = useState("");
   const [revealed, setRevealed] = useState(false);
   const [avatarTheme, setAvatarTheme] = useState<AvatarTheme>("animals");
-  const [stories, setStories] = useState<StorySummary[]>([]);
+  const [stories, setStories] = useState<StorySummary[]>(() => {
+    if (typeof window === "undefined") return [];
+    const savedStories = localStorage.getItem(`pp_stories_${sessionId}`);
+    if (!savedStories) return [];
+    try {
+      const parsed = JSON.parse(savedStories) as StorySummary[];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  });
   const [finalEstimate, setFinalEstimate] = useState<Vote>(null);
   const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
-  const [sessionUrl, setSessionUrl] = useState(
-    `https://agiletoolhub.com/tools/planning-poker/${sessionId}`,
+  const [sessionUrl] = useState(() =>
+    typeof window !== "undefined"
+      ? window.location.href
+      : `https://agiletoolhub.com/tools/planning-poker/${sessionId}`,
   );
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState("");
+  const [myUserId] = useState(() =>
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+  );
   const animationsEnabled = useAnimation();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -66,7 +83,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const revealedRef = useRef(false);
   const autoJoinedRef = useRef(false);
 
-  useEffect(() => { setSessionUrl(window.location.href); }, []);
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
   useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
   useEffect(() => { revealedRef.current = revealed; }, [revealed]);
@@ -80,26 +96,14 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       .filter(v => v !== null);
 
     if (nonNullVotes.length > 1 && new Set(nonNullVotes).size === 1) {
-      // Consensus detected - trigger celebration
-      setCelebrationMessage("Perfect consensus! Your team's in sync 🎯");
-      setShowCelebration(true);
+      // Delay state writes to avoid synchronous setState calls inside an effect.
+      const timer = window.setTimeout(() => {
+        setCelebrationMessage("Perfect consensus! Your team's in sync 🎯");
+        setShowCelebration(true);
+      }, 0);
+      return () => window.clearTimeout(timer);
     }
   }, [revealed, participants]);
-
-  // Restore saved stories on mount (before any other effects)
-  useEffect(() => {
-    const savedStories = localStorage.getItem(`pp_stories_${sessionId}`);
-    if (savedStories) {
-      try {
-        const parsed = JSON.parse(savedStories) as StorySummary[];
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setStories(parsed);
-        }
-      } catch {
-        // Ignore parse errors
-      }
-    }
-  }, [sessionId]);
   
   // Persist stories to localStorage whenever they change
   useEffect(() => {
@@ -262,14 +266,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
   // Init: stable userId + auto-rejoin from localStorage
   useEffect(() => {
-    // Use a fresh per-tab id to avoid duplicate-tab identity collisions.
-    // Duplicate tabs can inherit sessionStorage values, which causes two users
-    // to share one participant record and makes vote indicators confusing.
-    const uid =
-      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
-        ? crypto.randomUUID()
-        : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-    userIdRef.current = uid;
+    userIdRef.current = myUserId;
 
     const savedName = localStorage.getItem("pp_name");
     
@@ -277,11 +274,11 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       autoJoinedRef.current = true;
       setNameInput(savedName);
       myNameRef.current = savedName;
-      setParticipants({ [uid]: { name: savedName, hasVoted: false, vote: null } });
+      setParticipants({ [myUserId]: { name: savedName, hasVoted: false, vote: null } });
       setJoined(true);
       joinChannel(savedName);
     }
-  }, [joinChannel]);
+  }, [joinChannel, myUserId]);
 
   useEffect(() => () => { channelRef.current?.unsubscribe(); }, []);
 
@@ -291,7 +288,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     if (!name) return;
     localStorage.setItem("pp_name", name);
     myNameRef.current = name;
-    setParticipants({ [userIdRef.current]: { name, hasVoted: false, vote: null } });
+    setParticipants({ [myUserId]: { name, hasVoted: false, vote: null } });
     setJoined(true);
     joinChannel(name);
   };
@@ -578,7 +575,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   </div>
                   <span className="text-xs text-gray-500 max-w-[56px] truncate text-center">
                     {p.name}
-                    {uid === userIdRef.current ? " (you)" : ""}
+                    {uid === myUserId ? " (you)" : ""}
                   </span>
                   <span className="text-[10px] text-gray-400">
                     {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
