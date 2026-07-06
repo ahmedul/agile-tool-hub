@@ -5,7 +5,7 @@ import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
 import TemplateCopyActions from "@/components/TemplateCopyActions";
-import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 const HIGH_INTENT_TEMPLATE_SLUGS = new Set([
   "jira-bug-report-template",
@@ -82,14 +82,15 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
   const codeBlock = extractFirstCodeBlock(item.content);
   const showCopyActions = HIGH_INTENT_TEMPLATE_SLUGS.has(slug) && !!codeBlock;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: item.title,
+  const jsonLd = buildArticleSchema({
+    title: item.title,
     description: item.description,
     url: `https://agiletoolhub.com/templates/${slug}`,
-    publisher: { "@type": "Organization", name: "AgileToolHub", url: "https://agiletoolhub.com" },
-  };
+    datePublished: item.publishedAt,
+    dateModified: item.updatedAt,
+    section: "Templates",
+    keywords: item.keywords,
+  });
   const breadcrumbJsonLd = buildBreadcrumbSchema([
     { label: "Home", href: "/" },
     { label: "Templates", href: "/templates" },
@@ -104,6 +105,7 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
         title={item.title}
         description={item.description}
         category={item.category}
+        updatedAt={item.updatedAt}
         breadcrumbs={[{ label: "Templates", href: "/templates" }, { label: item.title }]}
         relatedLinks={item.relatedLinks}
         ctaProps={getTemplateCta(slug)}

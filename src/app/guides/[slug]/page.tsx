@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
-import { buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getAllSlugs("guides").map((slug) => ({ slug }));
@@ -28,14 +28,15 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const item = getContentBySlug("guides", slug);
   if (!item) notFound();
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: item.title,
+  const jsonLd = buildArticleSchema({
+    title: item.title,
     description: item.description,
     url: `https://agiletoolhub.com/guides/${slug}`,
-    publisher: { "@type": "Organization", name: "AgileToolHub", url: "https://agiletoolhub.com" },
-  };
+    datePublished: item.publishedAt,
+    dateModified: item.updatedAt,
+    section: "Guides",
+    keywords: item.keywords,
+  });
   const breadcrumbJsonLd = buildBreadcrumbSchema([
     { label: "Home", href: "/" },
     { label: "Guides", href: "/guides" },
@@ -50,6 +51,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         title={item.title}
         description={item.description}
         category={item.category}
+        updatedAt={item.updatedAt}
         breadcrumbs={[{ label: "Guides", href: "/guides" }, { label: item.title }]}
         relatedLinks={item.relatedLinks}
       >

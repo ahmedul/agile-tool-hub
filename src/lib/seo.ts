@@ -176,6 +176,46 @@ export function buildFAQSchema(items: FAQItem[]) {
   };
 }
 
+export interface ArticleSchemaOptions {
+  title: string;
+  description: string;
+  url: string;
+  datePublished?: string;
+  dateModified?: string;
+  section?: string;
+  keywords?: string[];
+}
+
+export function buildArticleSchema(options: ArticleSchemaOptions) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: options.title,
+    description: options.description,
+    url: options.url,
+    ...(options.datePublished ? { datePublished: options.datePublished } : {}),
+    ...(options.dateModified ? { dateModified: options.dateModified } : {}),
+    ...(options.section ? { articleSection: options.section } : {}),
+    ...(options.keywords && options.keywords.length > 0
+      ? { keywords: options.keywords.join(", ") }
+      : {}),
+    author: {
+      "@type": "Organization",
+      name: "AgileToolHub",
+      url: "https://agiletoolhub.com",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "AgileToolHub",
+      url: "https://agiletoolhub.com",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": options.url,
+    },
+  };
+}
+
 /**
  * Suggested keywords for common pages
  */
