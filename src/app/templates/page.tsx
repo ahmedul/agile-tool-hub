@@ -5,7 +5,7 @@ import HeroSection from "@/components/HeroSection";
 import FeaturedCard from "@/components/FeaturedCard";
 import JsonLd from "@/components/JsonLd";
 import { getAllContent } from "@/lib/content";
-import { buildMetadata, buildBreadcrumbSchema, KEYWORDS } from "@/lib/seo";
+import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Free Agile & Scrum Templates for Software Teams",
@@ -30,10 +30,22 @@ export default function TemplatesPage() {
     { label: "Home", href: "/" },
     { label: "Templates", href: "/templates" },
   ]);
+  const collectionSchema = buildCollectionPageSchema({
+    name: "Free Agile & Scrum Templates",
+    description:
+      "Jira-ready templates for bug reports, user stories, acceptance criteria, retrospectives, and sprint planning.",
+    url: "https://agiletoolhub.com/templates",
+    items: prioritizedTemplates.map((template) => ({
+      name: template.title,
+      description: template.description,
+      url: `https://agiletoolhub.com/templates/${template.slug}`,
+    })),
+  });
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={collectionSchema} />
       <HeroSection
         title="Save time. Use proven templates for every ceremony."
         description="Structured templates for sprint planning, retrospectives, user stories, bug reports, and more."

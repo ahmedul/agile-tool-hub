@@ -4,7 +4,7 @@ import FeaturedCard from "@/components/FeaturedCard";
 import TemplateCard from "@/components/TemplateCard";
 import JsonLd from "@/components/JsonLd";
 import { getAllContent } from "@/lib/content";
-import { buildMetadata, buildBreadcrumbSchema } from "@/lib/seo";
+import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Agile & Scrum Docs — Reference Guides for Software Teams",
@@ -28,10 +28,22 @@ export default function DocsPage() {
     { label: "Home", href: "/" },
     { label: "Docs", href: "/docs" },
   ]);
+  const collectionSchema = buildCollectionPageSchema({
+    name: "Agile & Scrum Docs",
+    description:
+      "Reference documentation on Agile, Scrum, and Jira concepts for software teams.",
+    url: "https://agiletoolhub.com/docs",
+    items: docs.map((doc) => ({
+      name: doc.title,
+      description: doc.description,
+      url: `https://agiletoolhub.com/docs/${doc.slug}`,
+    })),
+  });
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={collectionSchema} />
       <HeroSection
         title="Agile explained. Definitions, patterns, and real examples."
         description="Quick reference docs for agile terminology, scrum ceremonies, and methodologies."

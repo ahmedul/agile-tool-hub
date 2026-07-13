@@ -4,7 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import FeaturedCard from "@/components/FeaturedCard";
 import JsonLd from "@/components/JsonLd";
 import { getAllContent } from "@/lib/content";
-import { buildMetadata, buildBreadcrumbSchema } from "@/lib/seo";
+import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Agile & Scrum Guides for Software Teams",
@@ -26,10 +26,22 @@ export default function GuidesPage() {
     { label: "Home", href: "/" },
     { label: "Guides", href: "/guides" },
   ]);
+  const collectionSchema = buildCollectionPageSchema({
+    name: "Agile & Scrum Guides",
+    description:
+      "Practical guides on Jira tickets, bug reports, user stories, and acceptance criteria for engineering teams.",
+    url: "https://agiletoolhub.com/guides",
+    items: guides.map((guide) => ({
+      name: guide.title,
+      description: guide.description,
+      url: `https://agiletoolhub.com/guides/${guide.slug}`,
+    })),
+  });
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={collectionSchema} />
       <HeroSection
         title="Master Agile best practices. Learn how to run ceremonies better."
         description="Comprehensive guides, examples, and anti-patterns for every agile ritual."

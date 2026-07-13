@@ -216,6 +216,44 @@ export function buildArticleSchema(options: ArticleSchemaOptions) {
   };
 }
 
+export interface CollectionSchemaItem {
+  name: string;
+  url: string;
+  description?: string;
+}
+
+export interface CollectionPageSchemaOptions {
+  name: string;
+  description: string;
+  url: string;
+  items: CollectionSchemaItem[];
+}
+
+export function buildCollectionPageSchema(options: CollectionPageSchemaOptions) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: options.name,
+    description: options.description,
+    url: options.url,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: options.items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: item.url,
+        name: item.name,
+        ...(item.description ? { description: item.description } : {}),
+      })),
+    },
+    isPartOf: {
+      "@type": "WebSite",
+      name: "AgileToolHub",
+      url: "https://agiletoolhub.com",
+    },
+  };
+}
+
 /**
  * Suggested keywords for common pages
  */

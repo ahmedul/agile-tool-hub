@@ -3,7 +3,7 @@ import ToolCard from "@/components/ToolCard";
 import HeroSection from "@/components/HeroSection";
 import FeaturedCard from "@/components/FeaturedCard";
 import JsonLd from "@/components/JsonLd";
-import { buildMetadata, buildBreadcrumbSchema, KEYWORDS } from "@/lib/seo";
+import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Free Agile & Scrum Tools for Software Teams",
@@ -13,14 +13,68 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function ToolsPage() {
+  const tools = [
+    {
+      title: "Bug Report to Jira Ticket Converter",
+      description: "Paste messy bug notes and get a clean, structured Jira ticket instantly.",
+      href: "/tools/bug-report-to-jira-ticket-converter",
+    },
+    {
+      title: "User Story Generator",
+      description: "Describe your feature and get a complete Jira-ready user story with acceptance criteria.",
+      href: "/tools/user-story-generator",
+    },
+    {
+      title: "Planning Poker",
+      description: "Real-time story point estimation for your whole team.",
+      href: "/tools/planning-poker",
+    },
+    {
+      title: "Acceptance Criteria Generator",
+      description: "Generate testable acceptance criteria in Given/When/Then or checklist format in seconds.",
+      href: "/tools/acceptance-criteria-generator",
+    },
+    {
+      title: "Sprint Capacity Calculator",
+      description: "Get a realistic sprint commitment in story points.",
+      href: "/tools/sprint-capacity-calculator",
+    },
+    {
+      title: "Daily Standup Generator",
+      description: "Turn rough notes into a clear Yesterday/Today/Blockers update.",
+      href: "/tools/daily-standup-generator",
+    },
+    {
+      title: "Velocity Tracker",
+      description: "Track sprint velocity trends and forecast future capacity.",
+      href: "/tools/velocity-tracker",
+    },
+    {
+      title: "Retrospective Board",
+      description: "Real-time retro board for Agile teams.",
+      href: "/tools/retro-board",
+    },
+  ];
   const breadcrumbSchema = buildBreadcrumbSchema([
     { label: "Home", href: "/" },
     { label: "Tools", href: "/tools" },
   ]);
+  const collectionSchema = buildCollectionPageSchema({
+    name: "Free Agile & Scrum Tools",
+    description:
+      "Online tools for planning poker, user story writing, acceptance criteria generation, bug conversion, and sprint planning.",
+    url: "https://agiletoolhub.com/tools",
+    items: tools.map((tool) => ({
+      name: tool.title,
+      description: tool.description,
+      url: `https://agiletoolhub.com${tool.href}`,
+    })),
+  });
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={collectionSchema} />
       <HeroSection
         title="Automate Jira tickets, user stories, and acceptance criteria instantly."
         description="AI-powered generators and real-time collaboration tools for agile teams."
