@@ -25,6 +25,17 @@ relatedLinks:
     href: "/templates/user-story-template"
   - title: "Bug Report vs Jira Ticket"
     href: "/guides/bug-report-vs-jira-ticket"
+faqItems:
+  - question: "How long should a Jira ticket description be?"
+    answer: "Long enough to be clear, short enough to read in under 2 minutes. If it takes longer than that, the ticket is probably too large and should be split into smaller tickets."
+  - question: "Should developers write their own tickets?"
+    answer: "Yes, when they find bugs or need to track technical work. Technical tasks, debt, and infrastructure work should be in Jira so the team has full visibility of all work."
+  - question: "How specific should steps to reproduce be?"
+    answer: "Specific enough that someone who has never seen the bug can reproduce it by following the steps. Include the URL, the data they should enter, and the exact action to take."
+  - question: "When should a ticket be marked Critical?"
+    answer: "Only when the system is down, data is lost, or there is a security breach. Mark everything Critical and nothing is critical. Most tickets are High or Medium."
+  - question: "How do I write acceptance criteria?"
+    answer: "Make them testable, specific, and focused on behavior not implementation. A QA engineer should be able to write a test case from each criterion. Include happy path and error states."
 ---
 
 A bad Jira ticket wastes hours. A good Jira ticket saves them.

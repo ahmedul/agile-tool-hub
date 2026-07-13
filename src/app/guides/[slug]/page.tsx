@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
-import { buildArticleSchema, buildBreadcrumbSchema, buildHowToSchema, buildMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildHowToSchema, buildFAQSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getAllSlugs("guides").map((slug) => ({ slug }));
@@ -49,12 +49,14 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     steps: item.howToSteps,
     estimatedTime: "PT15M",
   }) : null;
+  const faqJsonLd = item.faqItems && item.faqItems.length > 0 ? buildFAQSchema(item.faqItems) : null;
 
   return (
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
       {howToJsonLd && <JsonLd data={howToJsonLd} />}
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ContentLayout
         title={item.title}
         description={item.description}

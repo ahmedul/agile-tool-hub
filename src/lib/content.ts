@@ -12,6 +12,7 @@ export interface ContentMeta {
   publishedAt?: string;
   updatedAt?: string;
   howToSteps?: { name: string; description: string }[];
+  faqItems?: { question: string; answer: string }[];
 }
 
 export interface ContentItem extends ContentMeta {

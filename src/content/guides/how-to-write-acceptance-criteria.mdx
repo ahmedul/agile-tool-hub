@@ -23,6 +23,17 @@ relatedLinks:
     href: "/examples/acceptance-criteria-examples-for-checkout"
   - title: "User Story Template"
     href: "/templates/user-story-template"
+faqItems:
+  - question: "Should acceptance criteria be in Given/When/Then or checklist format?"
+    answer: "Given/When/Then (Gherkin) is best for BDD workflows and teams using tools like Cucumber. Checklist format is simpler and works well for most Scrum teams in Jira. You can use both formats for the same story."
+  - question: "Who should write acceptance criteria?"
+    answer: "The Product Owner writes the first draft. The team (developers, QA, designers) reviews and refines them during refinement or sprint planning. Everyone should agree before the sprint starts."
+  - question: "Can acceptance criteria describe implementation details?"
+    answer: "No. Acceptance criteria should describe behavior and outcomes, not how to build it. Say 'the form validates email format' not 'use regex pattern X'. Technical decisions come during development."
+  - question: "What if I miss an edge case in acceptance criteria?"
+    answer: "The ticket gets reopened. This is why edge cases like error states, boundary conditions, and timeouts must be included before development starts."
+  - question: "How do I know if acceptance criteria are too vague?"
+    answer: "Ask: Can a QA engineer write a test case from this? If the answer is no, it is too vague. Rephrase until the outcome is specific and measurable."
 ---
 
 Acceptance criteria define the boundaries of a user story. They tell the team exactly when a feature is done — and they prevent the most common source of rework: disagreement over what "done" means.

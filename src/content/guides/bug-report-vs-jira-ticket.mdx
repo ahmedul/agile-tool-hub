@@ -19,6 +19,17 @@ relatedLinks:
     href: "/guides/api-requirements-for-jira-tickets"
   - title: "Acceptance Criteria Patterns"
     href: "/guides/acceptance-criteria-patterns-and-examples"
+faqItems:
+  - question: "Should I write a bug report before creating a Jira ticket?"
+    answer: "Only if the bug needs triage first. If you are a developer or QA with backlog access and the bug is clearly reproducible and worth fixing, create the Jira ticket directly. If you are unsure, write a bug report first for review."
+  - question: "What happens to a bug report after triage?"
+    answer: "If it is accepted and worth fixing, it becomes a Jira ticket. If it is a duplicate, rejected, or a known issue, the bug report is closed and linked in Jira for reference."
+  - question: "Can I use Jira as both a bug report AND a tracking tool?"
+    answer: "Yes, most modern teams do. Jira tickets serve as both the reported problem and the tracking unit. The distinction matters conceptually but not operationally if your process is clear."
+  - question: "Who decides if a bug report becomes a Jira ticket?"
+    answer: "Usually a product manager, tech lead, or QA lead during triage. They assess priority, reproducibility, and scope before adding it to the backlog."
+  - question: "Should developers report bugs they find to QA first or create Jira tickets directly?"
+    answer: "Developers can create Jira tickets directly for bugs they find. For bugs found by users or customers, have QA verify reproducibility and create the ticket to ensure quality."
 ---
 
 Teams use "bug report" and "Jira ticket" interchangeably. They are not the same thing — and the distinction matters.
