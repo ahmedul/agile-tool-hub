@@ -6,9 +6,9 @@ import JsonLd from "@/components/JsonLd";
 import CreatePlanningSession from "@/components/CreatePlanningSession";
 
 export const metadata: Metadata = {
-  title: "Free Planning Poker Tool",
+  title: "Free Planning Poker — Real-Time Team Story Point Estimation",
   description:
-    "Free online planning poker for Agile and Scrum teams. No account needed. Create a session, share the link, and estimate user stories together with Fibonacci cards.",
+    "Estimate story points in real-time with your team. Create a session, share a link, vote simultaneously. No signup. Fibonacci cards and fast reveals for Agile sprint planning.",
   keywords: [
     "planning poker",
     "free planning poker tool",

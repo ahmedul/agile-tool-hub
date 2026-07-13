@@ -7,8 +7,8 @@ import JsonLd from "@/components/JsonLd";
 import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Bug Report to Jira Ticket Converter — AI-Powered Free Tool",
-  description: "Convert messy bug notes into a clean, structured Jira ticket in seconds. Free tool for software teams. Includes quality scoring. No login required.",
+  title: "Free Bug Report to Jira Ticket Converter — Auto-Structured",
+  description: "Paste messy bug notes and get a clean, structured Jira ticket with repro steps instantly. No login. AI-powered with quality scoring for QA and dev teams.",
   keywords: KEYWORDS.bugReport,
   canonical: "https://agiletoolhub.com/tools/bug-report-to-jira-ticket-converter",
 });

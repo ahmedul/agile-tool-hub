@@ -7,9 +7,9 @@ import JsonLd from "@/components/JsonLd";
 import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "Velocity Tracker — Free Sprint Metrics & Forecasting Tool",
+  title: "Free Velocity Tracker — Sprint Capacity & Forecast Tool",
   description:
-    "Track team sprint velocity, visualize trends, forecast future sprint capacity, and improve planning accuracy. Free agile metrics tool. Export to Jira and Markdown.",
+    "Track sprint velocity trends and forecast realistic capacity for future sprints. Simple dashboard, no setup, free forever for Agile and Scrum teams.",
   keywords: KEYWORDS.velocityTracker,
   canonical: "https://agiletoolhub.com/tools/velocity-tracker",
 });
