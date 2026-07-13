@@ -11,6 +11,7 @@ export interface ContentMeta {
   relatedLinks?: { title: string; href: string }[];
   publishedAt?: string;
   updatedAt?: string;
+  howToSteps?: { name: string; description: string }[];
 }
 
 export interface ContentItem extends ContentMeta {

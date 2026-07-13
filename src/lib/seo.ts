@@ -254,6 +254,38 @@ export function buildCollectionPageSchema(options: CollectionPageSchemaOptions) 
   };
 }
 
+export interface HowToStep {
+  name: string;
+  description: string;
+  image?: string;
+}
+
+export interface HowToSchemaOptions {
+  title: string;
+  description: string;
+  url: string;
+  steps: HowToStep[];
+  estimatedTime?: string; // e.g., "PT15M" for 15 minutes
+}
+
+export function buildHowToSchema(options: HowToSchemaOptions) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: options.title,
+    description: options.description,
+    url: options.url,
+    ...(options.estimatedTime ? { totalTime: options.estimatedTime } : {}),
+    step: options.steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.description,
+      ...(step.image ? { image: step.image } : {}),
+    })),
+  };
+}
+
 /**
  * Suggested keywords for common pages
  */

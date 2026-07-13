@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
-import { buildArticleSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildHowToSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getAllSlugs("guides").map((slug) => ({ slug }));
@@ -42,11 +42,19 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     { label: "Guides", href: "/guides" },
     { label: item.title, href: `/guides/${slug}` },
   ]);
+  const howToJsonLd = item.howToSteps ? buildHowToSchema({
+    title: item.title,
+    description: item.description,
+    url: `https://agiletoolhub.com/guides/${slug}`,
+    steps: item.howToSteps,
+    estimatedTime: "PT15M",
+  }) : null;
 
   return (
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      {howToJsonLd && <JsonLd data={howToJsonLd} />}
       <ContentLayout
         title={item.title}
         description={item.description}
