@@ -4,6 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import CreatePlanningSession from "@/components/CreatePlanningSession";
+import { buildHowToSchema, buildBreadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Free Planning Poker — Real-Time Team Story Point Estimation",
@@ -52,7 +53,7 @@ const faqItems = [
 ];
 
 export default function PlanningPokerPage() {
-  const jsonLd = {
+  const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: faqItems.map((item) => ({
@@ -62,9 +63,33 @@ export default function PlanningPokerPage() {
     })),
   };
 
+  const howToSchema = buildHowToSchema({
+    title: "How to Run Planning Poker with Your Team",
+    description: "Step-by-step guide to running an effective planning poker session for story point estimation",
+    url: "https://agiletoolhub.com/tools/planning-poker",
+    steps: [
+      { name: "Create a Session", description: "Click 'Create New Session' to start a planning poker round" },
+      { name: "Share the Link", description: "Copy the session URL and share it with your team members" },
+      { name: "Enter Story Title", description: "Enter the story name or epic title you want to estimate" },
+      { name: "Vote Simultaneously", description: "Team members select their Fibonacci card estimate (1, 2, 3, 5, 8, 13, 21, or ?)" },
+      { name: "Reveal Votes", description: "Click reveal to show all estimates at once" },
+      { name: "Discuss Disagreements", description: "If estimates vary widely, discuss assumptions and re-vote" },
+      { name: "Reach Consensus", description: "Continue until team agrees on final estimate" },
+      { name: "Log Results", description: "Record final story points for sprint planning" },
+    ],
+  });
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { label: "Home", href: "/" },
+    { label: "Tools", href: "/tools" },
+    { label: "Planning Poker", href: "/tools/planning-poker" },
+  ]);
+
   return (
     <>
-      <JsonLd data={jsonLd} />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={howToSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <div className="max-w-4xl mx-auto px-4 py-10">
         <Breadcrumbs
           items={[{ label: "Tools", href: "/tools" }, { label: "Planning Poker" }]}

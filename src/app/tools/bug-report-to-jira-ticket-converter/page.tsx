@@ -4,7 +4,7 @@ import BugReportConverter from "@/components/BugReportConverter";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
-import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
+import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, buildHowToSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Free Bug Report to Jira Ticket Converter — Auto-Structured",
@@ -36,11 +36,28 @@ export default function BugReportConverterPage() {
     applicationCategory: "BusinessApplication",
   });
 
+  const howToSchema = buildHowToSchema({
+    title: "How to Convert Bug Reports to Jira Tickets",
+    description: "Step-by-step guide to using the bug report converter tool to create well-structured Jira tickets",
+    url: "https://agiletoolhub.com/tools/bug-report-to-jira-ticket-converter",
+    steps: [
+      { name: "Paste Bug Notes", description: "Copy and paste your raw bug notes, crash logs, or email into the input field" },
+      { name: "Review Raw Input", description: "Check that the full bug description is captured" },
+      { name: "Generate Ticket", description: "Click 'Generate Jira Ticket' to structure your notes" },
+      { name: "Review Output", description: "Check the structured Jira ticket with title, description, repro steps, and acceptance criteria" },
+      { name: "Check Quality Score", description: "Review the quality score to ensure all required fields are complete" },
+      { name: "Copy Output", description: "Click 'Copy to Clipboard' to copy the formatted ticket" },
+      { name: "Paste in Jira", description: "Open your Jira project and paste the ticket description into a new issue" },
+      { name: "Adjust and Submit", description: "Add assignee, priority, and any Jira-specific fields, then submit" },
+    ],
+  });
+
   return (
     <>
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={toolSchema} />
+      <JsonLd data={howToSchema} />
       <div className="max-w-4xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: "Tools", href: "/tools" }, { label: "Bug Report Converter" }]} />
         <span className="text-xs font-medium text-green-600 uppercase tracking-wide">Free Tool</span>

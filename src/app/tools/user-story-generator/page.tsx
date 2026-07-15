@@ -4,7 +4,7 @@ import UserStoryGenerator from "@/components/UserStoryGenerator";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
-import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
+import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, buildHowToSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Free User Story Generator — Jira-Ready in Seconds, No Login",
@@ -38,11 +38,28 @@ export default function UserStoryGeneratorPage() {
     applicationCategory: "BusinessApplication",
   });
 
+  const howToSchema = buildHowToSchema({
+    title: "How to Generate User Stories with the Story Generator",
+    description: "Step-by-step guide to using the user story generator to create complete, Jira-ready stories",
+    url: "https://agiletoolhub.com/tools/user-story-generator",
+    steps: [
+      { name: "Choose Work Type", description: "Select the work type: Feature (user-facing story), Improvement (enhancement), or Task (technical work)" },
+      { name: "Enter Feature Description", description: "Describe your feature in simple language (1-2 sentences). Example: 'Save payment method for faster checkout'" },
+      { name: "Add Context (Optional)", description: "Include any additional context about why this matters, who needs it, or edge cases" },
+      { name: "Select Preset", description: "Choose a preset (Product, Engineering, API, Tech Debt) to tailor the output to your work type" },
+      { name: "Generate Story", description: "Click 'Generate Story' to create a complete user story in Local or AI mode" },
+      { name: "Review Quality Score", description: "Check the story quality score (based on clarity, scope, criteria, and dependencies)" },
+      { name: "Customize Output", description: "Edit the generated text to add specific details about your actual feature" },
+      { name: "Copy to Jira", description: "Copy the output and paste directly into your Jira ticket description field" },
+    ],
+  });
+
   return (
     <>
       <JsonLd data={faqSchema} />
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={toolSchema} />
+      <JsonLd data={howToSchema} />
       <div className="max-w-4xl mx-auto px-4 py-10">
       <Breadcrumbs items={[{ label: "Tools", href: "/tools" }, { label: "User Story Generator" }]} />
       <span className="text-xs font-medium text-green-600 uppercase tracking-wide">Free Tool</span>
