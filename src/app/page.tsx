@@ -254,6 +254,12 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-900">Retrospective Success</h3>
             </div>
             <ul className="space-y-3">
+              <li className="pb-2 border-b border-green-100">
+                <Link href="/guides/complete-guide-to-retrospectives-and-standups" className="text-blue-600 hover:underline font-bold text-sm block mb-1">
+                  📖 Complete Retrospectives & Standups Guide
+                </Link>
+                <p className="text-gray-500 text-xs">Master sprint retrospectives, daily standups, facilitation, and team ceremonies</p>
+              </li>
               <li>
                 <Link href="/guides/how-to-run-a-sprint-retrospective" className="text-blue-600 hover:underline font-medium text-sm">
                   How to Run a Sprint Retrospective
