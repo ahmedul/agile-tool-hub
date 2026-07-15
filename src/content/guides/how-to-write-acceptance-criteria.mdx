@@ -36,6 +36,12 @@ faqItems:
     answer: "The ticket gets reopened. This is why edge cases like error states, boundary conditions, and timeouts must be included before development starts."
   - question: "How do I know if acceptance criteria are too vague?"
     answer: "Ask: Can a QA engineer write a test case from this? If the answer is no, it is too vague. Rephrase until the outcome is specific and measurable."
+  - question: "How many acceptance criteria should a story have?"
+    answer: "3-8 is typical. One criterion isn't enough (not detailed enough). More than 10 and the story is probably too big. Each criterion should be independently testable."
+  - question: "Should acceptance criteria include performance requirements?"
+    answer: "Yes, if performance matters. Example: 'Page loads in under 2 seconds on 4G connection' or 'API response time under 500ms for p99'. Without measurable performance criteria, QA won't know what to test."
+  - question: "Can a story be accepted if it meets acceptance criteria but breaks something else?"
+    answer: "No. Meeting acceptance criteria is necessary but not sufficient. Regression testing is part of QA's job. New features should not break existing features. Acceptance criteria should include 'no regression' implicitly."
 ---
 
 Acceptance criteria define the boundaries of a user story. They tell the team exactly when a feature is done — and they prevent the most common source of rework: disagreement over what "done" means.

@@ -18,6 +18,17 @@ relatedLinks:
     href: "/templates/acceptance-criteria-template"
   - title: "How to Write a Good Jira Ticket"
     href: "/guides/how-to-write-a-good-jira-ticket"
+faqItems:
+  - question: "When should I use Gherkin vs checklist format?"
+    answer: "Gherkin (Given/When/Then) is best for complex workflows and teams using automation tools like Cucumber. Checklist format is faster for simple features and works in Jira without special tools. Choose based on your team's automation maturity."
+  - question: "Should acceptance criteria include browser compatibility?"
+    answer: "Yes, if it's relevant. Example: 'Works in Chrome, Firefox, Safari (desktop versions from last 2 years)'. If it needs to work everywhere, state that. If only modern browsers matter, be specific."
+  - question: "Can I add acceptance criteria after development starts?"
+    answer: "You can, but it's risky. New criteria mid-sprint can cause rework or scope creep. It's better to catch missing criteria during refinement. If new criteria emerge, decide: implement this sprint or move to next sprint?"
+  - question: "What if a feature can't be fully tested without manual QA?"
+    answer: "That's OK. Acceptance criteria should include manual test steps. Example: 'QA manually tests payment flow with test credit card #4111...' or 'Visual QA: compare button alignment in Firefox on macOS.' Some features can't be 100% automated."
+  - question: "How do acceptance criteria relate to technical tasks?"
+    answer: "Acceptance criteria define what the user sees (behavior). Technical tasks define how to build it. Example: AC is 'Login page loads in under 2 seconds'. A technical task is 'Optimize database query to improve page speed'."
 ---
 
 Acceptance criteria (AC) are the bridge between product requirement and "done." Poor AC lead to:

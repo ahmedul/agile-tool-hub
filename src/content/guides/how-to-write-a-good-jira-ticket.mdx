@@ -38,6 +38,12 @@ faqItems:
     answer: "Only when the system is down, data is lost, or there is a security breach. Mark everything Critical and nothing is critical. Most tickets are High or Medium."
   - question: "How do I write acceptance criteria?"
     answer: "Make them testable, specific, and focused on behavior not implementation. A QA engineer should be able to write a test case from each criterion. Include happy path and error states."
+  - question: "Should every ticket have acceptance criteria?"
+    answer: "Yes. Features and user stories always need acceptance criteria. Bugs need expected vs actual behavior. Tasks may be simple enough without detailed criteria, but user-facing work always needs them."
+  - question: "What's the difference between a ticket title and description?"
+    answer: "Title: One sentence that describes the problem (searchable in Jira). Description: Details needed to solve it (steps, context, linked tickets). Title should stand alone; description provides context."
+  - question: "How do I know when a ticket is too big?"
+    answer: "If it can't be completed by one person in 3 days, it's too big. If it needs design review or spans multiple systems, it's too big. Break it into smaller tickets. Smaller tickets = faster delivery and faster feedback."
 ---
 
 A bad Jira ticket wastes hours. A good Jira ticket saves them.
