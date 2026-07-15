@@ -168,6 +168,12 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-900">Ticket Quality Mastery</h3>
             </div>
             <ul className="space-y-3">
+              <li className="pb-2 border-b border-blue-100">
+                <Link href="/guides/complete-guide-to-jira-ticket-quality" className="text-blue-600 hover:underline font-bold text-sm block mb-1">
+                  📘 Complete Guide to Jira Ticket Quality
+                </Link>
+                <p className="text-gray-500 text-xs">Comprehensive guide covering all aspects of ticket quality</p>
+              </li>
               <li>
                 <Link href="/guides/how-to-write-a-good-jira-ticket" className="text-blue-600 hover:underline font-medium text-sm">
                   How to Write a Good Jira Ticket
@@ -208,6 +214,12 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-900">Sprint Planning Essentials</h3>
             </div>
             <ul className="space-y-3">
+              <li className="pb-2 border-b border-orange-100">
+                <Link href="/guides/complete-guide-to-sprint-planning-and-estimation" className="text-blue-600 hover:underline font-bold text-sm block mb-1">
+                  📘 Complete Sprint Planning & Estimation Guide
+                </Link>
+                <p className="text-gray-500 text-xs">Master sprint planning, capacity, velocity, and Fibonacci estimation</p>
+              </li>
               <li>
                 <Link href="/guides/sprint-capacity-planning-guide" className="text-blue-600 hover:underline font-medium text-sm">
                   Sprint Capacity Planning

@@ -1,0 +1,284 @@
+---
+title: "Complete Guide to Sprint Planning & Story Point Estimation"
+description: "Master sprint planning and story point estimation. Learn Fibonacci, planning poker, capacity planning, velocity tracking, and ceremonies. Set realistic goals and estimate accurately."
+slug: "complete-guide-to-sprint-planning-and-estimation"
+category: "Guides"
+keywords:
+  - sprint planning
+  - story point estimation
+  - planning poker
+  - fibonacci estimation
+  - sprint capacity
+  - velocity tracking
+  - scrum planning
+  - sprint goals
+relatedLinks:
+  - title: "Sprint Capacity Planning Guide"
+    href: "/guides/sprint-capacity-planning-guide"
+  - title: "Story Point Estimation Guide with Examples"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "How to Write Sprint Goals"
+    href: "/guides/how-to-write-sprint-goals"
+  - title: "Sprint Velocity Tracking Guide"
+    href: "/guides/sprint-velocity-tracking-guide"
+  - title: "Avoiding Common Sprint Mistakes"
+    href: "/guides/avoiding-common-sprint-mistakes"
+  - title: "Definition of Ready Best Practices"
+    href: "/guides/definition-of-ready-best-practices"
+  - title: "Planning Poker Tool"
+    href: "/tools/planning-poker"
+  - title: "Sprint Capacity Calculator"
+    href: "/tools/sprint-capacity-calculator"
+  - title: "Velocity Tracker Tool"
+    href: "/tools/velocity-tracker"
+faqItems:
+  - question: "What is the difference between sprint planning and backlog refinement?"
+    answer: "Backlog refinement (grooming) prepares tickets for estimation. Sprint planning selects tickets into the sprint and commits to delivery. Refinement happens before planning, often in a separate meeting."
+  - question: "How do we estimate tickets that are too big?"
+    answer: "Break them down. If a ticket is more than 8-13 story points, it's too large for one sprint. Split it into smaller stories until each is 5-8 points. Smaller stories mean faster feedback and lower risk."
+  - question: "Should we include QA time in story point estimation?"
+    answer: "Yes. Story points include all work: development, testing, code review, deployment. If QA takes 3 days, that work is part of the estimate."
+  - question: "What if we consistently miss our sprint commitment?"
+    answer: "First, check if your estimates are honest or inflated. Second, check if you have unplanned work interrupting the sprint. Third, check if your sprint goal is realistic for your team's capacity."
+  - question: "How long does it take to stabilize team velocity?"
+    answer: "Usually 3–5 sprints. New teams will have volatile velocity while they calibrate estimates. Once you have 5–10 sprints of history, use the average velocity to plan future sprints."
+---
+
+## Why Sprint Planning Matters
+
+Sprint planning is where strategy meets reality. It's where teams commit to deliverables and set the pace for the iteration.
+
+Poor sprint planning leads to:
+- **Missed commitments** — Goals that were never realistic
+- **Scope creep** — Too much work squeezed into the sprint
+- **Low velocity** — Unfinished work every sprint
+- **Burned out teams** — Overcommitment leading to exhaustion
+
+Good sprint planning leads to:
+- **Predictable delivery** — Teams know their capacity
+- **Realistic goals** — Achievable commitments build confidence
+- **High quality** — Less rush, fewer bugs
+- **Team morale** — Success breeds momentum
+
+## The Sprint Planning Meeting
+
+A typical sprint planning meeting has two parts:
+
+### Part 1: Why This Sprint (30 minutes)
+The product owner presents:
+- Sprint goals — What are we trying to accomplish?
+- Business context — Why these goals now?
+- Priorities — Which work matters most?
+
+The team asks questions until they understand the "why".
+
+### Part 2: How We'll Do It (90 minutes)
+The team:
+- Estimates tickets using planning poker
+- Discusses unknowns and risks
+- Commits to a realistic set of work
+- Breaks down large tickets into smaller pieces
+
+**Pro tip:** Separate estimation from commitment. Estimate all the work first, then select what fits your capacity.
+
+## Story Points: The Basics
+
+Story points measure **complexity and effort**, not hours or days.
+
+Why use story points instead of hours?
+
+- **Hours are too precise** — You can't predict the future, so don't pretend. "This is 3 story points" is honest. "This is 12.5 hours" is fake certainty.
+- **Story points are relative** — They only matter in context of other stories. "This is bigger than that" is concrete.
+- **Story points absorb uncertainty** — If a task might take 3 days or 5, story points capture that range without forcing false precision.
+
+### The Fibonacci Scale
+
+Most Agile teams use **Fibonacci numbers** for story points:
+
+**1, 2, 3, 5, 8, 13, 21, ?**
+
+Why Fibonacci? It enforces discipline:
+- You can't choose 4 or 6 — you must pick 3 or 5
+- This forces conversation about whether something is really two sizes bigger
+- Large gaps (5→8→13) reflect increasing uncertainty
+
+### What Each Size Means
+
+| Points | Complexity | Effort | Example |
+|--------|-----------|--------|---------|
+| **1** | Trivial | < 1 hour | Fix typo, update documentation |
+| **2** | Simple | 1–2 hours | Add a form field, simple validation |
+| **3** | Straightforward | 4–8 hours | Build a basic feature, clear requirements |
+| **5** | Moderate | 1–2 days | Implement a feature with moderate complexity, some unknowns |
+| **8** | Complex | 2–3 days | Feature with many edge cases, requires testing |
+| **13** | Very complex | 3–5 days | Major feature, significant unknowns, high risk |
+| **21** | Too big | > 5 days | **DON'T ESTIMATE 21-POINT TICKETS** — Break them down |
+| **?** | Unknown | Unknown | "We don't know enough to estimate this" |
+
+**The rule:** If it's 21 points, split it. No ticket should take more than one sprint to complete.
+
+## Planning Poker: How to Estimate Together
+
+Planning poker is a game that makes estimation collaborative and reveals disagreement.
+
+### How It Works
+
+1. **Read the ticket** — Everyone reads the acceptance criteria
+2. **Ask questions** — Team clarifies unknowns
+3. **Everyone estimates simultaneously** — Each person writes down their estimate (hidden)
+4. **Reveal** — Everyone shows their estimate at the same time
+5. **Discuss disagreement** — If estimates vary widely, the person with the highest and lowest explain their thinking
+6. **Re-estimate** — After discussion, estimate again
+7. **Agree** — The final estimate becomes the story's size
+
+### Why Estimate Simultaneously?
+
+If one person estimates first, everyone else anchors to that number. Simultaneous estimation means everyone thinks independently.
+
+**Example:**
+- Developer A estimates 3 points (simple feature)
+- QA estimates 8 points (lots of browsers to test)
+- Conversation reveals: "Oh, we need to test 15 browsers? That's way more work"
+- Final estimate: 8 points
+
+Without simultaneous estimation, QA might have said "sure, 3 sounds right" and you'd plan for a disaster.
+
+### Planning Poker Tool
+
+Use [Planning Poker](https://agiletoolhub.com/tools/planning-poker) to run real-time estimation:
+- No account or setup required
+- Share a link with your team
+- Vote simultaneously
+- See results and discuss
+
+## Capacity Planning: Know Your Team's Velocity
+
+Your team's **velocity** is the number of story points completed per sprint.
+
+If your team averages 25 story points per sprint, your sprint capacity is **25 points**.
+
+### How to Calculate Capacity
+
+**Step 1: Calculate available hours**
+```
+Team size: 5 people
+Hours per week: 40
+Sprint length: 2 weeks
+Total hours: 5 × 40 × 2 = 400 hours
+```
+
+**Step 2: Remove non-development time**
+```
+Meetings: 20 hours
+Interruptions/support: 15 hours
+Buffer for unexpected: 25 hours
+Available for work: 400 - 60 = 340 hours
+```
+
+**Step 3: Use historical velocity**
+If your team completed 25 points last sprint, expect ~25 points this sprint (assuming no major changes).
+
+**Better:** Use your team's average velocity over 5–10 sprints.
+
+### Sprint Capacity Calculator
+
+Use the [Sprint Capacity Calculator](https://agiletoolhub.com/tools/sprint-capacity-calculator) to estimate realistic commitment:
+- Enter team size and availability
+- Get a realistic point estimate
+- Compare to historical velocity
+
+### Velocity Tracking
+
+Your velocity tells you if your team is:
+- **Accelerating** — Completing more work (learning, better processes)
+- **Decelerating** — Completing less work (burnout, scope creep, increased complexity)
+- **Stable** — Consistent (you can plan predictably)
+
+Track velocity over time using the [Velocity Tracker Tool](https://agiletoolhub.com/tools/velocity-tracker).
+
+## Setting a Realistic Sprint Goal
+
+Your sprint goal is **why your team is working this sprint**. Not just a list of tickets, but a shared objective.
+
+**Bad sprint goals:**
+- "Complete all the tickets on the board"
+- "Do all the features listed"
+
+**Good sprint goals:**
+- "Complete checkout payment flow so sales can demo it to enterprise customer"
+- "Fix the top 5 reported bugs to improve stability"
+- "Implement two-factor authentication for security compliance"
+
+Each goal:
+- Has **business context** — Why this matters now
+- Has a **clear outcome** — How will we know we succeeded?
+- Is **achievable** in one sprint
+
+### How to Write Sprint Goals
+
+Read: [How to Write Sprint Goals](https://agiletoolhub.com/guides/how-to-write-sprint-goals)
+
+A good sprint goal aligns the team around *why* they're working, not just *what* they're building.
+
+## Common Sprint Planning Mistakes
+
+### ❌ Overcommitting
+**Mistake:** Selecting 40 points of work for a team with 25-point velocity
+**Fix:** Use your historical velocity. Don't estimate higher than you've delivered.
+
+### ❌ Treating Story Points as Hours
+**Mistake:** "This is 8 points, which is 8 hours"
+**Fix:** Story points are relative sizes, not time estimates. Your velocity reveals the conversion.
+
+### ❌ Planning Without Historical Velocity
+**Mistake:** Estimating capacity from scratch every sprint
+**Fix:** After 3–5 sprints, track your velocity and use it to plan future sprints.
+
+### ❌ Including Unestimated Tickets
+**Mistake:** Adding "?" tickets to the sprint
+**Fix:** Every ticket in the sprint should be estimated. "?" means "take it offline and come back with an estimate".
+
+### ❌ Forgetting to Account for Non-Development Time
+**Mistake:** Assuming 40 hours = 40 hours of coding
+**Fix:** Meetings, support, interruptions eat 20–30% of time. Plan accordingly.
+
+### ❌ Changing Scope Mid-Sprint
+**Mistake:** Adding new tickets to the sprint after planning
+**Fix:** Changes to scope mean you won't finish something. What do you want to drop?
+
+## Definition of Ready: Pre-Sprint Checklist
+
+Before a ticket enters the sprint, it should be **ready**:
+
+- ☐ Title is clear and specific
+- ☐ Acceptance criteria are defined and testable
+- ☐ Dependencies are identified
+- ☐ Ticket is estimated
+- ☐ Designer sign-off (if design work)
+- ☐ No unknowns that block development
+
+If a ticket doesn't meet these criteria, it's not ready. Refine it before planning.
+
+Read: [Definition of Ready Best Practices](https://agiletoolhub.com/guides/definition-of-ready-best-practices)
+
+## Related Resources
+
+**Quick Reads:**
+- [Sprint Capacity Planning Guide](https://agiletoolhub.com/guides/sprint-capacity-planning-guide)
+- [How to Write Sprint Goals](https://agiletoolhub.com/guides/how-to-write-sprint-goals)
+
+**For Estimation Mastery:**
+- [Story Point Estimation Guide with Examples](https://agiletoolhub.com/guides/story-point-estimation-guide-with-examples)
+- [Avoiding Common Sprint Mistakes](https://agiletoolhub.com/guides/avoiding-common-sprint-mistakes)
+
+**For Tracking Progress:**
+- [Sprint Velocity Tracking Guide](https://agiletoolhub.com/guides/sprint-velocity-tracking-guide)
+- [Velocity Tracker Tool](https://agiletoolhub.com/tools/velocity-tracker)
+
+**Interactive Tools:**
+- [Planning Poker](https://agiletoolhub.com/tools/planning-poker) — Real-time team estimation
+- [Sprint Capacity Calculator](https://agiletoolhub.com/tools/sprint-capacity-calculator) — Calculate realistic sprint commitment
+
+---
+
+Sprint planning sets your team up for success. Invest in getting it right, and the rest of your sprint runs smoothly.
