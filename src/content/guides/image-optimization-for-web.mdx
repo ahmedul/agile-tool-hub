@@ -1,0 +1,326 @@
+---
+title: "Image Optimization for Web: Alt Text, Compression, and Schema"
+description: "Master image optimization for SEO and performance. Learn alt text best practices, compression techniques, lazy loading, responsive images, and image schema implementation."
+slug: "image-optimization-for-web"
+category: "Guides"
+keywords:
+  - image optimization
+  - alt text seo
+  - image compression
+  - responsive images
+  - lazy loading images
+  - image schema
+  - web performance
+  - image best practices
+relatedLinks:
+  - title: "Web Performance Best Practices"
+    href: "/guides/web-performance-best-practices"
+  - title: "SEO Best Practices for Technical Teams"
+    href: "/docs/agile-glossary"
+  - title: "Acceptance Criteria for Design"
+    href: "/guides/acceptance-criteria-patterns-and-examples"
+---
+
+## Why Image Optimization Matters
+
+Images account for ~50% of web page size. Unoptimized images:
+- **Slow down pages** — Poor Core Web Vitals
+- **Hurt mobile experience** — Slow loading on 4G
+- **Lose search visibility** — Google ranks faster pages higher
+- **Miss accessibility** — No alt text = excludes users and search engines
+
+Optimized images:
+- Load faster
+- Rank higher
+- Work on all devices
+- Help users with visual impairments
+
+## 1. Alt Text: The Most Important Optimization
+
+**Alt text** is the text description of an image. It serves two purposes:
+1. **Accessibility** — Screen readers read alt text to blind/low-vision users
+2. **SEO** — Search engines use alt text to understand images
+
+### How to Write Good Alt Text
+
+✅ **Good alt text:**
+- Describes what's in the image
+- Includes relevant keywords naturally
+- 100–125 characters (fits on one line)
+- Actionable and specific
+
+❌ **Bad alt text:**
+- Generic ("image", "photo")
+- Stuffed with keywords ("jira ticket template best practices agile")
+- Too long (200+ characters)
+- Doesn't describe the content
+
+### Examples
+
+**Image: A team of people in a sprint planning meeting**
+
+❌ Bad:
+```
+alt="meeting"
+alt="sprint planning jira agile scrum estimation"
+```
+
+✅ Good:
+```
+alt="Agile team in sprint planning meeting writing user stories on whiteboard"
+```
+
+**Image: A Jira ticket with acceptance criteria**
+
+❌ Bad:
+```
+alt="ticket"
+alt="jira ticket template example screenshot"
+```
+
+✅ Good:
+```
+alt="Jira ticket example showing clear title, description, and acceptance criteria"
+```
+
+### Guidelines by Content Type
+
+| Content Type | Alt Text Approach | Example |
+|--------------|------------------|---------|
+| **Decorative** | Empty alt text `alt=""` | Divider lines, backgrounds, spacers |
+| **Informational** | Describe the content | "Graph showing sprint velocity over 10 sprints" |
+| **Functional** | Describe the action | "Button to create a new Jira ticket" |
+| **Complex** (charts, diagrams) | Brief + link to full description | "Chart showing estimation techniques (see full data below)" |
+
+## 2. Image Compression: Reduce File Size
+
+Large images are the #1 performance killer. Compress without losing quality.
+
+### Compression Techniques
+
+**PNG** — For graphics, logos, icons
+- Use PNG for anything with text or crisp edges
+- Typically 50–200 KB per image
+- Tools: TinyPNG, ImageOptim, PNGCrush
+
+**JPEG** — For photographs and complex images
+- Use JPEG for photos, screenshots
+- Save at 85–90% quality (good balance of size vs quality)
+- Typically 20–100 KB per image
+- Tools: TinyJPEG, ImageOptim, ImageMagick
+
+**WebP** — Modern format, 25–35% smaller
+- Supported in all modern browsers
+- Fallback to JPEG for older browsers
+- Typically 15–60 KB per image
+- Tools: ImageMagick, Online converters
+
+**SVG** — For simple graphics, logos, icons
+- Vector format (scales to any size)
+- Smallest file size for simple graphics (2–10 KB)
+- Perfect for logos, icons, diagrams
+- Requires design in vector format
+
+### Compression Workflow
+
+1. **Choose the right format** — PNG for graphics, JPEG for photos, SVG for icons
+2. **Export at the right size** — Don't use 2000px images and resize in CSS
+3. **Compress** — Use TinyPNG, TinyJPEG, or ImageMagick
+4. **Target sizes:**
+   - Hero images: 100–200 KB
+   - Thumbnails: 20–50 KB
+   - Icons: < 5 KB
+
+### Tools
+
+- [TinyPNG](https://tinypng.com) — Drag & drop PNG/JPEG compression
+- [ImageOptim](https://imageoptim.com) — Mac desktop tool
+- [ImageMagick](https://imagemagick.org) — Command-line tool (scripts)
+- [WebP converters](https://convertio.co/png-webp/) — Convert to modern format
+
+## 3. Responsive Images: Work on All Screens
+
+A 2000px image shown at 400px on mobile wastes bandwidth.
+
+### Techniques
+
+**Responsive Image Sizes**
+```html
+<img
+  srcset="image-400w.jpg 400w,
+          image-800w.jpg 800w,
+          image-1200w.jpg 1200w"
+  sizes="(max-width: 600px) 100vw,
+         (max-width: 1200px) 50vw,
+         1200px"
+  src="image-1200w.jpg"
+  alt="Agile team in sprint planning"
+/>
+```
+
+The browser downloads the image size closest to its viewport.
+
+**Next.js Image Component**
+```jsx
+import Image from "next/image";
+
+export default function Sprint() {
+  return (
+    <Image
+      src="/sprint-planning.jpg"
+      alt="Agile team in sprint planning meeting"
+      width={800}
+      height={600}
+      responsive
+      quality={85}
+    />
+  );
+}
+```
+
+Benefits:
+- Automatic format selection (WebP on modern browsers)
+- Automatic responsive sizing
+- Lazy loading by default
+- Automatic optimization
+
+## 4. Lazy Loading: Don't Load Everything
+
+Load images only when users scroll to them.
+
+### Native Lazy Loading
+```html
+<img
+  src="image.jpg"
+  alt="Description"
+  loading="lazy"
+/>
+```
+
+### Next.js Image
+```jsx
+import Image from "next/image";
+
+<Image
+  src="/image.jpg"
+  alt="Description"
+  width={800}
+  height={600}
+  loading="lazy"
+/>
+```
+
+**Impact:**
+- First page load faster (10–20% improvement)
+- Faster Largest Contentful Paint (LCP)
+- Better Core Web Vitals
+- Better ranking in Google
+
+## 5. Image Schema for Search Engines
+
+Image schema helps Google understand images and improves search visibility.
+
+### Basic Image Schema
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "ImageObject",
+  "url": "https://example.com/sprint-planning.jpg",
+  "name": "Agile team in sprint planning",
+  "description": "Team discussing story points using planning poker in weekly sprint planning meeting",
+  "width": { "@type": "Distance", "value": "800px" },
+  "height": { "@type": "Distance", "value": "600px" }
+}
+```
+
+### Image Schema in Article
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Sprint Planning Guide",
+  "image": [
+    {
+      "@type": "ImageObject",
+      "url": "https://example.com/sprint-planning.jpg",
+      "width": 800,
+      "height": 600
+    }
+  ]
+}
+```
+
+**Benefits:**
+- Improved image search visibility
+- Rich snippets in Google Images
+- Better understanding of page content
+
+## 6. Performance Impact: Core Web Vitals
+
+Optimized images improve Core Web Vitals:
+
+| Metric | Impact | Target |
+|--------|--------|--------|
+| **LCP** (Largest Contentful Paint) | First image load speed | < 2.5s |
+| **FID** (First Input Delay) | Responsiveness | < 100ms |
+| **CLS** (Cumulative Layout Shift) | Image aspect ratio | < 0.1 |
+
+### Techniques to Improve
+
+**Largest Contentful Paint (LCP):**
+- Use lazy loading for below-the-fold images
+- Preload hero images: `<link rel="preload" as="image" href="hero.jpg">`
+- Compress hero images aggressively
+- Use modern formats (WebP)
+
+**Cumulative Layout Shift (CLS):**
+- Always specify `width` and `height` attributes
+- Reserve space with aspect ratio CSS:
+  ```css
+  img { aspect-ratio: 16 / 9; }
+  ```
+
+## Image Optimization Checklist
+
+Before deploying any image:
+
+- ☐ Alt text is descriptive and keyword-relevant (not stuffed)
+- ☐ Image is compressed (PNG < 200 KB, JPEG < 100 KB)
+- ☐ Format is right (PNG for graphics, JPEG for photos, SVG for icons)
+- ☐ Width/height attributes are specified
+- ☐ Lazy loading enabled for below-the-fold images
+- ☐ Image is responsive (srcset for different sizes or Next.js Image)
+- ☐ Aspect ratio CSS prevents layout shift
+- ☐ Image schema included if page has Article schema
+
+## Tools and Resources
+
+**Optimization Tools:**
+- [TinyPNG](https://tinypng.com) — PNG/JPEG compression
+- [ImageOptim](https://imageoptim.com) — Batch compression (Mac)
+- [ImageMagick](https://imagemagick.org) — CLI compression
+- [Squoosh](https://squoosh.app) — Web-based compression
+
+**Testing & Monitoring:**
+- [Google PageSpeed Insights](https://pagespeed.web.dev) — Test page performance
+- [WebPageTest](https://www.webpagetest.org) — Detailed waterfall analysis
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse) — Built into Chrome DevTools
+
+**Learning:**
+- [Web.dev Images Guide](https://web.dev/image-optimization/)
+- [MDN: Responsive Images](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images)
+- [Schema.org: ImageObject](https://schema.org/ImageObject)
+
+## Quick Wins
+
+1. **Add alt text** — Improves accessibility and SEO immediately
+2. **Compress images** — Use TinyPNG, saves 30–50% file size
+3. **Enable lazy loading** — Add `loading="lazy"` to all images
+4. **Specify dimensions** — Add `width` and `height` to prevent layout shift
+5. **Use WebP** — 25–35% smaller on modern browsers
+
+---
+
+Image optimization is often overlooked but has huge impact on performance and SEO. Start with alt text and compression, then move to responsive images and lazy loading.

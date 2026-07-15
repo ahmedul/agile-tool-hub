@@ -319,6 +319,35 @@ export function buildHowToSchema(options: HowToSchemaOptions) {
 }
 
 /**
+ * Build ImageObject schema for image SEO
+ */
+export interface ImageSchemaOptions {
+  url: string;
+  title: string;
+  description?: string;
+  width?: number;
+  height?: number;
+  contentUrl?: string;
+}
+
+export function buildImageSchema(options: ImageSchemaOptions) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    url: options.url,
+    name: options.title,
+    ...(options.description ? { description: options.description } : {}),
+    ...(options.width && options.height
+      ? {
+          width: { "@type": "Distance", value: `${options.width}px` },
+          height: { "@type": "Distance", value: `${options.height}px` },
+        }
+      : {}),
+    ...(options.contentUrl ? { contentUrl: options.contentUrl } : {}),
+  };
+}
+
+/**
  * Suggested keywords for common pages
  */
 export const KEYWORDS = {
