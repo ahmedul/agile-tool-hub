@@ -294,6 +294,12 @@ export default function Home() {
               <h3 className="text-xl font-bold text-gray-900">User Story Mastery</h3>
             </div>
             <ul className="space-y-3">
+              <li className="pb-2 border-b border-purple-100">
+                <Link href="/guides/complete-guide-to-user-stories-and-epic-breakdown" className="text-blue-600 hover:underline font-bold text-sm block mb-1">
+                  📖 Complete User Stories & Epic Breakdown Guide
+                </Link>
+                <p className="text-gray-500 text-xs">Master user story writing, INVEST principles, epic decomposition, and practical examples</p>
+              </li>
               <li>
                 <Link href="/guides/how-to-write-user-stories" className="text-blue-600 hover:underline font-medium text-sm">
                   How to Write User Stories
