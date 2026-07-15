@@ -1,16 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import JsonLd from "@/components/JsonLd";
+import { buildOrganizationSchema, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "About",
-  description:
-    "Why AgileToolHub exists: practical Jira-ready templates and tools for software teams that need cleaner tickets and smoother delivery.",
+  ...buildMetadata({
+    title: "About AgileToolHub — Practical Agile & Jira Templates for Engineering Teams",
+    description:
+      "Why AgileToolHub exists: practical Jira-ready templates and tools for software teams that need clearer tickets, better acceptance criteria, and smoother delivery.",
+    keywords: [
+      "about agile tool hub",
+      "agile templates",
+      "jira best practices",
+      "software delivery",
+      "agile tools",
+    ],
+    canonical: "https://agiletoolhub.com/about",
+  }),
+  title: {
+    absolute: "About AgileToolHub — Practical Agile & Jira Templates for Engineering Teams",
+  },
 };
 
 export default function AboutPage() {
+  const organizationSchema = buildOrganizationSchema();
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <>
+      <JsonLd data={organizationSchema} />
+      <div className="max-w-4xl mx-auto px-4 py-10">
       <Breadcrumbs items={[{ label: "About" }]} />
 
       <span className="text-xs font-medium text-blue-600 uppercase tracking-wide">About</span>
@@ -27,6 +46,19 @@ export default function AboutPage() {
           This site was created by a software engineer who works with Jira tickets, APIs,
           CI/CD, and delivery workflows in real engineering teams.
         </p>
+
+        <h2>Creator expertise & credibility</h2>
+        <p>
+          AgileToolHub is built on years of experience in software engineering and delivery,
+          including:
+        </p>
+        <ul>
+          <li>Professional software delivery in fast-paced startup and scale-up environments</li>
+          <li>Deep hands-on experience with Jira, Sprint Planning, Retrospectives, and Agile ceremonies</li>
+          <li>API design, QA workflows, and cross-team collaboration across Product, Engineering, and QA</li>
+          <li>Building tools and processes that help teams ship faster with fewer misunderstandings</li>
+          <li>Open-source contributions and technical writing on practical engineering topics</li>
+        </ul>
 
         <h2>Why this site exists</h2>
         <p>
@@ -109,5 +141,6 @@ export default function AboutPage() {
         </ul>
       </div>
     </div>
+    </>
   );
 }

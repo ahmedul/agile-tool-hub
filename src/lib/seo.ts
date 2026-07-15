@@ -138,7 +138,7 @@ export function buildOrganizationSchema() {
     name: "AgileToolHub",
     url: "https://agiletoolhub.com",
     logo: "https://agiletoolhub.com/logo.png",
-    description: "Free Agile, Scrum, and software delivery templates and tools",
+    description: "Free Agile, Scrum, and software delivery templates and tools for engineering teams",
     sameAs: [
       "https://twitter.com/agile-tool-hub",
       "https://github.com/ahmedul/agile-tool-hub",
@@ -150,6 +150,38 @@ export function buildOrganizationSchema() {
       areaServed: "Worldwide",
       availableLanguage: ["en"],
     },
+    knowsAbout: [
+      "Agile",
+      "Scrum",
+      "Jira",
+      "User Stories",
+      "Acceptance Criteria",
+      "Sprint Planning",
+      "Retrospectives",
+      "Story Point Estimation",
+      "Software Delivery",
+      "Bug Tracking",
+      "Ticket Quality",
+    ],
+    potentialAction: [
+      {
+        "@type": "UseAction",
+        name: "Use User Story Generator",
+        target: "https://agiletoolhub.com/tools/user-story-generator",
+      },
+      {
+        "@type": "UseAction",
+        name: "Use Planning Poker",
+        target: "https://agiletoolhub.com/tools/planning-poker",
+      },
+      {
+        "@type": "UseAction",
+        name: "Use Retrospective Board",
+        target: "https://agiletoolhub.com/tools/retro-board",
+      },
+    ],
+    areaServed: "Worldwide",
+    serviceType: "Free Agile and Software Delivery Tools",
   };
 }
 
