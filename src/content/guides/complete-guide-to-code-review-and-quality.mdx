@@ -1,0 +1,369 @@
+---
+title: "Complete Guide to Code Review & Quality Standards"
+description: "Master code review workflows, PR best practices, quality gates, and feedback patterns. Learn how to scale code review across teams while maintaining standards."
+slug: "complete-guide-to-code-review-and-quality"
+category: "Guides"
+keywords:
+  - code review best practices
+  - pull request guidelines
+  - code quality standards
+  - pr feedback
+  - peer review process
+  - code review checklist
+  - team code standards
+relatedLinks:
+  - title: "Code Review Best Practices for Teams"
+    href: "/guides/code-review-best-practices-for-teams"
+  - title: "Pull Request Template"
+    href: "/templates/pull-request-template"
+  - title: "Code Review Checklist"
+    href: "/templates/code-review-checklist"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Definition of Done Template"
+    href: "/templates/definition-of-done-template"
+  - title: "Complete Guide to Jira Ticket Quality"
+    href: "/guides/complete-guide-to-jira-ticket-quality"
+  - title: "Bug Report vs Jira Ticket"
+    href: "/guides/bug-report-vs-jira-ticket"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+faqItems:
+  - question: "How long should code review take?"
+    answer: "Ideally 15-30 minutes for small PRs (under 200 lines). Large PRs (500+ lines) should take 1+ hour, which is a sign to split them. Longer reviews = more context switching and missed bugs. Aim for small, focused PRs."
+  - question: "Should code review block deployment?"
+    answer: "Yes. Code review is a quality gate, not optional. Approved PRs go to staging. After testing, they go to production. Skipping review to speed up deployment usually causes more problems than it solves."
+  - question: "What's the difference between code review and QA testing?"
+    answer: "Code review checks the implementation (logic, architecture, patterns, readability). QA tests functionality and user experience. Both are needed. Code review catches bugs early; QA catches integration issues."
+  - question: "How do you handle code review disagreements?"
+    answer: "If reviewer and author disagree on approach: discuss the trade-offs, check team standards, make a decision (usually team lead decides). Document the decision for future reference. The goal is consistency, not proving someone wrong."
+  - question: "Should senior developers review all code?"
+    answer: "Not necessarily. Peer review is valuable at all levels. Juniors learn by reviewing seniors' code. Seniors learn different perspectives from peers. Rotate reviewers. Mix experiences on every PR for knowledge sharing."
+  - question: "When should a PR be rejected in code review?"
+    answer: "Reject if: Security issues, breaking changes without migration path, violates team standards, or logic errors that QA won't catch. Don't reject for style disagreements (use linters). Provide specific guidance for fixes."
+  - question: "What if a developer ignores code review feedback?"
+    answer: "This is a culture problem. Address it 1-on-1 with the developer. Understand why they ignored feedback (didn't understand? disagreed? didn't see it?). Make sure everyone knows code review is mandatory, not optional."
+---
+
+## Why Code Review Matters
+
+Code review is often seen as a bottleneck — "it slows us down." But the opposite is true:
+
+**Code review saves time because it:**
+- Catches bugs early (cheaper than QA finding them)
+- Shares knowledge (junior devs learn; seniors see new patterns)
+- Prevents bad architecture decisions from going into production
+- Reduces rework (agreed standards = no style arguments later)
+- Documents why code was written a certain way
+
+**Code review without standards wastes time because it:**
+- Reviewers don't know what to look for
+- Feedback is inconsistent (one reviewer wants X, another wants Y)
+- Reviews become arguments instead of conversations
+- PRs sit approved for days waiting for author to make changes
+
+This guide covers how to set up code review that scales.
+
+## The Code Review Workflow
+
+A healthy code review workflow has 5 stages:
+
+### Stage 1: PR Opens (Author Perspective)
+
+Before opening a PR, the author should:
+
+1. **Keep PRs small** — 100-300 lines is ideal. 500+ lines is a sign to split.
+2. **Self-review first** — Go through your own code. Catch obvious issues. Format correctly.
+3. **Write a good description:**
+   - What does this PR do? (1-2 sentences)
+   - Why? (What problem does it solve?)
+   - How to test it? (Steps a reviewer can follow)
+   - Any known issues or TODOs? (Be transparent)
+
+**Example PR description:**
+```
+## What
+Implement rate limiting on POST /api/auth/login endpoint to prevent brute force attacks.
+
+## Why
+We've seen 10+ brute force attempts in the last week. Rate limiting is required for security.
+
+## How to Test
+1. Open Postman, make 50 rapid POST requests to /api/auth/login
+2. After request #21, you should get 429 (Too Many Requests)
+3. Wait 60 seconds, requests work again
+
+## Known Issues
+- Rate limiting key is IP-based (will need refining for API clients behind proxies)
+```
+
+This gives reviewers context immediately.
+
+### Stage 2: PR Assigned to Reviewers
+
+The author should:
+- Assign 1-2 reviewers (not 5)
+- Match the PR to the reviewer's expertise
+- Tag reviewers who should review vs reviewers who are FYI
+
+**Example:**
+- Assign: @alice (backend expertise), @bob (security focus)
+- Request review: @charlie (frontend, for context)
+
+### Stage 3: Reviewer Examines the Code
+
+The reviewer should check (in order):
+
+**1. Architecture & Design**
+- Does this fit the existing architecture?
+- Are there better patterns we use?
+- Is this a breaking change?
+
+**2. Logic & Correctness**
+- Does the logic do what the PR description says?
+- Are there edge cases? Error states?
+- Are error messages clear?
+
+**3. Performance & Scalability**
+- Are there N+1 database queries?
+- Is this going to be slow at scale?
+- Are we caching things that should be cached?
+
+**4. Security**
+- Is user input validated?
+- Are there injection vulnerabilities (SQL, XSS, etc.)?
+- Are secrets in the code?
+- Are permissions checked?
+
+**5. Testing**
+- Are new tests added?
+- Do tests cover happy path and error cases?
+- Is coverage adequate?
+
+**6. Readability & Maintainability**
+- Are variable names clear?
+- Are functions doing one thing?
+- Is documentation needed for complex logic?
+- Is this code easy for someone else to maintain in 6 months?
+
+**7. Code Style & Patterns**
+- Does it match team conventions? (Let linters handle this)
+- Are we using team-standard libraries?
+
+### Stage 4: Reviewer Provides Feedback
+
+Good feedback is:
+- **Specific** — Point to the exact line, quote the code
+- **Actionable** — "How to fix it" not just "this is wrong"
+- **Kind** — Critique code, not the person
+- **Educational** — Explain the why, not just the rule
+
+**Bad feedback:**
+```
+This is bad. Fix it.
+```
+
+**Good feedback:**
+```
+Line 42: This query will cause an N+1 problem at scale.
+Instead of loading user data in a loop, use JOIN to load all users at once.
+See: [link to similar pattern in codebase]
+```
+
+**Comment types:**
+
+- 🔴 **Blocking** — "Do not merge until this is fixed" (security, correctness, architecture)
+- 🟡 **Optional** — "Consider this approach" (style, optimization)
+- 💬 **Discussion** — "Question: why did you choose this?" (learning, not blocking)
+
+Most comments should be optional or discussion. Blocking comments should be rare.
+
+### Stage 5: Author Responds & Updates
+
+The author should:
+1. Respond to each comment
+2. Update the code or explain why they won't
+3. Mark comments as resolved once fixed
+4. Re-request review
+
+**Author responses:**
+
+✅ Good: "Good catch! Changed to use a JOIN. See commit abc123."
+✅ Good: "I considered that approach. This one is simpler for now. We can refactor later if performance becomes an issue."
+❌ Bad: "OK" (too vague)
+❌ Bad: Ignoring comments
+
+## Code Review Standards by Language
+
+### JavaScript/TypeScript
+
+**Checklist:**
+- Are types correct? (TS)
+- Any `any` types that should be specific?
+- Are error cases handled?
+- Are async/await patterns correct?
+- Is the code performant? (avoid unnecessary re-renders in React)
+
+**Common issues:**
+- Missing error handling
+- Improper async patterns
+- Memory leaks from event listeners
+- Stale closures in hooks
+
+### Python
+
+**Checklist:**
+- Are type hints included?
+- Is the code following PEP8?
+- Are there docstrings for complex functions?
+- Is the error handling comprehensive?
+
+**Common issues:**
+- Missing type hints (especially in data processing)
+- Mutable default arguments
+- Not handling None values
+
+### SQL & Databases
+
+**Checklist:**
+- Are queries optimized? (indexes, joins, not N+1)
+- Are transactions used correctly?
+- Is the schema migration backwards-compatible?
+- Are slow queries logged/monitored?
+
+**Common issues:**
+- N+1 queries
+- Missing indexes
+- Breaking schema changes
+- No transaction handling
+
+## Building a Code Review Culture
+
+### Establish Standards (Definition of Done)
+
+Your team should have a **Definition of Done** that includes code review. Example:
+
+```
+✓ Code is reviewed and approved
+✓ Tests pass (unit + integration)
+✓ No security issues
+✓ Performance acceptable (under 500ms for user-facing endpoints)
+✓ Documentation updated
+✓ PR deployed to staging, tested by author
+✓ Ready for production
+```
+
+### Make Code Review Psychological Safe
+
+- Reviewers: Be kind. Critique code, not people.
+- Authors: Be open. Feedback is about the code, not you.
+- Team: Celebrate good reviews and fixes.
+
+### Rotate Reviewers
+
+Don't let the same person review all code. Benefits:
+- Knowledge spreads
+- Prevents reviewer burnout
+- Different perspectives catch different issues
+- Juniors learn by reviewing seniors
+
+### Automate What You Can
+
+Use tools to handle:
+- Linting (ESLint, Prettier, Black)
+- Type checking (TypeScript, MyPy)
+- Security scanning (SAST tools)
+- Test coverage (SonarQube)
+
+**Humans review for logic and architecture; automation handles style.**
+
+## Common Code Review Mistakes
+
+### ❌ Mistake 1: Making PRs Too Large
+
+**Problem:** A 1000-line PR takes hours to review. Bugs hide in large diffs. Reviewers skim instead of deep-dive.
+
+**Fix:** Require PRs under 300 lines. If a PR is big, split it:
+- Split by feature: API endpoint in one PR, frontend in another
+- Split by layer: Database schema in one PR, business logic in another
+- Split by time: Phase 1 in one sprint, Phase 2 next sprint
+
+### ❌ Mistake 2: Not Blocking on Security Issues
+
+**Problem:** A developer opens a PR with SQL injection, and the reviewer says "consider using parameterized queries" as optional feedback.
+
+**Fix:** Make security blocking. Code with security issues should not merge.
+
+### ❌ Mistake 3: Inconsistent Standards
+
+**Problem:** One reviewer requires 90% test coverage. Another accepts 60%. Different reviewers want different style.
+
+**Fix:** Document standards. Use linters. Make automation consistent. When humans disagree, document the decision.
+
+### ❌ Mistake 4: Letting PRs Sit Approved
+
+**Problem:** PR is approved but author is busy. It sits for a week, then doesn't merge cleanly.
+
+**Fix:** Set a SLA: PRs approved should merge within 24 hours. If something changed and merge is risky, re-review.
+
+### ❌ Mistake 5: Reviewers Becoming Gatekeepers
+
+**Problem:** Reviewers make authors explain every line. Code review takes 10 hours per PR.
+
+**Fix:** Trust the team. Junior devs will make mistakes; that's OK. Review for correctness and patterns, not perfection.
+
+## Code Review Tools & Automation
+
+**GitHub:**
+- GitHub Actions for automated checks (tests, linting)
+- Required reviewers policy
+- Branch protection rules
+
+**GitLab:**
+- CI/CD pipelines
+- Merge request templates
+- Code quality reports
+
+**Code Review Tools:**
+- Review Ninja (automated common issues)
+- SonarQube (code quality metrics)
+- Snyk (security scanning)
+- Coverage.py / NYC (test coverage)
+
+These tools handle repetitive checks. Humans review for judgment.
+
+## Quick Checklist: Before Approving a PR
+
+Ask yourself:
+
+- ☐ Did the author explain what and why clearly?
+- ☐ Does the code do what the description says?
+- ☐ Are there security issues?
+- ☐ Is performance acceptable?
+- ☐ Are tests added/updated?
+- ☐ Does it follow team patterns?
+- ☐ Is error handling complete?
+- ☐ Will this code be easy to maintain in 6 months?
+
+If you said no to any of these, comment. If you said yes to all, approve.
+
+---
+
+## Related Resources
+
+**For Code Review:**
+- [Code Review Best Practices for Teams](https://agiletoolhub.com/guides/code-review-best-practices-for-teams) — Practical tips for daily reviews
+- [Pull Request Template](https://agiletoolhub.com/templates/pull-request-template) — Ready-to-use PR template
+- [Code Review Checklist](https://agiletoolhub.com/templates/code-review-checklist) — Reviewer's checklist
+
+**For Quality Standards:**
+- [Definition of Done Template](https://agiletoolhub.com/templates/definition-of-done-template) — Team standards
+- [Definition of Ready Template](https://agiletoolhub.com/templates/definition-of-ready-template) — Pre-development standards
+
+**For Ticketing & Specs:**
+- [Complete Guide to Jira Ticket Quality](https://agiletoolhub.com/guides/complete-guide-to-jira-ticket-quality) — Good specs lead to good code
+- [How to Write Acceptance Criteria](https://agiletoolhub.com/guides/how-to-write-acceptance-criteria) — Clear requirements reduce review friction
+
+---
+
+Great code review is a skill that scales teams. Invest in it now, and you'll catch bugs earlier, ship faster, and build a stronger engineering culture.
