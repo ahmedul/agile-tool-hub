@@ -157,8 +157,155 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="max-w-6xl mx-auto px-4 py-16 border-t border-gray-200">
+        <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Top Resources by Intent</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Ticket Quality Mastery */}
+          <div className="border border-gray-200 rounded-lg p-8 hover:shadow-md hover:border-blue-300 transition-all">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-2 h-8 bg-blue-600 rounded"></div>
+              <h3 className="text-xl font-bold text-gray-900">Ticket Quality Mastery</h3>
+            </div>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/guides/how-to-write-a-good-jira-ticket" className="text-blue-600 hover:underline font-medium text-sm">
+                  How to Write a Good Jira Ticket
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Clear, actionable Jira tickets with acceptance criteria and best practices</p>
+              </li>
+              <li>
+                <Link href="/guides/how-to-write-acceptance-criteria" className="text-blue-600 hover:underline font-medium text-sm">
+                  How to Write Acceptance Criteria
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Testable criteria in Given/When/Then or checklist format</p>
+              </li>
+              <li>
+                <Link href="/guides/bug-report-vs-jira-ticket" className="text-blue-600 hover:underline font-medium text-sm">
+                  Bug Report vs Jira Ticket
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">When to use each and how to convert between them</p>
+              </li>
+              <li>
+                <Link href="/guides/bug-severity-vs-priority-jira-guide" className="text-blue-600 hover:underline font-medium text-sm">
+                  Bug Severity vs Priority
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Understand the difference and how to set priority correctly</p>
+              </li>
+              <li>
+                <Link href="/tools/bug-report-to-jira-ticket-converter" className="text-blue-600 hover:underline font-medium text-sm">
+                  Bug Report Converter
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Convert messy notes into structured tickets instantly</p>
+              </li>
+            </ul>
+          </div>
+
+          {/* Sprint Planning Essentials */}
+          <div className="border border-gray-200 rounded-lg p-8 hover:shadow-md hover:border-orange-300 transition-all">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-2 h-8 bg-orange-600 rounded"></div>
+              <h3 className="text-xl font-bold text-gray-900">Sprint Planning Essentials</h3>
+            </div>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/guides/sprint-capacity-planning-guide" className="text-blue-600 hover:underline font-medium text-sm">
+                  Sprint Capacity Planning
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Calculate realistic sprint commitment and team velocity</p>
+              </li>
+              <li>
+                <Link href="/guides/story-point-estimation-guide-with-examples" className="text-blue-600 hover:underline font-medium text-sm">
+                  Story Point Estimation Guide
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Estimate accurately with Fibonacci, planning poker, and real examples</p>
+              </li>
+              <li>
+                <Link href="/tools/planning-poker" className="text-blue-600 hover:underline font-medium text-sm">
+                  Planning Poker Tool
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Real-time story point estimation for your whole team</p>
+              </li>
+              <li>
+                <Link href="/tools/sprint-capacity-calculator" className="text-blue-600 hover:underline font-medium text-sm">
+                  Sprint Capacity Calculator
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Calculate realistic sprint commitment from team availability</p>
+              </li>
+            </ul>
+          </div>
+
+          {/* Retrospective Success */}
+          <div className="border border-gray-200 rounded-lg p-8 hover:shadow-md hover:border-green-300 transition-all">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-2 h-8 bg-green-600 rounded"></div>
+              <h3 className="text-xl font-bold text-gray-900">Retrospective Success</h3>
+            </div>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/guides/how-to-run-a-sprint-retrospective" className="text-blue-600 hover:underline font-medium text-sm">
+                  How to Run a Sprint Retrospective
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Step-by-step guide to running productive retros with action items</p>
+              </li>
+              <li>
+                <Link href="/guides/how-to-run-effective-standups" className="text-blue-600 hover:underline font-medium text-sm">
+                  How to Run Effective Standups
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Keep standups quick, focused, and actually useful for teams</p>
+              </li>
+              <li>
+                <Link href="/tools/retro-board" className="text-blue-600 hover:underline font-medium text-sm">
+                  Retrospective Board
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Real-time retro board for Went Well, To Improve, and Action Items</p>
+              </li>
+              <li>
+                <Link href="/tools/daily-standup-generator" className="text-blue-600 hover:underline font-medium text-sm">
+                  Daily Standup Generator
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Turn rough notes into clean standup updates</p>
+              </li>
+            </ul>
+          </div>
+
+          {/* User Story Mastery */}
+          <div className="border border-gray-200 rounded-lg p-8 hover:shadow-md hover:border-purple-300 transition-all">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-2 h-8 bg-purple-600 rounded"></div>
+              <h3 className="text-xl font-bold text-gray-900">User Story Mastery</h3>
+            </div>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/guides/how-to-write-user-stories" className="text-blue-600 hover:underline font-medium text-sm">
+                  How to Write User Stories
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Write stories that developers understand and can estimate</p>
+              </li>
+              <li>
+                <Link href="/guides/how-to-break-down-epics-into-user-stories" className="text-blue-600 hover:underline font-medium text-sm">
+                  Break Down Epics into Stories
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Split large features into testable, shippable pieces</p>
+              </li>
+              <li>
+                <Link href="/guides/epic-breakdown-best-practices" className="text-blue-600 hover:underline font-medium text-sm">
+                  Epic Breakdown Best Practices
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Techniques for breaking down complex work into stories</p>
+              </li>
+              <li>
+                <Link href="/tools/user-story-generator" className="text-blue-600 hover:underline font-medium text-sm">
+                  User Story Generator
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Generate complete stories with acceptance criteria instantly</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <section className="max-w-4xl mx-auto px-4 py-14">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Why use these templates?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {[
             { title: "Save time", body: "Stop writing bug reports and tickets from scratch. Start from a proven structure." },
