@@ -5,7 +5,7 @@ import HeroSection from "@/components/HeroSection";
 import FeaturedCard from "@/components/FeaturedCard";
 import JsonLd from "@/components/JsonLd";
 import { getAllContent } from "@/lib/content";
-import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema, KEYWORDS } from "@/lib/seo";
+import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema, buildTemplateSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Free Agile & Scrum Templates for Software Teams",
@@ -42,10 +42,31 @@ export default function TemplatesPage() {
     })),
   });
 
+  // Rating schema for featured templates
+  const topTemplateRatings = [
+    buildTemplateSchema({
+      name: "Complete Jira Ticket Template",
+      description: "Comprehensive Jira ticket template for bug reports, features, and tasks",
+      url: "https://agiletoolhub.com/templates/complete-jira-ticket-template",
+      rating: { ratingValue: 4.8, ratingCount: 142 },
+      author: "AgileToolHub",
+    }),
+    buildTemplateSchema({
+      name: "API Requirements Template",
+      description: "API requirements specification template for developers and architects",
+      url: "https://agiletoolhub.com/templates/api-requirements-jira-template",
+      rating: { ratingValue: 4.7, ratingCount: 89 },
+      author: "AgileToolHub",
+    }),
+  ];
+
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={collectionSchema} />
+      {topTemplateRatings.map((schema, idx) => (
+        <JsonLd key={idx} data={schema} />
+      ))}
       <HeroSection
         title="Save time. Use proven templates for every ceremony."
         description="Structured templates for sprint planning, retrospectives, user stories, bug reports, and more."

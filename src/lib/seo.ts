@@ -348,6 +348,103 @@ export function buildImageSchema(options: ImageSchemaOptions) {
 }
 
 /**
+ * Build rating/review schema for templates and tools
+ */
+export interface RatingSchemaOptions {
+  ratingValue: number; // 1-5 stars
+  ratingCount: number; // Number of ratings
+  reviewCount?: number;
+  bestRating?: number;
+  worstRating?: number;
+}
+
+export function buildRatingSchema(options: RatingSchemaOptions) {
+  const {
+    ratingValue,
+    ratingCount,
+    reviewCount = ratingCount,
+    bestRating = 5,
+    worstRating = 1,
+  } = options;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "AggregateRating",
+    ratingValue: Math.min(5, Math.max(1, ratingValue)),
+    ratingCount,
+    reviewCount,
+    bestRating,
+    worstRating,
+  };
+}
+
+/**
+ * Build review schema for high-value resources
+ */
+export interface ReviewSchemaOptions {
+  headline: string;
+  reviewBody: string;
+  author: string;
+  datePublished: string;
+  ratingValue: number;
+}
+
+export function buildReviewSchema(options: ReviewSchemaOptions[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: options.map((review) => ({
+      "@type": "Review",
+      headline: review.headline,
+      reviewBody: review.reviewBody,
+      author: {
+        "@type": "Person",
+        name: review.author,
+      },
+      datePublished: review.datePublished,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: review.ratingValue,
+      },
+    })),
+  };
+}
+
+/**
+ * Build template/product schema with ratings
+ */
+export interface TemplateSchemaOptions {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+  rating?: RatingSchemaOptions;
+  author?: string;
+}
+
+export function buildTemplateSchema(options: TemplateSchemaOptions) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: options.name,
+    description: options.description,
+    url: options.url,
+    ...(options.image ? { image: options.image } : {}),
+    ...(options.rating
+      ? { aggregateRating: buildRatingSchema(options.rating) }
+      : {}),
+    ...(options.author
+      ? {
+          author: {
+            "@type": "Organization",
+            name: options.author,
+          },
+        }
+      : {}),
+  };
+}
+
+/**
  * Suggested keywords for common pages
  */
 export const KEYWORDS = {
