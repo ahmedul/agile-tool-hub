@@ -372,6 +372,12 @@ export default function BugReportConverter() {
   const [error, setError] = useState("");
   const [quality, setQuality] = useState<TicketQualityResult | null>(null);
 
+  const quickExamples = [
+    "Login button does nothing on Chrome 124 (macOS). Steps: 1) Open /login 2) enter valid creds 3) click Login. Expected dashboard. Actual spinner forever.",
+    "Checkout fails on mobile Safari when card CVV has 4 digits. Expected validation message. Actual generic error and payment not processed.",
+    "After outage in FRA12, Desire DB shows service placement on extra edges not matching CLI. Need impact verification and source-of-truth confirmation.",
+  ];
+
   useEffect(() => {
     // Reset for when AI mode is re-enabled
   }, []);
@@ -401,53 +407,68 @@ export default function BugReportConverter() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const canGenerate = Boolean(input.trim()) && !loading;
+
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Paste bug notes or a chat transcript
-        </label>
+    <div className="space-y-6">
+      <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-violet-700 text-white">Fast Mode</span>
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">No Login</span>
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200">AI Mode Coming Soon</span>
+        </div>
+        <p className="text-sm text-slate-700">
+          Turn messy bug notes into clean Jira tickets with proper structure, repro steps, and acceptance checks.
+          <Link href="/pricing" className="text-violet-700 hover:underline ml-1 font-medium">See plans</Link>
+        </p>
+      </div>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-2">Step 1</p>
+        <label className="block text-sm font-semibold text-slate-800 mb-2">Paste bug notes or chat transcript</label>
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="e.g. From Slack: login is broken in Chrome 124 on macOS. Steps: 1) open /login 2) enter valid credentials 3) click Login. Expected: dashboard opens. Actual: spinner runs forever."
-          className="w-full border border-gray-300 rounded-lg p-4 text-sm text-gray-800 min-h-[140px] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+          placeholder="From Slack, Zoom notes, or your own words. The tool will clean it up for Jira."
+          className="w-full border border-slate-300 rounded-xl p-4 text-sm text-slate-800 min-h-[140px] focus:outline-none focus:ring-2 focus:ring-violet-500 resize-y"
         />
-        <p className="text-xs text-gray-500 mt-1">
-          Tip: include steps, expected vs actual result, environment, and URL for better output.
-        </p>
-      </div>
+        <p className="text-xs text-slate-500 mt-2">Tip: include expected vs actual behavior if you have it.</p>
 
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          <span className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-600 text-white">
-            Local mode (Free)
-          </span>
-          <button
-            type="button"
-            disabled
-            className="px-3 py-1.5 rounded-md text-sm font-medium bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
-            title="Coming soon"
-          >
-            AI mode (Pro)
-          </button>
-          <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">Coming Soon</span>
+        <div className="mt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Need a quick start?</p>
+          <div className="flex flex-wrap gap-2">
+            {quickExamples.map((example) => (
+              <button
+                key={example}
+                type="button"
+                onClick={() => setInput(example)}
+                className="px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 text-xs font-medium hover:border-violet-400 hover:text-violet-700 transition-colors"
+              >
+                Try example
+              </button>
+            ))}
+          </div>
         </div>
-        <p className="text-xs text-gray-600">
-          Local mode is free and works entirely in your browser. AI mode is coming soon with Pro plan.
-          <Link href="/pricing" className="text-blue-600 hover:underline ml-1">
-            View plans
-          </Link>
-        </p>
-      </div>
+      </section>
 
-      <button
-        onClick={handleGenerate}
-        disabled={!input.trim() || loading}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-      >
-        {loading ? "Generating..." : "Generate Jira Ticket"}
-      </button>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-2">Step 2</p>
+        <p className="text-sm text-slate-700">We auto-detect priority, environment, and repro details. You can edit output before pasting into Jira.</p>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-2">Step 3</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleGenerate}
+            disabled={!canGenerate}
+            className="bg-violet-700 text-white px-6 py-3 rounded-xl font-semibold hover:bg-violet-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? "Generating..." : "Generate Jira Ticket"}
+          </button>
+          <p className="text-sm text-slate-600">Usually ready in under 2 seconds.</p>
+        </div>
+      </section>
 
       {error && (
         <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -456,7 +477,9 @@ export default function BugReportConverter() {
       )}
 
       {output && (
-        <div className="mt-6">
+        <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-1">Done</p>
+          <p className="text-sm font-semibold text-emerald-900 mb-3">Ticket generated. QA is smiling somewhere.</p>
           {quality && (
             <div className="mb-3 rounded-lg border border-gray-200 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -497,12 +520,21 @@ export default function BugReportConverter() {
           )}
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700">Generated Jira Ticket</label>
-            <button
-              onClick={handleCopy}
-              className="text-sm px-4 py-1.5 rounded border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              {copied ? "✓ Copied!" : "Copy"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleGenerate}
+                disabled={!canGenerate}
+                className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-white transition-colors disabled:opacity-50"
+              >
+                Regenerate
+              </button>
+              <button
+                onClick={handleCopy}
+                className="text-sm px-4 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50 transition-colors"
+              >
+                {copied ? "Copied!" : "Copy for Jira"}
+              </button>
+            </div>
           </div>
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}
