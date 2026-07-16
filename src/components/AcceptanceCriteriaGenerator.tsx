@@ -5,6 +5,8 @@ import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 import { trackEvent } from "@/lib/analytics";
 import { scoreAcceptanceCriteria, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
+import ToolStepCard from "@/components/ToolStepCard";
+import ToolSuccessBanner from "@/components/ToolSuccessBanner";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
 type GenerationMode = "local" | "ai";
@@ -321,8 +323,7 @@ export default function AcceptanceCriteriaGenerator() {
         </p>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">Step 1</p>
+      <ToolStepCard accentClassName="text-emerald-700" stepLabel="Step 1">
         <label htmlFor="featureDescription" className="block text-sm font-semibold text-slate-800 mb-2">
           What should this feature do? <span className="text-rose-500">*</span>
         </label>
@@ -351,11 +352,13 @@ export default function AcceptanceCriteriaGenerator() {
             ))}
           </div>
         </div>
-      </section>
+      </ToolStepCard>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">Step 2</p>
-        <p className="text-sm font-semibold text-slate-800 mb-3">Tune output</p>
+      <ToolStepCard
+        accentClassName="text-emerald-700"
+        stepLabel="Step 2"
+        title="Tune output"
+      >
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label htmlFor="userType" className="block text-sm font-medium text-slate-700 mb-1">User type</label>
@@ -401,10 +404,9 @@ export default function AcceptanceCriteriaGenerator() {
             </select>
           </div>
         </div>
-      </section>
+      </ToolStepCard>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-2">Step 3</p>
+      <ToolStepCard accentClassName="text-emerald-700" stepLabel="Step 3">
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleGenerate}
@@ -415,7 +417,7 @@ export default function AcceptanceCriteriaGenerator() {
           </button>
           <p className="text-sm text-slate-600">Built for speed and fewer QA surprises.</p>
         </div>
-      </section>
+      </ToolStepCard>
 
       {error && (
         <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -425,8 +427,7 @@ export default function AcceptanceCriteriaGenerator() {
 
       {output && (
         <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-1">Done</p>
-          <p className="text-sm font-semibold text-emerald-900 mb-3">Criteria generated. QA handshake unlocked.</p>
+          <ToolSuccessBanner title="Done" subtitle="Criteria generated. QA handshake unlocked." />
           {quality && (
             <div className="mb-3 rounded-lg border border-gray-200 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">

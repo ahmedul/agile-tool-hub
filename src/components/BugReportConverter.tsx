@@ -5,6 +5,8 @@ import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
 import { trackEvent } from "@/lib/analytics";
 import { scoreBugReport, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
+import ToolStepCard from "@/components/ToolStepCard";
+import ToolSuccessBanner from "@/components/ToolSuccessBanner";
 
 type GenerationMode = "local" | "ai";
 
@@ -423,8 +425,7 @@ export default function BugReportConverter() {
         </p>
       </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-2">Step 1</p>
+      <ToolStepCard accentClassName="text-violet-700" stepLabel="Step 1">
         <label className="block text-sm font-semibold text-slate-800 mb-2">Paste bug notes or chat transcript</label>
         <textarea
           value={input}
@@ -449,15 +450,15 @@ export default function BugReportConverter() {
             ))}
           </div>
         </div>
-      </section>
+      </ToolStepCard>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-2">Step 2</p>
-        <p className="text-sm text-slate-700">We auto-detect priority, environment, and repro details. You can edit output before pasting into Jira.</p>
-      </section>
+      <ToolStepCard
+        accentClassName="text-violet-700"
+        stepLabel="Step 2"
+        description="We auto-detect priority, environment, and repro details. You can edit output before pasting into Jira."
+      />
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-violet-700 mb-2">Step 3</p>
+      <ToolStepCard accentClassName="text-violet-700" stepLabel="Step 3">
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleGenerate}
@@ -468,7 +469,7 @@ export default function BugReportConverter() {
           </button>
           <p className="text-sm text-slate-600">Usually ready in under 2 seconds.</p>
         </div>
-      </section>
+      </ToolStepCard>
 
       {error && (
         <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -478,8 +479,7 @@ export default function BugReportConverter() {
 
       {output && (
         <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-1">Done</p>
-          <p className="text-sm font-semibold text-emerald-900 mb-3">Ticket generated. QA is smiling somewhere.</p>
+          <ToolSuccessBanner title="Done" subtitle="Ticket generated. QA is smiling somewhere." />
           {quality && (
             <div className="mb-3 rounded-lg border border-gray-200 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
