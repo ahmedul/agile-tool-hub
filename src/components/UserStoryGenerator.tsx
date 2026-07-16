@@ -333,6 +333,33 @@ export default function UserStoryGenerator() {
   const [error, setError] = useState("");
   const [quality, setQuality] = useState<StoryQualityResult | null>(null);
 
+  const quickExamples = [
+    {
+      label: "Checkout speedup",
+      text: "Users abandon checkout when card validation is slow. Add real-time validation and clearer inline errors. Must work on mobile and desktop.",
+      userType: "shopper",
+      storyType: "feature" as StoryType,
+      preset: "product" as StoryPreset,
+      priority: "High" as Priority,
+    },
+    {
+      label: "API reliability",
+      text: "Rate limit spikes are causing intermittent 500 errors on POST /api/orders. Add retry-safe handling and clear 429 responses.",
+      userType: "platform engineer",
+      storyType: "improvement" as StoryType,
+      preset: "api" as StoryPreset,
+      priority: "High" as Priority,
+    },
+    {
+      label: "Tech debt cleanup",
+      text: "Legacy auth module has duplicated logic and no shared validation utility. Refactor to reduce maintenance cost and keep behavior unchanged.",
+      userType: "engineering team",
+      storyType: "task" as StoryType,
+      preset: "tech_debt" as StoryPreset,
+      priority: "Medium" as Priority,
+    },
+  ];
+
   useEffect(() => {
     // Reset for when AI mode is re-enabled
   }, []);
@@ -368,126 +395,144 @@ export default function UserStoryGenerator() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const applyExample = (index: number) => {
+    const example = quickExamples[index];
+    if (!example) return;
+    setForm({
+      featureDescription: example.text,
+      userType: example.userType,
+      storyType: example.storyType,
+      preset: example.preset,
+      priority: example.priority,
+    });
+  };
+
+  const canGenerate = Boolean(form.featureDescription.trim()) && !loading;
+
   return (
-    <div className="space-y-5">
-      {/* Feature description */}
-      <div>
-        <label htmlFor="featureDescription" className="block text-sm font-medium text-gray-700 mb-1">
-          What does this feature do? <span className="text-red-500">*</span>
+    <div className="space-y-6">
+      <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-amber-50 p-5">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-sky-700 text-white">Fast Mode</span>
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">No Login</span>
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200">AI Mode Coming Soon</span>
+        </div>
+        <p className="text-sm text-slate-700">
+          Describe your idea, tweak a few knobs, and get a Jira-ready story in seconds. Less typing, more shipping.
+          <Link href="/pricing" className="text-sky-700 hover:underline ml-1 font-medium">See plans</Link>
+        </p>
+      </div>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-sky-700 mb-2">Step 1</p>
+        <label htmlFor="featureDescription" className="block text-sm font-semibold text-slate-800 mb-2">
+          What should this feature do? <span className="text-rose-500">*</span>
         </label>
         <textarea
           id="featureDescription"
           name="featureDescription"
           value={form.featureDescription}
           onChange={handleChange}
-          placeholder="e.g. Paste chat: PM wants users to filter product list by category and price. Must work on mobile. Depends on search API v2."
-          className="w-full border border-gray-300 rounded-lg p-3 text-sm text-gray-800 min-h-[100px] focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+          placeholder="Paste rough notes or one clear sentence. Example: Users should save payment methods and reuse them at checkout."
+          className="w-full border border-slate-300 rounded-xl p-3 text-sm text-slate-800 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-sky-500 resize-y"
         />
-        <p className="text-xs text-gray-400 mt-1">You can write a short sentence or paste a transcript from Slack/meeting notes.</p>
-      </div>
+        <p className="text-xs text-slate-500 mt-2">Tip: Messy notes are welcome. The generator will structure them for you.</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        {/* User type */}
-        <div>
-          <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1">
-            User type
-          </label>
-          <input
-            id="userType"
-            name="userType"
-            type="text"
-            value={form.userType}
-            onChange={handleChange}
-            placeholder="e.g. logged-in user"
-            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+        <div className="mt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Need a quick start?</p>
+          <div className="flex flex-wrap gap-2">
+            {quickExamples.map((example, idx) => (
+              <button
+                key={example.label}
+                type="button"
+                onClick={() => applyExample(idx)}
+                className="px-3 py-1.5 rounded-full border border-slate-300 bg-white text-slate-700 text-xs font-medium hover:border-sky-400 hover:text-sky-700 transition-colors"
+              >
+                Try: {example.label}
+              </button>
+            ))}
+          </div>
         </div>
+      </section>
 
-        {/* Story type */}
-        <div>
-          <label htmlFor="storyType" className="block text-sm font-medium text-gray-700 mb-1">
-            Story type
-          </label>
-          <select
-            id="storyType"
-            name="storyType"
-            value={form.storyType}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          >
-            <option value="feature">Story (new feature)</option>
-            <option value="improvement">Improvement</option>
-            <option value="task">Task</option>
-          </select>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-sky-700 mb-2">Step 2</p>
+        <p className="text-sm font-semibold text-slate-800 mb-3">Add context (optional but helpful)</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <label htmlFor="userType" className="block text-sm font-medium text-slate-700 mb-1">User type</label>
+            <input
+              id="userType"
+              name="userType"
+              type="text"
+              value={form.userType}
+              onChange={handleChange}
+              placeholder="e.g. logged-in user"
+              className="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="storyType" className="block text-sm font-medium text-slate-700 mb-1">Story type</label>
+            <select
+              id="storyType"
+              name="storyType"
+              value={form.storyType}
+              onChange={handleChange}
+              className="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+            >
+              <option value="feature">Story (new feature)</option>
+              <option value="improvement">Improvement</option>
+              <option value="task">Task</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="priority" className="block text-sm font-medium text-slate-700 mb-1">Priority</label>
+            <select
+              id="priority"
+              name="priority"
+              value={form.priority}
+              onChange={handleChange}
+              className="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+            >
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="preset" className="block text-sm font-medium text-slate-700 mb-1">Preset</label>
+            <select
+              id="preset"
+              name="preset"
+              value={form.preset}
+              onChange={handleChange}
+              className="w-full border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white"
+            >
+              <option value="product">Product</option>
+              <option value="engineering">Engineering</option>
+              <option value="api">API</option>
+              <option value="tech_debt">Tech Debt</option>
+            </select>
+          </div>
         </div>
+      </section>
 
-        {/* Priority */}
-        <div>
-          <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
-            Priority
-          </label>
-          <select
-            id="priority"
-            name="priority"
-            value={form.priority}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          >
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="preset" className="block text-sm font-medium text-gray-700 mb-1">
-            Preset
-          </label>
-          <select
-            id="preset"
-            name="preset"
-            value={form.preset}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          >
-            <option value="product">Product</option>
-            <option value="engineering">Engineering</option>
-            <option value="api">API</option>
-            <option value="tech_debt">Tech Debt</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          <span className="px-3 py-1.5 rounded-md text-sm font-medium bg-blue-600 text-white">
-            Local mode (Free)
-          </span>
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-sky-700 mb-2">Step 3</p>
+        <div className="flex flex-wrap items-center gap-3">
           <button
-            type="button"
-            disabled
-            className="px-3 py-1.5 rounded-md text-sm font-medium bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
-            title="Coming soon"
+            onClick={handleGenerate}
+            disabled={!canGenerate}
+            className="bg-sky-700 text-white px-6 py-3 rounded-xl font-semibold hover:bg-sky-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            AI mode (Pro)
+            {loading ? "Generating..." : "Generate My Story"}
           </button>
-          <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-200">Coming Soon</span>
+          <p className="text-sm text-slate-600">Usually ready in 1-2 seconds.</p>
         </div>
-        <p className="text-xs text-gray-600">
-          Local mode is free and works entirely in your browser. AI mode is coming soon with Pro plan.
-          <Link href="/pricing" className="text-blue-600 hover:underline ml-1">
-            View plans
-          </Link>
-        </p>
-      </div>
-
-      <button
-        onClick={handleGenerate}
-        disabled={!form.featureDescription.trim() || loading}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-      >
-        {loading ? "Generating..." : "Generate User Story"}
-      </button>
+      </section>
 
       {error && (
         <div className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -496,7 +541,9 @@ export default function UserStoryGenerator() {
       )}
 
       {output && (
-        <div className="mt-6">
+        <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50/50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700 mb-1">Done</p>
+          <p className="text-sm font-semibold text-emerald-900 mb-3">Your story is ready. Nice. Very PM-friendly.</p>
           {quality && (
             <div className="mb-3 rounded-lg border border-gray-200 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
@@ -537,12 +584,21 @@ export default function UserStoryGenerator() {
           )}
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium text-gray-700">Generated User Story</label>
-            <button
-              onClick={handleCopy}
-              className="text-sm px-4 py-1.5 rounded border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              {copied ? "✓ Copied!" : "Copy"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleGenerate}
+                disabled={!canGenerate}
+                className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-white transition-colors disabled:opacity-50"
+              >
+                Regenerate
+              </button>
+              <button
+                onClick={handleCopy}
+                className="text-sm px-4 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50 transition-colors"
+              >
+                {copied ? "Copied!" : "Copy for Jira"}
+              </button>
+            </div>
           </div>
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}
