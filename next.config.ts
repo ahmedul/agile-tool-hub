@@ -50,11 +50,6 @@ const nextConfig: NextConfig = {
       destination: "https://agiletoolhub.com/:path*",
       permanent: true,
     },
-    {
-      source: "/:path+/",
-      destination: "/:path+",
-      permanent: true,
-    },
   ],
   images: {
     formats: ["image/avif", "image/webp"],
