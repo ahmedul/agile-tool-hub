@@ -1,9 +1,13 @@
-# *
+# Canonical host directive
 User-agent: *
 Allow: /
-
-# Host
 Host: https://agiletoolhub.com
 
-# Sitemaps
+# Block www variant to prevent redirect chains in GSC
+User-agent: Googlebot
+User-agent: Googlebot-Image
+Disallow: /
+Host: https://www.agiletoolhub.com
+
+# Sitemaps (canonical URLs only)
 Sitemap: https://agiletoolhub.com/sitemap.xml
