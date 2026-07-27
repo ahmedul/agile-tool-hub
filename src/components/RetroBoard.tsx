@@ -153,11 +153,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const [notes, setNotes] = useState<RetroNote[]>([]);
   const [members, setMembers] = useState<Record<string, Member>>({});
   const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
-  const [sessionUrl] = useState(() =>
+  const sessionUrl =
     typeof window !== "undefined"
-      ? window.location.href
-      : `https://agiletoolhub.com/tools/retro-board/${sessionId}`,
-  );
+      ? `${window.location.origin}/tools/retro-board/${sessionId}`
+      : `https://agiletoolhub.com/tools/retro-board/${sessionId}`;
   const [currentUserId] = useState(() => {
     if (typeof window === "undefined") return "";
     let uid = sessionStorage.getItem(`retro-uid-${sessionId}`);
@@ -649,10 +648,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
           </button>
           {!isBoardLocked && (
             <>
-              <span className={`text-sm hidden sm:block truncate max-w-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
+              <span title={sessionUrl} className={`text-sm hidden sm:block break-all max-w-xs ${theme === "dark" ? "text-gray-400" : "text-gray-500"}`}>
                 {sessionUrl}
               </span>
-              <CopyButton text={sessionUrl} />
+              <CopyButton text={sessionUrl} label="Copy Invite" eventName="invite_copy" eventParams={{ tool: "retro_board" }} />
             </>
           )}
         </div>
