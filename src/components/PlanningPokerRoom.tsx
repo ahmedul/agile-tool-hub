@@ -624,7 +624,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           ) : (
             <motion.div
               className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-teal-50 p-4"
-              variants={ANIMATION_VARIANTS.fadeIn}
+              variants={ANIMATION_VARIANTS.fadeInUp}
               initial="initial"
               animate={animationsEnabled ? "animate" : false}
               transition={{ duration: DURATIONS.normal / 1000 }}
