@@ -24,6 +24,14 @@ relatedLinks:
 
 ## Free Acceptance Criteria Template
 
+Use this acceptance criteria template when you need a clear, testable format for Jira tickets. Choose the format that matches your work type, then copy-paste and customize.
+
+## Acceptance Criteria Format (Quick Guide)
+
+- Use **Given/When/Then** for user flows and behavior-driven scenarios.
+- Use a **Checklist** for straightforward feature validation.
+- Use **Rule-based** criteria for policy or business-logic-heavy stories.
+
 ### Format 1: Gherkin (Given / When / Then)
 
 Best for features with clear user interactions:
@@ -60,6 +68,22 @@ Best for complex business logic:
 - [ ] Rule 1 is implemented and tested
 - [ ] Rule 2 is implemented and tested
 - [ ] Edge cases for Rule 1 are handled
+```
+
+## Jira Acceptance Criteria Template (Copy-Paste)
+
+Paste this block into your Jira issue description or acceptance criteria field:
+
+```
+## Acceptance Criteria
+Given [context],
+When [action],
+Then [expected result].
+
+- [ ] Happy path is testable
+- [ ] Error states are covered
+- [ ] Edge cases are covered
+- [ ] Performance/security constraints are explicit
 ```
 
 ## Filled Example — Password Reset Feature
