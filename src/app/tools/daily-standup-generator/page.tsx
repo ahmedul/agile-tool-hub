@@ -4,8 +4,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import DailyStandupGenerator from "@/components/DailyStandupGenerator";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Daily Standup Generator — Free Tool for Agile Teams",
   description:
     "Create clear, structured daily standup updates in seconds. Capture yesterday, today, blockers, and export a Jira/Slack-ready format. Free tool, no login required.",
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
     "agile standup",
     "jira standup update",
   ],
-};
+  canonical: "https://agiletoolhub.com/tools/daily-standup-generator",
+});
 
 const faqItems = [
   {

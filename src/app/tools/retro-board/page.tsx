@@ -4,8 +4,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import CreateRetroSession from "@/components/CreateRetroSession";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Free Retrospective Board | Sprint Retro Tool",
   description:
     "Free real-time retrospective board for Agile and Scrum teams. No login required. Create a session, share the link, and run Went Well / To Improve / Action Items retros together.",
@@ -19,7 +20,8 @@ export const metadata: Metadata = {
     "went well to improve",
     "retro tool free",
   ],
-};
+  canonical: "https://agiletoolhub.com/tools/retro-board",
+});
 
 const faqItems = [
   {

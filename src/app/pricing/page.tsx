@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Pricing",
   description:
     "AgileToolHub pricing for Local and AI modes. Local mode is free forever. AI mode coming soon with paid plans.",
-};
+  canonical: "https://agiletoolhub.com/pricing",
+});
 
 const plans = [
   {

@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Privacy Policy",
   description:
     "Privacy policy for AgileToolHub, including clear handling for Local mode and AI mode across generator tools.",
-};
+  canonical: "https://agiletoolhub.com/privacy",
+});
 
 export default function PrivacyPage() {
   return (

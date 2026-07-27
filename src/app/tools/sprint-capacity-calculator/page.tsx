@@ -4,8 +4,9 @@ import SprintCapacityCalculator from "@/components/SprintCapacityCalculator";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Sprint Capacity Calculator — Free Tool for Agile Teams",
   description:
     "Calculate your team's sprint capacity in story points. Enter team size, available days, and velocity per person — get the recommended sprint commitment instantly. Free, no login.",
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
     "scrum capacity calculator",
     "sprint velocity calculator",
   ],
-};
+  canonical: "https://agiletoolhub.com/tools/sprint-capacity-calculator",
+});
 
 const faqItems = [
   {

@@ -4,9 +4,9 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import CreatePlanningSession from "@/components/CreatePlanningSession";
-import { buildHowToSchema, buildBreadcrumbSchema } from "@/lib/seo";
+import { buildHowToSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Free Planning Poker — Real-Time Team Story Point Estimation",
   description:
     "Estimate story points in real-time with your team. Create a session, share a link, vote simultaneously. No signup. Fibonacci cards and fast reveals for Agile sprint planning.",
@@ -19,7 +19,8 @@ export const metadata: Metadata = {
     "fibonacci planning poker",
     "online planning poker",
   ],
-};
+  canonical: "https://agiletoolhub.com/tools/planning-poker",
+});
 
 const faqItems = [
   {
