@@ -46,6 +46,15 @@ function getAvatar(uid: string, theme: AvatarTheme): string {
   return list[hashKey(uid) % list.length];
 }
 
+function getSeatPosition(index: number, total: number, centerX: number, centerY: number, radiusX: number, radiusY: number) {
+  const safeTotal = Math.max(total, 1);
+  const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / safeTotal);
+  return {
+    x: centerX + Math.cos(angle) * radiusX,
+    y: centerY + Math.sin(angle) * radiusY,
+  };
+}
+
 export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) {
   const [nameInput, setNameInput] = useState("");
   const [joined, setJoined] = useState(false);
@@ -468,12 +477,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   return (
     <div className="flex gap-6">
       <div className="flex-1 min-w-0 space-y-6">
-        {nudgeNotice && (
-          <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900">
-            <strong>{nudgeNotice.fromName}</strong> says: {nudgeNotice.message}
-          </div>
-        )}
-
         {/* Invite bar */}
         <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100 text-sm">
           <span className="text-blue-700 font-medium shrink-0">Invite:</span>
@@ -586,84 +589,120 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
             Team — {votedCount}/{totalCount} voted
           </p>
-          <div className="mb-3 flex items-center gap-2">
-            <span className="text-xs text-gray-500">Card theme:</span>
-            <button
-              type="button"
-              onClick={() => setAvatarTheme("animals")}
-              className={[
-                "px-2 py-1 text-xs rounded border",
-                avatarTheme === "animals"
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-gray-600 border-gray-300",
-              ].join(" ")}
-            >
-              Animals
-            </button>
-            <button
-              type="button"
-              onClick={() => setAvatarTheme("heroes")}
-              className={[
-                "px-2 py-1 text-xs rounded border",
-                avatarTheme === "heroes"
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-gray-600 border-gray-300",
-              ].join(" ")}
-            >
-              Heroes
-            </button>
+          <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500">Card theme:</span>
+              <button
+                type="button"
+                onClick={() => setAvatarTheme("animals")}
+                className={[
+                  "px-2 py-1 text-xs rounded border",
+                  avatarTheme === "animals"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white text-gray-600 border-gray-300",
+                ].join(" ")}
+              >
+                Animals
+              </button>
+              <button
+                type="button"
+                onClick={() => setAvatarTheme("heroes")}
+                className={[
+                  "px-2 py-1 text-xs rounded border",
+                  avatarTheme === "heroes"
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white text-gray-600 border-gray-300",
+                ].join(" ")}
+              >
+                Heroes
+              </button>
+            </div>
+            <span className="text-xs text-gray-500">Table mode</span>
           </div>
           {participantList.length === 0 ? (
             <p className="text-sm text-gray-400">Waiting for teammates to join…</p>
           ) : (
             <motion.div
-              className="flex flex-wrap gap-4"
-              variants={STAGGER_CONTAINER}
+              className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-teal-50 p-4"
+              variants={ANIMATION_VARIANTS.fadeIn}
               initial="initial"
               animate={animationsEnabled ? "animate" : false}
+              transition={{ duration: DURATIONS.normal / 1000 }}
             >
-              {participantList.map(([uid, p]) => (
-                <motion.div
-                  key={uid}
-                  variants={STAGGER_ITEM}
-                  className="flex flex-col items-center gap-1.5"
-                >
-                  <div
-                    className={[
-                      "relative w-14 h-20 rounded-xl border-2 flex items-center justify-center text-xl font-bold transition-all",
-                      nudgedUserId === uid ? "ring-2 ring-amber-300 ring-offset-2" : "",
-                      revealed && p.vote !== null
-                        ? "bg-white border-green-400 text-gray-900 shadow"
-                        : revealed
-                          ? "bg-gray-50 border-gray-200 text-gray-400"
-                          : p.hasVoted
-                            ? "bg-blue-600 border-blue-700 text-white"
-                            : "bg-gray-100 border-gray-200 text-gray-300",
-                    ].join(" ")}
-                  >
-                    <span className="absolute -top-2 -right-2 text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center">
-                      {getAvatar(uid, avatarTheme)}
-                    </span>
-                    {revealed ? (p.vote ?? "–") : p.hasVoted ? "✓" : "·"}
-                  </div>
-                  <span className="text-xs text-gray-500 max-w-[56px] truncate text-center">
-                    {p.name}
-                    {uid === myUserId ? " (you)" : ""}
-                  </span>
-                  <span className="text-[10px] text-gray-400">
-                    {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
-                  </span>
-                  {!revealed && hasStory && uid !== myUserId && !p.hasVoted && (
-                    <button
-                      type="button"
-                      onClick={() => handleNudge(uid)}
-                      className="text-[10px] px-2 py-0.5 rounded border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+              <div className="relative mx-auto w-full max-w-[720px] h-[360px] sm:h-[420px]">
+                {/* Poker table */}
+                <div className="absolute left-1/2 top-1/2 w-[72%] h-[56%] -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border-8 border-amber-800/80 bg-gradient-to-b from-emerald-700 to-emerald-900 shadow-[inset_0_20px_40px_rgba(255,255,255,0.08),0_18px_30px_rgba(0,0,0,0.25)] z-0" />
+
+                {/* Chairs around the table */}
+                {participantList.map(([uid, p], index) => {
+                  const centerX = 50;
+                  const centerY = 50;
+                  const radiusX = 42;
+                  const radiusY = 34;
+                  const pos = getSeatPosition(index, participantList.length, centerX, centerY, radiusX, radiusY);
+                  return (
+                    <motion.div
+                      key={uid}
+                      variants={STAGGER_ITEM}
+                      initial="initial"
+                      animate={animationsEnabled ? "animate" : false}
+                      className="absolute z-10"
+                      style={{ left: `${pos.x}%`, top: `${pos.y}%`, transform: "translate(-50%, -50%)" }}
                     >
-                      Nudge
-                    </button>
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="w-20 h-3 rounded-full bg-gray-300/60" />
+                        <div
+                          className={[
+                            "relative w-16 h-16 rounded-2xl border-2 flex items-center justify-center text-lg font-bold shadow-sm transition-all",
+                            nudgedUserId === uid ? "ring-2 ring-amber-300 ring-offset-2" : "",
+                            revealed && p.vote !== null
+                              ? "bg-white border-green-400 text-gray-900"
+                              : revealed
+                                ? "bg-gray-50 border-gray-200 text-gray-400"
+                                : p.hasVoted
+                                  ? "bg-blue-600 border-blue-700 text-white"
+                                  : "bg-white border-gray-200 text-gray-300",
+                          ].join(" ")}
+                        >
+                          <span className="absolute -top-2 -right-2 text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center">
+                            {getAvatar(uid, avatarTheme)}
+                          </span>
+                          {revealed ? (p.vote ?? "–") : p.hasVoted ? "✓" : "·"}
+                        </div>
+                        <span className="text-xs text-gray-600 max-w-[90px] truncate text-center font-medium">
+                          {p.name}{uid === myUserId ? " (you)" : ""}
+                        </span>
+                        <span className="text-[10px] text-gray-500">
+                          {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
+                        </span>
+                        {!revealed && hasStory && uid !== myUserId && !p.hasVoted && (
+                          <button
+                            type="button"
+                            onClick={() => handleNudge(uid)}
+                            className="text-[10px] px-2 py-0.5 rounded-full border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+                          >
+                            Nudge
+                          </button>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+
+                {/* Center content */}
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center px-4 w-[62%] pointer-events-none z-20">
+                  <p className="text-[11px] uppercase tracking-widest text-emerald-100/90 font-semibold">Planning Table</p>
+                  <p className="text-white font-semibold mt-1 truncate">
+                    {currentStory || "Set a story to start voting"}
+                  </p>
+                  <p className="text-emerald-100 text-xs mt-1">{votedCount}/{totalCount} voted</p>
+                  {nudgeNotice && (
+                    <div className="mt-3 inline-block rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900 shadow-sm pointer-events-auto">
+                      <strong>{nudgeNotice.fromName}</strong> says: {nudgeNotice.message}
+                    </div>
                   )}
-                </motion.div>
-              ))}
+                </div>
+              </div>
             </motion.div>
           )}
         </div>
