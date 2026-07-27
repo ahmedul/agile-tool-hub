@@ -39,7 +39,7 @@ const faqItems = [
   },
   {
     question: "What point scale does this tool use?",
-    answer: "Fibonacci numbers: 1, 2, 3, 5, 8, 13, 21, and ? for uncertain or unclear estimates.",
+    answer: "Fibonacci numbers: 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, and ? for uncertain or unclear estimates.",
   },
   {
     question: "Are sessions saved?",
@@ -72,7 +72,7 @@ export default function PlanningPokerPage() {
       { name: "Create a Session", description: "Click 'Create New Session' to start a planning poker round" },
       { name: "Share the Link", description: "Copy the session URL and share it with your team members" },
       { name: "Enter Story Title", description: "Enter the story name or epic title you want to estimate" },
-      { name: "Vote Simultaneously", description: "Team members select their Fibonacci card estimate (1, 2, 3, 5, 8, 13, 21, or ?)" },
+      { name: "Vote Simultaneously", description: "Team members select their Fibonacci card estimate (1, 2, 3, 5, 8, 13, 21, 34, 55, 89, or ?)" },
       { name: "Reveal Votes", description: "Click reveal to show all estimates at once" },
       { name: "Discuss Disagreements", description: "If estimates vary widely, discuss assumptions and re-vote" },
       { name: "Reach Consensus", description: "Continue until team agrees on final estimate" },
