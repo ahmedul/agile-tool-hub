@@ -23,6 +23,33 @@ import {
 
 const ANIMAL_AVATARS = ["🐶", "🐱", "🦊", "🐼", "🐨", "🐯", "🦁", "🐸", "🐵", "🦉"] as const;
 const HERO_AVATARS = ["🦸", "🦸‍♀️", "🛡️", "⚡", "🔥", "🌟", "🧠", "🦾", "🛰️", "🕶️"] as const;
+const SEAT_ACCENTS = [
+  {
+    avatar: "border-blue-100 bg-blue-50 text-blue-700",
+    rail: "bg-blue-500",
+    voted: "from-blue-500 to-indigo-600 border-blue-700",
+  },
+  {
+    avatar: "border-rose-100 bg-rose-50 text-rose-700",
+    rail: "bg-rose-500",
+    voted: "from-rose-500 to-orange-500 border-rose-700",
+  },
+  {
+    avatar: "border-amber-100 bg-amber-50 text-amber-800",
+    rail: "bg-amber-500",
+    voted: "from-amber-400 to-yellow-500 border-amber-600",
+  },
+  {
+    avatar: "border-violet-100 bg-violet-50 text-violet-700",
+    rail: "bg-violet-500",
+    voted: "from-violet-500 to-fuchsia-600 border-violet-700",
+  },
+  {
+    avatar: "border-cyan-100 bg-cyan-50 text-cyan-700",
+    rail: "bg-cyan-500",
+    voted: "from-cyan-500 to-teal-600 border-cyan-700",
+  },
+] as const;
 const NUDGE_MESSAGES = [
   "Hurry up! Sleeping or what? 😴",
   "Your card is waiting... no pressure, only the whole team 😄",
@@ -246,6 +273,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const autoJoinedRef = useRef(false);
   const nudgeResetTimerRef = useRef<number | null>(null);
   const nudgeNoticeTimerRef = useRef<number | null>(null);
+  const nudgeMessageIndexRef = useRef(0);
   const revealCountdownTimerRef = useRef<number | null>(null);
   const soundEnabledRef = useRef(soundEnabled);
 
@@ -296,6 +324,25 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     }
   }, []);
 
+  const revealCards = useCallback(() => {
+    if (revealedRef.current) return;
+
+    clearRevealCountdownTimer();
+    setRevealCountdown(null);
+    revealedRef.current = true;
+    setRevealed(true);
+    playUiSound("reveal");
+    channelRef.current?.send({
+      type: "broadcast",
+      event: "my_vote",
+      payload: {
+        userId: userIdRef.current,
+        vote: myVoteRef.current,
+        name: myNameRef.current,
+      },
+    });
+  }, [clearRevealCountdownTimer, playUiSound]);
+
   const startRevealCountdown = useCallback(
     (startedAtMs: number, durationSeconds: number, initiatorId: string) => {
       clearRevealCountdownTimer();
@@ -308,6 +355,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           setRevealCountdown(null);
           clearRevealCountdownTimer();
           if (initiatorId === userIdRef.current) {
+            revealCards();
             channelRef.current?.send({ type: "broadcast", event: "reveal", payload: {} });
           }
           return;
@@ -319,7 +367,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       tick();
       revealCountdownTimerRef.current = window.setInterval(tick, 200);
     },
-    [clearRevealCountdownTimer],
+    [clearRevealCountdownTimer, revealCards],
   );
 
   // Check for consensus when votes are revealed
@@ -447,19 +495,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         })
         // Reveal triggered — every client (including sender via self:true) sends their actual vote
         .on("broadcast", { event: "reveal" }, () => {
-          clearRevealCountdownTimer();
-          setRevealCountdown(null);
-          setRevealed(true);
-          playUiSound("reveal");
-          channelRef.current?.send({
-            type: "broadcast",
-            event: "my_vote",
-            payload: {
-              userId: userIdRef.current,
-              vote: myVoteRef.current,
-              name: myNameRef.current,
-            },
-          });
+          revealCards();
         })
         // Actual vote (only exchanged at reveal time)
         .on("broadcast", { event: "my_vote" }, ({ payload }) => {
@@ -510,6 +546,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           const story = payload.story as string | undefined;
           const estimate = payload.estimate as Vote;
           setStories((prev) => appendStorySummary(prev, story, estimate));
+          revealedRef.current = false;
           setRevealed(false);
           setMyVote(null);
           myVoteRef.current = null;
@@ -521,6 +558,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         })
         // Re-vote for same story
         .on("broadcast", { event: "revote" }, () => {
+          revealedRef.current = false;
           setRevealed(false);
           setMyVote(null);
           myVoteRef.current = null;
@@ -546,7 +584,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
       channelRef.current = channel;
     },
-    [clearRevealCountdownTimer, playUiSound, sessionId, startRevealCountdown],
+    [playUiSound, revealCards, sessionId, startRevealCountdown],
   );
 
   // Init: stable userId + auto-rejoin from localStorage
@@ -601,12 +639,14 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     myVoteRef.current = newVote;
     // Broadcast will come back to us (self:true) and update participants state
     if (isVoted && !wasVoted) {
+      setParticipants((prev) => upsertVoted(prev, userIdRef.current, myNameRef.current));
       channelRef.current?.send({
         type: "broadcast",
         event: "voted",
         payload: { userId: userIdRef.current, name: myNameRef.current },
       });
     } else if (!isVoted && wasVoted) {
+      setParticipants((prev) => upsertUnvoted(prev, userIdRef.current, myNameRef.current));
       channelRef.current?.send({
         type: "broadcast",
         event: "unvoted",
@@ -619,18 +659,24 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     e.preventDefault();
     const name = storyInput.trim();
     if (!name) return;
+    setCurrentStory(name);
+    currentStoryRef.current = name;
+    setStoryInput(name);
     // self:true — we receive this back ourselves and update currentStory uniformly
     channelRef.current?.send({ type: "broadcast", event: "story", payload: { name } });
   };
 
   const handleReveal = () => {
     if (!currentStory.trim() || revealCountdown !== null) return;
+    const startedAtMs = Date.now();
+    const durationSeconds = 3;
+    startRevealCountdown(startedAtMs, durationSeconds, userIdRef.current);
     channelRef.current?.send({
       type: "broadcast",
       event: "reveal_countdown",
       payload: {
-        startedAtMs: Date.now(),
-        durationSeconds: 3,
+        startedAtMs,
+        durationSeconds,
         initiatorId: userIdRef.current,
       },
     });
@@ -656,7 +702,8 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
   const handleNudge = (targetId: string) => {
     if (!targetId || targetId === userIdRef.current || revealed || !hasStory) return;
-    const message = NUDGE_MESSAGES[Math.floor(Math.random() * NUDGE_MESSAGES.length)];
+    const message = NUDGE_MESSAGES[nudgeMessageIndexRef.current % NUDGE_MESSAGES.length];
+    nudgeMessageIndexRef.current += 1;
     const targetName = participants[targetId]?.name || "teammate";
     channelRef.current?.send({
       type: "broadcast",
@@ -686,6 +733,27 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const hasStory = currentStory.trim().length > 0;
   const canReveal = hasStory && (myVote !== null || votedCount > 0);
   const recommendedEstimate = deriveRecommendedEstimate(participantList.map(([, p]) => p.vote));
+  const voteProgress = totalCount === 0 ? 0 : Math.round((votedCount / totalCount) * 100);
+  const tableStatusLabel =
+    revealCountdown !== null
+      ? "Reveal countdown"
+      : revealed
+        ? "Cards revealed"
+        : !hasStory
+          ? "Waiting for story"
+          : votedCount === totalCount && totalCount > 0
+            ? "Ready to reveal"
+            : "Voting in progress";
+  const tableStatusShortLabel =
+    revealCountdown !== null
+      ? "Countdown"
+      : revealed
+        ? "Revealed"
+        : !hasStory
+          ? "Story needed"
+          : votedCount === totalCount && totalCount > 0
+            ? "Ready"
+            : "Voting";
   const totalPoints = stories
     .filter((s) => typeof s.estimate === "number")
     .reduce((acc, s) => acc + (s.estimate as number), 0);
@@ -723,7 +791,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
   // ── Main poker room ────────────────────────────────────────────
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col gap-6 xl:flex-row">
       <div className="flex-1 min-w-0 space-y-6">
         {/* Invite bar */}
         <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100 text-sm">
@@ -849,10 +917,13 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
         {/* Team */}
         <div>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
-            Team — {votedCount}/{totalCount} voted
-          </p>
-          <div className="mb-3 flex items-center justify-between gap-3 flex-wrap">
+          <div className="mb-3 flex items-end justify-between gap-3 flex-wrap">
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+                Team — {votedCount}/{totalCount} voted
+              </p>
+              <p className="mt-1 text-sm font-semibold text-gray-800">{tableStatusLabel}</p>
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500">Card theme:</span>
               <button
@@ -880,29 +951,47 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 Heroes
               </button>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">Table mode</span>
-              {seatingProfile.hint && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full border border-emerald-300 bg-emerald-100/80 text-emerald-800">
-                  {seatingProfile.hint}
-                </span>
-              )}
-            </div>
           </div>
           {participantList.length === 0 ? (
             <p className="text-sm text-gray-400">Waiting for teammates to join…</p>
           ) : (
             <motion.div
-              className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-teal-50 p-4 pb-8"
+              className="overflow-hidden rounded-2xl border border-emerald-200/80 bg-[radial-gradient(circle_at_50%_42%,#f7fffb_0%,#ecfdf5_42%,#dff7ec_100%)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_18px_50px_rgba(15,118,110,0.12)]"
               variants={ANIMATION_VARIANTS.fadeInUp}
               initial="initial"
               animate={animationsEnabled ? "animate" : false}
               transition={{ duration: DURATIONS.normal / 1000 }}
             >
-              <div className={["relative mx-auto w-full max-w-[760px] overflow-visible", seatingProfile.containerClass].join(" ")}>
+              <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-white/80 bg-white/70 px-3 py-2 shadow-sm">
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-700">Current table</p>
+                  <p className="truncate text-sm font-semibold text-gray-900">
+                    {currentStory || "Set a story to start voting"}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  {seatingProfile.hint && (
+                    <span className="hidden rounded-full border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 sm:inline-flex">
+                      {seatingProfile.hint}
+                    </span>
+                  )}
+                  <span className="rounded-full bg-gray-900 px-2.5 py-1 text-[11px] font-bold text-white">
+                    {voteProgress}%
+                  </span>
+                </div>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/80">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 transition-all duration-500"
+                  style={{ width: `${voteProgress}%` }}
+                />
+              </div>
+
+              <div className={["relative mx-auto mt-4 w-full max-w-[760px] overflow-visible", seatingProfile.containerClass].join(" ")}>
+                <div className="absolute inset-x-4 top-1/2 h-20 -translate-y-1/2 rounded-full bg-emerald-950/10 blur-2xl" />
                 {/* Poker table */}
                 <div
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border-[10px] border-amber-800/90 bg-gradient-to-b from-emerald-700 via-emerald-800 to-emerald-900 shadow-[inset_0_20px_40px_rgba(255,255,255,0.08),0_22px_36px_rgba(0,0,0,0.28)] z-0"
+                  className="absolute left-1/2 z-0 -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border-[12px] border-amber-900 bg-gradient-to-br from-emerald-600 via-emerald-800 to-teal-950 shadow-[inset_0_22px_42px_rgba(255,255,255,0.12),inset_0_-18px_30px_rgba(0,0,0,0.18),0_30px_42px_rgba(15,23,42,0.24)]"
                   style={{
                     top: `${seatingProfile.centerY}%`,
                     width: `${seatingProfile.tableWidth}%`,
@@ -910,16 +999,52 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   }}
                 />
                 <div
-                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border border-emerald-500/40 z-0"
+                  className="absolute left-1/2 z-0 -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border border-white/10 bg-[radial-gradient(circle_at_50%_20%,rgba(255,255,255,0.14),transparent_42%)]"
                   style={{
                     top: `${seatingProfile.centerY}%`,
                     width: `${seatingProfile.innerWidth}%`,
                     height: `${seatingProfile.innerHeight}%`,
                   }}
                 />
+                <div
+                  className="absolute left-1/2 z-0 h-[12%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-300/15"
+                  style={{
+                    top: `${seatingProfile.centerY}%`,
+                    width: `${Math.max(seatingProfile.innerWidth - 12, 28)}%`,
+                  }}
+                />
+                <div
+                  className="absolute left-1/2 z-0 h-[6%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-300/10"
+                  style={{
+                    top: `${seatingProfile.centerY}%`,
+                    width: `${Math.max(seatingProfile.innerWidth - 24, 18)}%`,
+                  }}
+                />
+                <div
+                  className="absolute left-[34%] z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 border-amber-200 bg-amber-100 text-xs font-black text-amber-900 shadow"
+                  style={{ top: `calc(${seatingProfile.centerY}% - ${seatingProfile.tableHeight / 2}% + 16px)` }}
+                  title="Dealer"
+                >
+                  D
+                </div>
+                <div
+                  className="absolute left-[18%] z-10 h-5 w-5 rounded-full border-2 border-white bg-blue-500 shadow-md"
+                  style={{ top: `calc(${seatingProfile.centerY}% + ${seatingProfile.tableHeight / 2}% - 32px)` }}
+                />
+                <div
+                  className="absolute left-[21%] z-10 h-5 w-5 rounded-full border-2 border-white bg-rose-500 shadow-md"
+                  style={{ top: `calc(${seatingProfile.centerY}% + ${seatingProfile.tableHeight / 2}% - 24px)` }}
+                />
+                <div
+                  className="absolute right-[19%] z-10 h-5 w-5 rounded-full border-2 border-white bg-yellow-400 shadow-md"
+                  style={{ top: `calc(${seatingProfile.centerY}% - ${seatingProfile.tableHeight / 2}% + 36px)` }}
+                />
 
                 {/* Chairs around the table */}
                 {seatList.map(([uid, p], index) => {
+                  const isMe = uid === myUserId;
+                  const seatAccent = SEAT_ACCENTS[index % SEAT_ACCENTS.length];
+                  const seatStatus = revealed ? "revealed" : p.hasVoted ? "voted" : "waiting";
                   const centerX = 50;
                   const seat = getSeatPosition(
                     index,
@@ -949,6 +1074,44 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                       : { minX: 6, maxX: 94, minY: 10, maxY: 92 };
                   const posX = clampPercent(rawX, bounds.minX, bounds.maxX);
                   const posY = clampPercent(rawY, bounds.minY, bounds.maxY);
+                  const placeMetaAbove = posY < seatingProfile.centerY - 10;
+                  const playerMeta = (
+                    <>
+                      {nudgeNotice && nudgeNotice.targetId === uid && (
+                        <span className={["rounded-full border border-amber-300 bg-amber-100 px-2 py-0.5 font-semibold text-amber-900 shadow-sm", seatingProfile.compactSeats ? "text-[9px]" : "text-[10px]"].join(" ")}>
+                          nudged by {nudgeNotice.fromName}
+                        </span>
+                      )}
+                      <span
+                        title={p.name}
+                        className={[
+                          "truncate rounded-full bg-white/85 px-2 py-0.5 text-center font-semibold text-gray-800 shadow-sm",
+                          isMe ? "ring-2 ring-blue-200" : "",
+                          seatingProfile.compactSeats ? "max-w-[78px] text-[10px] leading-tight" : "max-w-[120px] text-xs",
+                        ].join(" ")}
+                      >
+                        {p.name}{isMe ? " (you)" : ""}
+                      </span>
+                      {!seatingProfile.compactMeta && (
+                        <span className="rounded-full bg-white/60 px-1.5 text-[10px] font-medium text-gray-500">
+                          {seatStatus}
+                        </span>
+                      )}
+                      {!revealed && hasStory && !isMe && !p.hasVoted && (
+                        <button
+                          type="button"
+                          aria-label={`Nudge ${p.name} to vote`}
+                          onClick={() => handleNudge(uid)}
+                          className={[
+                            "rounded-full border border-amber-300 bg-amber-50 text-amber-700 transition-colors hover:bg-amber-100",
+                            seatingProfile.compactSeats ? "px-1.5 py-0.5 text-[9px]" : "px-2 py-0.5 text-[10px]",
+                          ].join(" ")}
+                        >
+                          Nudge
+                        </button>
+                      )}
+                    </>
+                  );
                   return (
                     <motion.div
                       key={uid}
@@ -958,57 +1121,46 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                       className="absolute z-10"
                       style={{ left: `${posX}%`, top: `${posY}%`, transform: "translate(-50%, -50%)" }}
                     >
-                      <div className={["flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
-                        <div className={["rounded-full bg-gray-400/55", seatingProfile.compactSeats ? "w-16 h-2" : "w-20 h-3"].join(" ")} />
+                      <div className={["relative flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1.5"].join(" ")}>
+                        <div className="absolute top-8 h-16 w-20 rounded-full bg-slate-900/10 blur-xl" />
+                        {placeMetaAbove && (
+                          <div className={["relative z-20 flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
+                            {playerMeta}
+                          </div>
+                        )}
                         <div
                           className={[
-                            "relative rounded-2xl border-2 flex items-center justify-center font-bold shadow-sm transition-all",
-                            seatingProfile.compactSeats ? "w-14 h-14 text-base" : "w-16 h-16 text-lg",
-                            nudgedUserId === uid ? "ring-2 ring-amber-300 ring-offset-2" : "",
+                            "rounded-t-full border border-slate-300/80 bg-gradient-to-b from-slate-100 to-slate-300 shadow-sm",
+                            seatingProfile.compactSeats ? "h-2 w-14" : "h-2.5 w-[72px]",
+                          ].join(" ")}
+                        />
+                        <div
+                          className={[
+                            "relative flex items-center justify-center rounded-xl border-2 font-black shadow-lg transition-all",
+                            seatingProfile.compactSeats ? "h-14 w-11 text-base" : "h-[70px] w-14 text-lg",
+                            nudgedUserId === uid ? "ring-4 ring-amber-300 ring-offset-2 ring-offset-emerald-50" : "",
                             revealed && p.vote !== null
-                              ? "bg-white border-green-400 text-gray-900"
+                              ? "border-emerald-400 bg-white text-gray-950 shadow-emerald-900/10"
                               : revealed
-                                ? "bg-gray-50 border-gray-200 text-gray-400"
+                                ? "border-gray-200 bg-gray-50 text-gray-400"
                                 : p.hasVoted
-                                  ? "bg-blue-600 border-blue-700 text-white"
-                                  : "bg-white border-gray-200 text-gray-300",
+                                  ? `bg-gradient-to-br text-white ${seatAccent.voted}`
+                                  : "border-gray-200 bg-white text-gray-300",
                           ].join(" ")}
                         >
-                          <span className="absolute -top-2 -right-2 text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center">
+                          <span className={["absolute left-2 top-2 h-1.5 w-7 rounded-full", seatAccent.rail].join(" ")} />
+                          <span className={["absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full border text-sm shadow", seatAccent.avatar].join(" ")}>
                             {getAvatar(uid, avatarTheme)}
                           </span>
-                          {revealed ? (p.vote ?? "–") : p.hasVoted ? "✓" : "·"}
+                          <span>{revealed ? (p.vote ?? "–") : p.hasVoted ? "✓" : "·"}</span>
+                          {!revealed && p.hasVoted && (
+                            <span className="absolute bottom-1 h-1 w-8 rounded-full bg-white/45" />
+                          )}
                         </div>
-                        {nudgeNotice && nudgeNotice.targetId === uid && (
-                          <span className={["px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-800", seatingProfile.compactSeats ? "text-[9px]" : "text-[10px]"].join(" ")}>
-                            nudged by {nudgeNotice.fromName}
-                          </span>
-                        )}
-                        <span
-                          title={p.name}
-                          className={[
-                          "text-gray-700 truncate text-center font-semibold",
-                          seatingProfile.compactSeats ? "text-[10px] leading-tight max-w-[78px]" : "text-xs max-w-[110px]",
-                        ].join(" ")}
-                        >
-                          {p.name}{uid === myUserId ? " (you)" : ""}
-                        </span>
-                        {!seatingProfile.compactMeta && (
-                          <span className="text-[10px] text-gray-500">
-                            {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
-                          </span>
-                        )}
-                        {!revealed && hasStory && uid !== myUserId && !p.hasVoted && (
-                          <button
-                            type="button"
-                            onClick={() => handleNudge(uid)}
-                            className={[
-                              "rounded-full border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors",
-                              seatingProfile.compactSeats ? "text-[9px] px-1.5 py-0.5" : "text-[10px] px-2 py-0.5",
-                            ].join(" ")}
-                          >
-                            Nudge
-                          </button>
+                        {!placeMetaAbove && (
+                          <div className={["relative z-20 flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
+                            {playerMeta}
+                          </div>
                         )}
                       </div>
                     </motion.div>
@@ -1016,19 +1168,25 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 })}
 
                 {/* Center content */}
-                <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center px-4 w-[62%] pointer-events-none z-20" style={{ top: `${seatingProfile.centerY}%` }}>
-                  <p className="text-[11px] uppercase tracking-widest text-emerald-100/90 font-semibold">Planning Table</p>
-                  <p className="text-white font-semibold mt-1 truncate">
+                <div className="pointer-events-none absolute left-1/2 z-20 w-[62%] -translate-x-1/2 -translate-y-1/2 px-4 text-center" style={{ top: `${seatingProfile.centerY}%` }}>
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-emerald-100/90">Planning Table</p>
+                  <p className="mt-1 truncate text-sm font-black text-white drop-shadow-sm sm:text-lg">
                     {currentStory || "Set a story to start voting"}
                   </p>
-                  <p className="text-emerald-100 text-xs mt-1">{votedCount}/{totalCount} voted</p>
+                  <div className="mx-auto mt-3 flex max-w-[220px] items-center justify-center gap-1.5 rounded-full border border-white/10 bg-black/15 px-2.5 py-1 text-[10px] font-semibold text-emerald-50 sm:gap-2 sm:px-3 sm:text-xs">
+                    <span className="sm:hidden">{votedCount}/{totalCount}</span>
+                    <span className="hidden sm:inline">{votedCount}/{totalCount} voted</span>
+                    <span className="h-1 w-1 rounded-full bg-emerald-200" />
+                    <span className="sm:hidden">{tableStatusShortLabel}</span>
+                    <span className="hidden sm:inline">{tableStatusLabel}</span>
+                  </div>
                   {revealCountdown !== null && (
-                    <div className="mt-2 inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/90 text-emerald-800 text-2xl font-black shadow">
+                    <div className="mt-3 inline-flex h-14 w-14 items-center justify-center rounded-full border-4 border-emerald-200 bg-white text-3xl font-black text-emerald-900 shadow-xl">
                       {revealCountdown}
                     </div>
                   )}
                   {nudgeNotice && (
-                    <div className="mt-3 inline-block rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900 shadow-sm pointer-events-auto">
+                    <div className="pointer-events-auto mt-3 inline-block rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900 shadow-sm">
                       <strong>{nudgeNotice.fromName}</strong> nudged <strong>{nudgeNotice.targetName}</strong>: {nudgeNotice.message}
                     </div>
                   )}
@@ -1043,7 +1201,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           <button
             onClick={handleReveal}
             disabled={!canReveal || revealCountdown !== null}
-            className="px-8 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-8 py-3 font-semibold text-white shadow-lg shadow-emerald-900/15 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-emerald-900/20 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
           >
             {!hasStory
               ? "Set story first…"
@@ -1057,62 +1215,96 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           </button>
         ) : (
           <div className="space-y-4">
-            <div className="p-5 bg-white rounded-xl border border-gray-200">
-              <p className="text-sm font-semibold text-gray-700 mb-4">Results</p>
-              <div className="flex flex-wrap gap-6">
-                {participantList.map(([uid, p]) => (
-                  <div key={uid} className="text-center">
-                    <div className="text-3xl font-bold text-gray-900">{p.vote ?? "–"}</div>
-                    <div className="text-xs text-gray-400 mt-0.5">{p.name}</div>
-                  </div>
-                ))}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">Results</p>
+                  <p className="mt-1 truncate text-sm font-semibold text-gray-900">
+                    {currentStory || "Current story"}
+                  </p>
+                </div>
+                <div className="shrink-0 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-right">
+                  <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">Suggested</p>
+                  <p className="text-xl font-black text-emerald-950">{recommendedEstimate ?? "–"}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                {participantList.map(([uid, p], index) => {
+                  const isMe = uid === myUserId;
+                  const seatAccent = SEAT_ACCENTS[index % SEAT_ACCENTS.length];
+                  return (
+                    <div key={uid} className="rounded-xl border border-gray-200 bg-gray-50/80 p-3">
+                      <div className="mb-3 flex items-center gap-2">
+                        <span className={["flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-base shadow-sm", seatAccent.avatar].join(" ")}>
+                          {getAvatar(uid, avatarTheme)}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-semibold text-gray-800">
+                            {p.name}{isMe ? " (you)" : ""}
+                          </p>
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400">revealed</p>
+                        </div>
+                      </div>
+                      <div className="flex h-16 items-center justify-center rounded-lg border border-white bg-white text-3xl font-black text-gray-950 shadow-sm">
+                        {p.vote ?? "–"}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm text-gray-600 font-medium shrink-0">Final estimate:</span>
-              <div className="flex gap-1.5 flex-wrap">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <span className="text-sm font-semibold text-gray-800">Final estimate</span>
+                <span className="text-xs text-gray-500">
+                  {finalEstimate !== null
+                    ? `Selected: ${finalEstimate}`
+                    : recommendedEstimate !== null
+                      ? `Suggested: ${recommendedEstimate}`
+                      : "Choose an estimate"}
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
                 {PLANNING_POKER_CARDS.map((card) => (
                   <button
                     key={card}
+                    type="button"
                     onClick={() => setFinalEstimate(finalEstimate === card ? null : card)}
                     className={[
-                      "px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors",
+                      "min-w-10 rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors",
                       finalEstimate === card
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white text-gray-700 border-gray-300 hover:border-blue-400",
+                        ? "border-blue-600 bg-blue-600 text-white shadow-sm"
+                        : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50",
                     ].join(" ")}
                   >
                     {card}
                   </button>
                 ))}
               </div>
-              <button
-                onClick={handleRevote}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors shrink-0"
-              >
-                Re-vote
-              </button>
-              <button
-                onClick={handleNextStory}
-                disabled={!currentStory.trim()}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shrink-0"
-              >
-                Next Story →
-              </button>
-              <span className="text-xs text-gray-500">
-                {finalEstimate !== null
-                  ? `Using selected: ${finalEstimate}`
-                  : recommendedEstimate !== null
-                    ? `Auto estimate (highest): ${recommendedEstimate}`
-                    : "Select an estimate or reveal votes"}
-              </span>
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleRevote}
+                  className="shrink-0 rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                >
+                  Re-vote
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextStory}
+                  disabled={!currentStory.trim()}
+                  className="shrink-0 rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Next Story →
+                </button>
+              </div>
             </div>
           </div>
         )}
       </div>
 
       {/* Right sidebar */}
-      <aside className="w-64 shrink-0">
+      <aside className="w-full shrink-0 xl:w-64">
         <div className="bg-white rounded-2xl border border-gray-200 flex flex-col sticky top-6">
           <div className="px-4 py-3 border-b border-gray-100">
             <p className="font-semibold text-gray-900 text-sm">Session Log</p>
