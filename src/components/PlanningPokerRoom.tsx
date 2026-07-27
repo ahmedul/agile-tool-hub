@@ -47,11 +47,138 @@ function getAvatar(uid: string, theme: AvatarTheme): string {
 }
 
 function getSeatPosition(index: number, total: number, centerX: number, centerY: number, radiusX: number, radiusY: number) {
+  if (total === 1) {
+    return { x: centerX, y: centerY - Math.max(radiusY, 38) };
+  }
+
   const safeTotal = Math.max(total, 1);
-  const angle = (-Math.PI / 2) + ((2 * Math.PI * index) / safeTotal);
+  // For 2 players, left/right seating feels more natural than top/bottom.
+  const startAngle = safeTotal === 2 ? 0 : -Math.PI / 2;
+  const angle = startAngle + ((2 * Math.PI * index) / safeTotal);
   return {
     x: centerX + Math.cos(angle) * radiusX,
     y: centerY + Math.sin(angle) * radiusY,
+  };
+}
+
+function getSeatingProfile(total: number) {
+  const safeTotal = Math.max(total, 1);
+
+  if (safeTotal === 1) {
+    return {
+      centerY: 52,
+      radiusX: 0,
+      radiusY: 38,
+      outward: 11,
+      tableWidth: 60,
+      tableHeight: 44,
+      innerWidth: 52,
+      innerHeight: 36,
+      compactSeats: false,
+      compactMeta: false,
+      containerClass: "h-[420px] sm:h-[470px]",
+      hint: "Solo mode",
+    };
+  }
+
+  if (safeTotal === 2) {
+    return {
+      centerY: 52,
+      radiusX: 42,
+      radiusY: 0,
+      outward: 10,
+      tableWidth: 60,
+      tableHeight: 44,
+      innerWidth: 52,
+      innerHeight: 36,
+      compactSeats: false,
+      compactMeta: false,
+      containerClass: "h-[430px] sm:h-[480px]",
+      hint: "Face-off mode",
+    };
+  }
+
+  if (safeTotal <= 4) {
+    return {
+      centerY: 52,
+      radiusX: 45,
+      radiusY: 36,
+      outward: 9,
+      tableWidth: 64,
+      tableHeight: 46,
+      innerWidth: 56,
+      innerHeight: 38,
+      compactSeats: false,
+      compactMeta: false,
+      containerClass: "h-[430px] sm:h-[480px]",
+      hint: null,
+    };
+  }
+
+  if (safeTotal <= 6) {
+    return {
+      centerY: 52,
+      radiusX: 46,
+      radiusY: 38,
+      outward: 8,
+      tableWidth: 66,
+      tableHeight: 48,
+      innerWidth: 58,
+      innerHeight: 40,
+      compactSeats: false,
+      compactMeta: false,
+      containerClass: "h-[440px] sm:h-[495px]",
+      hint: null,
+    };
+  }
+
+  if (safeTotal <= 8) {
+    return {
+      centerY: 52,
+      radiusX: 47,
+      radiusY: 40,
+      outward: 7,
+      tableWidth: 67,
+      tableHeight: 49,
+      innerWidth: 59,
+      innerHeight: 41,
+      compactSeats: false,
+      compactMeta: false,
+      containerClass: "h-[450px] sm:h-[510px]",
+      hint: null,
+    };
+  }
+
+  if (safeTotal <= 10) {
+    return {
+      centerY: 53,
+      radiusX: 47,
+      radiusY: 42,
+      outward: 5,
+      tableWidth: 62,
+      tableHeight: 44,
+      innerWidth: 54,
+      innerHeight: 36,
+      compactSeats: true,
+      compactMeta: true,
+      containerClass: "h-[470px] sm:h-[540px]",
+      hint: `Dense mode (${safeTotal} players)`,
+    };
+  }
+
+  return {
+    centerY: 53,
+    radiusX: 48,
+    radiusY: 43,
+    outward: 4,
+    tableWidth: 60,
+    tableHeight: 42,
+    innerWidth: 52,
+    innerHeight: 34,
+    compactSeats: true,
+    compactMeta: true,
+    containerClass: "h-[490px] sm:h-[560px]",
+    hint: `High density (${safeTotal} players)`,
   };
 }
 
@@ -91,7 +218,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       : `agiletoolhub.com/tools/planning-poker/${shortSessionId}`;
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState("");
-  const [nudgeNotice, setNudgeNotice] = useState<{ fromName: string; message: string } | null>(null);
+  const [nudgeNotice, setNudgeNotice] = useState<{ fromName: string; targetName: string; targetId: string; message: string } | null>(null);
   const [nudgedUserId, setNudgedUserId] = useState<string | null>(null);
   const [revealCountdown, setRevealCountdown] = useState<number | null>(null);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
@@ -344,6 +471,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           const { targetId, fromName } = payload as {
             targetId?: string;
             fromName?: string;
+            targetName?: string;
             message?: string;
           };
           if (!targetId) return;
@@ -356,18 +484,21 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             setNudgedUserId((prev) => (prev === targetId ? null : prev));
           }, 3500);
 
+          setNudgeNotice({
+            fromName: fromName ?? "A teammate",
+            targetName: payload.targetName ?? "teammate",
+            targetId,
+            message: payload.message ?? "Hurry up! Sleeping or what? 😴",
+          });
+          if (nudgeNoticeTimerRef.current !== null) {
+            window.clearTimeout(nudgeNoticeTimerRef.current);
+          }
+          nudgeNoticeTimerRef.current = window.setTimeout(() => {
+            setNudgeNotice(null);
+          }, 4500);
+
           if (targetId === userIdRef.current) {
-            setNudgeNotice({
-              fromName: fromName ?? "A teammate",
-              message: payload.message ?? "Hurry up! Sleeping or what? 😴",
-            });
             playUiSound("nudge");
-            if (nudgeNoticeTimerRef.current !== null) {
-              window.clearTimeout(nudgeNoticeTimerRef.current);
-            }
-            nudgeNoticeTimerRef.current = window.setTimeout(() => {
-              setNudgeNotice(null);
-            }, 4500);
           }
         })
         // Next round — resets all state for everyone
@@ -522,12 +653,14 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const handleNudge = (targetId: string) => {
     if (!targetId || targetId === userIdRef.current || revealed || !hasStory) return;
     const message = NUDGE_MESSAGES[Math.floor(Math.random() * NUDGE_MESSAGES.length)];
+    const targetName = participants[targetId]?.name || "teammate";
     channelRef.current?.send({
       type: "broadcast",
       event: "nudge",
       payload: {
         targetId,
         fromName: myNameRef.current || "A teammate",
+        targetName,
         message,
       },
     });
@@ -536,6 +669,16 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const participantList = Object.entries(participants);
   const votedCount = participantList.filter(([, p]) => p.hasVoted).length;
   const totalCount = participantList.length;
+  const seatingProfile = getSeatingProfile(totalCount);
+  const isDenseLayout = totalCount > 8;
+  const mySeatSourceIndex = participantList.findIndex(([uid]) => uid === myUserId);
+  const targetSeatIndex = totalCount >= 3 ? Math.floor(totalCount / 2) : 0;
+  const seatList = totalCount >= 3 && mySeatSourceIndex >= 0
+    ? participantList.map((_, seatIndex) => {
+        const sourceIndex = (seatIndex + mySeatSourceIndex - targetSeatIndex + totalCount) % totalCount;
+        return participantList[sourceIndex];
+      })
+    : participantList;
   const hasStory = currentStory.trim().length > 0;
   const canReveal = hasStory && (myVote !== null || votedCount > 0);
   const recommendedEstimate = deriveRecommendedEstimate(participantList.map(([, p]) => p.vote));
@@ -733,29 +876,66 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 Heroes
               </button>
             </div>
-            <span className="text-xs text-gray-500">Table mode</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-500">Table mode</span>
+              {seatingProfile.hint && (
+                <span className="text-[10px] px-2 py-0.5 rounded-full border border-emerald-300 bg-emerald-100/80 text-emerald-800">
+                  {seatingProfile.hint}
+                </span>
+              )}
+            </div>
           </div>
           {participantList.length === 0 ? (
             <p className="text-sm text-gray-400">Waiting for teammates to join…</p>
           ) : (
             <motion.div
-              className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-teal-50 p-4"
+              className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50 to-teal-50 p-4 pb-8"
               variants={ANIMATION_VARIANTS.fadeInUp}
               initial="initial"
               animate={animationsEnabled ? "animate" : false}
               transition={{ duration: DURATIONS.normal / 1000 }}
             >
-              <div className="relative mx-auto w-full max-w-[720px] h-[360px] sm:h-[420px]">
+              <div className={["relative mx-auto w-full max-w-[760px] overflow-visible", seatingProfile.containerClass].join(" ")}>
                 {/* Poker table */}
-                <div className="absolute left-1/2 top-1/2 w-[72%] h-[56%] -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border-8 border-amber-800/80 bg-gradient-to-b from-emerald-700 to-emerald-900 shadow-[inset_0_20px_40px_rgba(255,255,255,0.08),0_18px_30px_rgba(0,0,0,0.25)] z-0" />
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border-[10px] border-amber-800/90 bg-gradient-to-b from-emerald-700 via-emerald-800 to-emerald-900 shadow-[inset_0_20px_40px_rgba(255,255,255,0.08),0_22px_36px_rgba(0,0,0,0.28)] z-0"
+                  style={{
+                    top: `${seatingProfile.centerY}%`,
+                    width: `${seatingProfile.tableWidth}%`,
+                    height: `${seatingProfile.tableHeight}%`,
+                  }}
+                />
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-[9999px] border border-emerald-500/40 z-0"
+                  style={{
+                    top: `${seatingProfile.centerY}%`,
+                    width: `${seatingProfile.innerWidth}%`,
+                    height: `${seatingProfile.innerHeight}%`,
+                  }}
+                />
 
                 {/* Chairs around the table */}
-                {participantList.map(([uid, p], index) => {
+                {seatList.map(([uid, p], index) => {
                   const centerX = 50;
-                  const centerY = 50;
-                  const radiusX = 42;
-                  const radiusY = 34;
-                  const pos = getSeatPosition(index, participantList.length, centerX, centerY, radiusX, radiusY);
+                  const seat = getSeatPosition(
+                    index,
+                    participantList.length,
+                    centerX,
+                    seatingProfile.centerY,
+                    seatingProfile.radiusX,
+                    seatingProfile.radiusY,
+                  );
+                  const vx = seat.x - centerX;
+                  const vy = seat.y - seatingProfile.centerY;
+                  const vlen = Math.hypot(vx, vy) || 1;
+                  const outwardX = vx / vlen;
+                  const outwardY = vy / vlen;
+                  const tangentX = -outwardY;
+                  const tangentY = outwardX;
+                  const ringBoost = isDenseLayout ? (index % 2 === 0 ? 3 : -2) : 0;
+                  const tangentShift = isDenseLayout ? (index % 2 === 0 ? 1.8 : -1.8) : 0;
+                  const posX = seat.x + outwardX * (seatingProfile.outward + ringBoost) + tangentX * tangentShift;
+                  const posY = seat.y + outwardY * (seatingProfile.outward + ringBoost) + tangentY * tangentShift;
                   return (
                     <motion.div
                       key={uid}
@@ -763,13 +943,14 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                       initial="initial"
                       animate={animationsEnabled ? "animate" : false}
                       className="absolute z-10"
-                      style={{ left: `${pos.x}%`, top: `${pos.y}%`, transform: "translate(-50%, -50%)" }}
+                      style={{ left: `${posX}%`, top: `${posY}%`, transform: "translate(-50%, -50%)" }}
                     >
-                      <div className="flex flex-col items-center gap-1">
-                        <div className="w-20 h-3 rounded-full bg-gray-300/60" />
+                      <div className={["flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
+                        <div className={["rounded-full bg-gray-400/55", seatingProfile.compactSeats ? "w-16 h-2" : "w-20 h-3"].join(" ")} />
                         <div
                           className={[
-                            "relative w-16 h-16 rounded-2xl border-2 flex items-center justify-center text-lg font-bold shadow-sm transition-all",
+                            "relative rounded-2xl border-2 flex items-center justify-center font-bold shadow-sm transition-all",
+                            seatingProfile.compactSeats ? "w-14 h-14 text-base" : "w-16 h-16 text-lg",
                             nudgedUserId === uid ? "ring-2 ring-amber-300 ring-offset-2" : "",
                             revealed && p.vote !== null
                               ? "bg-white border-green-400 text-gray-900"
@@ -785,17 +966,33 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                           </span>
                           {revealed ? (p.vote ?? "–") : p.hasVoted ? "✓" : "·"}
                         </div>
-                        <span className="text-xs text-gray-600 max-w-[90px] truncate text-center font-medium">
+                        {nudgeNotice && nudgeNotice.targetId === uid && (
+                          <span className={["px-2 py-0.5 rounded-full bg-amber-100 border border-amber-300 text-amber-800", seatingProfile.compactSeats ? "text-[9px]" : "text-[10px]"].join(" ")}>
+                            nudged by {nudgeNotice.fromName}
+                          </span>
+                        )}
+                        <span
+                          title={p.name}
+                          className={[
+                          "text-gray-700 truncate text-center font-semibold",
+                          seatingProfile.compactSeats ? "text-[10px] leading-tight max-w-[78px]" : "text-xs max-w-[110px]",
+                        ].join(" ")}
+                        >
                           {p.name}{uid === myUserId ? " (you)" : ""}
                         </span>
-                        <span className="text-[10px] text-gray-500">
-                          {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
-                        </span>
+                        {!seatingProfile.compactMeta && (
+                          <span className="text-[10px] text-gray-500">
+                            {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
+                          </span>
+                        )}
                         {!revealed && hasStory && uid !== myUserId && !p.hasVoted && (
                           <button
                             type="button"
                             onClick={() => handleNudge(uid)}
-                            className="text-[10px] px-2 py-0.5 rounded-full border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+                            className={[
+                              "rounded-full border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors",
+                              seatingProfile.compactSeats ? "text-[9px] px-1.5 py-0.5" : "text-[10px] px-2 py-0.5",
+                            ].join(" ")}
                           >
                             Nudge
                           </button>
@@ -806,7 +1003,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 })}
 
                 {/* Center content */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center px-4 w-[62%] pointer-events-none z-20">
+                <div className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 text-center px-4 w-[62%] pointer-events-none z-20" style={{ top: `${seatingProfile.centerY}%` }}>
                   <p className="text-[11px] uppercase tracking-widest text-emerald-100/90 font-semibold">Planning Table</p>
                   <p className="text-white font-semibold mt-1 truncate">
                     {currentStory || "Set a story to start voting"}
@@ -819,7 +1016,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   )}
                   {nudgeNotice && (
                     <div className="mt-3 inline-block rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900 shadow-sm pointer-events-auto">
-                      <strong>{nudgeNotice.fromName}</strong> says: {nudgeNotice.message}
+                      <strong>{nudgeNotice.fromName}</strong> nudged <strong>{nudgeNotice.targetName}</strong>: {nudgeNotice.message}
                     </div>
                   )}
                 </div>
