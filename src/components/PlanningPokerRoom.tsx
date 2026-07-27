@@ -61,11 +61,10 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   });
   const [finalEstimate, setFinalEstimate] = useState<Vote>(null);
   const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
-  const [sessionUrl] = useState(() =>
+  const sessionUrl =
     typeof window !== "undefined"
-      ? window.location.href
-      : `https://agiletoolhub.com/tools/planning-poker/${sessionId}`,
-  );
+      ? `${window.location.origin}/tools/planning-poker/${sessionId}`
+      : `https://agiletoolhub.com/tools/planning-poker/${sessionId}`;
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState("");
   const [myUserId] = useState(() =>
@@ -405,8 +404,8 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         {/* Invite bar */}
         <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100 text-sm">
           <span className="text-blue-700 font-medium shrink-0">Invite:</span>
-          <span className="text-blue-600 truncate flex-1 font-mono text-xs">{sessionUrl}</span>
-          <CopyButton text={sessionUrl} />
+          <span title={sessionUrl} className="text-blue-600 flex-1 font-mono text-xs break-all leading-relaxed">{sessionUrl}</span>
+          <CopyButton text={sessionUrl} label="Copy Invite" eventName="invite_copy" eventParams={{ tool: "planning_poker" }} />
           <span
             className={[
               "shrink-0 text-xs px-2 py-0.5 rounded-full font-medium",
