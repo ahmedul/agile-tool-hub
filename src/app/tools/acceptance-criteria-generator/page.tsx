@@ -7,8 +7,8 @@ import JsonLd from "@/components/JsonLd";
 import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Free Acceptance Criteria Generator — Gherkin & Checklist in Seconds",
-  description: "Generate testable acceptance criteria in Given/When/Then (Gherkin) or checklist format instantly. No login. AI-powered, with quality scoring for teams using Jira or Linear.",
+  title: "Acceptance Criteria Generator (Free) for Jira + Gherkin Examples",
+  description: "Generate acceptance criteria in Given/When/Then or checklist format for Jira tickets. Free tool with examples, quality checks, and no login required.",
   keywords: KEYWORDS.acceptanceCriteria,
   canonical: "https://agiletoolhub.com/tools/acceptance-criteria-generator",
 });
