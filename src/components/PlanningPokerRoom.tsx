@@ -93,6 +93,12 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const [celebrationMessage, setCelebrationMessage] = useState("");
   const [nudgeNotice, setNudgeNotice] = useState<{ fromName: string; message: string } | null>(null);
   const [nudgedUserId, setNudgedUserId] = useState<string | null>(null);
+  const [revealCountdown, setRevealCountdown] = useState<number | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const saved = localStorage.getItem("pp_sound_enabled");
+    return saved === null ? true : saved === "true";
+  });
   const [myUserId] = useState(() =>
     typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
@@ -109,10 +115,81 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const autoJoinedRef = useRef(false);
   const nudgeResetTimerRef = useRef<number | null>(null);
   const nudgeNoticeTimerRef = useRef<number | null>(null);
+  const revealCountdownTimerRef = useRef<number | null>(null);
+  const soundEnabledRef = useRef(soundEnabled);
 
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
   useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
   useEffect(() => { revealedRef.current = revealed; }, [revealed]);
+  useEffect(() => {
+    soundEnabledRef.current = soundEnabled;
+    localStorage.setItem("pp_sound_enabled", String(soundEnabled));
+  }, [soundEnabled]);
+
+  const playUiSound = useCallback((kind: "nudge" | "reveal") => {
+    if (!soundEnabledRef.current || typeof window === "undefined") return;
+    try {
+      type WebkitAudioWindow = Window & { webkitAudioContext?: typeof AudioContext };
+      const audioWindow = window as WebkitAudioWindow;
+      const AudioCtor = window.AudioContext ?? audioWindow.webkitAudioContext;
+      if (!AudioCtor) return;
+
+      const audioContext = new AudioCtor();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      if (kind === "nudge") {
+        oscillator.frequency.value = 720;
+        gainNode.gain.setValueAtTime(0.16, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.14);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.14);
+      } else {
+        oscillator.frequency.value = 880;
+        gainNode.gain.setValueAtTime(0.22, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.22);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.22);
+      }
+    } catch {
+      // Silent fallback if audio is blocked.
+    }
+  }, []);
+
+  const clearRevealCountdownTimer = useCallback(() => {
+    if (revealCountdownTimerRef.current !== null) {
+      window.clearInterval(revealCountdownTimerRef.current);
+      revealCountdownTimerRef.current = null;
+    }
+  }, []);
+
+  const startRevealCountdown = useCallback(
+    (startedAtMs: number, durationSeconds: number, initiatorId: string) => {
+      clearRevealCountdownTimer();
+
+      const tick = () => {
+        const elapsed = Math.floor((Date.now() - startedAtMs) / 1000);
+        const remaining = Math.max(0, durationSeconds - elapsed);
+
+        if (remaining <= 0) {
+          setRevealCountdown(null);
+          clearRevealCountdownTimer();
+          if (initiatorId === userIdRef.current) {
+            channelRef.current?.send({ type: "broadcast", event: "reveal", payload: {} });
+          }
+          return;
+        }
+
+        setRevealCountdown(remaining);
+      };
+
+      tick();
+      revealCountdownTimerRef.current = window.setInterval(tick, 200);
+    },
+    [clearRevealCountdownTimer],
+  );
 
   // Check for consensus when votes are revealed
   useEffect(() => {
@@ -196,6 +273,16 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           setCurrentStory(name);
           setStoryInput(name);
         })
+        // Starts a synchronized 3..2..1 reveal countdown.
+        .on("broadcast", { event: "reveal_countdown" }, ({ payload }) => {
+          const { startedAtMs, durationSeconds, initiatorId } = payload as {
+            startedAtMs?: number;
+            durationSeconds?: number;
+            initiatorId?: string;
+          };
+          if (!startedAtMs || !durationSeconds || !initiatorId || revealedRef.current) return;
+          startRevealCountdown(startedAtMs, durationSeconds, initiatorId);
+        })
         // New client requests current room state after joining.
         .on("broadcast", { event: "request_state" }, ({ payload }) => {
           const { requesterId } = payload as { requesterId: string };
@@ -229,7 +316,10 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         })
         // Reveal triggered — every client (including sender via self:true) sends their actual vote
         .on("broadcast", { event: "reveal" }, () => {
+          clearRevealCountdownTimer();
+          setRevealCountdown(null);
           setRevealed(true);
+          playUiSound("reveal");
           channelRef.current?.send({
             type: "broadcast",
             event: "my_vote",
@@ -271,6 +361,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
               fromName: fromName ?? "A teammate",
               message: payload.message ?? "Hurry up! Sleeping or what? 😴",
             });
+            playUiSound("nudge");
             if (nudgeNoticeTimerRef.current !== null) {
               window.clearTimeout(nudgeNoticeTimerRef.current);
             }
@@ -289,6 +380,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           myVoteRef.current = null;
           setCurrentStory("");
           setStoryInput("");
+          setRevealCountdown(null);
           setFinalEstimate(null);
           setParticipants((prev) => resetVotes(prev));
         })
@@ -297,6 +389,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           setRevealed(false);
           setMyVote(null);
           myVoteRef.current = null;
+          setRevealCountdown(null);
           setFinalEstimate(null);
           setParticipants((prev) => resetVotes(prev));
         })
@@ -318,7 +411,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
       channelRef.current = channel;
     },
-    [sessionId],
+    [clearRevealCountdownTimer, playUiSound, sessionId, startRevealCountdown],
   );
 
   // Init: stable userId + auto-rejoin from localStorage
@@ -339,9 +432,10 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
 
   useEffect(() => () => {
     channelRef.current?.unsubscribe();
+    clearRevealCountdownTimer();
     if (nudgeResetTimerRef.current !== null) window.clearTimeout(nudgeResetTimerRef.current);
     if (nudgeNoticeTimerRef.current !== null) window.clearTimeout(nudgeNoticeTimerRef.current);
-  }, []);
+  }, [clearRevealCountdownTimer]);
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -395,9 +489,16 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   };
 
   const handleReveal = () => {
-    if (!currentStory.trim()) return;
-    // self:true — we receive "reveal" back, set revealed, and broadcast "my_vote"
-    channelRef.current?.send({ type: "broadcast", event: "reveal", payload: {} });
+    if (!currentStory.trim() || revealCountdown !== null) return;
+    channelRef.current?.send({
+      type: "broadcast",
+      event: "reveal_countdown",
+      payload: {
+        startedAtMs: Date.now(),
+        durationSeconds: 3,
+        initiatorId: userIdRef.current,
+      },
+    });
   };
 
   const handleNextStory = () => {
@@ -494,6 +595,21 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           >
             {connStatus === "connected" ? "● Live" : connStatus === "error" ? "● Error" : "● Connecting…"}
           </span>
+        </div>
+
+        <div className="flex items-center justify-end">
+          <button
+            type="button"
+            onClick={() => setSoundEnabled((prev) => !prev)}
+            className={[
+              "text-xs px-3 py-1.5 rounded-full border transition-colors",
+              soundEnabled
+                ? "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                : "bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100",
+            ].join(" ")}
+          >
+            {soundEnabled ? "🔔 Sound: On" : "🔕 Sound: Off"}
+          </button>
         </div>
 
         {/* Story setter */}
@@ -696,6 +812,11 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                     {currentStory || "Set a story to start voting"}
                   </p>
                   <p className="text-emerald-100 text-xs mt-1">{votedCount}/{totalCount} voted</p>
+                  {revealCountdown !== null && (
+                    <div className="mt-2 inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/90 text-emerald-800 text-2xl font-black shadow">
+                      {revealCountdown}
+                    </div>
+                  )}
                   {nudgeNotice && (
                     <div className="mt-3 inline-block rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs text-amber-900 shadow-sm pointer-events-auto">
                       <strong>{nudgeNotice.fromName}</strong> says: {nudgeNotice.message}
@@ -711,13 +832,15 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
         {!revealed ? (
           <button
             onClick={handleReveal}
-            disabled={!canReveal}
+            disabled={!canReveal || revealCountdown !== null}
             className="px-8 py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {!hasStory
               ? "Set story first…"
               : !canReveal
               ? "Pick a card first…"
+              : revealCountdown !== null
+                ? `Revealing in ${revealCountdown}…`
               : votedCount === totalCount && totalCount > 0
                 ? "Everyone's voted! Ready to reveal? 👀"
                 : `${votedCount}/${totalCount} voted — let's go! 🚀`}
