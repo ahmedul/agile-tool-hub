@@ -61,6 +61,10 @@ function getSeatPosition(index: number, total: number, centerX: number, centerY:
   };
 }
 
+function clampPercent(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
 function getSeatingProfile(total: number) {
   const safeTotal = Math.max(total, 1);
 
@@ -934,8 +938,17 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   const tangentY = outwardX;
                   const ringBoost = isDenseLayout ? (index % 2 === 0 ? 3 : -2) : 0;
                   const tangentShift = isDenseLayout ? (index % 2 === 0 ? 1.8 : -1.8) : 0;
-                  const posX = seat.x + outwardX * (seatingProfile.outward + ringBoost) + tangentX * tangentShift;
-                  const posY = seat.y + outwardY * (seatingProfile.outward + ringBoost) + tangentY * tangentShift;
+                  // In 2-player mode, pull slightly inward to avoid edge clipping on small viewports.
+                  const outwardFactor = totalCount === 2 ? -0.75 : 1;
+                  const rawX = seat.x + outwardX * (seatingProfile.outward + ringBoost) * outwardFactor + tangentX * tangentShift;
+                  const rawY = seat.y + outwardY * (seatingProfile.outward + ringBoost) * outwardFactor + tangentY * tangentShift;
+                  const bounds = totalCount === 2
+                    ? { minX: 12, maxX: 88, minY: 22, maxY: 88 }
+                    : isDenseLayout
+                      ? { minX: 7, maxX: 93, minY: 10, maxY: 92 }
+                      : { minX: 6, maxX: 94, minY: 10, maxY: 92 };
+                  const posX = clampPercent(rawX, bounds.minX, bounds.maxX);
+                  const posY = clampPercent(rawY, bounds.minY, bounds.maxY);
                   return (
                     <motion.div
                       key={uid}
