@@ -23,6 +23,13 @@ import {
 
 const ANIMAL_AVATARS = ["🐶", "🐱", "🦊", "🐼", "🐨", "🐯", "🦁", "🐸", "🐵", "🦉"] as const;
 const HERO_AVATARS = ["🦸", "🦸‍♀️", "🛡️", "⚡", "🔥", "🌟", "🧠", "🦾", "🛰️", "🕶️"] as const;
+const NUDGE_MESSAGES = [
+  "Hurry up! Sleeping or what? 😴",
+  "Your card is waiting... no pressure, only the whole team 😄",
+  "Plot twist: we're waiting for your vote 👀",
+  "One tiny click for you, one giant step for this sprint 🚀",
+  "Wake up, estimator! The backlog needs you ⚡",
+] as const;
 type AvatarTheme = "animals" | "heroes";
 
 function hashKey(value: string): number {
@@ -75,6 +82,8 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
       : `agiletoolhub.com/tools/planning-poker/${shortSessionId}`;
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState("");
+  const [nudgeNotice, setNudgeNotice] = useState<{ fromName: string; message: string } | null>(null);
+  const [nudgedUserId, setNudgedUserId] = useState<string | null>(null);
   const [myUserId] = useState(() =>
     typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
@@ -89,6 +98,8 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const currentStoryRef = useRef("");
   const revealedRef = useRef(false);
   const autoJoinedRef = useRef(false);
+  const nudgeResetTimerRef = useRef<number | null>(null);
+  const nudgeNoticeTimerRef = useRef<number | null>(null);
 
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
   useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
@@ -229,6 +240,36 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           };
           setParticipants((prev) => upsertMyVote(prev, userId, vote, name));
         })
+        // Teammate sends a nudge to a specific participant to vote.
+        .on("broadcast", { event: "nudge" }, ({ payload }) => {
+          const { targetId, fromName } = payload as {
+            targetId?: string;
+            fromName?: string;
+            message?: string;
+          };
+          if (!targetId) return;
+
+          setNudgedUserId(targetId);
+          if (nudgeResetTimerRef.current !== null) {
+            window.clearTimeout(nudgeResetTimerRef.current);
+          }
+          nudgeResetTimerRef.current = window.setTimeout(() => {
+            setNudgedUserId((prev) => (prev === targetId ? null : prev));
+          }, 3500);
+
+          if (targetId === userIdRef.current) {
+            setNudgeNotice({
+              fromName: fromName ?? "A teammate",
+              message: payload.message ?? "Hurry up! Sleeping or what? 😴",
+            });
+            if (nudgeNoticeTimerRef.current !== null) {
+              window.clearTimeout(nudgeNoticeTimerRef.current);
+            }
+            nudgeNoticeTimerRef.current = window.setTimeout(() => {
+              setNudgeNotice(null);
+            }, 4500);
+          }
+        })
         // Next round — resets all state for everyone
         .on("broadcast", { event: "next_story" }, ({ payload }) => {
           const story = payload.story as string | undefined;
@@ -287,7 +328,11 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     }
   }, [joinChannel, myUserId]);
 
-  useEffect(() => () => { channelRef.current?.unsubscribe(); }, []);
+  useEffect(() => () => {
+    channelRef.current?.unsubscribe();
+    if (nudgeResetTimerRef.current !== null) window.clearTimeout(nudgeResetTimerRef.current);
+    if (nudgeNoticeTimerRef.current !== null) window.clearTimeout(nudgeNoticeTimerRef.current);
+  }, []);
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -364,6 +409,20 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     channelRef.current?.send({ type: "broadcast", event: "revote", payload: {} });
   };
 
+  const handleNudge = (targetId: string) => {
+    if (!targetId || targetId === userIdRef.current || revealed || !hasStory) return;
+    const message = NUDGE_MESSAGES[Math.floor(Math.random() * NUDGE_MESSAGES.length)];
+    channelRef.current?.send({
+      type: "broadcast",
+      event: "nudge",
+      payload: {
+        targetId,
+        fromName: myNameRef.current || "A teammate",
+        message,
+      },
+    });
+  };
+
   const participantList = Object.entries(participants);
   const votedCount = participantList.filter(([, p]) => p.hasVoted).length;
   const totalCount = participantList.length;
@@ -409,6 +468,12 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   return (
     <div className="flex gap-6">
       <div className="flex-1 min-w-0 space-y-6">
+        {nudgeNotice && (
+          <div className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900">
+            <strong>{nudgeNotice.fromName}</strong> says: {nudgeNotice.message}
+          </div>
+        )}
+
         {/* Invite bar */}
         <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100 text-sm">
           <span className="text-blue-700 font-medium shrink-0">Invite:</span>
@@ -566,6 +631,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   <div
                     className={[
                       "relative w-14 h-20 rounded-xl border-2 flex items-center justify-center text-xl font-bold transition-all",
+                      nudgedUserId === uid ? "ring-2 ring-amber-300 ring-offset-2" : "",
                       revealed && p.vote !== null
                         ? "bg-white border-green-400 text-gray-900 shadow"
                         : revealed
@@ -587,6 +653,15 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   <span className="text-[10px] text-gray-400">
                     {revealed ? "revealed" : p.hasVoted ? "voted" : "waiting"}
                   </span>
+                  {!revealed && hasStory && uid !== myUserId && !p.hasVoted && (
+                    <button
+                      type="button"
+                      onClick={() => handleNudge(uid)}
+                      className="text-[10px] px-2 py-0.5 rounded border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+                    >
+                      Nudge
+                    </button>
+                  )}
                 </motion.div>
               ))}
             </motion.div>
