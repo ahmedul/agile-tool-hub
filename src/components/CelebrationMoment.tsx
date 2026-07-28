@@ -33,7 +33,7 @@ export default function CelebrationMoment({
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [duration]);
+  }, [duration, onComplete]);
 
   if (!isVisible) return null;
 

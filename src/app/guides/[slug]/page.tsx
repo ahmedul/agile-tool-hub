@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
-import { buildArticleSchema, buildBreadcrumbSchema, buildHowToSchema, buildFAQSchema, buildImageSchema, buildMetadata } from "@/lib/seo";
+import { DEFAULT_OG_IMAGE_URL, buildArticleSchema, buildBreadcrumbSchema, buildHowToSchema, buildFAQSchema, buildImageSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getAllSlugs("guides").map((slug) => ({ slug }));
@@ -51,12 +51,12 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   }) : null;
   const faqJsonLd = item.faqItems && item.faqItems.length > 0 ? buildFAQSchema(item.faqItems) : null;
   const imageJsonLd = buildImageSchema({
-    url: "https://agiletoolhub.com/og-image.png",
+    url: DEFAULT_OG_IMAGE_URL,
     title: item.title,
     description: item.description,
     width: 1200,
     height: 630,
-    contentUrl: "https://agiletoolhub.com/og-image.png",
+    contentUrl: DEFAULT_OG_IMAGE_URL,
   });
 
   return (

@@ -39,7 +39,7 @@ export default function SprintCapacityCalculator() {
 
   const totalCapacity = members.reduce((sum, m) => sum + m.daysAvailable * m.velocity, 0);
   const recommendedCapacity = Math.round(totalCapacity * 0.8);
-  const maxDays = members.reduce((sum, m) => sum + sprintDays, 0);
+  const maxDays = members.length * sprintDays;
   const totalAvailableDays = members.reduce((sum, m) => sum + m.daysAvailable, 0);
   const utilizationPct = maxDays > 0 ? Math.round((totalAvailableDays / maxDays) * 100) : 0;
 

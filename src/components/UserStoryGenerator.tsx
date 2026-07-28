@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
+import { useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { scoreUserStory, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -10,7 +9,6 @@ import ToolSuccessBanner from "@/components/ToolSuccessBanner";
 
 type StoryType = "feature" | "improvement" | "task";
 type Priority = "High" | "Medium" | "Low";
-type GenerationMode = "local" | "ai";
 type StoryPreset = "product" | "engineering" | "api" | "tech_debt";
 
 interface FormState {
@@ -331,7 +329,7 @@ export default function UserStoryGenerator() {
   });
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const loading = false;
   const [error, setError] = useState("");
   const [quality, setQuality] = useState<StoryQualityResult | null>(null);
 
@@ -361,10 +359,6 @@ export default function UserStoryGenerator() {
       priority: "Medium" as Priority,
     },
   ];
-
-  useEffect(() => {
-    // Reset for when AI mode is re-enabled
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

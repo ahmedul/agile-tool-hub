@@ -1,14 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
+import { useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { scoreBugReport, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
 import ToolStepCard from "@/components/ToolStepCard";
 import ToolSuccessBanner from "@/components/ToolSuccessBanner";
-
-type GenerationMode = "local" | "ai";
 
 interface ParsedBugReport {
   title: string;
@@ -217,7 +214,6 @@ function parseBugReport(input: string): ParsedBugReport {
     .map((line) => line.trim())
     .filter(Boolean);
   const normalized = sourceInput.replace(/\s+/g, " ").trim();
-  const lower = normalized.toLowerCase();
 
   const explicitExpected = lines.find((line) => /^(expected|should|expected result)[:\s]/i.test(line));
   const explicitActual = lines.find((line) => /^(actual|observed|actual result|instead)[:\s]/i.test(line));
@@ -370,7 +366,7 @@ export default function BugReportConverter() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const loading = false;
   const [error, setError] = useState("");
   const [quality, setQuality] = useState<TicketQualityResult | null>(null);
 
@@ -379,10 +375,6 @@ export default function BugReportConverter() {
     "Checkout fails on mobile Safari when card CVV has 4 digits. Expected validation message. Actual generic error and payment not processed.",
     "After outage in FRA12, Desire DB shows service placement on extra edges not matching CLI. Need impact verification and source-of-truth confirmation.",
   ];
-
-  useEffect(() => {
-    // Reset for when AI mode is re-enabled
-  }, []);
 
   const handleGenerate = async () => {
     if (!input.trim()) return;

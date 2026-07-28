@@ -203,7 +203,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   // Persist theme preference
   useEffect(() => { localStorage.setItem("retro-theme", theme); }, [theme]);
 
-  const playSound = () => {
+  const playSound = useCallback(() => {
     try {
       type WebkitAudioWindow = Window & {
         webkitAudioContext?: typeof AudioContext;
@@ -224,7 +224,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     } catch {
       // Fallback: silent
     }
-  };
+  }, []);
 
   // ── Timer management ──────────────────────────────────────────────────────
 
@@ -357,7 +357,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         // Presence: membership only
         .on("presence", { event: "sync" }, () => {
           const state = channel.presenceState<{ userId: string; name: string }>();
-          setMembers((prev) => {
+          setMembers(() => {
             const next: Record<string, Member> = {};
             for (const presences of Object.values(state)) {
               const p = presences[0] as { userId: string; name: string } | undefined;

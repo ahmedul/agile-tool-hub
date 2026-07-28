@@ -12,22 +12,6 @@ const nextConfig: NextConfig = {
       has: [
         {
           type: "host",
-          value: "www.agiletoolhub.com",
-        },
-        {
-          type: "header",
-          key: "x-forwarded-proto",
-          value: "http",
-        },
-      ],
-      destination: "https://agiletoolhub.com/:path*",
-      permanent: true,
-    },
-    {
-      source: "/:path*",
-      has: [
-        {
-          type: "host",
           value: "agiletoolhub.com",
         },
         {
@@ -77,16 +61,6 @@ const nextConfig: NextConfig = {
           {
             key: "Referrer-Policy",
             value: "strict-origin-when-cross-origin",
-          },
-        ],
-      },
-      {
-        // Long cache for static assets
-        source: "/_next/static/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
           },
         ],
       },

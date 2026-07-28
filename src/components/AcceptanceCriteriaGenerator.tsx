@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getAiUsageStatus, incrementAiUsage } from "@/lib/subscription";
+import { useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { scoreAcceptanceCriteria, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -9,7 +8,6 @@ import ToolStepCard from "@/components/ToolStepCard";
 import ToolSuccessBanner from "@/components/ToolSuccessBanner";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
-type GenerationMode = "local" | "ai";
 type CriteriaPreset = "product" | "engineering" | "api" | "tech_debt";
 
 interface FormState {
@@ -233,7 +231,7 @@ export default function AcceptanceCriteriaGenerator() {
   });
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const loading = false;
   const [error, setError] = useState("");
   const [quality, setQuality] = useState<CriteriaQualityResult | null>(null);
 
@@ -260,10 +258,6 @@ export default function AcceptanceCriteriaGenerator() {
       userType: "engineering team",
     },
   ];
-
-  useEffect(() => {
-    // Reset for when AI mode is re-enabled
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>

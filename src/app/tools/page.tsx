@@ -7,7 +7,7 @@ import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema, buildT
 
 export const metadata: Metadata = buildMetadata({
   title: "Free Agile & Scrum Tools for Software Teams",
-  description: "Free online tools for Agile and Scrum teams. Planning poker, user story generator, acceptance criteria, bug report converter, velocity tracker, standup generator, and retro board — no login required.",
+  description: "Free online tools for Agile and Scrum teams. Planning poker, story point calculator, sprint planning checklist, user story generator, acceptance criteria, velocity tracker, and retro board - no login required.",
   keywords: KEYWORDS.tools,
   canonical: "https://agiletoolhub.com/tools",
 });
@@ -30,6 +30,16 @@ export default function ToolsPage() {
       href: "/tools/planning-poker",
     },
     {
+      title: "Story Point Calculator",
+      description: "Estimate story points from effort, complexity, uncertainty, risk, and dependencies.",
+      href: "/tools/story-point-calculator",
+    },
+    {
+      title: "Sprint Planning Checklist",
+      description: "Validate backlog readiness, team capacity, sprint goals, and commitment.",
+      href: "/tools/sprint-planning-checklist",
+    },
+    {
       title: "Acceptance Criteria Generator",
       description: "Generate testable acceptance criteria in Given/When/Then or checklist format in seconds.",
       href: "/tools/acceptance-criteria-generator",
@@ -38,6 +48,11 @@ export default function ToolsPage() {
       title: "Sprint Capacity Calculator",
       description: "Get a realistic sprint commitment in story points.",
       href: "/tools/sprint-capacity-calculator",
+    },
+    {
+      title: "Definition of Done Checklist",
+      description: "Build a practical quality checklist for Agile teams before work is called done.",
+      href: "/tools/definition-of-done-checklist",
     },
     {
       title: "Daily Standup Generator",
@@ -62,7 +77,7 @@ export default function ToolsPage() {
   const collectionSchema = buildCollectionPageSchema({
     name: "Free Agile & Scrum Tools",
     description:
-      "Online tools for planning poker, user story writing, acceptance criteria generation, bug conversion, and sprint planning.",
+      "Online tools for planning poker, story point estimation, sprint planning, user story writing, acceptance criteria generation, bug conversion, and quality checklists.",
     url: "https://agiletoolhub.com/tools",
     items: tools.map((tool) => ({
       name: tool.title,
@@ -137,6 +152,16 @@ export default function ToolsPage() {
             badge="Live · Free"
           />
           <ToolCard
+            title="Story Point Calculator"
+            description="Estimate a story using effort, complexity, uncertainty, risk, and dependencies with a Fibonacci recommendation."
+            href="/tools/story-point-calculator"
+          />
+          <ToolCard
+            title="Sprint Planning Checklist"
+            description="Check backlog readiness, team capacity, sprint goal clarity, and commitment before the sprint starts."
+            href="/tools/sprint-planning-checklist"
+          />
+          <ToolCard
             title="Acceptance Criteria Generator"
             description="Generate testable acceptance criteria in Given/When/Then or checklist format in seconds."
             href="/tools/acceptance-criteria-generator"
@@ -145,6 +170,11 @@ export default function ToolsPage() {
             title="Sprint Capacity Calculator"
             description="Enter team size and availability to get a realistic sprint commitment in story points."
             href="/tools/sprint-capacity-calculator"
+          />
+          <ToolCard
+            title="Definition of Done Checklist"
+            description="Build and copy a practical Agile quality checklist for code, testing, acceptance, and release readiness."
+            href="/tools/definition-of-done-checklist"
           />
           <ToolCard
             title="Daily Standup Generator"

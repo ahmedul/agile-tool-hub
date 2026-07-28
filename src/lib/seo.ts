@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 
+const SITE_URL = "https://agiletoolhub.com";
+export const DEFAULT_OG_IMAGE_URL = `${SITE_URL}/opengraph-image`;
+const ORGANIZATION_LOGO_URL = `${SITE_URL}/logo.svg`;
+
 /**
  * SEO Metadata Builder
  * Standardizes metadata across all pages for consistent SEO
@@ -25,7 +29,7 @@ export function buildMetadata(options: SEOMetadataOptions): Metadata {
     description,
     keywords = [],
     canonical,
-    ogImage = "https://agiletoolhub.com/og-image.png",
+    ogImage = DEFAULT_OG_IMAGE_URL,
     ogType = "website",
     authors = ["AgileToolHub"],
     robots = "index, follow",
@@ -137,7 +141,7 @@ export function buildOrganizationSchema() {
     "@type": "Organization",
     name: "AgileToolHub",
     url: "https://agiletoolhub.com",
-    logo: "https://agiletoolhub.com/logo.png",
+    logo: ORGANIZATION_LOGO_URL,
     description: "Free Agile, Scrum, and software delivery templates and tools for engineering teams",
     sameAs: [
       "https://twitter.com/agile-tool-hub",
@@ -460,8 +464,11 @@ export const KEYWORDS = {
     "agile tools",
     "scrum tools",
     "planning poker",
+    "story point calculator",
+    "sprint planning checklist",
     "user story generator",
     "acceptance criteria generator",
+    "definition of done checklist",
     "jira tools",
   ],
   userStory: [
