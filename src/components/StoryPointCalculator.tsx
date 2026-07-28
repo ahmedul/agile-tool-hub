@@ -17,6 +17,12 @@ type Factor = {
   options: FactorOption[];
 };
 
+type StoryPreset = {
+  label: string;
+  summary: string;
+  values: Record<FactorKey, number>;
+};
+
 const FACTORS: Factor[] = [
   {
     key: "effort",
@@ -83,6 +89,53 @@ const INITIAL_VALUES: Record<FactorKey, number> = {
   dependencies: 0,
 };
 
+const STORY_PRESETS: StoryPreset[] = [
+  {
+    label: "Small bug fix",
+    summary: "Fix a reproducible mobile layout bug on the sprint summary card.",
+    values: {
+      effort: 1,
+      complexity: 1,
+      uncertainty: 0,
+      risk: 0,
+      dependencies: 0,
+    },
+  },
+  {
+    label: "Dashboard filter",
+    summary: "Add a team filter to the velocity dashboard so managers can review one team at a time.",
+    values: {
+      effort: 2,
+      complexity: 1,
+      uncertainty: 1,
+      risk: 0,
+      dependencies: 0,
+    },
+  },
+  {
+    label: "Password reset",
+    summary: "Add password reset by email with token validation, expiry handling, and error states.",
+    values: {
+      effort: 3,
+      complexity: 2,
+      uncertainty: 2,
+      risk: 2,
+      dependencies: 2,
+    },
+  },
+  {
+    label: "Payment integration",
+    summary: "Integrate a payment provider with checkout session creation, webhooks, and subscription status updates.",
+    values: {
+      effort: 3,
+      complexity: 3,
+      uncertainty: 3,
+      risk: 3,
+      dependencies: 2,
+    },
+  },
+];
+
 function estimateStoryPoints(score: number) {
   if (score <= 2) return 1;
   if (score <= 4) return 2;
@@ -100,6 +153,13 @@ function getConfidence(score: number) {
   return "Very low";
 }
 
+function getEstimateLabel(estimate: number) {
+  if (estimate <= 2) return "Small";
+  if (estimate <= 5) return "Medium";
+  if (estimate <= 8) return "Large";
+  return "Split candidate";
+}
+
 export default function StoryPointCalculator() {
   const [summary, setSummary] = useState("");
   const [values, setValues] = useState<Record<FactorKey, number>>(INITIAL_VALUES);
@@ -111,7 +171,47 @@ export default function StoryPointCalculator() {
   );
   const estimate = estimateStoryPoints(totalScore);
   const confidence = getConfidence(totalScore);
-  const highFactors = FACTORS.filter((factor) => values[factor.key] >= 2).map((factor) => factor.label);
+  const estimateLabel = getEstimateLabel(estimate);
+  const highFactors = useMemo(
+    () => FACTORS.filter((factor) => values[factor.key] >= 2).map((factor) => factor.label),
+    [values],
+  );
+  const selectedFactors = useMemo(
+    () =>
+      FACTORS.map((factor) => {
+        const option = factor.options.find((item) => item.score === values[factor.key]);
+        return {
+          label: factor.label,
+          optionLabel: option?.label ?? "Unknown",
+          description: option?.description ?? "",
+          score: values[factor.key],
+        };
+      }),
+    [values],
+  );
+  const nextActions = useMemo(() => {
+    if (estimate >= 13) {
+      return [
+        "Split the story into smaller user-visible slices.",
+        "Convert unclear parts into acceptance criteria or a spike.",
+        "Resolve dependencies before sprint commitment.",
+      ];
+    }
+
+    if (confidence === "Low") {
+      return [
+        "Review unknowns with engineering and QA before planning.",
+        "Confirm the rollback and test strategy.",
+        "Use Planning Poker if estimates vary across the team.",
+      ];
+    }
+
+    return [
+      "Confirm acceptance criteria and Definition of Done.",
+      "Run Planning Poker if the estimate needs team agreement.",
+      "Compare the estimate against sprint capacity before committing.",
+    ];
+  }, [confidence, estimate]);
 
   const markdown = useMemo(() => {
     const lines = [
@@ -119,13 +219,15 @@ export default function StoryPointCalculator() {
       "",
       `Story: ${summary.trim() || "[add story summary]"}`,
       `Recommended estimate: ${estimate} story points`,
+      `Size: ${estimateLabel}`,
       `Confidence: ${confidence}`,
+      `Sizing score: ${totalScore} / 15`,
       "",
       "### Sizing factors",
-      ...FACTORS.map((factor) => {
-        const option = factor.options.find((item) => item.score === values[factor.key]);
-        return `- ${factor.label}: ${option?.label ?? "Unknown"} - ${option?.description ?? ""}`;
-      }),
+      ...selectedFactors.map((factor) => `- ${factor.label}: ${factor.optionLabel} - ${factor.description}`),
+      "",
+      "### Next actions",
+      ...nextActions.map((action) => `- ${action}`),
     ];
 
     if (estimate >= 13) {
@@ -133,10 +235,22 @@ export default function StoryPointCalculator() {
     }
 
     return lines.join("\n");
-  }, [confidence, estimate, summary, values]);
+  }, [confidence, estimate, estimateLabel, nextActions, selectedFactors, summary, totalScore]);
 
   const updateValue = (key: FactorKey, score: number) => {
     setValues((current) => ({ ...current, [key]: score }));
+    setCopied(false);
+  };
+
+  const applyPreset = (preset: StoryPreset) => {
+    setSummary(preset.summary);
+    setValues(preset.values);
+    setCopied(false);
+  };
+
+  const resetCalculator = () => {
+    setSummary("");
+    setValues(INITIAL_VALUES);
     setCopied(false);
   };
 
@@ -160,6 +274,21 @@ export default function StoryPointCalculator() {
           placeholder="As a returning customer, I want to filter saved payment methods so I can find the right card faster."
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        <div className="mt-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Try an example</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {STORY_PRESETS.map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => applyPreset(preset)}
+                className="rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:border-blue-300 hover:text-blue-700"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-4">
@@ -199,7 +328,11 @@ export default function StoryPointCalculator() {
           <p className="text-sm font-semibold text-blue-700">Recommended estimate</p>
           <p className="mt-2 text-6xl font-bold text-blue-800">{estimate}</p>
           <p className="mt-1 text-sm text-blue-700">story points</p>
-          <p className="mt-4 text-sm text-blue-900">Confidence: {confidence}</p>
+          <div className="mt-4 space-y-1 text-sm text-blue-900">
+            <p>{estimateLabel}</p>
+            <p>Confidence: {confidence}</p>
+            <p>Sizing score: {totalScore}/15</p>
+          </div>
         </div>
         <div className="border border-gray-200 bg-white rounded-lg p-5">
           <h2 className="font-semibold text-gray-900">Planning guidance</h2>
@@ -216,14 +349,41 @@ export default function StoryPointCalculator() {
             ) : (
               <p>Confirm acceptance criteria, testing approach, and rollout expectations before finalizing the estimate.</p>
             )}
+            <ul className="list-disc space-y-1 pl-5">
+              {nextActions.map((action) => (
+                <li key={action}>{action}</li>
+              ))}
+            </ul>
           </div>
-          <button
-            type="button"
-            onClick={copyEstimate}
-            className="mt-5 inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
-          >
-            {copied ? "Copied" : "Copy estimate"}
-          </button>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={copyEstimate}
+              className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+            >
+              {copied ? "Copied" : "Copy estimate"}
+            </button>
+            <button
+              type="button"
+              onClick={resetCalculator}
+              className="inline-flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:border-blue-300 hover:text-blue-700 transition-colors"
+            >
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-white p-5">
+        <h2 className="font-semibold text-gray-900">Estimate breakdown</h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {selectedFactors.map((factor) => (
+            <div key={factor.label} className="rounded-lg bg-gray-50 p-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{factor.label}</p>
+              <p className="mt-1 text-sm font-semibold text-gray-900">{factor.optionLabel}</p>
+              <p className="mt-1 text-xs text-gray-500">Score: {factor.score}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
