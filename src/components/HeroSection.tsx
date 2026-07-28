@@ -40,7 +40,7 @@ export default function HeroSection({
 
   return (
     <section
-      className={`relative w-full min-h-screen sm:min-h-[600px] md:min-h-[600px] lg:min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-r ${gradientFrom} ${gradientTo} dark:opacity-90`}
+      className={`relative w-full min-h-[520px] sm:min-h-[560px] lg:min-h-[600px] py-16 sm:py-20 flex items-center justify-center overflow-hidden bg-gradient-to-r ${gradientFrom} ${gradientTo} dark:opacity-90`}
     >
       {/* Accent Icon Background */}
       {accentIcon && (
@@ -54,7 +54,7 @@ export default function HeroSection({
       {/* Content Container */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center justify-center">
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
           {title}
         </h1>
 

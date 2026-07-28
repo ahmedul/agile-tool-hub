@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   ...buildMetadata({
     title: "AgileToolHub — Free Agile, Scrum & Software Delivery Templates & Tools",
     description:
-      "Free templates and tools for Agile teams. Generate user stories, acceptance criteria, bug reports, and Jira tickets. Track sprint velocity. Real-time planning poker and retros. No login required.",
+      "Free templates and tools for Agile teams. Estimate story points, plan sprint capacity, generate user stories, acceptance criteria, bug reports, and Jira tickets. No login required.",
     keywords: KEYWORDS.homepage,
     canonical: "https://agiletoolhub.com",
   }),
@@ -33,6 +33,40 @@ const templates = [
   { title: "Feature Request Template", description: "Capture product ideas with business value, scope, and clear acceptance criteria for implementation.", href: "/templates/feature-request-template", category: "Template" },
 ];
 
+const popularCalculators = [
+  {
+    title: "Story Point Calculator",
+    description: "Estimate a story with effort, complexity, uncertainty, risk, and dependencies.",
+    href: "/tools/story-point-calculator",
+  },
+  {
+    title: "Sprint Planning Checklist",
+    description: "Validate backlog readiness, capacity, sprint goals, and team commitment.",
+    href: "/tools/sprint-planning-checklist",
+  },
+  {
+    title: "Definition of Done Checklist",
+    description: "Check code quality, testing, acceptance, and release readiness before calling work done.",
+    href: "/tools/definition-of-done-checklist",
+  },
+  {
+    title: "Sprint Capacity Calculator",
+    description: "Calculate realistic sprint commitment from team availability and velocity.",
+    href: "/tools/sprint-capacity-calculator",
+  },
+  {
+    title: "Velocity Tracker",
+    description: "Track completed points, visualize sprint trends, and forecast future capacity.",
+    href: "/tools/velocity-tracker",
+  },
+  {
+    title: "Planning Poker",
+    description: "Run live story point estimation with your team and reveal votes together.",
+    href: "/tools/planning-poker",
+    badge: "Live · Free",
+  },
+];
+
 export default function Home() {
   const organizationSchema = buildOrganizationSchema();
 
@@ -51,6 +85,28 @@ export default function Home() {
           { label: "Bug Report Converter", href: "/tools/bug-report-to-jira-ticket-converter", variant: "outline" },
         ]}
       />
+
+      <section className="bg-white border-b border-gray-200 py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-8">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">Popular Agile Calculators</h2>
+              <p className="text-gray-600 mt-2 max-w-2xl">
+                Fast planning tools for story points, sprint readiness, capacity, velocity, and team quality standards.
+              </p>
+            </div>
+            <Link href="/tools" className="text-blue-600 hover:underline text-sm font-medium">
+              View all tools →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {popularCalculators.map((tool) => (
+              <ToolCard key={tool.href} {...tool} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
@@ -231,6 +287,18 @@ export default function Home() {
                   Story Point Estimation Guide
                 </Link>
                 <p className="text-gray-500 text-xs mt-1">Estimate accurately with Fibonacci, planning poker, and real examples</p>
+              </li>
+              <li>
+                <Link href="/tools/story-point-calculator" className="text-blue-600 hover:underline font-medium text-sm">
+                  Story Point Calculator
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Estimate work from effort, complexity, uncertainty, risk, and dependencies</p>
+              </li>
+              <li>
+                <Link href="/tools/sprint-planning-checklist" className="text-blue-600 hover:underline font-medium text-sm">
+                  Sprint Planning Checklist
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Validate backlog readiness, capacity, sprint goal, and commitment</p>
               </li>
               <li>
                 <Link href="/tools/planning-poker" className="text-blue-600 hover:underline font-medium text-sm">
