@@ -5,6 +5,8 @@ import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
 import TemplateCopyActions from "@/components/TemplateCopyActions";
+import { mdxComponents } from "@/components/MDXComponents";
+import { mdxRemoteOptions } from "@/lib/mdx";
 import { buildArticleSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 const HIGH_INTENT_TEMPLATE_SLUGS = new Set([
@@ -111,7 +113,7 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
         ctaProps={getTemplateCta(slug)}
         preContent={showCopyActions && codeBlock ? <TemplateCopyActions markdown={codeBlock} /> : null}
       >
-        <MDXRemote source={item.content} />
+        <MDXRemote source={item.content} options={mdxRemoteOptions} components={mdxComponents} />
       </ContentLayout>
     </>
   );

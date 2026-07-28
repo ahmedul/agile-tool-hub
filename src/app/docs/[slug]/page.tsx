@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
+import { mdxComponents } from "@/components/MDXComponents";
+import { mdxRemoteOptions } from "@/lib/mdx";
 import { buildArticleSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
@@ -55,7 +57,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
         breadcrumbs={[{ label: "Docs", href: "/docs" }, { label: item.title }]}
         relatedLinks={item.relatedLinks}
       >
-        <MDXRemote source={item.content} />
+        <MDXRemote source={item.content} options={mdxRemoteOptions} components={mdxComponents} />
       </ContentLayout>
     </>
   );

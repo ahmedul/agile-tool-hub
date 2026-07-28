@@ -90,7 +90,7 @@ export default function ContentLayout({
   const topRelatedLinks = relatedLinks?.slice(0, 4);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <div className="max-w-4xl mx-auto min-w-0 overflow-hidden px-4 py-10">
       <Breadcrumbs items={breadcrumbs} />
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <span className="text-xs font-medium text-blue-600 uppercase tracking-wide">{category}</span>
@@ -100,8 +100,8 @@ export default function ContentLayout({
           </span>
         )}
       </div>
-      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">{title}</h1>
-      <p className="text-lg text-gray-600 mb-10 border-b border-gray-200 pb-8">{description}</p>
+      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4 break-words">{title}</h1>
+      <p className="text-lg text-gray-600 mb-10 border-b border-gray-200 pb-8 break-words">{description}</p>
       {preContent}
       {!!topRelatedLinks?.length && (
         <div className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-4">
@@ -117,7 +117,7 @@ export default function ContentLayout({
           </ul>
         </div>
       )}
-      <div className="prose prose-gray max-w-none">{children}</div>
+      <div className="prose prose-gray max-w-none min-w-0">{children}</div>
       {relatedLinks && <RelatedLinks links={relatedLinks} />}
       {showCTA && <CTASection {...resolvedCta} />}
     </div>

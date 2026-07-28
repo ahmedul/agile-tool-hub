@@ -36,3 +36,7 @@ body {
 .tool-success-ping {
   animation: toolSuccessPing 900ms ease-out 1;
 }
+
+.prose {
+  overflow-wrap: break-word;
+}

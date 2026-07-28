@@ -289,6 +289,12 @@ export default function Home() {
                 <p className="text-gray-500 text-xs mt-1">Estimate accurately with Fibonacci, planning poker, and real examples</p>
               </li>
               <li>
+                <Link href="/guides/story-point-examples-for-agile-teams" className="text-blue-600 hover:underline font-medium text-sm">
+                  Story Point Examples for Agile Teams
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Concrete 1, 2, 3, 5, 8, and 13 point examples for common tickets</p>
+              </li>
+              <li>
                 <Link href="/tools/story-point-calculator" className="text-blue-600 hover:underline font-medium text-sm">
                   Story Point Calculator
                 </Link>

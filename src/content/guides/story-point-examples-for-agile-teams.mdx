@@ -1,0 +1,375 @@
+---
+title: "Story Point Examples for Agile Teams: 1, 2, 3, 5, 8, and 13 Point Stories"
+description: "Practical story point examples for Scrum teams. See 1, 2, 3, 5, 8, and 13 point examples for login pages, bug fixes, dashboards, APIs, migrations, and integrations."
+slug: "story-point-examples-for-agile-teams"
+category: "Guides"
+keywords:
+  - story point examples
+  - agile story point examples
+  - story point estimation examples
+  - scrum story points
+  - story points for login page
+  - how many story points for bug fix
+  - fibonacci story points
+relatedLinks:
+  - title: "Story Point Calculator"
+    href: "/tools/story-point-calculator"
+  - title: "Planning Poker"
+    href: "/tools/planning-poker"
+  - title: "Story Point Estimation Guide"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "Story Points Explained"
+    href: "/docs/story-points-explained"
+  - title: "Sprint Planning Checklist"
+    href: "/tools/sprint-planning-checklist"
+  - title: "Sprint Capacity Calculator"
+    href: "/tools/sprint-capacity-calculator"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "How to Break Down Epics Into User Stories"
+    href: "/guides/how-to-break-down-epics-into-user-stories"
+howToSteps:
+  - name: "Start with a reference story"
+    description: "Pick one completed story your team agrees was a 2 or 3 pointer, then compare new work against that baseline."
+  - name: "Score effort, complexity, and uncertainty"
+    description: "Discuss implementation effort, technical complexity, unknowns, dependencies, and risk before choosing a Fibonacci value."
+  - name: "Use examples as calibration"
+    description: "Compare the story to common examples such as small bug fixes, login changes, dashboard filters, payment integrations, and migrations."
+  - name: "Split anything too large"
+    description: "If the estimate is 13 or higher, split the work into smaller user-visible slices before sprint commitment."
+faqItems:
+  - question: "How many story points is a login page?"
+    answer: "A simple login UI with an existing authentication API is often 3 to 5 points. A new authentication flow with password reset, validation, rate limiting, and security review can be 8 or 13 points and may need to be split."
+  - question: "How many story points is a bug fix?"
+    answer: "A clear bug fix with known root cause is often 1 to 3 points. A bug with unclear reproduction steps, data risk, or cross-service impact may be 5 or 8 points because uncertainty is part of the estimate."
+  - question: "Is a 13 point story too big?"
+    answer: "Usually yes. A 13 point story may still fit in one sprint for some teams, but it carries enough risk that splitting it normally improves planning, testing, and delivery confidence."
+  - question: "Should story points include QA and code review?"
+    answer: "Yes. Story points should include all work needed to call the story done: development, testing, code review, documentation, deployment, and acceptance."
+---
+
+## Quick Answer: Common Story Point Examples
+
+Story points are relative. A 3 point story on one team may be a 5 point story on another team. Use these examples as calibration, then adjust based on your own codebase, team history, and Definition of Done.
+
+| Work item | Typical estimate | Why |
+|---|---:|---|
+| Fix a typo or label in one screen | 1 point | Clear, tiny, low risk |
+| Add one validation message | 1-2 points | Small change, easy to test |
+| Fix a reproducible UI bug | 2-3 points | Known cause, limited scope |
+| Add a dashboard filter | 3-5 points | UI, state, query, and tests |
+| Build a simple login page with existing auth | 3-5 points | Standard flow, known API |
+| Add password reset end to end | 5-8 points | Email, token, validation, security checks |
+| Integrate a payment provider | 8-13 points | External dependency, errors, compliance risk |
+| Migrate customer data | 13+ points | High risk, should be split |
+
+For a quick estimate, use the [Story Point Calculator](/tools/story-point-calculator). For team consensus, use [Planning Poker](/tools/planning-poker).
+
+## 1 Point Story Examples
+
+A 1 point story is tiny, clear, and low risk. It should be easy to implement, review, test, and ship.
+
+### Example 1: Update Button Copy
+
+**Story:** As a user, I want the checkout button to say "Review order" instead of "Continue" so the next step is clearer.
+
+**Why it is 1 point:**
+- One text change
+- No business logic change
+- No backend work
+- Low regression risk
+
+**Watch out for:** Translations, analytics labels, screenshots, or automated tests that depend on exact text.
+
+### Example 2: Add an Empty State Message
+
+**Story:** As a project manager, I want to see a helpful message when no sprint goals exist so I know what to do next.
+
+**Why it is 1 point:**
+- UI-only change
+- Clear acceptance criteria
+- No data model change
+
+**Could become 2 points if:** The empty state also needs a new CTA, permissions check, or tracking event.
+
+## 2 Point Story Examples
+
+A 2 point story is still small, but it has more than one moving part.
+
+### Example 1: Add Required Field Validation
+
+**Story:** As a user, I want the email field to show an error when it is blank so I can fix the form before submitting.
+
+**Why it is 2 points:**
+- Form validation logic
+- Error message copy
+- UI state
+- Unit or component test
+
+**Acceptance criteria:**
+- Blank email cannot be submitted
+- Error appears beside the field
+- Error clears when a valid email is entered
+
+### Example 2: Fix a Known Mobile Layout Bug
+
+**Story:** As a mobile user, I want the sprint summary card to fit the screen so I can read it without horizontal scrolling.
+
+**Why it is 2 points:**
+- Reproducible bug
+- Limited CSS change
+- Manual mobile verification needed
+
+**Could become 3 or 5 points if:** The layout issue is caused by a shared component used across many pages.
+
+## 3 Point Story Examples
+
+A 3 point story is a normal small feature or bug fix with clear requirements.
+
+### Example 1: Add a Dashboard Filter
+
+**Story:** As a team lead, I want to filter the velocity dashboard by team so I can review one team's trend at a time.
+
+**Why it is 3 points:**
+- UI control
+- Query or state update
+- Basic test coverage
+- Clear happy path
+
+**Could become 5 points if:** The filter must persist in the URL, support saved views, or interact with several other filters.
+
+### Example 2: Add a Jira Ticket Priority Dropdown
+
+**Story:** As a product owner, I want to set priority while creating a ticket so the team can triage backlog items faster.
+
+**Why it is 3 points:**
+- Existing form
+- Existing priority values
+- Straightforward validation
+- Simple persistence
+
+**Testing checklist:**
+- Default priority is correct
+- Selected priority saves
+- Invalid values are rejected
+- Existing tickets still render correctly
+
+## 5 Point Story Examples
+
+A 5 point story is meaningful work that still fits comfortably in a sprint if the team understands it.
+
+### Example 1: Build a Login Page with Existing Auth
+
+**Story:** As a returning user, I want to sign in with email and password so I can access my workspace.
+
+**Why it is 5 points:**
+- New page
+- Form validation
+- Auth API integration
+- Loading and error states
+- Redirect after success
+- Tests for key paths
+
+**Why it is not automatically 8 points:** The auth service already exists, the flow is standard, and there are no new security requirements.
+
+### Example 2: Add CSV Export to a Report
+
+**Story:** As an engineering manager, I want to export sprint velocity data as CSV so I can share it in planning docs.
+
+**Why it is 5 points:**
+- Data formatting
+- Download behavior
+- Edge cases for empty data
+- Browser compatibility check
+- User-facing copy
+
+**Could become 8 points if:** Exports need background jobs, permissions, audit logs, or very large datasets.
+
+## 8 Point Story Examples
+
+An 8 point story has real complexity or uncertainty. It may still be sprint-sized, but the team should discuss risk carefully.
+
+### Example 1: Add Password Reset End to End
+
+**Story:** As a user, I want to reset my password by email so I can regain account access without support help.
+
+**Why it is 8 points:**
+- Request reset form
+- Email delivery
+- Secure token handling
+- New password form
+- Expiration behavior
+- Error states
+- Security review
+
+**Split option:**
+- 3 points: request reset email
+- 3 points: reset password with token
+- 2 points: polish error states and instrumentation
+
+### Example 2: Add Role-Based Access to a Settings Page
+
+**Story:** As an admin, I want only workspace owners to edit billing settings so unauthorized users cannot change payment details.
+
+**Why it is 8 points:**
+- Permission rules
+- Backend enforcement
+- UI gating
+- Existing users and roles
+- Test matrix across roles
+
+**Risk:** Permission bugs can become security or billing incidents, so code review and test coverage matter.
+
+## 13 Point Story Examples
+
+A 13 point story is usually too large or risky to commit as one sprint item. Treat it as a signal to split.
+
+### Example 1: Integrate a Payment Provider
+
+**Story:** As a customer, I want to pay for a subscription with a credit card so I can unlock paid features.
+
+**Why it is 13 points:**
+- External provider integration
+- Webhooks
+- Error handling
+- Receipts or invoices
+- Billing states
+- Security and compliance considerations
+- Production verification
+
+**Better split:**
+- Create checkout session
+- Handle webhook events
+- Store subscription status
+- Gate paid features
+- Add cancellation or failure handling
+
+### Example 2: Migrate Customer Data to a New Schema
+
+**Story:** As an operations team, we want customer settings migrated to the new schema so future features can use a cleaner data model.
+
+**Why it is 13+ points:**
+- Data integrity risk
+- Backfill logic
+- Rollback plan
+- Production monitoring
+- Edge cases in old data
+- Cross-team review
+
+**Better split:**
+- Audit existing data shapes
+- Add new schema in parallel
+- Backfill a safe subset
+- Validate migration output
+- Switch reads
+- Remove old path after verification
+
+## Story Point Examples by Product Area
+
+### Login and Account
+
+| Story | Typical estimate |
+|---|---:|
+| Change login page copy | 1 |
+| Add client-side email validation | 2 |
+| Add "remember me" checkbox with existing session support | 3 |
+| Build login page with existing auth API | 5 |
+| Add password reset flow | 8 |
+| Add SSO with a new identity provider | 13+ |
+
+### Bug Fixes
+
+| Bug fix | Typical estimate |
+|---|---:|
+| Fix typo, missing label, or broken link | 1 |
+| Fix reproducible UI layout issue | 2 |
+| Fix known API validation bug | 3 |
+| Fix intermittent sync issue with logs available | 5 |
+| Fix hard-to-reproduce production incident | 8+ |
+
+### Dashboard and Reporting
+
+| Story | Typical estimate |
+|---|---:|
+| Rename a chart label | 1 |
+| Add tooltip copy | 2 |
+| Add one filter | 3 |
+| Add CSV export | 5 |
+| Add saved report views | 8 |
+| Rebuild report query architecture | 13+ |
+
+### API and Integrations
+
+| Story | Typical estimate |
+|---|---:|
+| Add one optional response field | 1-2 |
+| Add one validation rule | 2-3 |
+| Add a simple endpoint with existing models | 3-5 |
+| Add webhook processing | 5-8 |
+| Integrate a payment or identity provider | 8-13 |
+| Replace a core external integration | 13+ |
+
+## How to Use These Examples in Refinement
+
+Do not ask, "How many days will this take?"
+
+Ask:
+
+1. Is this closer to a 2 point story or a 5 point story we already completed?
+2. What is unknown?
+3. What can break?
+4. Which acceptance criteria are missing?
+5. Does this need one person, multiple roles, or another team?
+6. Can we test it inside the sprint?
+
+Then estimate with the team. If there is disagreement, that disagreement is useful. It usually reveals hidden complexity, missing requirements, or risk.
+
+## When to Use Planning Poker
+
+Use [Planning Poker](/tools/planning-poker) when:
+
+- Estimates vary widely
+- Senior engineers and junior engineers see the work differently
+- A story has hidden technical risk
+- The Product Owner needs to hear implementation concerns
+- The team is calibrating a new point scale
+
+Use the [Story Point Calculator](/tools/story-point-calculator) when you want a fast first pass before refinement.
+
+## When to Split a Story
+
+Split a story if:
+
+- It is estimated at 13 or higher
+- It has multiple user outcomes
+- It needs more than one sprint to test safely
+- It depends on another team's unresolved work
+- The team cannot describe a clear demo
+- Acceptance criteria mix discovery, build, migration, and rollout
+
+Good splits are user-visible when possible. Instead of "frontend task" and "backend task," prefer slices like:
+
+| Bad split | Better split |
+|---|---|
+| Build API | User can request password reset email |
+| Build UI | User can submit reset token and new password |
+| Testing task | Invalid or expired token shows a clear error |
+
+## Simple Calibration Exercise
+
+Use this exercise in backlog refinement:
+
+1. Pick three completed stories from the last two sprints.
+2. Label them small, medium, and large.
+3. Agree which one is your baseline 3 point story.
+4. Compare each new story to that baseline.
+5. If the team argues for more than five minutes, write down the unknown and split or spike the work.
+
+This keeps story point estimation practical. The goal is not perfect numbers. The goal is better conversation, safer commitments, and fewer surprise carryovers.
+
+## Related Tools
+
+- Use the [Story Point Calculator](/tools/story-point-calculator) for a fast Fibonacci recommendation.
+- Use [Planning Poker](/tools/planning-poker) when the whole team needs to estimate together.
+- Use the [Sprint Planning Checklist](/tools/sprint-planning-checklist) before committing scope.
+- Use the [Sprint Capacity Calculator](/tools/sprint-capacity-calculator) to compare estimated work against team capacity.

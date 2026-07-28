@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
+import { mdxComponents } from "@/components/MDXComponents";
+import { mdxRemoteOptions } from "@/lib/mdx";
 import { DEFAULT_OG_IMAGE_URL, buildArticleSchema, buildBreadcrumbSchema, buildHowToSchema, buildFAQSchema, buildImageSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
@@ -74,7 +76,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         breadcrumbs={[{ label: "Guides", href: "/guides" }, { label: item.title }]}
         relatedLinks={item.relatedLinks}
       >
-        <MDXRemote source={item.content} />
+        <MDXRemote source={item.content} options={mdxRemoteOptions} components={mdxComponents} />
       </ContentLayout>
     </>
   );
