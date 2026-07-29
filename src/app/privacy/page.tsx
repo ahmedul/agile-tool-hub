@@ -24,7 +24,7 @@ export default function PrivacyPage() {
 
       <div className="prose prose-gray max-w-none">
         <p>
-          Last updated: May 24, 2026
+          Last updated: July 29, 2026
         </p>
 
         <h2>1. Overview</h2>
@@ -61,32 +61,45 @@ export default function PrivacyPage() {
           us improve content and tools.
         </p>
 
-        <h2>5. Cookies and local storage</h2>
+        <h2>5. Feedback and feature requests</h2>
+        <p>
+          Some tools may include a feedback panel. A quick vote records the selected category only. If
+          you choose to send a detailed request, the written message is sent to our serverless endpoint
+          and may be stored as a GitHub issue so we can review and prioritise it.
+        </p>
+        <ul>
+          <li>Do not include secrets, credentials, private customer data, or regulated data in feedback</li>
+          <li>Detailed feedback may include the tool name, page URL, feedback type, timestamp, and message</li>
+          <li>Quick votes and detailed requests are used to improve the product</li>
+        </ul>
+
+        <h2>6. Cookies and local storage</h2>
         <p>
           AgileToolHub may use browser storage for product functionality, such as session continuity,
           local preferences, and usage counters.
         </p>
 
-        <h2>6. Security and retention</h2>
+        <h2>7. Security and retention</h2>
         <p>
           We use reasonable safeguards for data in transit. However, no method of transmission or
           storage is completely secure.
         </p>
 
-        <h2>7. Third-party services</h2>
+        <h2>8. Third-party services</h2>
         <p>
           We may use third-party services for analytics, hosting, and AI generation. Those services
           have their own terms and privacy practices.
         </p>
 
-        <h2>8. Your choices</h2>
+        <h2>9. Your choices</h2>
         <ul>
           <li>Use Local mode if you do not want text sent for AI inference</li>
           <li>Avoid pasting sensitive internal data into any online tool</li>
+          <li>Use vote-only feedback if you do not want to send a written request</li>
           <li>Clear your browser storage if you want to remove local counters and preferences</li>
         </ul>
 
-        <h2>9. Contact</h2>
+        <h2>10. Contact</h2>
         <p>
           Questions about this policy can be sent through future support channels. Until then, use
           the public project contact path on GitHub.
