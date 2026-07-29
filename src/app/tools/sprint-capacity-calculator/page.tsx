@@ -4,6 +4,7 @@ import SprintCapacityCalculator from "@/components/SprintCapacityCalculator";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -73,6 +74,8 @@ export default function SprintCapacityPage() {
         </p>
 
         <SprintCapacityCalculator />
+
+        <ToolFeedbackPanel toolName="Sprint Capacity Calculator" toolSlug="sprint-capacity-calculator" />
 
         <FAQ items={faqItems} />
 
