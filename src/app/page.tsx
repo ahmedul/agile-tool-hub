@@ -277,6 +277,12 @@ export default function Home() {
                 <p className="text-gray-500 text-xs">Master sprint planning, capacity, velocity, and Fibonacci estimation</p>
               </li>
               <li>
+                <Link href="/tools/sprint-planning-tools" className="text-blue-600 hover:underline font-medium text-sm">
+                  Free Sprint Planning Tools
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Use checklist, estimation, capacity, Planning Poker, and velocity tools together</p>
+              </li>
+              <li>
                 <Link href="/guides/sprint-capacity-planning-guide" className="text-blue-600 hover:underline font-medium text-sm">
                   Sprint Capacity Planning
                 </Link>

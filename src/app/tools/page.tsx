@@ -85,6 +85,7 @@ const toolGroups = [
     title: "Sprint planning and estimation",
     description: "Plan realistic sprint commitments with capacity, story points, and team estimation tools.",
     links: [
+      { title: "Sprint Planning Tools Hub", href: "/tools/sprint-planning-tools" },
       { title: "Story Point Calculator", href: "/tools/story-point-calculator" },
       { title: "Planning Poker", href: "/tools/planning-poker" },
       { title: "Sprint Capacity Calculator", href: "/tools/sprint-capacity-calculator" },
@@ -153,6 +154,7 @@ const chooserRows = [
 ];
 
 const learningLinks = [
+  { title: "Free Sprint Planning Tools", href: "/tools/sprint-planning-tools" },
   { title: "Story Point Examples for Agile Teams", href: "/guides/story-point-examples-for-agile-teams" },
   { title: "Story Point Estimation Guide", href: "/guides/story-point-estimation-guide-with-examples" },
   { title: "Complete Guide to Sprint Planning & Estimation", href: "/guides/complete-guide-to-sprint-planning-and-estimation" },

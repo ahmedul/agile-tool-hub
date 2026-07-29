@@ -91,6 +91,7 @@ export default function StoryPointCalculatorPage() {
         <div className="mt-10 border-t border-gray-200 pt-8">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Related resources</h2>
           <ul className="space-y-2">
+            <li><Link href="/tools/sprint-planning-tools" className="text-blue-600 hover:underline">Sprint Planning Tools</Link></li>
             <li><Link href="/tools/planning-poker" className="text-blue-600 hover:underline">Planning Poker</Link></li>
             <li><Link href="/guides/story-point-examples-for-agile-teams" className="text-blue-600 hover:underline">Story Point Examples for Agile Teams</Link></li>
             <li><Link href="/guides/story-point-estimation-guide-with-examples" className="text-blue-600 hover:underline">Story Point Estimation Guide</Link></li>

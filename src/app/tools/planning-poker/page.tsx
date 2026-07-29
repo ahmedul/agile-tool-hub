@@ -174,6 +174,7 @@ export default function PlanningPokerPage() {
           </h3>
           <div className="flex flex-wrap gap-3">
             {[
+              { title: "Sprint Planning Tools", href: "/tools/sprint-planning-tools" },
               { title: "Story Points Explained", href: "/docs/story-points-explained" },
               { title: "User Story Template", href: "/templates/user-story-template" },
               { title: "User Story Generator", href: "/tools/user-story-generator" },

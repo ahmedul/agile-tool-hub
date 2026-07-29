@@ -176,6 +176,7 @@ export default function VelocityTrackerPage() {
           </h2>
           <RelatedLinks
             links={[
+              { title: "Sprint Planning Tools", href: "/tools/sprint-planning-tools" },
               { title: "Sprint Velocity Tracking Guide", href: "/guides/sprint-velocity-tracking-guide" },
               { title: "Sprint Capacity Planning Guide", href: "/guides/sprint-capacity-planning-guide" },
               { title: "Story Point Estimation Guide", href: "/guides/story-point-estimation-guide-with-examples" },

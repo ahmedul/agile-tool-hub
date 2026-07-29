@@ -105,6 +105,7 @@ export default function SprintPlanningChecklistPage() {
         <div className="mt-10 border-t border-gray-200 pt-8">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Related resources</h2>
           <ul className="space-y-2">
+            <li><Link href="/tools/sprint-planning-tools" className="text-blue-600 hover:underline">Sprint Planning Tools</Link></li>
             <li><Link href="/templates/sprint-planning-template" className="text-blue-600 hover:underline">Sprint Planning Template</Link></li>
             <li><Link href="/tools/sprint-capacity-calculator" className="text-blue-600 hover:underline">Sprint Capacity Calculator</Link></li>
             <li><Link href="/tools/story-point-calculator" className="text-blue-600 hover:underline">Story Point Calculator</Link></li>
