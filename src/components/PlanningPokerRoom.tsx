@@ -92,6 +92,24 @@ function clampPercent(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+function getSeatBounds(total: number, isDenseLayout: boolean) {
+  if (total === 2) {
+    return { minX: 12, maxX: 88, minY: 22, maxY: 88 };
+  }
+
+  if (isDenseLayout) {
+    return { minX: 7, maxX: 93, minY: 10, maxY: 90 };
+  }
+
+  if (total <= 4) {
+    return { minX: 12, maxX: 88, minY: 15, maxY: 85 };
+  }
+
+  return total <= 7
+    ? { minX: 11, maxX: 89, minY: 14, maxY: 86 }
+    : { minX: 8, maxX: 92, minY: 12, maxY: 88 };
+}
+
 function getSeatingProfile(total: number) {
   const safeTotal = Math.max(total, 1);
 
@@ -131,51 +149,51 @@ function getSeatingProfile(total: number) {
 
   if (safeTotal <= 4) {
     return {
-      centerY: 52,
-      radiusX: 45,
-      radiusY: 36,
-      outward: 9,
-      tableWidth: 64,
-      tableHeight: 46,
-      innerWidth: 56,
-      innerHeight: 38,
+      centerY: 50,
+      radiusX: 42,
+      radiusY: 31,
+      outward: 5,
+      tableWidth: 62,
+      tableHeight: 42,
+      innerWidth: 54,
+      innerHeight: 34,
       compactSeats: false,
       compactMeta: false,
-      containerClass: "h-[430px] sm:h-[480px]",
+      containerClass: "h-[500px] sm:h-[540px]",
       hint: null,
     };
   }
 
   if (safeTotal <= 6) {
     return {
-      centerY: 52,
-      radiusX: 46,
-      radiusY: 38,
-      outward: 8,
-      tableWidth: 66,
-      tableHeight: 48,
-      innerWidth: 58,
-      innerHeight: 40,
+      centerY: 50,
+      radiusX: 43,
+      radiusY: 32,
+      outward: 5,
+      tableWidth: 63,
+      tableHeight: 43,
+      innerWidth: 55,
+      innerHeight: 35,
       compactSeats: false,
       compactMeta: false,
-      containerClass: "h-[440px] sm:h-[495px]",
+      containerClass: "h-[515px] sm:h-[555px]",
       hint: null,
     };
   }
 
   if (safeTotal <= 8) {
     return {
-      centerY: 52,
-      radiusX: 47,
-      radiusY: 40,
-      outward: 7,
-      tableWidth: 67,
-      tableHeight: 49,
-      innerWidth: 59,
-      innerHeight: 41,
+      centerY: 50,
+      radiusX: 44,
+      radiusY: 34,
+      outward: 5,
+      tableWidth: 64,
+      tableHeight: 44,
+      innerWidth: 56,
+      innerHeight: 36,
       compactSeats: false,
       compactMeta: false,
-      containerClass: "h-[450px] sm:h-[510px]",
+      containerClass: "h-[530px] sm:h-[570px]",
       hint: null,
     };
   }
@@ -1067,14 +1085,11 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   const outwardFactor = totalCount === 2 ? -0.75 : 1;
                   const rawX = seat.x + outwardX * (seatingProfile.outward + ringBoost) * outwardFactor + tangentX * tangentShift;
                   const rawY = seat.y + outwardY * (seatingProfile.outward + ringBoost) * outwardFactor + tangentY * tangentShift;
-                  const bounds = totalCount === 2
-                    ? { minX: 12, maxX: 88, minY: 22, maxY: 88 }
-                    : isDenseLayout
-                      ? { minX: 7, maxX: 93, minY: 10, maxY: 92 }
-                      : { minX: 6, maxX: 94, minY: 10, maxY: 92 };
+                  const bounds = getSeatBounds(totalCount, isDenseLayout);
                   const posX = clampPercent(rawX, bounds.minX, bounds.maxX);
                   const posY = clampPercent(rawY, bounds.minY, bounds.maxY);
-                  const placeMetaAbove = posY < seatingProfile.centerY - 10;
+                  const placeMetaAbove =
+                    posY < seatingProfile.centerY - 10 || posY > seatingProfile.centerY + 24;
                   const playerMeta = (
                     <>
                       {nudgeNotice && nudgeNotice.targetId === uid && (
@@ -1087,7 +1102,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                         className={[
                           "truncate rounded-full bg-white/85 px-2 py-0.5 text-center font-semibold text-gray-800 shadow-sm",
                           isMe ? "ring-2 ring-blue-200" : "",
-                          seatingProfile.compactSeats ? "max-w-[78px] text-[10px] leading-tight" : "max-w-[120px] text-xs",
+                          seatingProfile.compactSeats
+                            ? "max-w-[78px] text-[10px] leading-tight"
+                            : "max-w-[72px] text-[11px] leading-tight sm:max-w-[120px] sm:text-xs",
                         ].join(" ")}
                       >
                         {p.name}{isMe ? " (you)" : ""}
@@ -1131,13 +1148,13 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                         <div
                           className={[
                             "rounded-t-full border border-slate-300/80 bg-gradient-to-b from-slate-100 to-slate-300 shadow-sm",
-                            seatingProfile.compactSeats ? "h-2 w-14" : "h-2.5 w-[72px]",
+                            seatingProfile.compactSeats ? "h-2 w-14" : "h-2 w-14 sm:h-2.5 sm:w-[72px]",
                           ].join(" ")}
                         />
                         <div
                           className={[
                             "relative flex items-center justify-center rounded-xl border-2 font-black shadow-lg transition-all",
-                            seatingProfile.compactSeats ? "h-14 w-11 text-base" : "h-[70px] w-14 text-lg",
+                            seatingProfile.compactSeats ? "h-14 w-11 text-base" : "h-16 w-12 text-base sm:h-[70px] sm:w-14 sm:text-lg",
                             nudgedUserId === uid ? "ring-4 ring-amber-300 ring-offset-2 ring-offset-emerald-50" : "",
                             revealed && p.vote !== null
                               ? "border-emerald-400 bg-white text-gray-950 shadow-emerald-900/10"
