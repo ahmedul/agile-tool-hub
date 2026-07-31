@@ -1088,8 +1088,8 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                   const bounds = getSeatBounds(totalCount, isDenseLayout);
                   const posX = clampPercent(rawX, bounds.minX, bounds.maxX);
                   const posY = clampPercent(rawY, bounds.minY, bounds.maxY);
-                  const placeMetaAbove =
-                    posY < seatingProfile.centerY - 10 || posY > seatingProfile.centerY + 24;
+                  const isLeftSeat = posX < centerX - 8;
+                  const placeMetaAbove = posY < seatingProfile.centerY - 10;
                   const playerMeta = (
                     <>
                       {nudgeNotice && nudgeNotice.targetId === uid && (
@@ -1165,8 +1165,20 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                                   : "border-gray-200 bg-white text-gray-300",
                           ].join(" ")}
                         >
-                          <span className={["absolute left-2 top-2 h-1.5 w-7 rounded-full", seatAccent.rail].join(" ")} />
-                          <span className={["absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full border text-sm shadow", seatAccent.avatar].join(" ")}>
+                          <span
+                            className={[
+                              "absolute top-2 h-1.5 w-7 rounded-full",
+                              isLeftSeat ? "right-2" : "left-2",
+                              seatAccent.rail,
+                            ].join(" ")}
+                          />
+                          <span
+                            className={[
+                              "absolute -top-2 flex h-7 w-7 items-center justify-center rounded-full border text-sm shadow",
+                              isLeftSeat ? "-left-2" : "-right-2",
+                              seatAccent.avatar,
+                            ].join(" ")}
+                          >
                             {getAvatar(uid, avatarTheme)}
                           </span>
                           <span>{revealed ? (p.vote ?? "–") : p.hasVoted ? "✓" : "·"}</span>
