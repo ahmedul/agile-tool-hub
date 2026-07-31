@@ -973,39 +973,135 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
           {participantList.length === 0 ? (
             <p className="text-sm text-gray-400">Waiting for teammates to join…</p>
           ) : (
-            <motion.div
-              className="overflow-hidden rounded-2xl border border-emerald-200/80 bg-[radial-gradient(circle_at_50%_42%,#f7fffb_0%,#ecfdf5_42%,#dff7ec_100%)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_18px_50px_rgba(15,118,110,0.12)]"
-              variants={ANIMATION_VARIANTS.fadeInUp}
-              initial="initial"
-              animate={animationsEnabled ? "animate" : false}
-              transition={{ duration: DURATIONS.normal / 1000 }}
-            >
-              <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-white/80 bg-white/70 px-3 py-2 shadow-sm">
-                <div className="min-w-0">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-700">Current table</p>
-                  <p className="truncate text-sm font-semibold text-gray-900">
-                    {currentStory || "Set a story to start voting"}
-                  </p>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  {seatingProfile.hint && (
-                    <span className="hidden rounded-full border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 sm:inline-flex">
-                      {seatingProfile.hint}
-                    </span>
-                  )}
-                  <span className="rounded-full bg-gray-900 px-2.5 py-1 text-[11px] font-bold text-white">
-                    {voteProgress}%
-                  </span>
-                </div>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/80">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 transition-all duration-500"
-                  style={{ width: `${voteProgress}%` }}
-                />
-              </div>
+            <div className="space-y-4">
+              {revealed && (
+                <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">Results</p>
+                        <p className="mt-1 truncate text-sm font-semibold text-gray-900">
+                          {currentStory || "Current story"}
+                        </p>
+                      </div>
+                      <div className="shrink-0 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-right">
+                        <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">Suggested</p>
+                        <p className="text-xl font-black text-emerald-950">{recommendedEstimate ?? "–"}</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {participantList.map(([uid, p], index) => {
+                        const isMe = uid === myUserId;
+                        const seatAccent = SEAT_ACCENTS[index % SEAT_ACCENTS.length];
+                        return (
+                          <div key={uid} className="flex items-center justify-between gap-2 rounded-xl border border-gray-200 bg-gray-50/80 px-3 py-2">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <span className={["flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm shadow-sm", seatAccent.avatar].join(" ")}>
+                                {getAvatar(uid, avatarTheme)}
+                              </span>
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-semibold text-gray-800">
+                                  {p.name}{isMe ? " (you)" : ""}
+                                </p>
+                                <p className="text-[10px] uppercase tracking-wide text-gray-400">revealed</p>
+                              </div>
+                            </div>
+                            <span className="flex h-9 w-10 shrink-0 items-center justify-center rounded-lg border border-white bg-white text-lg font-black text-gray-950 shadow-sm">
+                              {p.vote ?? "–"}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-              <div className={["relative mx-auto mt-4 w-full max-w-[760px] overflow-visible", seatingProfile.containerClass].join(" ")}>
+                  <div className="self-start rounded-2xl border border-blue-200 bg-blue-50 p-4 shadow-sm lg:sticky lg:top-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-widest text-blue-700">Final estimate</p>
+                        <p className="mt-1 text-sm font-semibold text-gray-900">
+                          {finalEstimate !== null
+                            ? `Selected: ${finalEstimate}`
+                            : recommendedEstimate !== null
+                              ? `Suggested: ${recommendedEstimate}`
+                              : "Choose an estimate"}
+                        </p>
+                      </div>
+                      <div className="rounded-xl bg-white px-3 py-2 text-xl font-black text-blue-900 shadow-sm">
+                        {finalEstimate ?? recommendedEstimate ?? "–"}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-6 lg:grid-cols-4">
+                      {PLANNING_POKER_CARDS.map((card) => (
+                        <button
+                          key={card}
+                          type="button"
+                          onClick={() => setFinalEstimate(finalEstimate === card ? null : card)}
+                          className={[
+                            "min-w-10 rounded-lg border px-2 py-1.5 text-sm font-semibold transition-colors",
+                            finalEstimate === card
+                              ? "border-blue-600 bg-blue-600 text-white shadow-sm"
+                              : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50",
+                          ].join(" ")}
+                        >
+                          {card}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                      <button
+                        type="button"
+                        onClick={handleRevote}
+                        className="rounded-lg bg-white px-4 py-2 font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-100"
+                      >
+                        Re-vote
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleNextStory}
+                        disabled={!currentStory.trim()}
+                        className="rounded-lg bg-blue-600 px-6 py-2 font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Next Story →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <motion.div
+                className="overflow-hidden rounded-2xl border border-emerald-200/80 bg-[radial-gradient(circle_at_50%_42%,#f7fffb_0%,#ecfdf5_42%,#dff7ec_100%)] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_18px_50px_rgba(15,118,110,0.12)]"
+                variants={ANIMATION_VARIANTS.fadeInUp}
+                initial="initial"
+                animate={animationsEnabled ? "animate" : false}
+                transition={{ duration: DURATIONS.normal / 1000 }}
+              >
+                <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-white/80 bg-white/70 px-3 py-2 shadow-sm">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-emerald-700">Current table</p>
+                    <p className="truncate text-sm font-semibold text-gray-900">
+                      {currentStory || "Set a story to start voting"}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    {seatingProfile.hint && (
+                      <span className="hidden rounded-full border border-emerald-300 bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 sm:inline-flex">
+                        {seatingProfile.hint}
+                      </span>
+                    )}
+                    <span className="rounded-full bg-gray-900 px-2.5 py-1 text-[11px] font-bold text-white">
+                      {voteProgress}%
+                    </span>
+                  </div>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded-full bg-white/80">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-500 transition-all duration-500"
+                    style={{ width: `${voteProgress}%` }}
+                  />
+                </div>
+
+                <div className={["relative mx-auto mt-4 w-full max-w-[760px] overflow-visible", seatingProfile.containerClass].join(" ")}>
                 <div className="absolute inset-x-4 top-1/2 h-20 -translate-y-1/2 rounded-full bg-emerald-950/10 blur-2xl" />
                 {/* Poker table */}
                 <div
@@ -1208,8 +1304,9 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                     </div>
                   )}
                 </div>
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
+            </div>
           )}
         </div>
 
@@ -1230,94 +1327,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 ? "Everyone's voted! Ready to reveal? 👀"
                 : `${votedCount}/${totalCount} voted — let's go! 🚀`}
           </button>
-        ) : (
-          <div className="space-y-4">
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-              <div className="mb-4 flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-emerald-700">Results</p>
-                  <p className="mt-1 truncate text-sm font-semibold text-gray-900">
-                    {currentStory || "Current story"}
-                  </p>
-                </div>
-                <div className="shrink-0 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-right">
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700">Suggested</p>
-                  <p className="text-xl font-black text-emerald-950">{recommendedEstimate ?? "–"}</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-                {participantList.map(([uid, p], index) => {
-                  const isMe = uid === myUserId;
-                  const seatAccent = SEAT_ACCENTS[index % SEAT_ACCENTS.length];
-                  return (
-                    <div key={uid} className="rounded-xl border border-gray-200 bg-gray-50/80 p-3">
-                      <div className="mb-3 flex items-center gap-2">
-                        <span className={["flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-base shadow-sm", seatAccent.avatar].join(" ")}>
-                          {getAvatar(uid, avatarTheme)}
-                        </span>
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-semibold text-gray-800">
-                            {p.name}{isMe ? " (you)" : ""}
-                          </p>
-                          <p className="text-[10px] uppercase tracking-wide text-gray-400">revealed</p>
-                        </div>
-                      </div>
-                      <div className="flex h-16 items-center justify-center rounded-lg border border-white bg-white text-3xl font-black text-gray-950 shadow-sm">
-                        {p.vote ?? "–"}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <span className="text-sm font-semibold text-gray-800">Final estimate</span>
-                <span className="text-xs text-gray-500">
-                  {finalEstimate !== null
-                    ? `Selected: ${finalEstimate}`
-                    : recommendedEstimate !== null
-                      ? `Suggested: ${recommendedEstimate}`
-                      : "Choose an estimate"}
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {PLANNING_POKER_CARDS.map((card) => (
-                  <button
-                    key={card}
-                    type="button"
-                    onClick={() => setFinalEstimate(finalEstimate === card ? null : card)}
-                    className={[
-                      "min-w-10 rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors",
-                      finalEstimate === card
-                        ? "border-blue-600 bg-blue-600 text-white shadow-sm"
-                        : "border-gray-300 bg-white text-gray-700 hover:border-blue-400 hover:bg-blue-50",
-                    ].join(" ")}
-                  >
-                    {card}
-                  </button>
-                ))}
-              </div>
-              <div className="mt-4 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleRevote}
-                  className="shrink-0 rounded-lg bg-gray-100 px-4 py-2 font-medium text-gray-700 transition-colors hover:bg-gray-200"
-                >
-                  Re-vote
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextStory}
-                  disabled={!currentStory.trim()}
-                  className="shrink-0 rounded-lg bg-blue-600 px-6 py-2 font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Next Story →
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        ) : null}
       </div>
 
       {/* Right sidebar */}
