@@ -1045,18 +1045,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 >
                   D
                 </div>
-                <div
-                  className="absolute left-[18%] z-10 h-5 w-5 rounded-full border-2 border-white bg-blue-500 shadow-md"
-                  style={{ top: `calc(${seatingProfile.centerY}% + ${seatingProfile.tableHeight / 2}% - 32px)` }}
-                />
-                <div
-                  className="absolute left-[21%] z-10 h-5 w-5 rounded-full border-2 border-white bg-rose-500 shadow-md"
-                  style={{ top: `calc(${seatingProfile.centerY}% + ${seatingProfile.tableHeight / 2}% - 24px)` }}
-                />
-                <div
-                  className="absolute right-[19%] z-10 h-5 w-5 rounded-full border-2 border-white bg-yellow-400 shadow-md"
-                  style={{ top: `calc(${seatingProfile.centerY}% - ${seatingProfile.tableHeight / 2}% + 36px)` }}
-                />
 
                 {/* Chairs around the table */}
                 {seatList.map(([uid, p], index) => {
