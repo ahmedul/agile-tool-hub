@@ -102,12 +102,12 @@ function getSeatBounds(total: number, isDenseLayout: boolean) {
   }
 
   if (total <= 4) {
-    return { minX: 12, maxX: 88, minY: 15, maxY: 85 };
+    return { minX: 12, maxX: 88, minY: 15, maxY: 78 };
   }
 
   return total <= 7
-    ? { minX: 11, maxX: 89, minY: 14, maxY: 86 }
-    : { minX: 8, maxX: 92, minY: 12, maxY: 88 };
+    ? { minX: 11, maxX: 89, minY: 14, maxY: 80 }
+    : { minX: 8, maxX: 92, minY: 12, maxY: 84 };
 }
 
 function getSeatingProfile(total: number) {
@@ -1141,7 +1141,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                       <div className={["relative flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1.5"].join(" ")}>
                         <div className="absolute top-8 h-16 w-20 rounded-full bg-slate-900/10 blur-xl" />
                         {placeMetaAbove && (
-                          <div className={["relative z-20 flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
+                          <div className={["absolute bottom-full z-20 mb-1 flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
                             {playerMeta}
                           </div>
                         )}
@@ -1175,7 +1175,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                           )}
                         </div>
                         {!placeMetaAbove && (
-                          <div className={["relative z-20 flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
+                          <div className={["absolute top-full z-20 mt-1 flex flex-col items-center", isDenseLayout ? "gap-0.5" : "gap-1"].join(" ")}>
                             {playerMeta}
                           </div>
                         )}
