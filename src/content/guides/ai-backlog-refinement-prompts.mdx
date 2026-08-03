@@ -1,0 +1,568 @@
+---
+title: "AI Backlog Refinement Prompts for Scrum Teams"
+description: "Copy AI backlog refinement prompts for user story cleanup, Definition of Ready checks, acceptance criteria, story splitting, dependencies, and Jira-ready follow-ups."
+slug: "ai-backlog-refinement-prompts"
+category: "Guides"
+publishedAt: "2026-08-03"
+updatedAt: "2026-08-03"
+keywords:
+  - AI backlog refinement prompts
+  - backlog refinement prompts
+  - AI backlog grooming
+  - Scrum refinement prompts
+  - Definition of Ready AI prompt
+  - user story refinement prompt
+  - acceptance criteria AI prompt
+  - Jira backlog refinement
+relatedLinks:
+  - title: "Backlog Refinement Best Practices"
+    href: "/guides/backlog-refinement-best-practices"
+  - title: "Definition of Ready Best Practices"
+    href: "/guides/definition-of-ready-best-practices"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "AI Scrum Master Prompts"
+    href: "/guides/ai-scrum-master-prompts"
+  - title: "AI Sprint Planning Prompts"
+    href: "/guides/ai-sprint-planning-prompts"
+  - title: "How to Write User Stories"
+    href: "/guides/how-to-write-user-stories"
+  - title: "How to Write Acceptance Criteria"
+    href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Planning Poker Tool"
+    href: "/tools/planning-poker"
+  - title: "Backlog Refinement Template"
+    href: "/templates/backlog-refinement-template"
+howToSteps:
+  - name: "Collect candidate backlog items"
+    description: "Gather the next sprint candidates, product goal, known constraints, dependencies, designs, and any rough notes from stakeholders."
+  - name: "Sanitize sensitive details"
+    description: "Remove customer data, secrets, internal URLs, credentials, incident details, and private stakeholder comments before using AI."
+  - name: "Check Definition of Ready"
+    description: "Use AI to identify missing user value, unclear acceptance criteria, dependencies, test gaps, and oversized stories."
+  - name: "Improve the story draft"
+    description: "Ask AI to rewrite messy notes into a clearer user story, acceptance criteria, open questions, and scope boundaries."
+  - name: "Bring the result back to the team"
+    description: "Use the AI output as a draft for team discussion. The Product Owner and developers still decide priority, scope, readiness, and estimate."
+faqItems:
+  - question: "Can AI run backlog refinement for a Scrum team?"
+    answer: "No. AI can prepare drafts, identify gaps, and generate questions, but the Product Owner and development team still need to make product, technical, and estimation decisions together."
+  - question: "What can AI help with during backlog refinement?"
+    answer: "AI can clean up user stories, suggest acceptance criteria, find missing dependencies, propose story splits, draft Product Owner questions, and turn refinement notes into Jira-ready follow-ups."
+  - question: "Can AI decide if a story is ready?"
+    answer: "AI can compare a story against your Definition of Ready and flag gaps, but the team should decide whether the story is ready for sprint planning."
+  - question: "Is it safe to paste Jira backlog items into AI?"
+    answer: "Only if your organization allows it. Remove customer data, credentials, private comments, internal URLs, security details, production logs, and regulated information first."
+---
+
+Backlog refinement is where rough ideas become clear, small, testable work.
+
+AI can help with the preparation: cleaning up notes, finding missing details, drafting acceptance criteria, and creating better questions for the Product Owner.
+
+It should not decide priority, scope, estimate, or sprint commitment.
+
+Use these prompts when you need to:
+
+- turn rough feature notes into a user story
+- check whether a story meets Definition of Ready
+- find missing acceptance criteria
+- split large stories
+- surface dependencies and risks
+- prepare estimation questions
+- convert refinement notes into Jira-ready follow-up items
+
+If you need a quick draft, start with the [User Story Generator](/tools/user-story-generator) or [Acceptance Criteria Generator](/tools/acceptance-criteria-generator), then use these prompts to refine the result with your team.
+
+## How to Use AI in Backlog Refinement
+
+Use AI before or during refinement to make the discussion sharper.
+
+Good AI use:
+
+- summarize messy stakeholder notes
+- suggest missing acceptance criteria
+- identify unclear scope
+- create Product Owner questions
+- propose smaller story splits
+- flag dependencies and readiness gaps
+- format Jira follow-up items
+
+Bad AI use:
+
+- inventing customer requirements
+- forcing a story into the sprint
+- assigning story points without the team
+- replacing the Product Owner's priority decision
+- hiding uncertainty behind confident wording
+- pasting sensitive company or customer data
+
+The output should be treated as a draft.
+
+The team still owns the refinement conversation.
+
+## Prompt 1: Backlog Item Readiness Check
+
+Use this before refinement to see which tickets need discussion.
+
+```text
+Act as a Scrum Master preparing backlog refinement.
+
+Review the backlog items below against our Definition of Ready.
+
+Definition of Ready:
+- Clear user or business value
+- User type or stakeholder is identified
+- Acceptance criteria are testable
+- Scope boundaries are clear
+- Dependencies are known
+- Small enough to estimate
+- No major open product questions
+- No major open technical questions
+
+Return a table with:
+1. Backlog item
+2. Ready? yes/no/unclear
+3. Missing information
+4. Acceptance criteria gaps
+5. Dependency or risk
+6. Question to ask in refinement
+7. Suggested next action
+
+Backlog items:
+[paste sanitized backlog summaries]
+```
+
+Use this with the [Definition of Ready Best Practices](/guides/definition-of-ready-best-practices) guide.
+
+## Prompt 2: Rewrite Rough Notes Into a User Story
+
+Use this when the backlog item is a messy paragraph, Slack thread, or stakeholder request.
+
+```text
+Act as a Product Owner and Scrum Master refining a rough backlog item.
+
+Rough notes:
+[paste sanitized notes]
+
+Create:
+- Clear title
+- User story in As a / I want / So that format
+- Business value
+- Scope included
+- Scope excluded
+- Acceptance criteria checklist
+- Open questions
+- Dependencies
+- Suggested story type: story / task / spike / bug
+
+Rules:
+- Do not invent requirements
+- Mark assumptions clearly
+- Keep the story small enough for one sprint
+- Use plain language suitable for Jira
+```
+
+For a faster first draft, use the [User Story Generator](/tools/user-story-generator).
+
+## Prompt 3: Acceptance Criteria Gap Check
+
+Use this when a story looks understandable but may not be testable.
+
+```text
+Act as a QA-minded Scrum team member reviewing acceptance criteria.
+
+User story:
+[story]
+
+Current acceptance criteria:
+[criteria]
+
+Find gaps in:
+- Happy path
+- Error states
+- Edge cases
+- Permissions
+- Empty states
+- Loading states
+- Validation rules
+- Performance or accessibility constraints
+- Analytics or audit needs, if relevant
+
+Return:
+1. Missing criterion
+2. Why it matters
+3. Suggested acceptance criterion
+4. Question to confirm with the Product Owner
+
+Do not add implementation details unless they are required constraints.
+```
+
+You can also generate a clean first pass with the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator).
+
+## Prompt 4: Story Splitting Prompt
+
+Use this when a story is too large for one sprint or has too many acceptance criteria.
+
+```text
+Act as a Scrum Master helping a team split a large backlog item.
+
+Large story:
+[paste story]
+
+Known constraints:
+- User value must remain visible
+- Each split should be testable
+- Avoid splitting only by frontend/backend/database layers
+- Keep each split small enough to estimate
+
+Return:
+- 3 to 6 smaller stories
+- User value for each split
+- Acceptance criteria for each split
+- Suggested delivery order
+- Dependencies between splits
+- What should stay out of scope
+
+Flag any split that is only a technical task.
+```
+
+Good story splits usually follow user workflow, rule variation, data variation, or risk reduction.
+
+## Prompt 5: Product Owner Question List
+
+Use this when developers are making assumptions during refinement.
+
+```text
+Act as a Scrum Master preparing Product Owner questions for backlog refinement.
+
+Backlog item:
+[story or rough notes]
+
+Generate questions grouped by:
+- User value
+- Scope boundaries
+- Acceptance criteria
+- Priority and trade-offs
+- UX or design
+- Data and permissions
+- Dependencies
+- Release or stakeholder expectations
+
+Rules:
+- Keep questions specific
+- Avoid yes/no questions when detail is needed
+- Prioritize the 10 most important questions
+- Mark which questions must be answered before sprint planning
+```
+
+This helps prevent sprint planning from becoming refinement.
+
+## Prompt 6: Dependency and Risk Scan
+
+Use this when the story looks ready but may have hidden blockers.
+
+```text
+Act as a technical Scrum team member scanning a backlog item for dependencies.
+
+Backlog item:
+[story]
+
+Known context:
+- Systems touched: [systems]
+- Teams involved: [teams]
+- External vendors or APIs: [vendors/APIs]
+- Environments needed: [environments]
+- Security or compliance constraints: [constraints]
+
+Identify:
+1. Technical dependencies
+2. Product dependencies
+3. Data dependencies
+4. Testing dependencies
+5. Release or rollout risks
+6. Questions to resolve before estimation
+7. Suggested spike if uncertainty is too high
+
+Return a practical table for refinement.
+```
+
+This is useful for API, integration, migration, analytics, and permission-heavy work.
+
+## Prompt 7: Spike or Story Decision
+
+Use this when the team cannot estimate because uncertainty is too high.
+
+```text
+Act as a Scrum Master helping decide whether a backlog item should be refined as a story or a spike.
+
+Backlog item:
+[item]
+
+Known unknowns:
+[unknowns]
+
+Evaluate:
+- Is the user value clear?
+- Is the technical approach known?
+- Are dependencies known?
+- Are acceptance criteria testable?
+- Can the team estimate with reasonable confidence?
+- What information is missing?
+
+Recommend:
+- Keep as story
+- Split first
+- Create a spike
+- Defer until more product clarity exists
+
+If recommending a spike, write:
+- Spike goal
+- Questions to answer
+- Timebox
+- Output expected
+- Follow-up story likely needed
+```
+
+Do not use spikes as a way to avoid writing clear stories. Use them when learning is genuinely required.
+
+## Prompt 8: Estimation Discussion Prep
+
+Use this before planning poker or when estimates vary widely.
+
+```text
+Act as a Scrum Master preparing estimation discussion.
+
+Backlog item:
+[story]
+
+Acceptance criteria:
+[criteria]
+
+Generate:
+- Clarifying questions before estimation
+- Reasons someone may estimate low
+- Reasons someone may estimate high
+- Hidden complexity to discuss
+- Testing effort to discuss
+- Dependencies that affect estimate
+- What must be clarified before planning poker
+
+Do not assign a final story point estimate.
+The team will estimate together.
+```
+
+Then estimate with the team in [Planning Poker](/tools/planning-poker).
+
+## Prompt 9: Refinement Meeting Agenda
+
+Use this before the session.
+
+```text
+Act as a Scrum Master creating a backlog refinement agenda.
+
+Context:
+- Session length: [time]
+- Number of backlog items: [count]
+- Team members attending: [roles]
+- Sprint planning date: [date]
+- Main refinement goal: [goal]
+
+Create an agenda with:
+- Timeboxes
+- Preparation needed from Product Owner
+- Discussion flow
+- Decision points
+- Parking lot rules
+- Expected outputs
+
+Keep the meeting focused on making items ready for future sprint planning.
+```
+
+Use this with the [Backlog Refinement Template](/templates/backlog-refinement-template).
+
+## Prompt 10: Jira Follow-Up Items After Refinement
+
+Use this at the end of refinement so decisions do not disappear.
+
+```text
+Act as a Scrum Master converting backlog refinement notes into Jira-ready follow-up items.
+
+Refinement notes:
+[notes]
+
+Create follow-up items with:
+- Title
+- Type: product question / technical question / dependency / spike / story update
+- Owner
+- Due date or review point
+- Description
+- Completion criteria
+- Related backlog item
+
+Rules:
+- Do not create new product scope unless it was agreed
+- Make each follow-up actionable
+- Flag anything blocking sprint planning
+```
+
+This is especially useful when refinement creates questions for design, QA, architecture, security, or another team.
+
+## Prompt 11: Definition of Ready Checklist Builder
+
+Use this if your team does not have a shared readiness standard yet.
+
+```text
+Act as a Scrum Master helping a software team define Definition of Ready.
+
+Team context:
+- Product type: [product]
+- Team size: [size]
+- Sprint length: [length]
+- Common sprint problems: [problems]
+- Roles involved: [roles]
+
+Create a practical Definition of Ready checklist with:
+- Required fields
+- Acceptance criteria expectations
+- Dependency expectations
+- Design or UX expectations
+- QA expectations
+- Estimation expectations
+- Exceptions where the team can flex
+
+Keep the checklist lightweight enough to use in refinement.
+```
+
+Pair this with the [Definition of Ready Best Practices](/guides/definition-of-ready-best-practices) page.
+
+## Prompt 12: Backlog Refinement Summary
+
+Use this after the session.
+
+```text
+Act as a Scrum Master writing a backlog refinement summary.
+
+Refined items:
+[items]
+
+Decisions made:
+[decisions]
+
+Open questions:
+[questions]
+
+Follow-up actions:
+[actions]
+
+Write a concise summary with:
+- Items now ready
+- Items not ready and why
+- Questions for Product Owner
+- Technical or QA follow-ups
+- Items likely ready for sprint planning
+
+Tone: factual, short, and useful for the team.
+```
+
+This keeps the next sprint planning session clean.
+
+## A Simple AI Backlog Refinement Workflow
+
+Use this sequence:
+
+1. Product Owner gathers candidate backlog items.
+2. Run the readiness check prompt.
+3. Rewrite messy items into clearer user stories.
+4. Run the acceptance criteria gap check.
+5. Split stories that are too large.
+6. Scan for dependencies and risks.
+7. Prepare estimation questions.
+8. Run refinement with the team.
+9. Convert decisions into Jira follow-ups.
+10. Review ready items before sprint planning.
+
+The goal is not to make tickets look polished.
+
+The goal is to make work understandable, testable, small enough, and ready for team commitment.
+
+## What Good Refined Stories Include
+
+A ready story usually has:
+
+- clear user or business value
+- specific user or stakeholder
+- testable acceptance criteria
+- known dependencies
+- scope boundaries
+- open questions resolved or tracked
+- estimate or estimation path
+- no hidden product or technical assumptions
+
+If a story is still unclear, keep it out of sprint planning until the missing information is resolved.
+
+## Common Mistakes When Using AI for Refinement
+
+### Letting AI invent requirements
+
+AI may fill gaps with plausible details. Mark assumptions and confirm with the Product Owner.
+
+### Making stories look ready when they are not
+
+Polished wording is not the same as readiness. Dependencies, criteria, and scope still need review.
+
+### Asking AI for story points
+
+AI can suggest complexity factors, but the team should estimate together.
+
+### Creating too many acceptance criteria
+
+More criteria can mean the story is too large. Split it instead of turning one ticket into a checklist monster.
+
+### Skipping team discussion
+
+Refinement is a shared understanding activity. AI can prepare the draft, but the team builds the understanding.
+
+## Reusable Master Prompt
+
+Use this when you want one prompt for full backlog refinement support.
+
+```text
+Act as a pragmatic Scrum Master helping a software team prepare backlog refinement.
+
+Context:
+- Product goal: [goal]
+- Candidate backlog items: [items]
+- Definition of Ready: [DoR]
+- Known constraints: [constraints]
+- Upcoming sprint planning date: [date]
+
+Return:
+1. Readiness check for each item
+2. User story rewrite where needed
+3. Acceptance criteria gaps
+4. Product Owner questions
+5. Dependency and risk scan
+6. Suggested story splits
+7. Estimation discussion questions
+8. Jira-ready follow-up actions
+
+Rules:
+- Do not invent product requirements
+- Mark assumptions clearly
+- Do not assign final story points
+- Keep stories small and testable
+- Protect sensitive data
+- Flag anything blocking sprint planning
+```
+
+## Next Step
+
+Use these prompts with:
+
+- [Backlog Refinement Best Practices](/guides/backlog-refinement-best-practices) to run the ceremony well
+- [Definition of Ready Best Practices](/guides/definition-of-ready-best-practices) to decide what ready means
+- [User Story Generator](/tools/user-story-generator) to turn rough feature ideas into story drafts
+- [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) to create testable criteria
+- [AI Sprint Planning Prompts](/guides/ai-sprint-planning-prompts) when ready items move into sprint planning
