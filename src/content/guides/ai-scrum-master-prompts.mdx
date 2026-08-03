@@ -1,0 +1,534 @@
+---
+title: "AI Scrum Master Prompts for Sprint Planning, Standups, Retrospectives, and Backlog Refinement"
+description: "Copy practical AI Scrum Master prompts for sprint planning, daily standups, retrospectives, backlog refinement, sprint reviews, and Jira-ready follow-up actions."
+slug: "ai-scrum-master-prompts"
+category: "Guides"
+publishedAt: "2026-08-03"
+updatedAt: "2026-08-03"
+keywords:
+  - AI Scrum Master prompts
+  - AI Scrum prompts
+  - AI for Scrum Masters
+  - AI sprint planning prompts
+  - AI retrospective prompts
+  - AI backlog refinement prompts
+  - AI daily standup prompts
+  - Agile AI prompts
+relatedLinks:
+  - title: "Planning Poker Tool"
+    href: "/tools/planning-poker"
+  - title: "Daily Standup Generator"
+    href: "/tools/daily-standup-generator"
+  - title: "Retrospective Board"
+    href: "/tools/retro-board"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "Sprint Planning Checklist"
+    href: "/tools/sprint-planning-checklist"
+  - title: "Sprint Capacity Calculator"
+    href: "/tools/sprint-capacity-calculator"
+  - title: "Complete Guide to Sprint Planning and Estimation"
+    href: "/guides/complete-guide-to-sprint-planning-and-estimation"
+  - title: "Backlog Refinement Best Practices"
+    href: "/guides/backlog-refinement-best-practices"
+  - title: "How to Run a Sprint Retrospective"
+    href: "/guides/how-to-run-a-sprint-retrospective"
+howToSteps:
+  - name: "Choose the Scrum event"
+    description: "Start with the event you are preparing for: sprint planning, daily scrum, backlog refinement, sprint review, or retrospective."
+  - name: "Paste only safe context"
+    description: "Remove secrets, customer data, private credentials, and sensitive production details before using an AI prompt."
+  - name: "Ask for a structured output"
+    description: "Request a table, checklist, Jira ticket, action item list, or facilitation plan so the result is easy to review."
+  - name: "Review with human judgment"
+    description: "Treat the AI output as a draft. The Scrum Master, Product Owner, and developers still own the decision."
+  - name: "Move the output into the workflow"
+    description: "Turn useful output into sprint goals, Jira tickets, acceptance criteria, action items, or follow-up conversations."
+faqItems:
+  - question: "Can AI replace a Scrum Master?"
+    answer: "No. AI can draft prompts, summarize notes, and find gaps, but it cannot coach a team, read the room, resolve conflict, or own facilitation judgment."
+  - question: "What is the best AI prompt for Scrum Masters?"
+    answer: "The best prompt gives context, names the Scrum event, asks for a structured output, and includes constraints such as Definition of Ready, Definition of Done, capacity, risks, and expected format."
+  - question: "Can I paste Jira tickets into AI tools?"
+    answer: "Only if your organization's data policy allows it. Remove secrets, credentials, customer data, private incident details, and regulated information before using any online AI tool."
+  - question: "How should Scrum Masters use AI in sprint planning?"
+    answer: "Use AI to check backlog readiness, draft sprint goals, identify dependency risks, suggest story splits, and prepare facilitation questions before the planning meeting."
+---
+
+AI can help Scrum Masters prepare faster, summarize better, and spot gaps earlier. It should not replace facilitation.
+
+The useful pattern is simple:
+
+1. Bring a messy input: backlog items, standup notes, retro notes, stakeholder feedback, or sprint history.
+2. Ask AI for a structured draft: checklist, table, risk list, prompt questions, or Jira-ready action items.
+3. Review the result with the team before making decisions.
+
+Scrum.org has also been writing about AI in Agile and Scrum, including practical uses for sprint planning and AI education for Scrum Masters. See [AI-Enhanced Sprint Planning](https://www.scrum.org/resources/blog/ai-enhanced-sprint-planning) and Scrum.org's [AI training announcement for Scrum Masters](https://www.scrum.org/resources/scrumorg-launches-new-ai-training-scrum-masters).
+
+Use the prompts below as working drafts. Replace the bracketed parts with your actual context.
+
+## Quick Rules for AI Scrum Prompts
+
+Good AI Scrum Master prompts have five parts:
+
+| Part | What to include | Example |
+|------|-----------------|---------|
+| Role | What the AI should act as | "Act as a Scrum Master helping a software team prepare sprint planning." |
+| Event | The Scrum event or workflow | Sprint planning, daily scrum, backlog refinement, retro |
+| Context | Safe, relevant input | Ticket titles, notes, risks, blockers, capacity |
+| Output format | How the result should look | Table, checklist, agenda, Jira action items |
+| Constraints | Rules the AI must follow | No new scope, flag assumptions, keep items testable |
+
+Bad prompt:
+
+```text
+Help with sprint planning.
+```
+
+Better prompt:
+
+```text
+Act as a Scrum Master preparing sprint planning for a software team.
+Review the backlog items below and return a table with:
+1. Ready for sprint? yes/no
+2. Missing acceptance criteria
+3. Dependency or risk
+4. Suggested question to ask the Product Owner
+5. Suggested split if the item is too large
+
+Backlog items:
+[paste safe backlog summaries]
+```
+
+## Sprint Planning Prompts
+
+Use these prompts before sprint planning, not during a rushed meeting.
+
+### 1. Backlog Readiness Check
+
+```text
+Act as a Scrum Master preparing sprint planning.
+Review these backlog items against Definition of Ready.
+
+Definition of Ready:
+- Clear user or business value
+- Acceptance criteria included
+- Dependencies identified
+- Small enough for one sprint
+- Testable outcome
+
+Return a table with:
+- Item
+- Ready? yes/no
+- Missing information
+- Risk or dependency
+- Question to ask before planning
+
+Backlog items:
+[paste ticket titles and short descriptions]
+```
+
+Use this before opening the [Sprint Planning Checklist](/tools/sprint-planning-checklist).
+
+### 2. Sprint Goal Draft Prompt
+
+```text
+Act as a Scrum Master helping a Product Owner draft a sprint goal.
+
+Inputs:
+- Product objective: [objective]
+- Candidate backlog items: [items]
+- Team capacity: [capacity]
+- Known risks: [risks]
+
+Create 3 sprint goal options.
+Each option should include:
+- Goal statement
+- Why it matters
+- Which backlog items support it
+- What not to include in this sprint
+- Risk to discuss before commitment
+```
+
+Good output should help the team choose a focus, not just list tickets.
+
+### 3. Capacity Risk Prompt
+
+```text
+Act as a Scrum Master reviewing sprint capacity.
+
+Team context:
+- Sprint length: [days]
+- Team members and availability: [availability]
+- Average velocity: [velocity]
+- Planned ceremonies or holidays: [events]
+- Support/on-call load: [load]
+
+Identify:
+1. Realistic sprint capacity
+2. Overcommitment risk
+3. People with limited availability
+4. Work that should be deferred
+5. Questions to ask before commitment
+
+Return a concise table and a recommendation.
+```
+
+You can pair this with the [Sprint Capacity Calculator](/tools/sprint-capacity-calculator).
+
+### 4. Planning Poker Discussion Prompt
+
+```text
+Act as a Scrum Master facilitating story point estimation.
+
+For this backlog item:
+[paste safe story summary]
+
+Generate:
+- Clarifying questions before estimation
+- Hidden complexity to discuss
+- Testing considerations
+- Dependency risks
+- Reasons one person might vote low
+- Reasons one person might vote high
+
+Do not assign a final estimate. Help the team have a better planning poker conversation.
+```
+
+Run the team vote in [Planning Poker](/tools/planning-poker), then use the AI output to guide discussion when estimates disagree.
+
+## Daily Scrum and Standup Prompts
+
+AI is useful after standup, especially for summarizing blockers and follow-ups.
+
+### 5. Standup Summary Prompt
+
+```text
+Act as a Scrum Master summarizing daily scrum notes.
+
+Turn the notes below into:
+- Yesterday
+- Today
+- Blockers
+- Dependencies
+- Follow-up conversations needed after standup
+
+Rules:
+- Keep it brief
+- Do not turn this into a manager status report
+- Highlight blockers that need same-day action
+
+Notes:
+[paste safe standup notes]
+```
+
+You can also use the [Daily Standup Generator](/tools/daily-standup-generator) for quick Yesterday/Today/Blockers formatting.
+
+### 6. Blocker Detection Prompt
+
+```text
+Act as a Scrum Master looking for hidden blockers.
+
+Review these daily updates and identify:
+- Explicit blockers
+- Hidden blockers
+- Dependency risks
+- People who may need help
+- Questions to ask after standup
+
+Return a table with owner, blocker, urgency, and next action.
+
+Updates:
+[paste updates]
+```
+
+Hidden blockers often sound like:
+
+- "Waiting for review"
+- "Need clarification"
+- "Still looking into it"
+- "Should be done soon"
+- "Blocked by environment"
+
+## Backlog Refinement Prompts
+
+Use AI to prepare refinement, not to bypass team discussion.
+
+### 7. User Story Improvement Prompt
+
+```text
+Act as a Scrum Master and Product Owner reviewing a user story.
+
+Story:
+[paste story]
+
+Improve it by returning:
+- Clearer user story wording
+- Acceptance criteria in checklist format
+- Given/When/Then scenarios
+- Assumptions
+- Open questions
+- Suggested story split if too large
+
+Keep the original intent. Do not invent business requirements.
+```
+
+Try the [User Story Generator](/tools/user-story-generator) when you want a structured first draft from a rough feature idea.
+
+### 8. Acceptance Criteria Gap Prompt
+
+```text
+Act as a QA-minded Scrum Master reviewing acceptance criteria.
+
+Feature:
+[feature summary]
+
+Existing acceptance criteria:
+[criteria]
+
+Find:
+- Missing happy path criteria
+- Missing edge cases
+- Error states
+- Permission or role scenarios
+- Data validation rules
+- Testability gaps
+
+Return improved acceptance criteria in Given/When/Then format.
+```
+
+You can generate a clean starting point with the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator).
+
+### 9. Epic Breakdown Prompt
+
+```text
+Act as a Scrum Master helping a team break down an epic.
+
+Epic:
+[epic summary]
+
+Break it into sprint-sized user stories.
+For each story include:
+- Story title
+- User story format
+- Acceptance criteria
+- Dependency
+- Suggested order
+- Reason this slice can be delivered independently
+
+Avoid technical task lists unless needed to explain dependencies.
+```
+
+## Retrospective Prompts
+
+AI can help cluster retro notes, but the team should still own the conversation.
+
+### 10. Retro Theme Clustering Prompt
+
+```text
+Act as a neutral Scrum Master summarizing retrospective notes.
+
+Group the notes into themes:
+- What went well
+- What needs improvement
+- Action items
+- Repeated signals
+- One topic the team should discuss first
+
+Rules:
+- Do not blame individuals
+- Keep original meaning
+- Make action items specific and assignable
+
+Retro notes:
+[paste anonymized notes]
+```
+
+Use the [Retrospective Board](/tools/retro-board) to collect notes live, then use this prompt after the discussion to clean up action items.
+
+### 11. Action Item Quality Prompt
+
+```text
+Act as a Scrum Master improving retrospective action items.
+
+Current action items:
+[paste action items]
+
+Rewrite each action item so it has:
+- Clear owner
+- Specific next step
+- Due date or review point
+- Expected outcome
+- How the team will know it worked
+
+Flag vague items that are unlikely to be completed.
+```
+
+Weak retro action item:
+
+```text
+Improve communication.
+```
+
+Better:
+
+```text
+By next Wednesday, the team will add dependency notes to every ticket entering sprint planning. Scrum Master reviews this in refinement.
+```
+
+## Sprint Review Prompts
+
+Sprint reviews are about inspecting the increment and adapting the backlog.
+
+### 12. Sprint Review Prep Prompt
+
+```text
+Act as a Scrum Master preparing a sprint review.
+
+Sprint context:
+- Sprint goal: [goal]
+- Completed items: [items]
+- Not completed items: [items]
+- Demo risks: [risks]
+- Stakeholders attending: [stakeholders]
+
+Create:
+- 45-minute agenda
+- Demo order
+- Stakeholder questions
+- Risks to mention honestly
+- Backlog follow-up items after the review
+```
+
+### 13. Stakeholder Feedback Prompt
+
+```text
+Act as a Scrum Master and Product Owner reviewing sprint review feedback.
+
+Feedback:
+[paste stakeholder feedback]
+
+Convert it into:
+- New backlog items
+- Clarification questions
+- Product risks
+- Items that should not become backlog work yet
+- Suggested priority discussion for the Product Owner
+
+Do not promise scope. Keep the output as planning input.
+```
+
+## Weekly AI Workflow for Scrum Masters
+
+Here is a realistic weekly workflow that does not add much overhead.
+
+| Day | Scrum Master use case | Prompt to use | Output |
+|-----|-----------------------|---------------|--------|
+| Before refinement | Check backlog readiness | Backlog Readiness Check | Missing info and PO questions |
+| Before planning | Draft sprint goal options | Sprint Goal Draft | Goal options and risks |
+| During estimation prep | Prepare discussion | Planning Poker Discussion | Clarifying questions |
+| Daily | Summarize blockers | Blocker Detection | Same-day follow-ups |
+| Before retro | Cluster notes | Retro Theme Clustering | Themes and candidate actions |
+| After retro | Improve actions | Action Item Quality | Clear owners and outcomes |
+
+## Privacy and Data Safety
+
+Do not paste sensitive data into AI tools unless your organization explicitly allows it.
+
+Avoid pasting:
+
+- Customer names or private customer data
+- Credentials, tokens, passwords, private keys
+- Production incident secrets
+- Security vulnerabilities that should stay internal
+- Contract, finance, HR, or regulated data
+- Full Jira exports with private comments
+
+Safer input:
+
+```text
+Story A: User can reset password by email. Missing AC for expired token.
+Story B: Admin can export CSV. Dependency on reporting API.
+Story C: Checkout bug. Payment retry behavior unclear.
+```
+
+Unsafe input:
+
+```text
+Full customer ticket with names, email addresses, internal URLs, API tokens, logs, and private comments.
+```
+
+## Common Mistakes When Using AI in Scrum
+
+### Mistake 1: Letting AI decide the estimate
+
+AI can suggest discussion points, but the team estimates. Story points are a team calibration tool.
+
+Use [Planning Poker](/tools/planning-poker) for the vote and AI for better questions.
+
+### Mistake 2: Accepting generated acceptance criteria without review
+
+AI often misses product context. The Product Owner, developers, and QA should review any generated criteria.
+
+### Mistake 3: Turning standup into a status report
+
+AI summaries are useful, but the daily scrum is still for team coordination. Do not use AI summaries to create surveillance reports.
+
+### Mistake 4: Creating too many action items
+
+Retrospectives fail when action items are vague or too numerous. Pick one or two specific improvements.
+
+### Mistake 5: Pasting sensitive data
+
+Clean the input first. If the prompt still works after removing private details, use the cleaned version.
+
+## Copy-Paste Prompt: Full Scrum Master Assistant
+
+Use this as a general-purpose prompt when you are not sure where to start.
+
+```text
+Act as a pragmatic Scrum Master for a software team.
+
+Context:
+[paste safe context]
+
+Scrum event or workflow:
+[sprint planning / daily scrum / backlog refinement / sprint review / retrospective]
+
+Help me prepare by returning:
+1. Main risks or gaps
+2. Questions to ask the team
+3. Questions to ask the Product Owner
+4. Suggested next actions
+5. Any Jira-ready follow-up items
+
+Rules:
+- Do not invent scope
+- Flag assumptions clearly
+- Keep the output concise
+- Make action items specific and assignable
+- Protect team collaboration; do not turn this into a status report
+```
+
+## Next Step
+
+If your goal is better sprint planning, start with:
+
+1. [Sprint Planning Checklist](/tools/sprint-planning-checklist)
+2. [Sprint Capacity Calculator](/tools/sprint-capacity-calculator)
+3. [Planning Poker](/tools/planning-poker)
+4. The sprint planning prompts above
+
+If your goal is better backlog quality, start with:
+
+1. [User Story Generator](/tools/user-story-generator)
+2. [Acceptance Criteria Generator](/tools/acceptance-criteria-generator)
+3. The backlog refinement prompts above
+
+If your goal is better team improvement, start with:
+
+1. [Retrospective Board](/tools/retro-board)
+2. [Daily Standup Generator](/tools/daily-standup-generator)
+3. The retrospective and standup prompts above

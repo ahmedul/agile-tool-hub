@@ -213,6 +213,49 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="bg-blue-50 border-y border-blue-100 py-14 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-8">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">AI for Scrum teams</p>
+              <h2 className="text-3xl font-bold text-gray-900 mt-1">Use AI to prepare better Scrum ceremonies</h2>
+              <p className="text-gray-600 mt-2 max-w-2xl">
+                Copy practical prompts for sprint planning, standups, retrospectives, backlog refinement, and Jira-ready follow-up work.
+              </p>
+            </div>
+            <Link href="/guides/ai-scrum-master-prompts" className="text-blue-700 hover:underline text-sm font-semibold">
+              Open AI Scrum prompts →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {[
+              {
+                title: "AI Scrum Master Prompts",
+                description: "A full prompt pack for sprint planning, daily scrum, refinement, review, and retrospectives.",
+                href: "/guides/ai-scrum-master-prompts",
+              },
+              {
+                title: "Planning Poker",
+                description: "Run the team estimate first, then use AI prompts to discuss disagreement and hidden complexity.",
+                href: "/tools/planning-poker",
+              },
+              {
+                title: "Acceptance Criteria Generator",
+                description: "Turn rough feature notes into testable Given/When/Then or checklist criteria.",
+                href: "/tools/acceptance-criteria-generator",
+              },
+            ].map((item) => (
+              <Link key={item.href} href={item.href} className="block rounded-lg border border-blue-100 bg-white p-5 transition-all hover:border-blue-400 hover:shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wide text-blue-600 mb-1">Resource</p>
+                <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
+                <p className="text-sm text-gray-500">{item.description}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="max-w-6xl mx-auto px-4 py-16 border-t border-gray-200">
         <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Top Resources by Intent</h2>
         
