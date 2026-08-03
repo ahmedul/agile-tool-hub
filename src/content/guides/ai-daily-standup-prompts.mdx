@@ -1,0 +1,491 @@
+---
+title: "AI Daily Standup Prompts for Scrum Teams"
+description: "Copy AI daily standup prompts for Yesterday/Today/Blockers updates, async standups, blocker follow-ups, Jira comments, and Scrum team summaries."
+slug: "ai-daily-standup-prompts"
+category: "Guides"
+publishedAt: "2026-08-03"
+updatedAt: "2026-08-03"
+keywords:
+  - AI daily standup prompts
+  - daily standup prompts
+  - AI standup update
+  - Scrum standup prompts
+  - daily scrum AI prompts
+  - async standup prompts
+  - Jira standup update
+  - Slack standup update
+relatedLinks:
+  - title: "Daily Standup Generator"
+    href: "/tools/daily-standup-generator"
+  - title: "Daily Standup Template"
+    href: "/templates/daily-standup-template"
+  - title: "Daily Standup Best Practices"
+    href: "/guides/how-to-run-effective-standups"
+  - title: "Complete Guide to Retrospectives & Standups"
+    href: "/guides/complete-guide-to-retrospectives-and-standups"
+  - title: "AI Scrum Master Prompts"
+    href: "/guides/ai-scrum-master-prompts"
+  - title: "AI Sprint Planning Prompts"
+    href: "/guides/ai-sprint-planning-prompts"
+  - title: "AI Retrospective Prompts"
+    href: "/guides/ai-retrospective-prompts"
+  - title: "Sprint Capacity Calculator"
+    href: "/tools/sprint-capacity-calculator"
+howToSteps:
+  - name: "Collect rough standup notes"
+    description: "Write what was completed yesterday, what is planned today, blockers, dependencies, and help needed."
+  - name: "Sanitize sensitive details"
+    description: "Remove private customer data, credentials, internal URLs, production logs, and personal feedback before using AI."
+  - name: "Choose the output format"
+    description: "Ask for a Slack update, Jira comment, team summary, async standup, or blocker follow-up."
+  - name: "Review blockers separately"
+    description: "Use AI to identify unresolved blockers and follow-up owners without turning the standup into a long problem-solving meeting."
+  - name: "Post the final update"
+    description: "Review the AI draft, fix wording, confirm owners, and share it with the team."
+faqItems:
+  - question: "Can AI write my daily standup update?"
+    answer: "AI can turn rough notes into a clean update, but you should review the result and make sure it accurately reflects your work, blockers, and commitments."
+  - question: "Should daily standups be generated automatically?"
+    answer: "Only the formatting should be automated. The actual update still needs current human context, especially blockers, dependencies, and changes to sprint goal risk."
+  - question: "What is the best format for an AI standup prompt?"
+    answer: "Use Yesterday, Today, Blockers, Help Needed, and Sprint Goal Risk. Ask for concise bullets that are easy to paste into Slack, Jira, or Teams."
+  - question: "Can AI summarize team standup notes?"
+    answer: "Yes, if the notes are safe to share. AI can group blockers, identify follow-ups, and produce a concise team summary without replacing team discussion."
+---
+
+AI is useful after you already know what you want to say.
+
+It should not invent progress, hide blockers, or turn the daily standup into a status report.
+
+Use these prompts to convert rough notes into clear updates for:
+
+- live daily standups
+- async Slack standups
+- Jira comments
+- team blocker summaries
+- Scrum Master follow-ups
+- end-of-day handoffs
+
+If you only need a quick Yesterday/Today/Blockers format, use the [Daily Standup Generator](/tools/daily-standup-generator).
+
+## How to Use AI for Daily Standups
+
+The best use of AI is formatting and clarity.
+
+Good inputs:
+
+- what you completed yesterday
+- what you plan to work on today
+- blockers or dependencies
+- help needed
+- sprint goal risk
+- links or ticket IDs that are safe to share
+
+Bad inputs:
+
+- vague claims like "worked on stuff"
+- private customer details
+- credentials or API keys
+- private people feedback
+- production logs with personal data
+- anything you have not actually done
+
+Use AI to make updates shorter, clearer, and easier to act on.
+
+Do not use AI to make updates sound busier than they are.
+
+## Prompt 1: Clean Individual Standup Update
+
+Use this when you have rough notes and need a clear update.
+
+```text
+Act as a Scrum team member preparing a concise daily standup update.
+
+My rough notes:
+[paste notes]
+
+Create a standup update with:
+- Yesterday
+- Today
+- Blockers
+- Help needed
+- Sprint goal risk: yes/no
+
+Rules:
+- Keep it brief
+- Use first person
+- Do not exaggerate progress
+- Do not invent work
+- If a blocker is unclear, flag it as a question
+```
+
+Example input:
+
+```text
+merged token refresh fix, still need tests for retry. today payment retry and QA smoke. blocked by partner API key.
+```
+
+Better output:
+
+```text
+Yesterday: Merged the token refresh fix.
+Today: Working on payment retry logic and pairing with QA on smoke tests.
+Blockers: Waiting for the partner API key.
+Help needed: Need someone to confirm who owns the API key request.
+Sprint goal risk: Yes, if the API key is not available today.
+```
+
+## Prompt 2: Slack Async Standup Update
+
+Use this for remote or distributed teams.
+
+```text
+Act as a software team member writing an async Slack standup update.
+
+Rough notes:
+[paste notes]
+
+Format the update for Slack with:
+- Yesterday
+- Today
+- Blockers
+- Help needed
+
+Rules:
+- Use short bullets
+- Keep the tone clear and professional
+- Mention blockers early
+- Do not include long technical detail
+- Add a final line if follow-up is needed after standup
+```
+
+This works well when the team posts updates in a daily thread.
+
+## Prompt 3: Jira-Friendly Standup Comment
+
+Use this when your team comments on Jira tickets during the sprint.
+
+```text
+Act as a developer writing a Jira-friendly standup comment.
+
+Ticket context:
+- Ticket ID: [ticket]
+- Goal: [goal]
+- Current status: [status]
+- Work completed: [completed]
+- Next step: [next step]
+- Blocker: [blocker]
+
+Write a concise Jira comment with:
+- Progress
+- Next step
+- Blocker or dependency
+- Expected follow-up time
+
+Rules:
+- Use clear factual language
+- Do not overpromise
+- Do not include private Slack context
+- Make the blocker actionable
+```
+
+Use this when an update needs to live with the ticket, not only in chat.
+
+## Prompt 4: Team Standup Summary
+
+Use this after collecting multiple updates.
+
+```text
+Act as a Scrum Master summarizing daily standup notes.
+
+Team standup notes:
+[paste sanitized team notes]
+
+Create a summary with:
+1. Completed work
+2. Today's focus
+3. Blockers
+4. Dependencies between people or teams
+5. Risks to sprint goal
+6. Follow-up conversations needed after standup
+
+Rules:
+- Keep the summary short
+- Do not evaluate individual performance
+- Do not assign blame
+- Preserve blockers exactly enough to act on them
+- Mark urgent follow-ups clearly
+```
+
+This prompt helps the Scrum Master see where the team needs coordination.
+
+## Prompt 5: Blocker Follow-Up Prompt
+
+Use this when blockers were mentioned but not resolved.
+
+```text
+Act as a Scrum Master turning standup blockers into follow-up actions.
+
+Blockers from standup:
+[paste blockers]
+
+Return a table with:
+1. Blocker
+2. Impact on sprint goal
+3. Who needs to be involved
+4. Immediate next action
+5. Suggested owner
+6. Review time
+
+Rules:
+- Keep actions small
+- Do not solve the blocker inside the standup summary
+- Escalate only blockers that need outside help
+- Flag blockers that have appeared more than once
+```
+
+The goal is to protect the 15-minute standup while still acting on blockers quickly.
+
+## Prompt 6: Make a Vague Update Useful
+
+Use this when a standup update is too generic.
+
+```text
+Act as a Scrum Master helping make a vague standup update more useful.
+
+Vague update:
+[paste update]
+
+Rewrite it into a clearer update with:
+- Specific completed outcome
+- Specific next step
+- Any blocker or dependency
+- One clarifying question to ask the person
+
+Rules:
+- Do not invent missing facts
+- Mark unknowns as questions
+- Keep the tone neutral
+- Avoid sounding like a manager report
+```
+
+Vague update:
+
+```text
+Yesterday I worked on backend stuff. Today I will continue. No blockers.
+```
+
+Better follow-up question:
+
+```text
+Which backend outcome moved forward, and is anything needed from frontend, QA, or product today?
+```
+
+## Prompt 7: Sprint Goal Risk Check
+
+Use this when standups sound fine but the sprint goal may be slipping.
+
+```text
+Act as a Scrum Master checking risk to the sprint goal.
+
+Sprint goal:
+[goal]
+
+Current standup notes:
+[notes]
+
+Candidate sprint scope:
+[scope]
+
+Identify:
+1. Work that clearly supports the sprint goal
+2. Work that may not support the sprint goal
+3. Blockers that threaten the goal
+4. Dependencies that need attention today
+5. Questions to ask after standup
+
+Rules:
+- Do not change the sprint goal
+- Do not assign blame
+- Keep recommendations practical
+```
+
+Use this when the team is busy but not obviously moving toward the sprint goal.
+
+## Prompt 8: Async Standup Digest for Managers or Stakeholders
+
+Use this only when stakeholders need a lightweight digest.
+
+```text
+Act as a Scrum Master writing a stakeholder-safe daily summary.
+
+Team notes:
+[paste sanitized notes]
+
+Write a concise summary with:
+- Progress toward sprint goal
+- Key blockers or dependencies
+- Decisions needed
+- Risks that may affect delivery
+
+Rules:
+- Do not list every person's update
+- Do not expose private team discussion
+- Do not turn the standup into a performance report
+- Keep it under 120 words
+```
+
+This summary should be about delivery flow, not individual monitoring.
+
+## Prompt 9: End-of-Day Handoff
+
+Use this for distributed teams across time zones.
+
+```text
+Act as a developer writing an end-of-day handoff for a teammate in another time zone.
+
+Context:
+- Work completed today: [completed]
+- Work in progress: [in progress]
+- Current blocker: [blocker]
+- Files, tickets, or PRs touched: [safe links or IDs]
+- What I need tomorrow: [needed]
+
+Write a handoff with:
+- Current status
+- What changed
+- What to check next
+- Known risks
+- Question for teammate
+
+Rules:
+- Keep it practical
+- Do not include sensitive data
+- Make it easy for someone to resume work
+```
+
+This is not the same as a standup, but it often prevents next-day blockers.
+
+## Prompt 10: Standup Improvement Review
+
+Use this when standups feel like status reports.
+
+```text
+Act as a Scrum Master reviewing how a team uses daily standups.
+
+Observed standup pattern:
+[describe pattern]
+
+Recent standup notes:
+[paste sanitized notes]
+
+Evaluate:
+1. Are updates focused on progress toward the sprint goal?
+2. Are blockers visible?
+3. Are follow-up conversations clear?
+4. Is the meeting becoming a manager status report?
+5. What small change should we try tomorrow?
+
+Return:
+- Diagnosis
+- Evidence from notes
+- One facilitation adjustment
+- One phrase the facilitator can use
+```
+
+Use this with the [Daily Standup Best Practices](/guides/how-to-run-effective-standups) guide.
+
+## A Simple AI Standup Workflow
+
+For an individual:
+
+1. Write rough notes.
+2. Run the clean individual update prompt.
+3. Review for accuracy.
+4. Paste the update into Slack, Jira, or the team standup.
+
+For a Scrum Master:
+
+1. Collect safe standup notes.
+2. Run the team summary prompt.
+3. Run the blocker follow-up prompt.
+4. Create follow-up conversations after standup.
+5. Check sprint goal risk.
+
+## What Good Standup Updates Include
+
+A good update answers:
+
+- What changed since yesterday?
+- What is the plan for today?
+- Is anything blocked?
+- Who needs to help?
+- Does this affect the sprint goal?
+
+It does not need:
+
+- a full task log
+- every tiny detail
+- manager-facing performance language
+- long technical investigation notes
+
+## Common Mistakes When Using AI for Standups
+
+### Making the update sound more complete than it is
+
+If the work is still uncertain, say that clearly.
+
+### Hiding blockers
+
+AI can polish wording, but it should never bury the blocker.
+
+### Creating long updates
+
+Standups should be quick. If the AI output is long, ask for a shorter version.
+
+### Turning standups into reports
+
+The daily standup is for team coordination. It is not a manager status meeting.
+
+### Forgetting to review AI output
+
+You own the update. Check names, blockers, ticket IDs, and next steps before posting.
+
+## Reusable Master Prompt
+
+Use this when you want one prompt for daily standup formatting and follow-up.
+
+```text
+Act as a pragmatic Scrum Master helping a software team prepare daily standup updates.
+
+Context:
+- Sprint goal: [goal]
+- Rough standup notes: [notes]
+- Team mode: [live / async / hybrid]
+- Output destination: [Slack / Jira / Teams / meeting]
+
+Return:
+1. Clean individual or team standup update
+2. Blockers and owners
+3. Help needed
+4. Sprint goal risk
+5. Follow-up conversations needed after standup
+6. Questions to clarify vague updates
+
+Rules:
+- Do not invent progress
+- Do not hide blockers
+- Keep it brief
+- Do not evaluate individual performance
+- Do not include sensitive data
+- Make blockers actionable
+```
+
+## Next Step
+
+Use these prompts with:
+
+- [Daily Standup Generator](/tools/daily-standup-generator) to format rough notes quickly
+- [Daily Standup Template](/templates/daily-standup-template) for a reusable team format
+- [Daily Standup Best Practices](/guides/how-to-run-effective-standups) to fix standup anti-patterns
+- [AI Scrum Master Prompts](/guides/ai-scrum-master-prompts) for prompts across the full Scrum cycle

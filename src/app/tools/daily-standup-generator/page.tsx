@@ -93,6 +93,11 @@ export default function DailyStandupGeneratorPage() {
           <h2 className="text-lg font-semibold text-gray-800 mb-4">Related resources</h2>
           <ul className="space-y-2">
             <li>
+              <Link href="/guides/ai-daily-standup-prompts" className="text-blue-600 hover:underline">
+                → AI Daily Standup Prompts
+              </Link>
+            </li>
+            <li>
               <Link href="/guides/how-to-run-effective-standups" className="text-blue-600 hover:underline">
                 → Daily Standup Best Practices
               </Link>
