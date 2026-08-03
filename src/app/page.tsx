@@ -228,12 +228,17 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               {
                 title: "AI Scrum Master Prompts",
                 description: "A full prompt pack for sprint planning, daily scrum, refinement, review, and retrospectives.",
                 href: "/guides/ai-scrum-master-prompts",
+              },
+              {
+                title: "AI Sprint Planning Prompts",
+                description: "Prepare sprint goals, capacity checks, backlog readiness, and planning poker discussions.",
+                href: "/guides/ai-sprint-planning-prompts",
               },
               {
                 title: "Planning Poker",

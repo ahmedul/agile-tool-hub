@@ -1,0 +1,437 @@
+---
+title: "AI Sprint Planning Prompts for Scrum Teams"
+description: "Copy AI sprint planning prompts for backlog readiness, sprint goals, capacity checks, story splitting, planning poker discussion, and Jira-ready follow-up questions."
+slug: "ai-sprint-planning-prompts"
+category: "Guides"
+publishedAt: "2026-08-03"
+updatedAt: "2026-08-03"
+keywords:
+  - AI sprint planning prompts
+  - sprint planning prompts
+  - AI for sprint planning
+  - Scrum sprint planning AI
+  - sprint goal AI prompt
+  - backlog readiness AI prompt
+  - planning poker AI prompt
+  - Agile planning prompts
+relatedLinks:
+  - title: "AI Scrum Master Prompts"
+    href: "/guides/ai-scrum-master-prompts"
+  - title: "Complete Guide to Sprint Planning and Estimation"
+    href: "/guides/complete-guide-to-sprint-planning-and-estimation"
+  - title: "Sprint Planning Checklist"
+    href: "/tools/sprint-planning-checklist"
+  - title: "Sprint Capacity Calculator"
+    href: "/tools/sprint-capacity-calculator"
+  - title: "Planning Poker Tool"
+    href: "/tools/planning-poker"
+  - title: "Story Point Calculator"
+    href: "/tools/story-point-calculator"
+  - title: "Sprint Capacity Planning Guide"
+    href: "/guides/sprint-capacity-planning-guide"
+  - title: "Story Point Estimation Guide"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "Definition of Ready Best Practices"
+    href: "/guides/definition-of-ready-best-practices"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+howToSteps:
+  - name: "Prepare safe sprint context"
+    description: "Collect backlog item summaries, team capacity, previous velocity, known risks, dependencies, and the product objective without sensitive data."
+  - name: "Check backlog readiness"
+    description: "Use AI to find missing acceptance criteria, unclear scope, dependencies, and items that are too large for one sprint."
+  - name: "Draft sprint goal options"
+    description: "Ask AI to propose sprint goals that connect backlog items to one shared outcome."
+  - name: "Review capacity and risk"
+    description: "Ask AI to compare candidate work against availability, velocity, holidays, meetings, and support load."
+  - name: "Facilitate team estimation"
+    description: "Use AI-generated questions to improve the planning poker discussion, but let the team own the final estimate."
+faqItems:
+  - question: "Can AI run sprint planning for a Scrum team?"
+    answer: "No. AI can prepare prompts, risks, questions, and draft sprint goals, but the team still owns sprint planning, estimation, commitment, and trade-off decisions."
+  - question: "What should I include in an AI sprint planning prompt?"
+    answer: "Include candidate backlog items, the product objective, team capacity, average velocity, known risks, dependencies, and the output format you want."
+  - question: "Can AI estimate story points?"
+    answer: "AI can suggest discussion points and possible complexity factors, but story points should be estimated by the team because they depend on team context and shared calibration."
+  - question: "Is it safe to paste Jira tickets into AI prompts?"
+    answer: "Only if your organization allows it. Remove customer data, secrets, internal URLs, credentials, private comments, and regulated information first."
+---
+
+Sprint planning is easier when the team starts with clear backlog items, realistic capacity, and a focused sprint goal.
+
+AI can help prepare those inputs. It should not decide the sprint for the team.
+
+Use these prompts before or during sprint planning to:
+
+- find unready backlog items
+- draft sprint goal options
+- spot capacity risks
+- prepare planning poker questions
+- split large stories
+- turn planning decisions into Jira-ready follow-up items
+
+Scrum.org describes AI as useful for drafting acceptance criteria, sprint goals, and preparation material for sprint planning. The team still needs to review, challenge, and adapt the output. See Scrum.org's article on [AI-Enhanced Sprint Planning](https://www.scrum.org/resources/blog/ai-enhanced-sprint-planning).
+
+## How to Use AI in Sprint Planning
+
+Use AI for preparation and facilitation support.
+
+Do not use AI as the decision maker.
+
+| Sprint planning activity | Good AI use | Human decision |
+|--------------------------|-------------|----------------|
+| Backlog readiness | Find missing details and unclear criteria | Product Owner and team decide readiness |
+| Sprint goal | Draft options and trade-offs | Product Owner and team choose the goal |
+| Capacity | Summarize availability risks | Team commits to realistic work |
+| Estimation | Generate clarifying questions | Developers estimate together |
+| Scope trade-offs | Surface risk and dependency options | Product Owner decides priority |
+| Follow-up work | Draft Jira action items | Team confirms owners and next steps |
+
+## Prompt 1: Backlog Readiness Check
+
+Use this before sprint planning. It prevents sprint planning from becoming backlog refinement.
+
+```text
+Act as a Scrum Master preparing sprint planning.
+
+Review the candidate backlog items below against Definition of Ready.
+
+Definition of Ready:
+- Clear user or business value
+- Acceptance criteria included
+- Dependencies identified
+- Small enough for one sprint
+- Testable outcome
+- No major open product questions
+
+Return a table with:
+1. Backlog item
+2. Ready for sprint? yes/no
+3. Missing information
+4. Dependency or risk
+5. Question to ask the Product Owner
+6. Suggested split if too large
+
+Candidate backlog items:
+[paste safe backlog summaries]
+```
+
+Use the output with the [Sprint Planning Checklist](/tools/sprint-planning-checklist).
+
+## Prompt 2: Sprint Goal Options
+
+Use this when sprint planning starts with a list of tickets but no clear outcome.
+
+```text
+Act as a Scrum Master helping a Product Owner prepare sprint planning.
+
+Inputs:
+- Product objective: [objective]
+- Candidate backlog items: [items]
+- Customer or business reason: [reason]
+- Known deadline or milestone: [deadline]
+- Team capacity: [capacity]
+
+Create 3 sprint goal options.
+
+For each option include:
+- Sprint goal statement
+- Why this goal matters
+- Backlog items that support it
+- Items that do not support the goal
+- Risk or trade-off
+- Question the team should discuss before commitment
+```
+
+Good sprint goals are outcome-based:
+
+```text
+Enable enterprise users to complete SSO login in staging so the sales team can demo the workflow.
+```
+
+Weak sprint goals are ticket lists:
+
+```text
+Finish tickets 123, 124, 125, and 126.
+```
+
+## Prompt 3: Capacity and Overcommitment Check
+
+Use this before the team commits.
+
+```text
+Act as a Scrum Master reviewing sprint capacity.
+
+Sprint context:
+- Sprint length: [days]
+- Team members and availability: [availability]
+- Average velocity from last 5 sprints: [velocity]
+- Candidate sprint scope: [items and estimates]
+- Holidays, leave, support, or on-call: [constraints]
+- Ceremonies or planned meetings: [meetings]
+
+Return:
+1. Realistic commitment range
+2. Overcommitment risks
+3. People or skills with limited availability
+4. Items that should be deferred first
+5. Recommendation for sprint planning
+
+Do not assume 100% availability.
+```
+
+Pair this with the [Sprint Capacity Calculator](/tools/sprint-capacity-calculator) and [Velocity Tracker](/tools/velocity-tracker).
+
+## Prompt 4: Planning Poker Discussion Prep
+
+Use this before estimation or when estimates are far apart.
+
+```text
+Act as a Scrum Master facilitating planning poker.
+
+Backlog item:
+[paste safe story summary]
+
+Acceptance criteria:
+[paste criteria]
+
+Generate:
+- Clarifying questions before estimation
+- Hidden complexity to discuss
+- Testing considerations
+- Data, security, or permission risks
+- Integration or dependency risks
+- Why someone might estimate low
+- Why someone might estimate high
+
+Do not assign a final story point estimate. The team will estimate together.
+```
+
+Then run the vote in [Planning Poker](/tools/planning-poker).
+
+## Prompt 5: Story Split Prompt
+
+Use this when a story feels too large, unclear, or risky.
+
+```text
+Act as a Scrum Master helping a software team split a large story.
+
+Large story:
+[paste story]
+
+Constraints:
+- Each split should be testable
+- Each split should deliver user or learning value
+- Avoid splitting only by technical layer unless there is no better option
+- Keep each split small enough for one sprint
+
+Return:
+- 3 to 6 smaller user stories
+- Acceptance criteria for each
+- Suggested delivery order
+- Dependencies between stories
+- What should remain out of scope
+```
+
+Use the result as a draft only. The team should still decide how to slice the work.
+
+## Prompt 6: Dependency and Risk Scan
+
+Use this when the sprint looks possible but fragile.
+
+```text
+Act as a Scrum Master scanning sprint planning risks.
+
+Candidate sprint scope:
+[items]
+
+Known context:
+- Teams involved: [teams]
+- External dependencies: [dependencies]
+- Environments needed: [environments]
+- APIs or systems touched: [systems]
+- Deadline or release target: [target]
+
+Identify:
+1. Dependency risks
+2. Environment risks
+3. Review or approval bottlenecks
+4. Testing risks
+5. Questions to resolve before sprint commitment
+6. Risk mitigation actions
+
+Return a table with risk, impact, owner, and next action.
+```
+
+## Prompt 7: Sprint Planning Agenda
+
+Use this to keep planning focused and time-boxed.
+
+```text
+Act as a Scrum Master creating a sprint planning agenda.
+
+Sprint context:
+- Sprint length: [length]
+- Team size: [team size]
+- Product objective: [objective]
+- Number of candidate backlog items: [count]
+- Known risks: [risks]
+
+Create a sprint planning agenda with:
+- Time boxes
+- Facilitator notes
+- Product Owner preparation
+- Team discussion points
+- Decision points
+- Expected outputs
+
+Keep the meeting focused on goal, scope, capacity, and risks.
+```
+
+## Prompt 8: Product Owner Question List
+
+Use this when tickets are close to ready but still ambiguous.
+
+```text
+Act as a Scrum Master preparing questions for the Product Owner.
+
+Candidate sprint items:
+[items]
+
+Generate the 10 most important questions to ask before sprint commitment.
+
+Group questions by:
+- Business value
+- Acceptance criteria
+- Scope boundaries
+- Dependencies
+- Release or stakeholder expectations
+- Measurement of success
+
+Keep the questions specific and answerable.
+```
+
+## Prompt 9: Jira Follow-Up Items After Planning
+
+Use this at the end of sprint planning.
+
+```text
+Act as a Scrum Master converting sprint planning notes into Jira-ready follow-up items.
+
+Planning notes:
+[notes]
+
+Create follow-up items with:
+- Title
+- Type: question / task / risk / dependency / spike
+- Owner
+- Due date or review point
+- Description
+- Acceptance or completion criteria
+
+Do not create new product scope unless it was explicitly agreed during planning.
+```
+
+## Prompt 10: Sprint Commitment Summary
+
+Use this to share a clean planning summary after the meeting.
+
+```text
+Act as a Scrum Master writing a sprint planning summary.
+
+Inputs:
+- Sprint goal: [goal]
+- Committed items: [items]
+- Deferred items: [items]
+- Capacity assumption: [capacity]
+- Risks: [risks]
+- Follow-up actions: [actions]
+
+Write a concise summary with:
+- Sprint goal
+- What the team committed to
+- What was intentionally left out
+- Risks and owners
+- Next actions
+
+Tone: clear, factual, and useful for the team.
+```
+
+## A Full Sprint Planning Workflow With AI
+
+Here is the practical order:
+
+1. Run the backlog readiness prompt before planning.
+2. Use the sprint goal prompt to prepare 2 or 3 goal options.
+3. Use the capacity prompt with actual availability.
+4. Estimate with the team in [Planning Poker](/tools/planning-poker).
+5. Use the risk scan when estimates or dependencies feel uncertain.
+6. Create Jira-ready follow-ups after the meeting.
+7. Share the sprint commitment summary.
+
+## What Not to Do
+
+### Do not let AI assign final story points
+
+Story points are relative to your team. AI does not know your team calibration, codebase, test burden, deployment process, or hidden constraints.
+
+### Do not paste sensitive Jira data
+
+Remove:
+
+- customer names
+- private comments
+- credentials or tokens
+- internal URLs
+- security vulnerabilities
+- regulated data
+- production logs with personal data
+
+### Do not use AI to force commitment
+
+If AI says the sprint is possible but the team disagrees, listen to the team.
+
+### Do not create scope from AI suggestions
+
+AI often invents useful-sounding extras. Keep only what the Product Owner and team agree is in scope.
+
+## Sprint Planning Prompt Template
+
+Use this as a reusable master prompt.
+
+```text
+Act as a pragmatic Scrum Master helping a software team prepare sprint planning.
+
+Context:
+- Product objective: [objective]
+- Candidate backlog items: [items]
+- Team capacity: [capacity]
+- Average velocity: [velocity]
+- Known risks and dependencies: [risks]
+- Definition of Ready: [DoR]
+
+Return:
+1. Sprint goal options
+2. Backlog readiness issues
+3. Capacity and overcommitment risks
+4. Planning poker discussion questions
+5. Items that may need splitting
+6. Product Owner questions
+7. Recommended follow-up actions
+
+Rules:
+- Do not invent scope
+- Flag assumptions
+- Keep recommendations concise
+- Do not assign final story points
+- Protect sensitive data
+```
+
+## Next Step
+
+Use this guide with:
+
+- [Sprint Planning Checklist](/tools/sprint-planning-checklist) to confirm readiness
+- [Sprint Capacity Calculator](/tools/sprint-capacity-calculator) to avoid overcommitment
+- [Planning Poker](/tools/planning-poker) to estimate as a team
+- [AI Scrum Master Prompts](/guides/ai-scrum-master-prompts) for prompts across the full Scrum cycle
