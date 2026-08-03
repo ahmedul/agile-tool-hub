@@ -241,14 +241,14 @@ export default function Home() {
                 href: "/guides/ai-sprint-planning-prompts",
               },
               {
+                title: "AI Retrospective Prompts",
+                description: "Prepare retro questions, group themes, and turn team feedback into focused action items.",
+                href: "/guides/ai-retrospective-prompts",
+              },
+              {
                 title: "Planning Poker",
                 description: "Run the team estimate first, then use AI prompts to discuss disagreement and hidden complexity.",
                 href: "/tools/planning-poker",
-              },
-              {
-                title: "Acceptance Criteria Generator",
-                description: "Turn rough feature notes into testable Given/When/Then or checklist criteria.",
-                href: "/tools/acceptance-criteria-generator",
               },
             ].map((item) => (
               <Link key={item.href} href={item.href} className="block rounded-lg border border-blue-100 bg-white p-5 transition-all hover:border-blue-400 hover:shadow-sm">
@@ -387,6 +387,12 @@ export default function Home() {
                   📖 Complete Retrospectives & Standups Guide
                 </Link>
                 <p className="text-gray-500 text-xs">Master sprint retrospectives, daily standups, facilitation, and team ceremonies</p>
+              </li>
+              <li>
+                <Link href="/guides/ai-retrospective-prompts" className="text-blue-600 hover:underline font-medium text-sm">
+                  AI Retrospective Prompts
+                </Link>
+                <p className="text-gray-500 text-xs mt-1">Use AI to prepare retro questions, summarize themes, and sharpen action items</p>
               </li>
               <li>
                 <Link href="/guides/how-to-run-a-sprint-retrospective" className="text-blue-600 hover:underline font-medium text-sm">

@@ -1,0 +1,501 @@
+---
+title: "AI Retrospective Prompts for Scrum Teams"
+description: "Copy AI retrospective prompts for sprint retro prep, theme grouping, root cause questions, action items, remote retros, and follow-up summaries."
+slug: "ai-retrospective-prompts"
+category: "Guides"
+publishedAt: "2026-08-03"
+updatedAt: "2026-08-03"
+keywords:
+  - AI retrospective prompts
+  - retrospective prompts
+  - sprint retrospective prompts
+  - AI for retrospectives
+  - Scrum retrospective AI
+  - retrospective action items
+  - agile retrospective questions
+  - remote retrospective prompts
+relatedLinks:
+  - title: "Retrospective Board"
+    href: "/tools/retro-board"
+  - title: "Sprint Retrospective Template"
+    href: "/templates/sprint-retrospective-template"
+  - title: "How to Run a Sprint Retrospective"
+    href: "/guides/how-to-run-a-sprint-retrospective"
+  - title: "Complete Guide to Retrospectives & Standups"
+    href: "/guides/complete-guide-to-retrospectives-and-standups"
+  - title: "Sprint Review vs Retrospective"
+    href: "/guides/sprint-review-vs-retrospective"
+  - title: "AI Scrum Master Prompts"
+    href: "/guides/ai-scrum-master-prompts"
+  - title: "AI Sprint Planning Prompts"
+    href: "/guides/ai-sprint-planning-prompts"
+  - title: "Daily Standup Generator"
+    href: "/tools/daily-standup-generator"
+howToSteps:
+  - name: "Prepare safe sprint context"
+    description: "Collect non-sensitive sprint facts, team observations, blockers, and delivery outcomes without personal criticism or private data."
+  - name: "Choose the retrospective format"
+    description: "Ask AI to recommend a simple format based on the team's current situation, such as Start/Stop/Continue, 4Ls, or Went Well/To Improve/Action Items."
+  - name: "Group retro notes into themes"
+    description: "Use AI to cluster anonymous notes into themes without removing important disagreement."
+  - name: "Create better discussion questions"
+    description: "Ask for neutral facilitation questions that help the team explore root causes and trade-offs."
+  - name: "Turn decisions into action items"
+    description: "Convert the team's chosen improvements into specific actions with owners, review dates, and success signals."
+faqItems:
+  - question: "Can AI run a sprint retrospective?"
+    answer: "No. AI can help prepare prompts, group themes, draft summaries, and sharpen action items, but the Scrum Master and team still need to facilitate the conversation and decide what to change."
+  - question: "What retrospective data is safe to paste into AI?"
+    answer: "Use sanitized notes, sprint metrics, and generic blockers. Remove names, private feedback, customer data, credentials, internal URLs, incident details, and anything sensitive."
+  - question: "How can AI improve retrospective action items?"
+    answer: "AI can turn vague ideas like 'communicate better' into specific behavior changes with an owner, review point, and measurable signal."
+  - question: "Should AI summarize individual feedback?"
+    answer: "Be careful. Retrospectives require trust. Prefer anonymous, sanitized themes and avoid using AI to judge or label individual team members."
+---
+
+AI can make retrospectives easier to prepare and easier to follow up.
+
+It should not replace the conversation.
+
+Use these prompts when you need help with:
+
+- choosing the right retrospective format
+- creating neutral discussion questions
+- grouping retro notes into useful themes
+- turning vague complaints into specific action items
+- summarizing decisions after the retro
+- checking whether last sprint's action items actually improved anything
+
+The practical pattern is simple:
+
+1. Run the retrospective with the team.
+2. Use AI to organize and sharpen the output.
+3. Let the team decide what action to commit to.
+
+Start the session in the [Retrospective Board](/tools/retro-board), then use these prompts to prepare or summarize the discussion.
+
+## How to Use AI Safely in Retrospectives
+
+Retrospectives depend on trust. Treat AI as a drafting assistant, not a judge.
+
+Use AI for:
+
+- preparing facilitation questions
+- choosing a format
+- grouping anonymous notes
+- drafting action items
+- writing a neutral summary
+- checking whether actions are measurable
+
+Do not use AI for:
+
+- rating individual performance
+- deciding who is to blame
+- analyzing private people feedback without consent
+- pasting sensitive incident details
+- replacing the team's own improvement decision
+
+Before using any prompt, remove:
+
+- names if the feedback is sensitive
+- customer or stakeholder names
+- private Slack messages
+- credentials or tokens
+- internal URLs
+- regulated data
+- production logs with personal data
+
+## Prompt 1: Choose the Right Retrospective Format
+
+Use this before the meeting if your usual retro format feels stale.
+
+```text
+Act as a Scrum Master preparing a sprint retrospective.
+
+Team context:
+- Sprint length: [length]
+- Team size: [team size]
+- Sprint outcome: [met goal / missed goal / partial]
+- Current team mood: [calm / tired / frustrated / energized / uncertain]
+- Main topic we may need to discuss: [topic]
+- Remote, hybrid, or in-person: [mode]
+
+Recommend 3 retrospective formats.
+
+For each format include:
+- When to use it
+- Why it fits this team context
+- Questions to ask
+- Timebox
+- Risk to watch for
+- Expected output
+
+Keep the retro focused on one or two improvements for the next sprint.
+```
+
+Good use case: the sprint had a specific problem, like repeated interruptions, late testing, unclear requirements, or deployment delays.
+
+## Prompt 2: Pre-Retro Reflection Questions
+
+Use this to help people prepare before the meeting.
+
+```text
+Act as a Scrum Master writing pre-retro reflection questions.
+
+Sprint context:
+- Sprint goal: [goal]
+- Outcome: [outcome]
+- Known blockers: [blockers]
+- Delivery concerns: [concerns]
+- Team improvement theme from last retro: [theme]
+
+Create 8 short reflection questions.
+
+Group them by:
+- What helped us
+- What slowed us down
+- What surprised us
+- What we should change next sprint
+
+Rules:
+- Keep the tone neutral
+- Avoid blame
+- Make questions easy to answer asynchronously
+- Include one question about the previous retro action item
+```
+
+Send the questions before the retro so people have time to think.
+
+## Prompt 3: Group Retro Notes Into Themes
+
+Use this after silent writing or after a retro board has many notes.
+
+```text
+Act as a neutral retrospective facilitator.
+
+Group these anonymous retro notes into themes.
+
+Rules:
+- Do not remove disagreement
+- Do not judge the team
+- Do not assign blame
+- Keep the original meaning of the notes
+- Preserve minority concerns if they look important
+
+Return:
+1. Theme name
+2. Notes included in the theme
+3. What the theme may indicate
+4. Neutral discussion question
+5. Whether this theme needs action now or later
+
+Retro notes:
+[paste sanitized anonymous notes]
+```
+
+This works well after collecting notes in the [Retrospective Board](/tools/retro-board).
+
+## Prompt 4: Root Cause Discussion Questions
+
+Use this when the team is discussing a top-voted issue.
+
+```text
+Act as a Scrum Master facilitating root cause discussion.
+
+Retro theme:
+[theme]
+
+Context:
+- What happened: [facts]
+- Impact: [impact]
+- Previous attempts to fix it: [attempts]
+- Constraints: [constraints]
+
+Generate:
+- 5 neutral questions to understand the root cause
+- 3 questions that reveal system/process issues
+- 3 questions that reveal unclear expectations
+- 3 questions that help identify a small experiment for next sprint
+
+Avoid blame. Keep questions practical and specific.
+```
+
+Useful question style:
+
+```text
+What made this problem hard to see earlier?
+```
+
+Less useful:
+
+```text
+Who caused this?
+```
+
+## Prompt 5: Turn Vague Feedback Into Action Items
+
+Use this when the retro output is true but too vague.
+
+```text
+Act as a Scrum Master improving retrospective action items.
+
+Vague feedback:
+[paste feedback]
+
+Create 3 possible action items.
+
+Each action item must include:
+- Specific behavior change
+- Owner
+- Start date
+- Review date
+- Success signal
+- What we will stop doing if this experiment fails
+
+Rules:
+- Keep each action small enough to try in one sprint
+- Avoid action items owned by "the team"
+- Avoid generic phrases like "communicate better"
+- Do not create more than 2 final actions for the sprint
+```
+
+Bad action item:
+
+```text
+Improve communication.
+```
+
+Better action item:
+
+```text
+For the next sprint, any blocker older than 2 hours is posted in #blocked with owner, impact, and needed help. Owner: Scrum Master. Review at next retro.
+```
+
+## Prompt 6: Remote Retrospective Facilitation Plan
+
+Use this for distributed teams.
+
+```text
+Act as a Scrum Master designing a remote sprint retrospective.
+
+Team context:
+- Time zones: [time zones]
+- Number of participants: [number]
+- Sprint outcome: [outcome]
+- Team mood: [mood]
+- Tool we will use: [tool]
+- Available meeting time: [time]
+
+Create a remote retrospective plan with:
+- Pre-work message
+- Silent writing time
+- Theme grouping method
+- Voting method
+- Discussion timeboxes
+- Action item format
+- Follow-up message
+
+Include facilitation notes for quiet participants and dominant voices.
+```
+
+For a lightweight setup, create a free session in the [Retrospective Board](/tools/retro-board) and share the link.
+
+## Prompt 7: Tense Retrospective Neutralizer
+
+Use this when the retro may become defensive.
+
+```text
+Act as a calm retrospective facilitator.
+
+Situation:
+[describe the issue without names]
+
+Create:
+- A neutral opening statement
+- 5 ground rules
+- 8 facilitation questions
+- 3 phrases to redirect blame into process discussion
+- A closing statement that turns discussion into action
+
+Rules:
+- Do not minimize the issue
+- Do not assign blame
+- Keep language direct and respectful
+- Focus on what the team can change next sprint
+```
+
+Use this when the sprint involved conflict, missed expectations, production issues, or repeated blockers.
+
+## Prompt 8: Recurring Retro Issue Detector
+
+Use this when the same problem appears every sprint.
+
+```text
+Act as a Scrum Master reviewing retrospective history.
+
+Past retro themes:
+[paste sanitized themes from previous retros]
+
+Current sprint retro themes:
+[paste sanitized current themes]
+
+Identify:
+1. Repeated issues
+2. Issues that became worse
+3. Issues that improved
+4. Possible root causes
+5. Actions that were too vague
+6. One small experiment for next sprint
+
+Return the result in a table.
+```
+
+This is useful when the team says the retro is not changing anything.
+
+## Prompt 9: Retro Summary for the Team
+
+Use this after the meeting.
+
+```text
+Act as a Scrum Master writing a retrospective summary.
+
+Retro notes:
+[notes]
+
+Final team decisions:
+[decisions]
+
+Action items:
+[action items]
+
+Write a concise team summary with:
+- What we discussed
+- Main themes
+- What we decided to change
+- Action item owner and review date
+- What we will revisit next retro
+
+Tone:
+- Neutral
+- Brief
+- No blame
+- No individual performance commentary
+```
+
+Keep the summary factual. Avoid adding new analysis after the team has already agreed on actions.
+
+## Prompt 10: Review Last Retro Action Items
+
+Use this at the start of the next retrospective.
+
+```text
+Act as a Scrum Master preparing a follow-up on last sprint's retrospective actions.
+
+Previous action items:
+[action items]
+
+Evidence from this sprint:
+[evidence]
+
+Create a review table with:
+1. Action item
+2. Owner
+3. Was it tried?
+4. Evidence of improvement
+5. What still needs work
+6. Keep, change, or stop?
+7. Question to ask the team
+
+Keep the review honest and lightweight.
+```
+
+This is where many retrospectives fail. If actions are not reviewed, people stop believing the retro matters.
+
+## A Simple AI Retrospective Workflow
+
+Use this workflow for a two-week sprint:
+
+1. Before the retro, run the format selection prompt.
+2. Send the pre-retro reflection questions.
+3. Collect notes in the [Retrospective Board](/tools/retro-board).
+4. Group notes into themes.
+5. Discuss the top one or two themes.
+6. Use the action item prompt to make changes specific.
+7. Send the retro summary.
+8. Review action items at the next retrospective.
+
+## What Good Retrospective Action Items Need
+
+Every retro action item should answer:
+
+- What behavior will change?
+- Who owns the follow-up?
+- When will we review it?
+- How will we know it helped?
+- What will we stop doing if it does not help?
+
+If an action item cannot answer these questions, it is probably too vague.
+
+## Common Mistakes When Using AI for Retrospectives
+
+### Pasting private feedback without consent
+
+Trust matters more than automation. Sanitize notes before using AI.
+
+### Asking AI who is right
+
+Retrospectives are not debates for AI to judge. Use AI to create better questions, not verdicts.
+
+### Creating too many action items
+
+One completed improvement is better than six forgotten action items.
+
+### Letting AI rewrite the team's decision
+
+AI can polish the wording, but the team owns the decision.
+
+### Skipping the follow-up
+
+The next retro should start by reviewing whether the last action item changed anything.
+
+## Reusable Master Prompt
+
+Use this when you want one prompt for the full retrospective flow.
+
+```text
+Act as a pragmatic Scrum Master helping a software team prepare and follow up on a sprint retrospective.
+
+Context:
+- Sprint goal: [goal]
+- Sprint outcome: [outcome]
+- Team mood: [mood]
+- Known blockers: [blockers]
+- Previous retro action items: [actions]
+- Sanitized retro notes: [notes]
+
+Return:
+1. Recommended retrospective format
+2. Pre-retro reflection questions
+3. Grouped themes from the notes
+4. Neutral discussion questions for top themes
+5. Suggested action item drafts
+6. Follow-up summary for the team
+7. Questions to review at the next retro
+
+Rules:
+- Do not assign blame
+- Do not evaluate individual performance
+- Keep action items small and measurable
+- Preserve disagreement where it matters
+- Do not invent facts
+- Use neutral language
+```
+
+## Next Step
+
+Use these prompts with:
+
+- [Retrospective Board](/tools/retro-board) to collect and vote on notes
+- [Sprint Retrospective Template](/templates/sprint-retrospective-template) for a reusable meeting structure
+- [How to Run a Sprint Retrospective](/guides/how-to-run-a-sprint-retrospective) for facilitation steps
+- [AI Scrum Master Prompts](/guides/ai-scrum-master-prompts) for prompts across the full Scrum cycle
