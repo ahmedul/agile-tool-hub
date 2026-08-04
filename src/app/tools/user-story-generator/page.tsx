@@ -108,6 +108,7 @@ export default function UserStoryGeneratorPage() {
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Related resources</h2>
         <ul className="space-y-2">
           <li><Link href="/guides/ai-backlog-refinement-prompts" className="text-blue-600 hover:underline">→ AI Backlog Refinement Prompts</Link></li>
+          <li><Link href="/tools/acceptance-criteria-generator" className="text-blue-600 hover:underline">→ Acceptance Criteria Generator</Link></li>
           <li><Link href="/templates/user-story-template" className="text-blue-600 hover:underline">→ User Story Template</Link></li>
           <li><Link href="/templates/acceptance-criteria-template" className="text-blue-600 hover:underline">→ Acceptance Criteria Template</Link></li>
           <li><Link href="/guides/how-to-write-acceptance-criteria" className="text-blue-600 hover:underline">→ How to Write Acceptance Criteria</Link></li>
