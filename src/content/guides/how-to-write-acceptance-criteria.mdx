@@ -1,110 +1,350 @@
 ---
-title: "How to Write Acceptance Criteria"
-description: "Step-by-step guide to writing testable acceptance criteria in Gherkin (Given/When/Then) or checklist format. Reduce rework and prevent ticket back-and-forth."
+title: "How to Write Acceptance Criteria: Examples, Template & Checklist"
+description: "Learn how to write clear, testable acceptance criteria for Jira user stories with Given/When/Then examples, checklist format, review questions, and common mistakes."
 slug: "how-to-write-acceptance-criteria"
 category: "Guides"
+publishedAt: "2026-06-05"
+updatedAt: "2026-08-04"
 keywords:
   - how to write acceptance criteria
   - acceptance criteria guide
   - acceptance criteria examples
-  - given when then
+  - acceptance criteria template
+  - given when then acceptance criteria
   - gherkin acceptance criteria
   - agile acceptance criteria
+  - jira acceptance criteria
 relatedLinks:
+  - title: "Acceptance Criteria Generator"
+    href: "/tools/acceptance-criteria-generator"
+  - title: "Acceptance Criteria Template"
+    href: "/templates/acceptance-criteria-template"
+  - title: "Acceptance Criteria Patterns & Examples"
+    href: "/guides/acceptance-criteria-patterns-and-examples"
+  - title: "Acceptance Criteria Examples for Checkout"
+    href: "/examples/acceptance-criteria-examples-for-checkout"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
   - title: "AI Backlog Refinement Prompts"
     href: "/guides/ai-backlog-refinement-prompts"
   - title: "Complete Guide to Jira Ticket Quality"
     href: "/guides/complete-guide-to-jira-ticket-quality"
-  - title: "Acceptance Criteria Generator"
-    href: "/tools/acceptance-criteria-generator"
-  - title: "Acceptance Criteria Patterns & Examples"
-    href: "/guides/acceptance-criteria-patterns-and-examples"
-  - title: "Acceptance Criteria Template"
-    href: "/templates/acceptance-criteria-template"
-  - title: "Acceptance Criteria Examples for API"
-    href: "/examples/acceptance-criteria-examples-for-api"
-  - title: "Acceptance Criteria Examples for Checkout"
-    href: "/examples/acceptance-criteria-examples-for-checkout"
   - title: "User Story Template"
     href: "/templates/user-story-template"
+howToSteps:
+  - name: "Understand the user story"
+    description: "Read the user, goal, business value, scope, dependencies, and open questions before writing criteria."
+  - name: "Choose an acceptance criteria format"
+    description: "Use Given/When/Then for behavior, checklist format for simple validation, or both for important Jira tickets."
+  - name: "Write the happy path"
+    description: "Describe the normal successful outcome in concrete, testable language."
+  - name: "Add edge cases and error states"
+    description: "Cover invalid input, permissions, empty states, failures, timeouts, and important boundary conditions."
+  - name: "Make each criterion testable"
+    description: "Replace vague words with measurable outcomes so QA can prove whether each criterion passes or fails."
+  - name: "Review before sprint planning"
+    description: "Ask Product, Engineering, and QA to agree on the criteria before estimating or starting development."
 faqItems:
-  - question: "Should acceptance criteria be in Given/When/Then or checklist format?"
-    answer: "Given/When/Then (Gherkin) is best for BDD workflows and teams using tools like Cucumber. Checklist format is simpler and works well for most Scrum teams in Jira. You can use both formats for the same story."
-  - question: "Who should write acceptance criteria?"
-    answer: "The Product Owner writes the first draft. The team (developers, QA, designers) reviews and refines them during refinement or sprint planning. Everyone should agree before the sprint starts."
+  - question: "What are acceptance criteria?"
+    answer: "Acceptance criteria are the conditions a user story must satisfy before the Product Owner or team can accept it as complete."
+  - question: "How do you write acceptance criteria?"
+    answer: "Start with the user story, choose a format, write the happy path, add edge cases and error states, make each item testable, and review the result with Product, Engineering, and QA."
+  - question: "Should acceptance criteria be Given/When/Then or checklist format?"
+    answer: "Given/When/Then is best for user behavior, workflows, and BDD-style testing. Checklist format is faster for straightforward Jira tickets. Many teams use both."
+  - question: "How many acceptance criteria should a user story have?"
+    answer: "Most user stories need 3 to 7 acceptance criteria. If you need more than 10, the story may be too large and should probably be split."
+  - question: "Who writes acceptance criteria?"
+    answer: "The Product Owner usually writes the first draft. Developers, QA, designers, and stakeholders refine them during backlog refinement or sprint planning."
   - question: "Can acceptance criteria describe implementation details?"
-    answer: "No. Acceptance criteria should describe behavior and outcomes, not how to build it. Say 'the form validates email format' not 'use regex pattern X'. Technical decisions come during development."
-  - question: "What if I miss an edge case in acceptance criteria?"
-    answer: "The ticket gets reopened. This is why edge cases like error states, boundary conditions, and timeouts must be included before development starts."
-  - question: "How do I know if acceptance criteria are too vague?"
-    answer: "Ask: Can a QA engineer write a test case from this? If the answer is no, it is too vague. Rephrase until the outcome is specific and measurable."
-  - question: "How many acceptance criteria should a story have?"
-    answer: "3-8 is typical. One criterion isn't enough (not detailed enough). More than 10 and the story is probably too big. Each criterion should be independently testable."
-  - question: "Should acceptance criteria include performance requirements?"
-    answer: "Yes, if performance matters. Example: 'Page loads in under 2 seconds on 4G connection' or 'API response time under 500ms for p99'. Without measurable performance criteria, QA won't know what to test."
-  - question: "Can a story be accepted if it meets acceptance criteria but breaks something else?"
-    answer: "No. Meeting acceptance criteria is necessary but not sufficient. Regression testing is part of QA's job. New features should not break existing features. Acceptance criteria should include 'no regression' implicitly."
+    answer: "Usually no. Acceptance criteria should describe behavior and outcomes, not internal implementation. Technical tasks can explain how the team will build the solution."
+  - question: "What is the difference between acceptance criteria and Definition of Done?"
+    answer: "Acceptance criteria are specific to one story. Definition of Done is a team-wide quality checklist that applies to every story or backlog item."
 ---
 
-Acceptance criteria define the boundaries of a user story. They tell the team exactly when a feature is done — and they prevent the most common source of rework: disagreement over what "done" means.
+Acceptance criteria define what must be true before a user story can be accepted. They reduce rework because the team agrees on behavior, edge cases, and quality expectations before development starts.
+
+Use this guide when you are writing Jira stories, preparing backlog refinement, or turning rough feature notes into testable work. For a faster first draft, use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator). For a copy-paste structure, use the [Acceptance Criteria Template](/templates/acceptance-criteria-template).
 
 ## What Are Acceptance Criteria?
 
-Acceptance criteria are conditions a feature must satisfy to be accepted by the Product Owner and stakeholders. They answer: *How do we know this story is complete?*
+Acceptance criteria are clear, testable conditions that a feature must satisfy before the Product Owner, QA, or team can call the story complete.
 
-Good acceptance criteria are:
-- **Specific** — no ambiguity
-- **Testable** — a QA engineer can write a test case from them
-- **Agreed upon** — written before development starts, not after
+A good acceptance criterion should answer:
 
-## Two Common Formats
+- what context or condition applies
+- what action or event happens
+- what result should be visible or verifiable
+- what errors, permissions, or edge cases matter
+- how QA can prove whether it passed or failed
 
-### 1. Given/When/Then (Gherkin)
+Acceptance criteria are not the same as implementation tasks. "Use Redis for caching" is a technical task. "Search results appear within 500ms for 95% of requests" is acceptance criteria because it describes a measurable outcome.
 
-Best for behaviour-driven development (BDD) and when working closely with QA.
+## How to Write Acceptance Criteria in 6 Steps
 
-```
-Given [a starting context]
-When [an action is taken]
-Then [a specific outcome occurs]
-```
+### 1. Start with the user story
 
-**Example:**
-```
-Given a registered user is on the login page
-When they submit a valid email and password
-Then they are redirected to their dashboard
-And a session cookie is set
-```
+Read the user story, business value, scope notes, designs, dependencies, and open questions.
 
-### 2. Checklist Format
+If the story does not clearly explain the user and outcome, fix that first. A weak story usually creates weak acceptance criteria.
 
-Best for simpler stories or teams not using BDD tools.
+Useful prompt:
 
-```
-- [ ] User can log in with email and password
-- [ ] Error message shown for invalid credentials
-- [ ] Account locked after 5 failed attempts
-- [ ] Password field is masked by default
+```text
+As a [user type],
+I want to [take an action],
+So that [business or user outcome].
 ```
 
-## When to Write Them
+### 2. Choose the right format
 
-Acceptance criteria should be written **during refinement**, before the sprint. The Product Owner drafts them; the team reviews and challenges them. If you can't write acceptance criteria for a story, the story isn't ready to be pointed or pulled into a sprint.
+| Format | Best for | Use when |
+|---|---|---|
+| Given/When/Then | User behavior, workflows, BDD, QA automation | The story has a clear context, action, and result |
+| Checklist | Simple validation and Jira ticket clarity | The story is straightforward or mostly non-UI |
+| Rule-based | Policy, eligibility, pricing, permissions | The story depends on business logic |
+| Hybrid | Most important product stories | You need both behavior and edge-case coverage |
 
-## Common Mistakes
+### 3. Write the happy path first
 
-**Too vague:** "User can log in successfully" — what does success look like?
+Start with the normal successful outcome. This gives the team a shared baseline before you add exceptions.
 
-**Too implementation-specific:** "Use JWT tokens with a 24-hour expiry" — that's a technical decision, not acceptance criteria.
+Weak:
 
-**Written after development:** At that point you're documenting what was built, not defining what should be built.
+```text
+User can reset password.
+```
 
-**Missing edge cases:** Happy path only. Always ask: what happens when it goes wrong?
+Better:
 
-## Checklist Before You Finalise
+```text
+Given a registered user is on the password reset page,
+When they submit a valid account email,
+Then a password reset email is sent within 2 minutes.
+```
 
-- [ ] Can a QA engineer write a test from each criterion?
-- [ ] Does each criterion describe *behaviour*, not *implementation*?
-- [ ] Are error states and edge cases covered?
-- [ ] Has the whole team reviewed and agreed on them?
+### 4. Add edge cases and error states
+
+Ask what can go wrong:
+
+- invalid input
+- missing data
+- expired links or sessions
+- users without permission
+- empty states
+- duplicate submissions
+- slow or unavailable services
+- browser, device, or accessibility constraints
+
+Example:
+
+```text
+Given the password reset link has expired,
+When the user opens the link,
+Then they see a clear error message and can request a new link.
+```
+
+### 5. Make every criterion testable
+
+QA should be able to turn each criterion into a test case. Replace vague words with observable outcomes.
+
+| Vague | Testable |
+|---|---|
+| The page loads fast | The page reaches LCP under 2.5 seconds on mobile |
+| The error is clear | The error message says "Email or password incorrect" |
+| The user can filter products | Filtered results update within 2 seconds after selection |
+| The API works | Valid requests return 201 and invalid requests return 400 with a reason |
+
+### 6. Review before sprint planning
+
+Acceptance criteria should be reviewed before estimation. Developers, QA, Product, and design should all understand the same expected result.
+
+If the team cannot estimate the story because the criteria are unclear, the story is not ready.
+
+## Given/When/Then Acceptance Criteria Example
+
+Use this format when the story describes user behavior.
+
+```text
+Given [starting context],
+When [user action or system event],
+Then [expected result].
+```
+
+Filled example:
+
+```text
+Given a registered shopper has products in the cart,
+When they apply a valid discount code,
+Then the order total updates with the discount amount.
+
+Given the shopper enters an expired discount code,
+When they apply the code,
+Then they see a message that the code has expired.
+
+Given the discount code cannot be combined with another offer,
+When the shopper applies the code,
+Then the system explains which offer is active and why.
+```
+
+This works because each scenario has a clear context, action, and expected result.
+
+## Checklist Acceptance Criteria Example
+
+Use checklist format when the ticket needs scannable conditions more than full scenarios.
+
+```text
+Acceptance Criteria:
+- [ ] User can filter products by category
+- [ ] User can filter products by price range
+- [ ] Results update within 2 seconds
+- [ ] Empty state appears when no products match
+- [ ] Filters can be cleared in one action
+- [ ] Mobile and desktop layouts are supported
+```
+
+This works well for Jira tickets where Product and QA need a quick shared list.
+
+## Rule-Based Acceptance Criteria Example
+
+Use rule-based criteria when the work depends on policy or business logic.
+
+```text
+Business Rules:
+- Discount codes cannot be combined with automatic promotions
+- Expired discount codes cannot be applied
+- Discount codes cannot reduce the order total below zero
+
+Acceptance Criteria:
+- [ ] Valid discount codes reduce the order total correctly
+- [ ] Expired discount codes show a clear error message
+- [ ] Incompatible offers explain which discount is active
+- [ ] Taxes and shipping are calculated after the correct discount rules
+```
+
+This format makes the rules visible before engineers start implementation.
+
+## Acceptance Criteria Review Checklist
+
+Before a story enters sprint planning, check:
+
+- [ ] The user or actor is clear
+- [ ] The expected outcome is specific
+- [ ] Each criterion can pass or fail
+- [ ] Happy path is covered
+- [ ] Error states are covered
+- [ ] Edge cases and boundary conditions are covered
+- [ ] Permissions and roles are clear
+- [ ] Performance, security, or compliance constraints are included if relevant
+- [ ] Open questions are listed
+- [ ] Product, Engineering, and QA agree on the criteria
+
+## Common Acceptance Criteria Mistakes
+
+### Mistake 1: Writing vague outcomes
+
+Weak:
+
+```text
+The dashboard should work well.
+```
+
+Better:
+
+```text
+The dashboard loads the user's active projects within 2 seconds and shows an empty state when no projects exist.
+```
+
+### Mistake 2: Writing implementation details
+
+Weak:
+
+```text
+Use Redis cache for project search.
+```
+
+Better:
+
+```text
+Search results appear within 500ms for 95% of requests.
+```
+
+### Mistake 3: Only covering the happy path
+
+Weak:
+
+```text
+User can upload a file.
+```
+
+Better:
+
+```text
+- [ ] User can upload a supported file under 10MB
+- [ ] Unsupported file types show a clear error
+- [ ] Files larger than 10MB are rejected before upload starts
+- [ ] Upload progress is visible while the file is uploading
+```
+
+### Mistake 4: Writing acceptance criteria after development
+
+Acceptance criteria should guide the build, not document what was already built. Write them during refinement, then adjust only when the team agrees the scope changed.
+
+## Acceptance Criteria vs Definition of Done
+
+| Topic | Acceptance Criteria | Definition of Done |
+|---|---|---|
+| Scope | One user story | Every story or backlog item |
+| Owner | Product Owner with team input | Whole Scrum team |
+| Purpose | Defines story-specific acceptance | Defines shared quality bar |
+| Example | "Expired reset link shows a new-link option" | "Code reviewed, tested, and deployed to staging" |
+
+Use acceptance criteria to define what the story must do. Use [Definition of Done](/docs/definition-of-done-explained) to define the team's standard for finished work.
+
+## Quick Copy-Paste Acceptance Criteria Template
+
+```markdown
+## Acceptance Criteria
+
+Given [context],
+When [action],
+Then [expected result].
+
+- [ ] Happy path is testable
+- [ ] Error states are covered
+- [ ] Edge cases are covered
+- [ ] Permission rules are clear
+- [ ] Performance, security, or compliance constraints are explicit
+- [ ] Open questions are listed
+```
+
+For a fuller reusable version, use the [Acceptance Criteria Template](/templates/acceptance-criteria-template). To generate criteria from rough notes, use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator).
+
+## FAQ
+
+**What are acceptance criteria?**
+
+Acceptance criteria are the conditions a user story must satisfy before the Product Owner or team can accept it as complete.
+
+**How do you write acceptance criteria?**
+
+Start with the user story, choose a format, write the happy path, add edge cases and error states, make each item testable, and review the result with Product, Engineering, and QA.
+
+**Should acceptance criteria be Given/When/Then or checklist format?**
+
+Given/When/Then is best for user behavior, workflows, and BDD-style testing. Checklist format is faster for straightforward Jira tickets. Many teams use both.
+
+**How many acceptance criteria should a user story have?**
+
+Most user stories need 3 to 7 acceptance criteria. If you need more than 10, the story may be too large and should probably be split.
+
+**Who writes acceptance criteria?**
+
+The Product Owner usually writes the first draft. Developers, QA, designers, and stakeholders refine them during backlog refinement or sprint planning.
+
+**Can acceptance criteria describe implementation details?**
+
+Usually no. Acceptance criteria should describe behavior and outcomes, not internal implementation. Technical tasks can explain how the team will build the solution.
+
+**What is the difference between acceptance criteria and Definition of Done?**
+
+Acceptance criteria are specific to one story. Definition of Done is a team-wide quality checklist that applies to every story or backlog item.
