@@ -1,134 +1,265 @@
 ---
-title: "Acceptance Criteria Template (Free, Jira-Ready) + Examples"
-description: "Copy-paste acceptance criteria template with Gherkin (Given/When/Then), checklist format, and examples for Jira tickets. Write clear, testable criteria faster."
+title: "Acceptance Criteria Template for Jira: Copy, Examples & Checklist"
+description: "Copy a free Jira-ready acceptance criteria template with Given/When/Then, checklist format, examples, QA review questions, and common mistakes."
 slug: "acceptance-criteria-template"
 category: "Templates"
+publishedAt: "2026-06-05"
+updatedAt: "2026-08-04"
 keywords:
   - acceptance criteria template
   - acceptance criteria template jira
+  - jira acceptance criteria template
   - acceptance criteria examples
-  - how to write acceptance criteria
+  - given when then acceptance criteria
   - gherkin acceptance criteria
+  - acceptance criteria checklist
+  - user story acceptance criteria template
 relatedLinks:
   - title: "Acceptance Criteria Generator"
     href: "/tools/acceptance-criteria-generator"
-  - title: "User Story Generator"
-    href: "/tools/user-story-generator"
-  - title: "User Story Template"
-    href: "/templates/user-story-template"
-  - title: "Acceptance Criteria Examples for API"
-    href: "/examples/acceptance-criteria-examples-for-api"
   - title: "How to Write Acceptance Criteria"
     href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Acceptance Criteria Examples for Checkout"
+    href: "/examples/acceptance-criteria-examples-for-checkout"
+  - title: "Acceptance Criteria Examples for API"
+    href: "/examples/acceptance-criteria-examples-for-api"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
+  - title: "QA Test Case Template"
+    href: "/templates/qa-test-case-template"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+howToSteps:
+  - name: "Start with the user story"
+    description: "Read the user story, business value, scope notes, and any design or API details before writing criteria."
+  - name: "Choose the right format"
+    description: "Use Given/When/Then for behavior, checklist format for straightforward validation, and rule-based criteria for business logic."
+  - name: "Copy the Jira template"
+    description: "Paste the template into the Jira description or acceptance criteria field."
+  - name: "Fill in testable outcomes"
+    description: "Replace placeholders with concrete users, actions, expected results, edge cases, errors, and constraints."
+  - name: "Review with Product, Engineering, and QA"
+    description: "Confirm the criteria are clear, testable, complete, and agreed before development starts."
+faqItems:
+  - question: "What is an acceptance criteria template?"
+    answer: "An acceptance criteria template is a reusable structure for writing the conditions a user story must meet before the team can call it done."
+  - question: "Can I paste this acceptance criteria template into Jira?"
+    answer: "Yes. The template is written in Markdown-style sections that are easy to paste into Jira issue descriptions, acceptance criteria fields, or comments."
+  - question: "Should acceptance criteria use Given/When/Then?"
+    answer: "Use Given/When/Then when the story has clear behavior, preconditions, and expected outcomes. For simpler work, a checklist can be faster and easier to review."
+  - question: "How many acceptance criteria should a story have?"
+    answer: "Most user stories need 3 to 7 acceptance criteria. If the list is much longer, the story may be too large or the scope may need to be split."
+  - question: "Who writes acceptance criteria?"
+    answer: "The Product Owner usually drafts them, then developers and QA refine them during backlog refinement or sprint planning."
+  - question: "What is the difference between acceptance criteria and Definition of Done?"
+    answer: "Acceptance criteria are specific to one story. Definition of Done is a team-wide quality checklist that applies to every completed item."
 ---
 
-## Free Acceptance Criteria Template
+Use this free acceptance criteria template when a Jira ticket needs clearer test conditions before sprint planning, development, or QA handoff.
 
-Use this acceptance criteria template when you need a clear, testable format for Jira tickets. Choose the format that matches your work type, then copy-paste and customize.
+Good acceptance criteria answer one simple question: what must be true before this story is accepted?
 
-## Acceptance Criteria Format (Quick Guide)
+If you want a first draft from rough notes, use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator). If you need the full story structure around the criteria, start with the [User Story Template](/templates/user-story-template).
 
-- Use **Given/When/Then** for user flows and behavior-driven scenarios.
-- Use a **Checklist** for straightforward feature validation.
-- Use **Rule-based** criteria for policy or business-logic-heavy stories.
+## Copy-Paste Acceptance Criteria Template for Jira
 
-### Format 1: Gherkin (Given / When / Then)
+Paste this block into your Jira issue description or acceptance criteria field, then replace the placeholders.
 
-Best for features with clear user interactions:
-
-```
-Given [a specific context or precondition],
-When [a user performs an action],
-Then [the expected outcome occurs].
-```
-
-### Format 2: Checklist
-
-Best for simpler stories or non-UI work:
-
-```
+```markdown
 ## Acceptance Criteria
-- [ ] [Condition 1 that must be true]
-- [ ] [Condition 2 that must be true]
-- [ ] [Edge case that must be handled]
-- [ ] [Error state that must be handled]
-- [ ] [Performance or security requirement]
-```
 
-### Format 3: Rule-based
+### Behavior
 
-Best for complex business logic:
+Given [specific context or precondition],
+When [user action or system event],
+Then [expected result or visible outcome].
 
-```
-## Business Rules
-- Rule 1: [Describe the rule]
-- Rule 2: [Describe the rule]
+Given [error or edge-case condition],
+When [user action or system event],
+Then [safe, clear, and testable outcome].
 
-## Acceptance Criteria
-- [ ] Rule 1 is implemented and tested
-- [ ] Rule 2 is implemented and tested
-- [ ] Edge cases for Rule 1 are handled
-```
+### Checklist
 
-## Jira Acceptance Criteria Template (Copy-Paste)
-
-Paste this block into your Jira issue description or acceptance criteria field:
-
-```
-## Acceptance Criteria
-Given [context],
-When [action],
-Then [expected result].
-
-- [ ] Happy path is testable
+- [ ] The happy path is covered
 - [ ] Error states are covered
-- [ ] Edge cases are covered
-- [ ] Performance/security constraints are explicit
+- [ ] Empty states or edge cases are covered
+- [ ] Permission, role, or access rules are clear
+- [ ] Data validation rules are clear
+- [ ] Performance, security, or compliance constraints are explicit
+- [ ] Analytics, notifications, or audit events are listed if needed
+- [ ] The expected result can be tested by QA
+
+### Open Questions
+
+- [ ] [Question blocking clear acceptance]
+- [ ] [Business rule or edge case that needs Product Owner confirmation]
 ```
 
-## Filled Example — Password Reset Feature
+## Quick Format Selector
 
-**Given** a registered user is on the password reset page,
-**When** they enter a valid email address and click "Send reset link",
-**Then** they receive a reset email within 2 minutes.
+| Format | Best for | Example use |
+|---|---|---|
+| Given/When/Then | User flows, behavior, BDD, QA automation | Login, checkout, password reset, onboarding |
+| Checklist | Simple validation and Jira ticket clarity | Form fields, copy changes, admin settings |
+| Rule-based | Policy-heavy or business-logic-heavy stories | Pricing, permissions, tax, eligibility |
+| Both | Important work with user behavior and QA coverage | Payments, account changes, security-sensitive flows |
 
-**Given** the reset link has expired (after 24 hours),
-**When** the user clicks the link,
-**Then** they see an error: "This link has expired. Request a new one."
+## Given/When/Then Acceptance Criteria Template
 
-**Given** the user enters an email not registered in the system,
-**When** they click "Send reset link",
-**Then** they see a message: "If this email is registered, you will receive a link shortly." (do not confirm whether the email exists — security)
+Use Given/When/Then when the story has a clear context, action, and expected outcome.
 
-**Additional criteria:**
+```text
+Given [precondition],
+When [action],
+Then [expected outcome].
+
+Given [alternate condition],
+When [action],
+Then [expected outcome].
+```
+
+### Given/When/Then example
+
+```text
+Given a registered user is on the password reset page,
+When they enter a valid account email and submit the form,
+Then a password reset email is sent within 2 minutes.
+
+Given the reset link is expired,
+When the user opens the link,
+Then they see an error message and can request a new link.
+```
+
+## Checklist Acceptance Criteria Template
+
+Use checklist format when the team needs quick, scannable acceptance conditions.
+
+```text
+- [ ] User can complete the main action with valid data
+- [ ] User sees a helpful validation message for invalid data
+- [ ] Empty state appears when no results are available
+- [ ] User without permission cannot access the feature
+- [ ] The outcome is logged, measured, or communicated if required
+```
+
+## Rule-Based Acceptance Criteria Template
+
+Use this when the story depends on policy, pricing, eligibility, roles, or workflow rules.
+
+```text
+## Business Rules
+
+- Rule 1: [Describe the rule]
+- Rule 2: [Describe the exception]
+- Rule 3: [Describe the fallback]
+
+## Acceptance Criteria
+
+- [ ] Rule 1 is applied consistently
+- [ ] Rule 2 exception is handled
+- [ ] Invalid or unsupported cases show a clear message
+- [ ] QA can test each rule independently
+```
+
+## Filled Example: Password Reset Feature
+
+```markdown
+## Acceptance Criteria
+
+Given a registered user is on the password reset page,
+When they enter a valid account email and click "Send reset link",
+Then they receive a reset email within 2 minutes.
+
+Given the reset link has expired after 24 hours,
+When the user opens the link,
+Then they see "This link has expired. Request a new one."
+
+Given the user enters an email that is not registered,
+When they submit the reset request,
+Then they see "If this email is registered, you will receive a link shortly."
+
+Checklist:
 - [ ] Reset links expire after 24 hours
-- [ ] Each link can only be used once
-- [ ] Old links are invalidated when a new one is requested
-- [ ] Email is sent from a verified domain
+- [ ] Each reset link can only be used once
+- [ ] Requesting a new link invalidates older links
+- [ ] The message does not reveal whether an email exists
+- [ ] Password reset events are logged for security review
+```
 
-## What Makes Good Acceptance Criteria?
+## Filled Example: Checkout Discount Code
 
-Good acceptance criteria are:
+```markdown
+## Acceptance Criteria
 
-- **Testable** — QA can write a test case directly from them
-- **Clear** — No ambiguity about what "done" means
-- **Complete** — Happy path, error states, and edge cases covered
-- **Independent** — Each criterion stands alone
+Given a shopper has eligible items in the cart,
+When they apply a valid discount code,
+Then the order total updates with the discount amount.
 
-## Common Mistakes
+Given a shopper enters an expired discount code,
+When they apply the code,
+Then they see a clear message that the code has expired.
 
-- Writing acceptance criteria as implementation details ("the API should return 200") instead of user-visible outcomes
-- Missing error and edge cases — these are where bugs hide
-- Criteria too vague to test ("the page should load fast")
-- Writing acceptance criteria after development starts
+Given a discount code cannot be combined with another offer,
+When the shopper applies the code,
+Then the system explains which offer is active and why.
+
+Checklist:
+- [ ] Discount cannot reduce the total below allowed minimums
+- [ ] Tax and shipping calculations still use the correct rules
+- [ ] Discount amount appears in the order summary
+- [ ] Invalid codes do not change the order total
+```
+
+For more domain examples, see [Acceptance Criteria Examples for Checkout](/examples/acceptance-criteria-examples-for-checkout) and [Acceptance Criteria Examples for API](/examples/acceptance-criteria-examples-for-api).
+
+## Acceptance Criteria Review Checklist
+
+Before a story enters sprint planning, check that the criteria are:
+
+- **Testable** - QA can prove whether each item passes or fails
+- **Specific** - the expected outcome is concrete
+- **Complete** - happy path, edge cases, and error states are covered
+- **User-focused** - criteria describe behavior and outcomes, not internal implementation
+- **Agreed** - Product, Engineering, and QA understand the same definition of accepted
+- **Small enough** - the number of criteria does not signal an oversized story
+
+## Common Acceptance Criteria Mistakes
+
+Avoid these patterns:
+
+- Writing vague criteria such as "the page should load fast"
+- Writing implementation tasks instead of outcomes
+- Forgetting empty states, errors, permissions, or edge cases
+- Adding criteria after development has already started
+- Mixing several unrelated features into one story
+- Using too many criteria instead of splitting the story
+
+If the ticket is still unclear, use [How to Write Acceptance Criteria](/guides/how-to-write-acceptance-criteria) or generate a first draft with the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator).
 
 ## FAQ
 
-**Who should write acceptance criteria?**
-Product Owners write the initial criteria. Developers and QA refine them during sprint planning. All three should agree before development starts.
+**What is an acceptance criteria template?**
 
-**What is the difference between acceptance criteria and a definition of done?**
-Acceptance criteria are specific to one story. Definition of Done is a team-wide checklist that applies to every story (code review, tests, deployment, etc.).
+An acceptance criteria template is a reusable structure for writing the conditions a user story must meet before the team can call it done.
 
-**Should acceptance criteria cover performance?**
-Yes, if performance is a requirement for the feature. "The page loads in under 2 seconds on a 4G connection" is a valid acceptance criterion.
+**Can I paste this acceptance criteria template into Jira?**
+
+Yes. The template is written in Markdown-style sections that are easy to paste into Jira issue descriptions, acceptance criteria fields, or comments.
+
+**Should acceptance criteria use Given/When/Then?**
+
+Use Given/When/Then when the story has clear behavior, preconditions, and expected outcomes. For simpler work, a checklist can be faster and easier to review.
+
+**How many acceptance criteria should a story have?**
+
+Most user stories need 3 to 7 acceptance criteria. If the list is much longer, the story may be too large or the scope may need to be split.
+
+**Who writes acceptance criteria?**
+
+The Product Owner usually drafts them, then developers and QA refine them during backlog refinement or sprint planning.
+
+**What is the difference between acceptance criteria and Definition of Done?**
+
+Acceptance criteria are specific to one story. Definition of Done is a team-wide quality checklist that applies to every completed item.

@@ -7,7 +7,7 @@ import JsonLd from "@/components/JsonLd";
 import TemplateCopyActions from "@/components/TemplateCopyActions";
 import { mdxComponents } from "@/components/MDXComponents";
 import { mdxRemoteOptions } from "@/lib/mdx";
-import { buildArticleSchema, buildBreadcrumbSchema, buildFAQSchema, buildMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFAQSchema, buildHowToSchema, buildMetadata } from "@/lib/seo";
 
 const HIGH_INTENT_TEMPLATE_SLUGS = new Set([
   "jira-bug-report-template",
@@ -98,12 +98,20 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
     { label: "Templates", href: "/templates" },
     { label: item.title, href: `/templates/${slug}` },
   ]);
+  const howToJsonLd = item.howToSteps ? buildHowToSchema({
+    title: item.title,
+    description: item.description,
+    url: `https://agiletoolhub.com/templates/${slug}`,
+    steps: item.howToSteps,
+    estimatedTime: "PT10M",
+  }) : null;
   const faqJsonLd = item.faqItems && item.faqItems.length > 0 ? buildFAQSchema(item.faqItems) : null;
 
   return (
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      {howToJsonLd && <JsonLd data={howToJsonLd} />}
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ContentLayout
         title={item.title}
