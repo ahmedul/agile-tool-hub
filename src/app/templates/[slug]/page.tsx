@@ -7,7 +7,7 @@ import JsonLd from "@/components/JsonLd";
 import TemplateCopyActions from "@/components/TemplateCopyActions";
 import { mdxComponents } from "@/components/MDXComponents";
 import { mdxRemoteOptions } from "@/lib/mdx";
-import { buildArticleSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFAQSchema, buildMetadata } from "@/lib/seo";
 
 const HIGH_INTENT_TEMPLATE_SLUGS = new Set([
   "jira-bug-report-template",
@@ -98,11 +98,13 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
     { label: "Templates", href: "/templates" },
     { label: item.title, href: `/templates/${slug}` },
   ]);
+  const faqJsonLd = item.faqItems && item.faqItems.length > 0 ? buildFAQSchema(item.faqItems) : null;
 
   return (
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ContentLayout
         title={item.title}
         description={item.description}

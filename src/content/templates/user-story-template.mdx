@@ -1,114 +1,369 @@
 ---
-title: "User Story Template (Free, Jira-Ready) with Acceptance Criteria"
-description: "Copy-paste user story template for Jira with acceptance criteria, story points, business value, and Definition of Done, plus a filled example."
+title: "User Story Template for Jira: Copy, Examples & Acceptance Criteria"
+description: "Copy a free Jira-ready user story template with acceptance criteria, story points, priority, Definition of Done, examples, and writing tips for Scrum teams."
 slug: "user-story-template"
 category: "Templates"
+publishedAt: "2026-06-05"
+updatedAt: "2026-08-04"
 keywords:
   - user story template
   - user story template jira
   - agile user story template
-  - scrum user story
+  - scrum user story template
+  - user story format
+  - as a user I want template
+  - user story acceptance criteria template
+  - jira user story example
 relatedLinks:
   - title: "User Story Generator"
     href: "/tools/user-story-generator"
   - title: "Acceptance Criteria Generator"
     href: "/tools/acceptance-criteria-generator"
+  - title: "How to Write User Stories"
+    href: "/guides/how-to-write-user-stories"
+  - title: "User Story Examples for Different Domains"
+    href: "/guides/user-story-examples-for-different-domains"
+  - title: "AI Backlog Refinement Prompts"
+    href: "/guides/ai-backlog-refinement-prompts"
   - title: "Acceptance Criteria Template"
     href: "/templates/acceptance-criteria-template"
-  - title: "User Story Examples for Login Page"
-    href: "/examples/user-story-examples-for-login-page"
   - title: "How to Write Acceptance Criteria"
     href: "/guides/how-to-write-acceptance-criteria"
+  - title: "Definition of Ready Template"
+    href: "/templates/definition-of-ready-template"
+  - title: "Story Points Explained"
+    href: "/docs/story-points-explained"
+  - title: "Planning Poker"
+    href: "/tools/planning-poker"
+faqItems:
+  - question: "What is the standard user story template?"
+    answer: "The standard user story template is: As a [user type], I want to [do something], so that [benefit or outcome]. Good Jira stories also include acceptance criteria, priority, story points, dependencies, and Definition of Done."
+  - question: "Can I paste this user story template into Jira?"
+    answer: "Yes. The template is written in Markdown-style sections that are easy to paste into Jira, Linear, Azure DevOps, or another backlog tool."
+  - question: "How many acceptance criteria should a user story have?"
+    answer: "Most user stories need 3 to 7 acceptance criteria. If you need more than 10, the story may be too large and should probably be split."
+  - question: "Who writes user stories?"
+    answer: "The Product Owner usually writes the first draft, but developers, QA, designers, and stakeholders often help refine the story and acceptance criteria."
+  - question: "What is the difference between a user story and a task?"
+    answer: "A user story describes user or business value. A task describes implementation work. Teams often break a user story into technical tasks during sprint planning."
 ---
 
-## Free User Story Template
+Use this user story template when you need a clear, Jira-ready story for backlog refinement, sprint planning, or product handoff.
 
-```
+A good user story explains:
+
+- who needs the work
+- what they need to do
+- why it matters
+- how the team will know it is done
+
+If you want to generate a first draft from rough notes, use the [User Story Generator](/tools/user-story-generator). If you already have a story and need better test conditions, use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator).
+
+## Copy-Paste User Story Template
+
+```markdown
 ## User Story
+
 As a [type of user],
-I want to [perform some action],
-So that [I achieve some goal or benefit].
+I want to [perform an action],
+So that [I achieve a benefit or outcome].
 
-## Story Points
-[ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8  [ ] 13
+## Business Value
 
-## Priority
-[ ] Critical  [ ] High  [x] Medium  [ ] Low
+[Explain why this matters to the user, customer, product, or business.]
+
+## Scope
+
+In scope:
+- [What this story includes]
+- [Main workflow or behavior]
+- [Important constraints]
+
+Out of scope:
+- [What this story does not include]
+- [Future enhancement or separate story]
 
 ## Acceptance Criteria
-Given [some context or precondition],
-When [I perform some action],
-Then [I expect this outcome].
 
-- [ ] Criterion 1
-- [ ] Criterion 2
-- [ ] Criterion 3
+Given [context or precondition],
+When [action happens],
+Then [expected result happens].
 
-## Definition of Done
-- [ ] Code reviewed and approved
-- [ ] Unit tests written and passing
-- [ ] QA verified in staging
-- [ ] No new bugs introduced
-- [ ] Documentation updated if needed
+Checklist:
+- [ ] [Criterion 1: clear and testable]
+- [ ] [Criterion 2: error state or edge case]
+- [ ] [Criterion 3: permission, validation, or data rule]
 
-## Notes / Context
-[Any additional context, constraints, or open questions]
+## Story Points
+
+[ ] 1  [ ] 2  [ ] 3  [ ] 5  [ ] 8  [ ] 13  [ ] ?
+
+## Priority
+
+[ ] Critical  [ ] High  [ ] Medium  [ ] Low
 
 ## Dependencies
-[List any blocking stories or dependencies]
+
+- [Blocking team, API, design, data, approval, or related ticket]
+
+## Open Questions
+
+- [Question that must be answered before development starts]
+
+## Definition of Done
+
+- [ ] Acceptance criteria are met
+- [ ] Code reviewed and approved
+- [ ] Tests written or updated
+- [ ] QA verified in staging or target environment
+- [ ] No known regression introduced
+- [ ] Documentation, analytics, or release notes updated if needed
 ```
 
-## Filled Example
+## Filled User Story Example
 
-**User Story:**
+```markdown
+## User Story
+
 As a registered user,
-I want to reset my password via email,
+I want to reset my password by email,
 So that I can regain access to my account if I forget my password.
 
-**Story Points:** 3
+## Business Value
 
-**Priority:** High
+Users can recover access without contacting support, reducing support tickets and improving account self-service.
 
-**Acceptance Criteria:**
-- Given I am on the login page, when I click "Forgot password", then I am taken to the password reset page
-- Given I enter a valid email address, when I click "Send reset link", then I receive an email within 2 minutes
-- Given I click the reset link in the email, when the link is valid and not expired, then I can set a new password
-- Given the reset link has expired (after 24 hours), when I click it, then I see an error message with an option to request a new link
+## Scope
 
-**Definition of Done:**
-- Reset flow works end to end in staging
-- Email is sent via the configured email provider
-- Expired links are handled gracefully
-- QA sign-off received
+In scope:
+- User can request a password reset link from the login page
+- System sends reset email to a valid account email
+- User can set a new password from a valid reset link
+- Expired or invalid links show a clear error
 
-## What Makes a Good User Story?
+Out of scope:
+- Changing email address
+- Multi-factor authentication recovery
+- Admin password reset flow
 
-A good user story answers three questions:
+## Acceptance Criteria
 
-1. **Who** — who is this for?
-2. **What** — what do they want to do?
-3. **Why** — what is the business value?
+Given I am on the login page,
+When I click "Forgot password",
+Then I am taken to the password reset page.
 
-Without the "why", teams build features without understanding the purpose. Without the "who", acceptance criteria become vague.
+Given I enter a valid registered email address,
+When I submit the reset request,
+Then I receive a reset email within 2 minutes.
+
+Given I open a valid reset link,
+When I enter and confirm a new password,
+Then my password is updated and I can log in with the new password.
+
+Given the reset link is expired,
+When I open the link,
+Then I see an error message and an option to request a new link.
+
+Checklist:
+- [ ] Reset email does not reveal whether an email exists
+- [ ] Reset token expires after 24 hours
+- [ ] Password validation rules match account settings
+- [ ] Successful reset invalidates the used token
+
+## Story Points
+
+5
+
+## Priority
+
+High
+
+## Dependencies
+
+- Email provider configuration
+- Password policy copy from security team
+
+## Open Questions
+
+- Should reset links expire after 15 minutes, 1 hour, or 24 hours?
+- Do we need an audit event for successful password reset?
+
+## Definition of Done
+
+- [ ] Reset flow works end to end in staging
+- [ ] Unit and integration tests cover valid, expired, and invalid token cases
+- [ ] QA verifies happy path and error states
+- [ ] Security review completed for token expiry behavior
+```
+
+## User Story Format
+
+The classic format is:
+
+```text
+As a [user type],
+I want [capability],
+So that [benefit].
+```
+
+Each part has a job.
+
+| Part | Purpose | Weak example | Better example |
+|---|---|---|---|
+| As a | Names the user or stakeholder | As a user | As a registered shopper |
+| I want | Describes the capability | I want a button | I want to save my payment method |
+| So that | Explains the value | So that it works | So that I can check out faster next time |
+
+The "so that" line is important. Without it, the team may build the requested feature without understanding the outcome.
+
+## What to Include in a Jira User Story
+
+A Jira-ready user story should include more than the one-line story.
+
+| Field | What to write |
+|---|---|
+| Summary | Short title that clearly names the user outcome |
+| Description | As a / I want / So that story |
+| Business value | Why this matters |
+| Acceptance criteria | Testable conditions for completion |
+| Story points | Team estimate using your point scale |
+| Priority | Product priority, not personal urgency |
+| Dependencies | Designs, APIs, teams, approvals, data, or related tickets |
+| Open questions | Anything blocking readiness |
+| Definition of Done | Quality checks before completion |
+
+If the story is still unclear, refine it before sprint planning. Use [AI Backlog Refinement Prompts](/guides/ai-backlog-refinement-prompts) to find missing details and Product Owner questions.
+
+## Acceptance Criteria Template
+
+Use Given/When/Then for behavior that needs clear test cases:
+
+```text
+Given [starting context],
+When [user action or system event],
+Then [expected outcome].
+```
+
+Use checklist format for simpler requirements:
+
+```text
+- [ ] User can submit the form with valid data
+- [ ] Validation message appears for invalid data
+- [ ] Empty state appears when no results are available
+- [ ] User without permission cannot access the feature
+```
+
+Good acceptance criteria are:
+
+- specific
+- testable
+- agreed before development starts
+- focused on behavior, not implementation
+- clear about edge cases and error states
+
+See [How to Write Acceptance Criteria](/guides/how-to-write-acceptance-criteria) for deeper guidance.
+
+## Definition of Ready Checklist
+
+Before a user story enters sprint planning, check:
+
+- user or stakeholder is clear
+- business value is clear
+- acceptance criteria are testable
+- scope boundaries are clear
+- dependencies are visible
+- design or API notes are attached if needed
+- story is small enough to estimate
+- open questions are answered or tracked
+
+If several items fail this checklist, the story is not ready. Use the [Definition of Ready Template](/templates/definition-of-ready-template).
+
+## Story Point Guidance
+
+Story points should include all work needed to call the story done:
+
+- development
+- tests
+- code review
+- QA verification
+- documentation or release notes if needed
+- deployment or configuration work
+
+Do not estimate only coding time.
+
+Use [Story Points Explained](/docs/story-points-explained) if your team needs the basics, or [Planning Poker](/tools/planning-poker) when the team needs to estimate together.
 
 ## Common User Story Mistakes
 
-- Writing from the system's perspective instead of the user's
-- Missing acceptance criteria entirely
-- Stories too large to complete in one sprint — split them
-- Technical stories written as user stories (use tasks instead)
-- No definition of done — leads to incomplete handoffs
+### Writing from the system perspective
 
-## FAQ
+Weak:
 
-**How long should a user story be?**
-Short enough to fit on a sticky note. The story itself is one to three sentences. The acceptance criteria do the heavy lifting.
+```text
+As a system, I want to store password reset tokens.
+```
 
-**Should developers write user stories?**
-Anyone can write user stories. Product Owners typically write them, but engineers and QA often add the acceptance criteria and technical notes.
+Better:
 
-**What is the difference between a user story and a task?**
-A user story describes user value. A task describes technical work. Breaking a user story into tasks is part of sprint planning.
+```text
+As a registered user, I want to reset my password by email so that I can regain access to my account.
+```
 
-**How many acceptance criteria should a story have?**
-Typically 3–7. Too few means the story is under-defined. Too many means the story is too large and should be split.
+Technical work may still exist, but the user story should explain user or business value.
+
+### Missing the business value
+
+If the story does not explain why the work matters, the team has less context for trade-offs.
+
+### Acceptance criteria are too vague
+
+Weak:
+
+```text
+User can reset password.
+```
+
+Better:
+
+```text
+Given I open an expired reset link, when the page loads, then I see an error and can request a new link.
+```
+
+### The story is too large
+
+If a story has many workflows, many user types, or more than 10 acceptance criteria, split it.
+
+### Dependencies are hidden
+
+If the story depends on design, another team, an API, data migration, or approval, make that visible before sprint planning.
+
+## Frequently Asked Questions
+
+### What is the standard user story template?
+
+The standard user story template is: As a [user type], I want to [do something], so that [benefit or outcome]. Good Jira stories also include acceptance criteria, priority, story points, dependencies, and Definition of Done.
+
+### Can I paste this user story template into Jira?
+
+Yes. The template uses simple Markdown-style sections that are easy to paste into Jira, Linear, Azure DevOps, or another backlog tool.
+
+### How many acceptance criteria should a user story have?
+
+Most user stories need 3 to 7 acceptance criteria. If you need more than 10, the story may be too large and should be split.
+
+### Who writes user stories?
+
+The Product Owner usually writes the first draft, but developers, QA, designers, and stakeholders often help refine the story and acceptance criteria.
+
+### What is the difference between a user story and a task?
+
+A user story describes user or business value. A task describes implementation work. Teams often break a user story into technical tasks during sprint planning.
+
+## Next Step
+
+Use these resources together:
+
+1. [User Story Generator](/tools/user-story-generator) - turn rough feature notes into a Jira-ready story.
+2. [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) - create testable criteria from a rough story.
+3. [User Story Examples for Different Domains](/guides/user-story-examples-for-different-domains) - compare your story with real examples.
+4. [AI Backlog Refinement Prompts](/guides/ai-backlog-refinement-prompts) - find gaps before sprint planning.
