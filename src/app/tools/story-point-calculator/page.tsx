@@ -4,16 +4,24 @@ import StoryPointCalculator from "@/components/StoryPointCalculator";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
-import { buildBreadcrumbSchema, buildFAQSchema, buildMetadata, buildToolSchema } from "@/lib/seo";
+import {
+  buildBreadcrumbSchema,
+  buildFAQSchema,
+  buildHowToSchema,
+  buildMetadata,
+  buildToolSchema,
+} from "@/lib/seo";
 
 const pageUrl = "https://agiletoolhub.com/tools/story-point-calculator";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Story Point Calculator - Free Agile Estimation Tool",
+  title: "Free Story Point Calculator: Agile & Scrum Estimation Tool",
   description:
-    "Estimate story points with a free Agile calculator for effort, complexity, uncertainty, risk, and dependencies. Get a Fibonacci estimate and planning guidance instantly.",
+    "Use this free online story point calculator to estimate Agile and Scrum work. Score effort, complexity, uncertainty, risk, and dependencies to get a Fibonacci recommendation instantly.",
   keywords: [
     "story point calculator",
+    "free story point calculator",
+    "online story point calculator",
     "agile estimation calculator",
     "scrum story points",
     "fibonacci estimation",
@@ -60,12 +68,26 @@ export default function StoryPointCalculatorPage() {
     url: pageUrl,
     applicationCategory: "BusinessApplication",
   });
+  const howToSchema = buildHowToSchema({
+    title: "How to Estimate Story Points with a Calculator",
+    description:
+      "Use five practical sizing factors to create a starting Fibonacci estimate for an Agile user story.",
+    url: pageUrl,
+    steps: [
+      { name: "Describe the story", description: "Add a short summary of the user story or backlog item." },
+      { name: "Score the five factors", description: "Choose levels for effort, complexity, uncertainty, risk, and dependencies." },
+      { name: "Review the recommendation", description: "Use the Fibonacci result, confidence level, and high-risk factors as a starting point." },
+      { name: "Copy the estimate", description: "Copy the formatted estimate and next actions into Jira or your planning notes." },
+      { name: "Confirm with the team", description: "Use Planning Poker when the team needs a shared estimate before sprint commitment." },
+    ],
+  });
 
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={faqSchema} />
       <JsonLd data={toolSchema} />
+      <JsonLd data={howToSchema} />
       <div className="max-w-4xl mx-auto px-4 py-10">
         <Breadcrumbs items={[{ label: "Tools", href: "/tools" }, { label: "Story Point Calculator" }]} />
         <span className="text-xs font-medium text-green-600 uppercase">Free Tool</span>
@@ -83,6 +105,20 @@ export default function StoryPointCalculatorPage() {
           <p className="text-gray-600">
             Use it during backlog refinement when a story is understood enough to discuss, but before the team commits it to a sprint.
             For live team voting, use Planning Poker after everyone has reviewed the story.
+          </p>
+        </section>
+
+        <section className="mt-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-3">How this story point calculator works</h2>
+          <p className="text-gray-600 mb-4">
+            The calculator combines five parts of a user story: implementation effort, technical complexity,
+            uncertainty, delivery risk, and dependencies. The combined score maps to a Fibonacci estimate such as
+            1, 2, 3, 5, 8, 13, or 21 points.
+          </p>
+          <p className="text-gray-600">
+            Treat the result as a discussion starter, not a promise of hours. Compare it with completed stories,
+            confirm the acceptance criteria, and use <Link href="/tools/planning-poker" className="text-blue-600 hover:underline">Planning Poker</Link>
+            when the whole team needs to vote together.
           </p>
         </section>
 
