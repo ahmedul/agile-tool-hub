@@ -1,0 +1,30 @@
+# AgileToolHub
+
+AgileToolHub provides free browser-based Agile and Scrum tools, templates, and guides for software teams. Most tools require no login and no paid subscription.
+
+## Tool directory
+
+- Planning Poker: real-time team story point estimation with simultaneous Fibonacci votes. https://agiletoolhub.com/tools/planning-poker
+- Story Point Calculator: quick story point recommendation from effort, complexity, uncertainty, risk, and dependencies. https://agiletoolhub.com/tools/story-point-calculator
+- User Story Generator: creates a Jira-ready user story from a feature idea. https://agiletoolhub.com/tools/user-story-generator
+- Acceptance Criteria Generator: creates Given/When/Then or checklist acceptance criteria. https://agiletoolhub.com/tools/acceptance-criteria-generator
+- Bug Report to Jira Ticket Converter: turns rough bug notes into a structured Jira ticket. https://agiletoolhub.com/tools/bug-report-to-jira-ticket-converter
+- Sprint Capacity Calculator: estimates realistic sprint commitment from team availability and velocity. https://agiletoolhub.com/tools/sprint-capacity-calculator
+- Daily Standup Generator: turns rough notes into a Yesterday/Today/Blockers update. https://agiletoolhub.com/tools/daily-standup-generator
+- Retrospective Board: shared live board for feedback, improvements, and action items. https://agiletoolhub.com/tools/retro-board
+
+## High-value guides
+
+- Story Points Explained: https://agiletoolhub.com/docs/story-points-explained
+- Story Point Estimation Guide: https://agiletoolhub.com/guides/story-point-estimation-guide-with-examples
+- Story Point Examples: https://agiletoolhub.com/guides/story-point-examples-for-agile-teams
+- Scrum Ceremonies Explained: https://agiletoolhub.com/docs/scrum-ceremonies-explained
+- How to Write Acceptance Criteria: https://agiletoolhub.com/guides/how-to-write-acceptance-criteria
+
+## Structured directory
+
+For tool purposes, inputs, outputs, and workflow selection, see https://agiletoolhub.com/ai-tools
+
+## Full sitemap
+
+https://agiletoolhub.com/sitemap.xml

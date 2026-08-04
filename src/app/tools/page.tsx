@@ -268,6 +268,9 @@ export default function ToolsPage() {
             Use these browser-based tools during backlog refinement, sprint planning, daily standups, retrospectives, QA handoff, and Jira ticket cleanup.
             Each tool is designed for a specific team workflow, so you can move from rough notes to a clearer sprint plan faster.
           </p>
+          <p className="mt-3 text-sm text-gray-600">
+            Looking for a structured tool list? See the <Link href="/ai-tools" className="text-blue-600 hover:underline">AI-friendly Agile tools directory</Link> for each tool&apos;s purpose, inputs, and outputs.
+          </p>
         </div>
 
         {/* Standard Tools Grid */}
