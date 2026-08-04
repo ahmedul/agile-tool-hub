@@ -6,7 +6,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
 import { mdxComponents } from "@/components/MDXComponents";
 import { mdxRemoteOptions } from "@/lib/mdx";
-import { buildArticleSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
+import { buildArticleSchema, buildBreadcrumbSchema, buildFAQSchema, buildMetadata } from "@/lib/seo";
 
 export async function generateStaticParams() {
   return getAllSlugs("docs").map((slug) => ({ slug }));
@@ -44,11 +44,13 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
     { label: "Docs", href: "/docs" },
     { label: item.title, href: `/docs/${slug}` },
   ]);
+  const faqJsonLd = item.faqItems && item.faqItems.length > 0 ? buildFAQSchema(item.faqItems) : null;
 
   return (
     <>
       <JsonLd data={jsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <ContentLayout
         title={item.title}
         description={item.description}

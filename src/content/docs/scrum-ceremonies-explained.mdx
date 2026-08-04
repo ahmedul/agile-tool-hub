@@ -1,104 +1,328 @@
 ---
-title: "Scrum Ceremonies Explained: 4 Events, Order, and Examples"
-description: "Learn the 4 Scrum ceremonies (Sprint Planning, Daily Scrum, Review, Retro), their order, duration, and practical examples for Agile teams."
+title: "Scrum Ceremonies Explained: 4 Events, Order, Timing & Tools"
+description: "Learn Scrum ceremonies in order: sprint planning, daily scrum, sprint review, and retrospective. Includes timing, agenda, outputs, examples, and free tools."
 slug: "scrum-ceremonies-explained"
 category: "Docs"
+publishedAt: "2026-06-05"
+updatedAt: "2026-08-04"
 keywords:
   - scrum ceremonies
+  - scrum ceremonies explained
   - what are scrum ceremonies
   - scrum ceremonies order
   - scrum ceremonies list
   - scrum events
   - sprint planning
+  - daily scrum
   - daily standup
   - sprint review
   - sprint retrospective
   - scrum meetings explained
 relatedLinks:
-  - title: "Sprint Review Meeting Template"
-    href: "/templates/sprint-review-meeting-template"
-  - title: "Sprint Review vs Retrospective"
-    href: "/guides/sprint-review-vs-retrospective"
-  - title: "Daily Standup Template"
-    href: "/templates/daily-standup-template"
-  - title: "Sprint Velocity Tracking Guide"
-    href: "/guides/sprint-velocity-tracking-guide"
+  - title: "Sprint Planning Checklist"
+    href: "/tools/sprint-planning-checklist"
+  - title: "Daily Standup Generator"
+    href: "/tools/daily-standup-generator"
+  - title: "Retrospective Board"
+    href: "/tools/retro-board"
   - title: "Planning Poker"
     href: "/tools/planning-poker"
+  - title: "Sprint Review Meeting Template"
+    href: "/templates/sprint-review-meeting-template"
   - title: "Sprint Retrospective Template"
     href: "/templates/sprint-retrospective-template"
+  - title: "Sprint Review vs Retrospective"
+    href: "/guides/sprint-review-vs-retrospective"
+  - title: "Complete Guide to Sprint Planning and Estimation"
+    href: "/guides/complete-guide-to-sprint-planning-and-estimation"
+  - title: "Daily Standup Best Practices"
+    href: "/guides/how-to-run-effective-standups"
+  - title: "Complete Guide to Retrospectives & Standups"
+    href: "/guides/complete-guide-to-retrospectives-and-standups"
+  - title: "AI Scrum Master Prompts"
+    href: "/guides/ai-scrum-master-prompts"
   - title: "Story Points Explained"
     href: "/docs/story-points-explained"
-  - title: "How to Write a Good Jira Ticket"
-    href: "/guides/how-to-write-a-good-jira-ticket"
-  - title: "Agile Glossary"
-    href: "/docs/agile-glossary"
-  - title: "Agile Anti-Patterns to Avoid"
-    href: "/guides/agile-anti-patterns-to-avoid"
-  - title: "Agile Team Anti-Patterns with Examples"
-    href: "/examples/agile-team-anti-patterns-examples"
+faqItems:
+  - question: "What are the 4 Scrum ceremonies?"
+    answer: "The four Scrum ceremonies are Sprint Planning, Daily Scrum, Sprint Review, and Sprint Retrospective. Scrum formally calls them events."
+  - question: "What is the correct order of Scrum ceremonies?"
+    answer: "The normal order is Sprint Planning, Daily Scrum throughout the sprint, Sprint Review near the end, Sprint Retrospective after the review, then the next Sprint Planning."
+  - question: "Is backlog refinement a Scrum ceremony?"
+    answer: "Backlog refinement is not one of the four core Scrum events, but many Scrum teams run it regularly so sprint planning is faster and clearer."
+  - question: "What is the difference between Sprint Review and Retrospective?"
+    answer: "Sprint Review inspects the product increment with stakeholders. Sprint Retrospective inspects how the Scrum Team worked and chooses process improvements for the next sprint."
+  - question: "How long should Scrum ceremonies take?"
+    answer: "For a two-week sprint, Sprint Planning can take up to 4 hours, Daily Scrum is 15 minutes, Sprint Review can take up to 2 hours, and Sprint Retrospective can take up to 1.5 hours."
 ---
 
-Scrum defines four ceremonies (also called "events") that give a sprint its structure. Each has a clear purpose, a recommended duration, and a defined set of participants.
+Scrum ceremonies are the recurring Scrum events that structure each sprint.
+
+The four core Scrum ceremonies are:
+
+1. **Sprint Planning** - decide the sprint goal and sprint backlog.
+2. **Daily Scrum** - inspect progress toward the sprint goal and adapt the plan.
+3. **Sprint Review** - inspect the product increment with stakeholders.
+4. **Sprint Retrospective** - improve how the Scrum team works together.
+
+They happen in this order:
+
+```text
+Sprint Planning -> Daily Scrum -> Sprint Review -> Sprint Retrospective -> next Sprint Planning
+```
+
+## Scrum Ceremonies at a Glance
+
+| Ceremony | When it happens | Main purpose | Typical output | Useful tool |
+|---|---|---|---|---|
+| Sprint Planning | Start of sprint | Decide goal and work | Sprint goal, sprint backlog | [Sprint Planning Checklist](/tools/sprint-planning-checklist) |
+| Daily Scrum | Every sprint day | Inspect progress and blockers | Adapted daily plan | [Daily Standup Generator](/tools/daily-standup-generator) |
+| Sprint Review | End of sprint | Inspect product increment | Stakeholder feedback, backlog updates | [Sprint Review Template](/templates/sprint-review-meeting-template) |
+| Sprint Retrospective | After review | Improve team process | 1-2 action items | [Retrospective Board](/tools/retro-board) |
+
+Scrum calls them events. Many teams call them ceremonies or meetings. The useful question is not the label. The useful question is whether each event creates the decision or feedback loop it is supposed to create.
 
 ## 1. Sprint Planning
 
-**When:** At the start of each sprint.  
-**Duration:** Up to 2 hours per week of sprint length (e.g. 4 hours for a 2-week sprint).  
-**Who:** Scrum Master, Product Owner, Development Team.
+- **When:** At the start of each sprint.
+- **Timebox:** Up to 2 hours per week of sprint length. A two-week sprint can use up to 4 hours.
+- **Who attends:** Product Owner, Scrum Master, and developers.
+- **Main output:** Sprint goal and sprint backlog.
 
-The team selects items from the top of the product backlog and commits to completing them by the end of the sprint. The output is a **sprint goal** and a **sprint backlog**.
+Sprint Planning answers two questions:
 
-**Key questions answered:**
-- What can we deliver this sprint?
-- How will we get the work done?
+1. Why is this sprint valuable?
+2. What can the team realistically complete?
 
-## 2. Daily Standup (Daily Scrum)
+The Product Owner brings the highest-priority backlog items. The team discusses readiness, capacity, dependencies, and risk. The result is a shared sprint goal and selected backlog items the team believes it can complete.
 
-**When:** Every day of the sprint, same time and place.  
-**Duration:** 15 minutes maximum.  
-**Who:** Development Team (Scrum Master and PO may attend but don't drive it).
+### Sprint Planning Agenda
 
-A short synchronisation meeting for the team to inspect progress toward the sprint goal and adapt the plan.
+| Step | What happens |
+|---|---|
+| Review product objective | Product Owner explains the goal and priorities |
+| Check capacity | Team reviews holidays, support load, meetings, and availability |
+| Review ready backlog items | Team checks clarity, acceptance criteria, dependencies, and size |
+| Estimate or confirm estimates | Developers discuss uncertainty and estimate together |
+| Choose sprint scope | Team selects realistic work that supports the sprint goal |
+| Confirm sprint goal | Team agrees what success should look like by the end of the sprint |
 
-**Classic format:**
-1. What did I do yesterday?
-2. What will I do today?
-3. Are there any blockers?
+### Sprint Planning Example
 
-**Tip:** Keep it to 15 minutes. Any detailed problem-solving should happen in a separate follow-up conversation.
+```text
+Sprint goal:
+Enable customers to reset passwords without support help.
+
+Selected work:
+- Create password reset request form
+- Send reset email
+- Validate reset token
+- Add expired token error state
+- Add basic reset flow tests
+```
+
+Use the [Sprint Planning Checklist](/tools/sprint-planning-checklist) before closing planning. If estimates are still unclear, run the discussion in [Planning Poker](/tools/planning-poker).
+
+## 2. Daily Scrum
+
+- **When:** Every day of the sprint, usually at the same time.
+- **Timebox:** 15 minutes.
+- **Who attends:** Developers. The Scrum Master and Product Owner may attend, but developers own the event.
+- **Main output:** A clear daily plan and visible blockers.
+
+The Daily Scrum is not a status report to a manager. It is a short inspection of progress toward the sprint goal.
+
+The team should leave knowing:
+
+- what changed since yesterday
+- what work matters today
+- what is blocked
+- who needs follow-up after the meeting
+- whether the sprint goal is at risk
+
+### Daily Scrum Format
+
+The classic three questions are useful:
+
+1. What did I complete yesterday?
+2. What will I work on today?
+3. What blockers do I have?
+
+But the better version connects everything to the sprint goal:
+
+```text
+Yesterday: Finished reset email template and reviewed token expiry logic.
+Today: Implement reset token validation and pair with QA on test cases.
+Blocker: Need security review on token lifetime.
+Sprint goal risk: Low if review happens today.
+```
+
+Use the [Daily Standup Generator](/tools/daily-standup-generator) to turn rough notes into a clean Yesterday/Today/Blockers update.
 
 ## 3. Sprint Review
 
-**When:** At the end of the sprint.  
-**Duration:** Up to 1 hour per week of sprint length.  
-**Who:** Scrum Team + key stakeholders.
+- **When:** At the end of the sprint, before the retrospective.
+- **Timebox:** Up to 1 hour per week of sprint length. A two-week sprint can use up to 2 hours.
+- **Who attends:** Scrum Team and relevant stakeholders.
+- **Main output:** Feedback on the product increment and updates to the product backlog.
 
-The team demonstrates what was completed during the sprint. Stakeholders provide feedback and the Product Owner updates the backlog accordingly.
+The Sprint Review answers:
 
-**Key outcomes:**
-- Stakeholders see working software.
-- The backlog is revised based on feedback.
-- Clarity on what comes next.
+```text
+Did we build the right thing, and what should we learn from stakeholder feedback?
+```
+
+It is not only a demo. The demo is part of the review, but the real purpose is product inspection and adaptation.
+
+### Sprint Review Agenda
+
+| Step | What happens |
+|---|---|
+| Restate sprint goal | Product Owner reminds everyone what the sprint tried to achieve |
+| Show completed work | Team demonstrates working product, not slides |
+| Discuss incomplete work | Team explains what was not completed and why |
+| Gather feedback | Stakeholders react, ask questions, and suggest changes |
+| Update backlog | Product Owner adjusts priorities based on what was learned |
+
+Use the [Sprint Review Meeting Template](/templates/sprint-review-meeting-template) if your review needs a clear agenda and stakeholder questions.
 
 ## 4. Sprint Retrospective
 
-**When:** After the Sprint Review, before the next Sprint Planning.  
-**Duration:** Up to 45 minutes per week of sprint length.  
-**Who:** Scrum Team (Scrum Master facilitates).
+- **When:** After the Sprint Review and before the next Sprint Planning.
+- **Timebox:** Up to 45 minutes per week of sprint length. A two-week sprint can use up to 1.5 hours.
+- **Who attends:** Scrum Team.
+- **Main output:** One or two specific improvement actions for the next sprint.
 
-The team reflects on how they worked together and identifies improvements for the next sprint.
+The retrospective answers:
 
-**Classic format:**
-- **What went well?** — Practices to keep.
-- **What didn't go well?** — Problems to address.
-- **Action items** — Specific, owned improvements for next sprint.
+```text
+How can we work better together next sprint?
+```
 
-## Summary
+The retrospective is about process, collaboration, quality, tools, communication, and team health. It is not a second sprint review and it is not a blame session.
 
-| Ceremony | Purpose | Max Duration (2-week sprint) |
-|---|---|---|
-| Sprint Planning | Plan the sprint | 4 hours |
-| Daily Standup | Sync daily progress | 15 minutes |
-| Sprint Review | Demo to stakeholders | 2 hours |
-| Sprint Retrospective | Improve the team process | 1.5 hours |
+### Simple Retrospective Format
+
+| Column | Question |
+|---|---|
+| Went well | What helped us this sprint? |
+| To improve | What slowed us down or caused friction? |
+| Action items | What will we change next sprint? |
+
+Good action items are specific and owned.
+
+Weak action item:
+
+```text
+Communicate better.
+```
+
+Better action item:
+
+```text
+For the next sprint, any blocker older than 2 hours is posted in #blocked with owner, impact, and needed help. Review at next retro.
+```
+
+Use the [Retrospective Board](/tools/retro-board) to collect notes, vote, and turn the discussion into action items.
+
+## Scrum Ceremonies Order
+
+For a normal sprint, the order is:
+
+1. Sprint Planning
+2. Daily Scrum each working day
+3. Sprint Review
+4. Sprint Retrospective
+5. Next Sprint Planning
+
+For a two-week sprint, a simple rhythm looks like this:
+
+| Day | Event |
+|---|---|
+| Monday, week 1 | Sprint Planning |
+| Every working day | Daily Scrum |
+| Mid-sprint | Backlog refinement, if the team uses it |
+| Last day, week 2 | Sprint Review |
+| After review | Sprint Retrospective |
+
+Backlog refinement is important, but it is not one of the four core Scrum events. It is a useful recurring activity many teams use to prepare future work before sprint planning.
+
+## Scrum Ceremonies vs Scrum Artifacts
+
+Teams often mix up events and artifacts.
+
+| Type | Examples |
+|---|---|
+| Scrum ceremonies/events | Sprint Planning, Daily Scrum, Sprint Review, Sprint Retrospective |
+| Scrum artifacts | Product Backlog, Sprint Backlog, Increment |
+| Commitments | Product Goal, Sprint Goal, Definition of Done |
+
+Events create the rhythm. Artifacts hold the work and evidence. Commitments create clarity about what the team is trying to achieve.
+
+## Who Attends Each Scrum Ceremony?
+
+| Ceremony | Product Owner | Scrum Master | Developers | Stakeholders |
+|---|---|---|---|---|
+| Sprint Planning | Yes | Yes | Yes | Usually no |
+| Daily Scrum | Optional | Optional | Yes | No |
+| Sprint Review | Yes | Yes | Yes | Yes |
+| Sprint Retrospective | Yes | Yes | Yes | No |
+
+The Product Owner is part of the Scrum Team, so they usually attend the retrospective. Some teams exclude the Product Owner when there is a trust problem, but that is a symptom to fix, not the normal pattern.
+
+## Common Scrum Ceremony Mistakes
+
+### Sprint Planning becomes backlog refinement
+
+If stories are not ready, planning turns into requirements discovery. Fix this with regular refinement and a clear Definition of Ready.
+
+Useful next step: [AI Backlog Refinement Prompts](/guides/ai-backlog-refinement-prompts).
+
+### Daily Scrum becomes a manager report
+
+If everyone reports to one person, the team stops coordinating with each other. Re-center the meeting on blockers, sprint goal risk, and follow-up conversations.
+
+Useful next step: [Daily Standup Best Practices](/guides/how-to-run-effective-standups).
+
+### Sprint Review becomes a slide presentation
+
+Stakeholders need to inspect working product. Slides can add context, but they should not replace a product demo and feedback discussion.
+
+Useful next step: [Sprint Review Meeting Template](/templates/sprint-review-meeting-template).
+
+### Retrospective creates vague action items
+
+"Improve communication" is not an action item. Pick one specific behavior change, assign an owner, and review it at the next retro.
+
+Useful next step: [AI Retrospective Prompts](/guides/ai-retrospective-prompts).
+
+## Frequently Asked Questions
+
+### What are the 4 Scrum ceremonies?
+
+The four Scrum ceremonies are Sprint Planning, Daily Scrum, Sprint Review, and Sprint Retrospective. Scrum formally calls them events.
+
+### What is the correct order of Scrum ceremonies?
+
+The normal order is Sprint Planning, Daily Scrum throughout the sprint, Sprint Review near the end, Sprint Retrospective after the review, then the next Sprint Planning.
+
+### Is backlog refinement a Scrum ceremony?
+
+Backlog refinement is not one of the four core Scrum events, but many Scrum teams run it regularly so sprint planning is faster and clearer.
+
+### What is the difference between Sprint Review and Retrospective?
+
+Sprint Review inspects the product increment with stakeholders. Sprint Retrospective inspects how the Scrum Team worked and chooses process improvements for the next sprint.
+
+### How long should Scrum ceremonies take?
+
+For a two-week sprint, Sprint Planning can take up to 4 hours, Daily Scrum is 15 minutes, Sprint Review can take up to 2 hours, and Sprint Retrospective can take up to 1.5 hours.
+
+## Next Step
+
+If you are setting up Scrum ceremonies for a team, start with:
+
+1. [Sprint Planning Checklist](/tools/sprint-planning-checklist) - confirm goal, capacity, scope, and risks.
+2. [Daily Standup Generator](/tools/daily-standup-generator) - turn rough notes into clear standup updates.
+3. [Retrospective Board](/tools/retro-board) - run a live team retro with action items.
+4. [Planning Poker](/tools/planning-poker) - estimate stories with the team.
