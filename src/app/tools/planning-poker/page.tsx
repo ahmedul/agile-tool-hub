@@ -4,14 +4,22 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import CreatePlanningSession from "@/components/CreatePlanningSession";
-import { buildHowToSchema, buildBreadcrumbSchema, buildMetadata } from "@/lib/seo";
+import {
+  buildHowToSchema,
+  buildBreadcrumbSchema,
+  buildMetadata,
+  buildToolSchema,
+} from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Free Planning Poker — Real-Time Team Story Point Estimation",
+  title: "Free Online Planning Poker: Real-Time Scrum Poker Tool",
   description:
-    "Estimate story points in real-time with your team. Create a session, share a link, vote simultaneously. No signup. Fibonacci cards and fast reveals for Agile sprint planning.",
+    "Use free online planning poker for remote Scrum teams. Create a session, share a link, vote simultaneously, and reveal Fibonacci story point estimates. No signup or login.",
   keywords: [
     "planning poker",
+    "free online planning poker",
+    "planning poker no login",
+    "online scrum poker",
     "free planning poker tool",
     "scrum poker",
     "story point estimation",
@@ -51,6 +59,11 @@ const faqItems = [
     answer:
       "Planning poker eliminates anchoring bias. Because everyone votes simultaneously, team members form independent estimates before seeing what others chose, which surfaces disagreements and drives better conversations.",
   },
+  {
+    question: "Can remote teams use this online planning poker tool?",
+    answer:
+      "Yes. Create a session, share the invite link in your video call or team chat, and everyone can vote from their own browser without creating an account.",
+  },
 ];
 
 export default function PlanningPokerPage() {
@@ -85,12 +98,20 @@ export default function PlanningPokerPage() {
     { label: "Tools", href: "/tools" },
     { label: "Planning Poker", href: "/tools/planning-poker" },
   ]);
+  const toolSchema = buildToolSchema({
+    name: "Free Online Planning Poker",
+    description:
+      "Real-time Scrum Poker tool for remote Agile teams to estimate user stories with simultaneous Fibonacci votes. Free and no login required.",
+    url: "https://agiletoolhub.com/tools/planning-poker",
+    applicationCategory: "BusinessApplication",
+  });
 
   return (
     <>
       <JsonLd data={faqSchema} />
       <JsonLd data={howToSchema} />
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={toolSchema} />
       <div className="max-w-4xl mx-auto px-4 py-10">
         <Breadcrumbs
           items={[{ label: "Tools", href: "/tools" }, { label: "Planning Poker" }]}
@@ -105,6 +126,15 @@ export default function PlanningPokerPage() {
           Real-time story point estimation for distributed Agile teams. Create a session, share the
           link, and vote simultaneously — no login required.
         </p>
+
+        <section className="mb-8 rounded-lg border border-gray-200 bg-gray-50 p-5">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Online planning poker for remote Scrum teams</h2>
+          <p className="text-gray-600">
+            This free Scrum Poker tool works in a browser during sprint planning or backlog refinement.
+            Invite 3–10 teammates, keep estimates hidden until everyone votes, then discuss the highest and
+            lowest cards before agreeing on the story point estimate.
+          </p>
+        </section>
 
         {/* CTA */}
         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 mb-12 text-center">
