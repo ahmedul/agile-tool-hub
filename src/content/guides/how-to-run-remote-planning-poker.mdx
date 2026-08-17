@@ -1,0 +1,155 @@
+---
+title: "How to Run Remote Planning Poker: A Practical Scrum Guide"
+description: "Learn how to run a focused remote Planning Poker session, prepare stories, estimate with Fibonacci cards, discuss disagreements, and reach a useful team estimate."
+slug: "how-to-run-remote-planning-poker"
+category: "Guides"
+publishedAt: "2026-08-17"
+updatedAt: "2026-08-17"
+keywords:
+  - remote planning poker
+  - how to run planning poker
+  - online planning poker
+  - planning poker for remote teams
+  - Scrum estimation
+  - Fibonacci story points
+relatedLinks:
+  - title: "Free Planning Poker Tool"
+    href: "/tools/planning-poker"
+  - title: "How to Estimate Story Points"
+    href: "/guides/story-point-estimation-guide-with-examples"
+  - title: "Story Points Explained"
+    href: "/docs/story-points-explained"
+  - title: "Story Point Calculator"
+    href: "/tools/story-point-calculator"
+  - title: "Sprint Planning Tools"
+    href: "/tools/sprint-planning-tools"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+howToSteps:
+  - name: "Choose a focused story"
+    description: "Select one backlog item with a clear outcome, acceptance criteria, and enough context for the team to discuss it."
+  - name: "Invite the delivery team"
+    description: "Create an online Planning Poker session and share the invite link with the people who will design, build, test, or support the work."
+  - name: "Clarify the work before voting"
+    description: "Answer questions about scope, dependencies, testing, data, and unknowns before anyone chooses a card."
+  - name: "Vote privately and simultaneously"
+    description: "Each participant chooses a Fibonacci card independently so the first number spoken does not anchor the rest of the team."
+  - name: "Discuss the spread"
+    description: "After revealing the cards, ask the people with the highest and lowest estimates to explain their assumptions."
+  - name: "Re-vote or split the story"
+    description: "Re-vote after useful clarification. If the story remains too large or uncertain, split it before committing it to a sprint."
+faqItems:
+  - question: "How many people should join a remote Planning Poker session?"
+    answer: "Three to ten people is a practical range for most teams. Include the people who understand the implementation and testing work, but avoid inviting a large audience that will not estimate."
+  - question: "Can remote teams use Planning Poker without a login?"
+    answer: "Yes. An online session can use a shared invite link so teammates join from their browsers without creating accounts."
+  - question: "Which cards should remote teams use?"
+    answer: "A Fibonacci-style scale such as 1, 2, 3, 5, 8, 13, 21, and an uncertainty card works well because the gaps become larger as uncertainty increases."
+  - question: "What should we do when estimates are far apart?"
+    answer: "Ask the highest and lowest voters to explain the assumptions behind their estimates. Look for missing requirements, dependencies, testing effort, or different interpretations, then clarify and vote again."
+  - question: "Should Planning Poker produce an exact delivery date?"
+    answer: "No. Story points are relative measures for a team's planning and forecasting. Use historical velocity and current capacity for forecasting rather than converting one estimate directly into hours."
+---
+
+Remote Planning Poker works when the team can see the same story, vote independently, and discuss the assumptions behind different estimates. The goal is not to find a mathematically perfect number. The goal is to expose uncertainty before the team plans the work.
+
+Use the [free online Planning Poker tool](/tools/planning-poker) to create a session, share one link, and reveal the team’s Fibonacci votes at the same time. No login is required.
+
+## Before the session
+
+Good estimation starts before the cards appear. Prepare one story at a time and make sure the team can answer the basic questions:
+
+- What user or business outcome are we delivering?
+- What is included and explicitly out of scope?
+- What does “done” mean for development, testing, documentation, and release?
+- Are designs, APIs, data, permissions, or external dependencies involved?
+- Is the story small enough to complete within one sprint?
+
+If the story is still mostly a product question, refine it before asking the team to estimate. A Planning Poker meeting should reveal delivery uncertainty, not compensate for missing requirements.
+
+## How to run a remote Planning Poker session
+
+### 1. Create one shared session
+
+Open the [Planning Poker tool](/tools/planning-poker), create a session, and share the invite link in the team call or chat. Ask participants to join with names that teammates recognize.
+
+For most teams, three to ten estimators is enough. Developers, testers, designers, and other delivery specialists should participate when their work affects the size of the story. A Product Owner can explain value and acceptance criteria, while the delivery team owns the estimate.
+
+### 2. Explain the story and invite questions
+
+Read the story and acceptance criteria. Do not start the vote until the team has had a short opportunity to ask questions.
+
+Useful questions include:
+
+- Which existing component or service can we reuse?
+- What happens when the input is invalid or incomplete?
+- Do we need migration, analytics, permissions, or feature flags?
+- How will we test the change across supported devices or integrations?
+- Is another team, vendor, or environment a dependency?
+
+Keep the discussion focused. If the team discovers that the story needs substantial product discovery, record the open question and split the discovery from the delivery work.
+
+### 3. Vote privately and reveal together
+
+Each person chooses a card without seeing the other votes. Reveal the cards only after everyone has voted.
+
+Private voting matters because the first estimate can anchor the group. Simultaneous reveal makes different mental models visible instead of hiding them behind the most confident voice in the room.
+
+### 4. Discuss the highest and lowest estimates
+
+Do not automatically average the votes. Ask the people with the highest and lowest cards to explain what they saw:
+
+- What extra work or risk did they include?
+- Did they interpret the acceptance criteria differently?
+- Are they assuming different implementation approaches?
+- Did they include testing, rollout, monitoring, or dependency work?
+
+The disagreement is useful information. It often reveals a missing example, an unconfirmed dependency, or a story that should be split.
+
+### 5. Clarify and vote again
+
+Update the story when the team learns something important, then run another vote. Stop when the team has a shared enough understanding to plan the work. Consensus does not require every card to match exactly, but a wide spread should have a clear explanation.
+
+## Choosing a Fibonacci scale
+
+The common sequence is **1, 2, 3, 5, 8, 13, 21**, with larger values and an uncertainty card for work that cannot yet be sized responsibly.
+
+The increasing gaps are intentional. A 13-point story contains more uncertainty than an 8-point story, so pretending to distinguish between 13.1 and 13.2 would create false precision.
+
+| Card | Typical interpretation |
+| --- | --- |
+| 1–3 | Small, familiar work with few unknowns |
+| 5–8 | Meaningful work with some complexity or coordination |
+| 13 | Large or uncertain; consider splitting it |
+| 21+ | Too large or unclear for a single sprint in many teams |
+| ? | The team does not have enough information to estimate |
+
+These meanings are relative to your team. A 5-point story for one team may be very different from a 5-point story for another. Calibrate against completed work rather than comparing point scales across teams.
+
+## Common remote-session problems
+
+### Someone cannot join
+
+Confirm that the participant is using the current invite link and a modern browser. If the session is active, avoid refreshing or creating a second session unless the original link is genuinely unavailable.
+
+### The team votes but cannot agree
+
+Return to the story and acceptance criteria. Ask for the assumptions behind the two most different cards. If the uncertainty is real, record it and use a spike, discovery task, or smaller story instead of forcing agreement.
+
+### One person dominates the discussion
+
+Use the cards to structure the conversation. Start with the highest and lowest estimates, then invite the rest of the team to add evidence. The purpose of the session is shared understanding, not winning an argument.
+
+### The story receives a very high estimate
+
+Check whether the story combines multiple outcomes. Split it by workflow, business rule, platform, data slice, or independent user value. Re-estimate the smaller stories after splitting.
+
+## After the vote
+
+Record the final estimate and the assumptions that made it possible. If the story changes later, re-open the estimate rather than treating the old number as a permanent fact.
+
+For a broader estimation process, read [How to Estimate Story Points](/guides/story-point-estimation-guide-with-examples). For a quick individual sizing check, use the [Story Point Calculator](/tools/story-point-calculator), but let the delivery team make the final estimate together.
+
+## Start a remote Planning Poker session
+
+When the story is ready, use the [free Planning Poker tool](/tools/planning-poker), share the session link, and vote before discussing the results. It is designed for browser-based team estimation without a login.

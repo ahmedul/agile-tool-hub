@@ -205,6 +205,8 @@ export default function PlanningPokerPage() {
           <div className="flex flex-wrap gap-3">
             {[
               { title: "Sprint Planning Tools", href: "/tools/sprint-planning-tools" },
+              { title: "How to Run Remote Planning Poker", href: "/guides/how-to-run-remote-planning-poker" },
+              { title: "Story Point Estimation Guide", href: "/guides/story-point-estimation-guide-with-examples" },
               { title: "Story Points Explained", href: "/docs/story-points-explained" },
               { title: "User Story Template", href: "/templates/user-story-template" },
               { title: "User Story Generator", href: "/tools/user-story-generator" },
