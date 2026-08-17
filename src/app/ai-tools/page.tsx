@@ -108,6 +108,16 @@ export default function AIToolsPage() {
           Use this directory to find the right free AgileToolHub tool for a team workflow. Each entry states what the tool does, what it accepts, and what it produces.
         </p>
 
+        <section className="mb-10 rounded-lg border border-blue-200 bg-blue-50 p-6">
+          <h2 className="text-xl font-semibold text-gray-900">Use AI to prepare, then let the team decide</h2>
+          <p className="mt-2 max-w-3xl text-gray-700">
+            AI can help draft stories, find missing acceptance criteria, prepare estimation questions, and summarize team notes. Use the dedicated tool to review the result, collaborate, and record the team decision.
+          </p>
+          <Link href="/guides/ai-assisted-agile-tools-for-scrum-teams" className="mt-3 inline-block text-blue-700 font-medium hover:underline">
+            Read the AI-assisted Agile workflow guide →
+          </Link>
+        </section>
+
         <div className="space-y-5">
           {tools.map((tool) => (
             <article key={tool.href} className="border border-gray-200 rounded-lg p-6 bg-white">
@@ -130,7 +140,7 @@ export default function AIToolsPage() {
         </div>
 
         <p className="mt-10 text-gray-600">
-          See the full <Link href="/tools" className="text-blue-600 hover:underline">Agile tools hub</Link> for workflow groups, guides, templates, and FAQs.
+          See the full <Link href="/tools" className="text-blue-600 hover:underline">Agile tools hub</Link> for workflow groups, guides, templates, and FAQs, or read the <Link href="/guides/ai-assisted-agile-tools-for-scrum-teams" className="text-blue-600 hover:underline">AI-assisted Agile guide</Link> for safe human-in-the-loop workflows.
         </p>
       </main>
     </>

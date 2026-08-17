@@ -19,6 +19,7 @@ function getPublicRoutes(): Set<string> {
   const routes = new Set([
     "/",
     "/about",
+    "/ai-tools",
     "/docs",
     "/examples",
     "/guides",
