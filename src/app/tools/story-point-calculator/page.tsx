@@ -129,6 +129,7 @@ export default function StoryPointCalculatorPage() {
           <ul className="space-y-2">
             <li><Link href="/tools/sprint-planning-tools" className="text-blue-600 hover:underline">Sprint Planning Tools</Link></li>
             <li><Link href="/tools/planning-poker" className="text-blue-600 hover:underline">Planning Poker</Link></li>
+            <li><Link href="/guides/planning-poker-vs-story-point-calculator" className="text-blue-600 hover:underline">Planning Poker vs Story Point Calculator</Link></li>
             <li><Link href="/guides/story-point-examples-for-agile-teams" className="text-blue-600 hover:underline">Story Point Examples for Agile Teams</Link></li>
             <li><Link href="/guides/story-point-estimation-guide-with-examples" className="text-blue-600 hover:underline">Story Point Estimation Guide</Link></li>
             <li><Link href="/docs/story-points-explained" className="text-blue-600 hover:underline">Story Points Explained</Link></li>

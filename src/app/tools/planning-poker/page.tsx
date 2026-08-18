@@ -206,6 +206,7 @@ export default function PlanningPokerPage() {
             {[
               { title: "Sprint Planning Tools", href: "/tools/sprint-planning-tools" },
               { title: "How to Run Remote Planning Poker", href: "/guides/how-to-run-remote-planning-poker" },
+              { title: "Planning Poker vs Story Point Calculator", href: "/guides/planning-poker-vs-story-point-calculator" },
               { title: "Story Point Estimation Guide", href: "/guides/story-point-estimation-guide-with-examples" },
               { title: "Story Points Explained", href: "/docs/story-points-explained" },
               { title: "User Story Template", href: "/templates/user-story-template" },
