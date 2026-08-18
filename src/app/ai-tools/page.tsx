@@ -118,6 +118,13 @@ export default function AIToolsPage() {
           </Link>
         </section>
 
+        <section className="mb-10 rounded-lg border border-gray-200 bg-gray-50 p-6">
+          <h2 className="text-xl font-semibold text-gray-900">For software agents</h2>
+          <p className="mt-2 text-gray-700">
+            Use the public <a href="/openapi.json" className="text-blue-700 hover:underline">OpenAPI specification</a> to call the deterministic Story Point Estimator and Sprint Capacity Calculator with JSON input and receive structured JSON output.
+          </p>
+        </section>
+
         <div className="space-y-5">
           {tools.map((tool) => (
             <article key={tool.href} className="border border-gray-200 rounded-lg p-6 bg-white">

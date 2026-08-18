@@ -1,0 +1,153 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AgileToolHub Agent Tools API",
+    "version": "1.0.0",
+    "description": "Deterministic JSON tools for Agile and Scrum workflows. No API key is required for these endpoints. Results are starting points for team discussion, not delivery commitments.",
+    "contact": { "url": "https://agiletoolhub.com/about" }
+  },
+  "servers": [
+    { "url": "https://agiletoolhub.com", "description": "Production" }
+  ],
+  "paths": {
+    "/api/agent/story-point": {
+      "post": {
+        "operationId": "estimateStoryPoints",
+        "summary": "Estimate a story with five sizing factors",
+        "description": "Maps five 0-3 sizing factors to a Fibonacci story point starting estimate.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StoryPointRequest" },
+              "example": {
+                "story": "Add export filters to the reporting dashboard",
+                "factors": { "effort": 2, "complexity": 1, "uncertainty": 1, "risk": 0, "dependencies": 1 }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Story point estimate",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StoryPointResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/agent/sprint-capacity": {
+      "post": {
+        "operationId": "calculateSprintCapacity",
+        "summary": "Calculate recommended sprint capacity",
+        "description": "Calculates maximum and recommended capacity from team availability and velocity. Recommended capacity uses an 80% buffer.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SprintCapacityRequest" },
+              "example": {
+                "sprintDays": 10,
+                "members": [
+                  { "name": "Developer 1", "daysAvailable": 8, "velocity": 2 },
+                  { "name": "Developer 2", "daysAvailable": 6, "velocity": 1.5 }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sprint capacity result",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/SprintCapacityResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StoryPointFactors": {
+        "type": "object",
+        "required": ["effort", "complexity", "uncertainty", "risk", "dependencies"],
+        "properties": {
+          "effort": { "type": "integer", "minimum": 0, "maximum": 3 },
+          "complexity": { "type": "integer", "minimum": 0, "maximum": 3 },
+          "uncertainty": { "type": "integer", "minimum": 0, "maximum": 3 },
+          "risk": { "type": "integer", "minimum": 0, "maximum": 3 },
+          "dependencies": { "type": "integer", "minimum": 0, "maximum": 3 }
+        }
+      },
+      "StoryPointRequest": {
+        "type": "object",
+        "required": ["factors"],
+        "properties": {
+          "story": { "type": "string", "maxLength": 2000 },
+          "factors": { "$ref": "#/components/schemas/StoryPointFactors" }
+        }
+      },
+      "StoryPointResponse": {
+        "type": "object",
+        "properties": {
+          "tool": { "const": "story-point-estimator" },
+          "estimate": { "type": "integer", "enum": [1, 2, 3, 5, 8, 13, 21] },
+          "label": { "type": "string" },
+          "confidence": { "type": "string" },
+          "score": { "type": "integer" },
+          "maxScore": { "const": 15 },
+          "highFactors": { "type": "array", "items": { "type": "string" } },
+          "nextActions": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": "string" }
+        }
+      },
+      "SprintCapacityMember": {
+        "type": "object",
+        "required": ["daysAvailable", "velocity"],
+        "properties": {
+          "name": { "type": "string" },
+          "daysAvailable": { "type": "number", "minimum": 0 },
+          "velocity": { "type": "number", "minimum": 0 }
+        }
+      },
+      "SprintCapacityRequest": {
+        "type": "object",
+        "required": ["sprintDays", "members"],
+        "properties": {
+          "sprintDays": { "type": "integer", "minimum": 1, "maximum": 30 },
+          "members": { "type": "array", "minItems": 1, "maxItems": 50, "items": { "$ref": "#/components/schemas/SprintCapacityMember" } }
+        }
+      },
+      "SprintCapacityResponse": {
+        "type": "object",
+        "properties": {
+          "tool": { "const": "sprint-capacity-calculator" },
+          "maxCapacity": { "type": "number" },
+          "recommendedCapacity": { "type": "number" },
+          "sprintDays": { "type": "integer" },
+          "totalAvailableDays": { "type": "number" },
+          "totalTeamDays": { "type": "number" },
+          "availabilityPercent": { "type": "integer" },
+          "members": { "type": "array", "items": { "$ref": "#/components/schemas/SprintCapacityMemberResult" } },
+          "note": { "type": "string" }
+        }
+      },
+      "SprintCapacityMemberResult": {
+        "allOf": [
+          { "$ref": "#/components/schemas/SprintCapacityMember" },
+          {
+            "type": "object",
+            "required": ["capacity"],
+            "properties": { "capacity": { "type": "number" } }
+          }
+        ]
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "The request failed validation",
+        "content": { "application/json": { "schema": { "type": "object", "required": ["error"], "properties": { "error": { "type": "string" } } } } }
+      }
+    }
+  }
+}
