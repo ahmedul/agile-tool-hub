@@ -1,0 +1,97 @@
+---
+title: "AI Agent Tools for Agile and Scrum Workflows"
+description: "Use AgileToolHub's free deterministic JSON tools from AI agents and developer workflows for story point estimation and sprint capacity planning."
+slug: "ai-agent-tools"
+category: "Docs"
+publishedAt: "2026-08-19"
+updatedAt: "2026-08-19"
+keywords:
+  - AI agent tools for Scrum
+  - Agile tools API
+  - planning poker API
+  - story point estimation API
+  - sprint capacity API
+  - free AI tools for developers
+relatedLinks:
+  - title: "AI-Friendly Agile Tools Directory"
+    href: "/ai-tools"
+  - title: "OpenAPI Specification"
+    href: "/openapi.json"
+  - title: "Planning Poker"
+    href: "/tools/planning-poker"
+  - title: "Story Point Calculator"
+    href: "/tools/story-point-calculator"
+  - title: "Sprint Capacity Calculator"
+    href: "/tools/sprint-capacity-calculator"
+faqItems:
+  - question: "Are the Agile agent tools free?"
+    answer: "Yes. The public Story Point Estimator and Sprint Capacity Calculator endpoints are free to call and do not require an API key."
+  - question: "Do these endpoints use an AI model?"
+    answer: "No. They use deterministic rules so an agent receives repeatable JSON output without sending the request to an AI provider."
+  - question: "Can an AI agent decide a team's story points?"
+    answer: "It can prepare a sizing signal and questions, but the delivery team should make the final estimate together. Use Planning Poker when the team needs independent votes and discussion."
+---
+
+AgileToolHub provides small, free JSON tools that AI agents and developer workflows can call without an account or API key. The endpoints are deterministic: the same valid input produces the same result, and no AI provider is required.
+
+Use the [AI-Friendly Agile Tools Directory](/ai-tools) to discover the available workflows, or open the [OpenAPI specification](/openapi.json) for machine-readable definitions.
+
+## Available endpoints
+
+| Endpoint | Use it for | Method |
+| --- | --- | --- |
+| `/api/agent/story-point` | Estimate one story from effort, complexity, uncertainty, risk, and dependencies | `POST` |
+| `/api/agent/sprint-capacity` | Calculate maximum and recommended sprint capacity from team availability | `POST` |
+
+All responses are JSON. Send `Content-Type: application/json`. An invalid request returns a `400` response with an `error` field.
+
+## Story Point Estimator
+
+Use this endpoint when an agent needs a quick, explainable first estimate before a human review.
+
+```bash
+curl -X POST https://agiletoolhub.com/api/agent/story-point \
+  -H "Content-Type: application/json" \
+  -d '{
+    "story": "Add export filters",
+    "factors": {
+      "effort": 2,
+      "complexity": 1,
+      "uncertainty": 1,
+      "risk": 0,
+      "dependencies": 1
+    }
+  }'
+```
+
+Each factor accepts a value from `0` to `3`. The response includes the Fibonacci estimate, confidence, score, high-scoring factors, and suggested follow-up actions.
+
+The estimate is a preparation signal, not a replacement for the team's decision. For a shared estimate, send the story to [Planning Poker](/tools/planning-poker) and let the team vote independently.
+
+## Sprint Capacity Calculator
+
+Use this endpoint to turn team availability and points-per-day assumptions into a planning range.
+
+```bash
+curl -X POST https://agiletoolhub.com/api/agent/sprint-capacity \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sprintDays": 10,
+    "members": [
+      { "name": "Developer 1", "daysAvailable": 8, "velocity": 2 },
+      { "name": "Developer 2", "daysAvailable": 6, "velocity": 1.5 }
+    ]
+  }'
+```
+
+The response includes each member's capacity, the team's maximum capacity, and an 80% recommended capacity that leaves room for meetings, reviews, bugs, and unplanned work.
+
+## Recommended agent workflow
+
+1. Ask the agent to structure the story and identify unclear assumptions.
+2. Call the Story Point Estimator for a transparent first sizing signal.
+3. Share the story and open questions with the delivery team.
+4. Use Planning Poker for independent votes and discussion.
+5. Use the Sprint Capacity Calculator when comparing the agreed estimate with team availability.
+
+Do not send passwords, API keys, customer information, private incident details, or other sensitive data. The team remains responsible for the product decision, estimate, and sprint commitment.
