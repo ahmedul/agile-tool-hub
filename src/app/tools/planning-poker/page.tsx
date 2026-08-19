@@ -12,9 +12,9 @@ import {
 } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Free Online Planning Poker: Real-Time Scrum Poker Tool",
+  title: "Free Planning Poker Online | Real-Time Scrum Poker Tool",
   description:
-    "Use free online planning poker for remote Scrum teams. Create a session, share a link, vote simultaneously, and reveal Fibonacci story point estimates. No signup or login.",
+    "Use free planning poker online with your Scrum team. Create a real-time session, share a link, vote together, and reveal Fibonacci estimates. No signup or login.",
   keywords: [
     "planning poker",
     "free online planning poker",
@@ -120,7 +120,7 @@ export default function PlanningPokerPage() {
           Free Tool
         </span>
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2 mb-4">
-          Free Planning Poker Tool
+          Free Planning Poker Online
         </h1>
         <p className="text-lg text-gray-600 mb-8 pb-8 border-b border-gray-200">
           Real-time story point estimation for distributed Agile teams. Create a session, share the
