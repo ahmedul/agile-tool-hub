@@ -7,8 +7,8 @@ import JsonLd from "@/components/JsonLd";
 import { buildMetadata, buildFAQSchema, buildBreadcrumbSchema, buildToolSchema, buildHowToSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Free User Story Generator — Jira-Ready in Seconds, No Login",
-  description: "Turn feature ideas into complete Jira-ready user stories with acceptance criteria instantly. No signup. AI-powered with quality scoring for Agile teams.",
+  title: "Free User Story Generator for Jira — No Login",
+  description: "Turn feature ideas into Jira-ready user stories with acceptance criteria, examples, and quality checks. Free to use with no signup required.",
   keywords: KEYWORDS.userStory,
   canonical: "https://agiletoolhub.com/tools/user-story-generator",
 });
