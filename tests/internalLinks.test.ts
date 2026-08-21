@@ -28,6 +28,7 @@ function getPublicRoutes(): Set<string> {
     "/templates",
     "/tools",
     "/openapi.json",
+    "/api/agent/tools",
   ]);
 
   for (const type of CONTENT_TYPES) {

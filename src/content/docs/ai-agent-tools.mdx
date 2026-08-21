@@ -8,6 +8,8 @@ updatedAt: "2026-08-19"
 keywords:
   - AI agent tools for Scrum
   - Agile tools API
+  - user story generator API
+  - acceptance criteria API
   - planning poker API
   - story point estimation API
   - sprint capacity API
@@ -42,6 +44,10 @@ Use the [AI-Friendly Agile Tools Directory](/ai-tools) to discover the available
 | --- | --- | --- |
 | `/api/agent/story-point` | Estimate one story from effort, complexity, uncertainty, risk, and dependencies | `POST` |
 | `/api/agent/sprint-capacity` | Calculate maximum and recommended sprint capacity from team availability | `POST` |
+| `/api/agent/user-story` | Turn feature notes into a Jira-ready story with acceptance criteria | `POST` |
+| `/api/agent/acceptance-criteria` | Turn a story into Gherkin and/or checklist criteria | `POST` |
+
+For lightweight discovery, call [`/api/agent/tools`](https://agiletoolhub.com/api/agent/tools). It returns the current tool names, endpoints, inputs, outputs, OpenAPI link, and documentation link.
 
 All responses are JSON. Send `Content-Type: application/json`. An invalid request returns a `400` response with an `error` field.
 
@@ -85,6 +91,30 @@ curl -X POST https://agiletoolhub.com/api/agent/sprint-capacity \
 ```
 
 The response includes each member's capacity, the team's maximum capacity, and an 80% recommended capacity that leaves room for meetings, reviews, bugs, and unplanned work.
+
+## User Story Generator
+
+Turn rough feature notes into a structured Markdown story that can be reviewed or pasted into Jira.
+
+```bash
+curl -X POST https://agiletoolhub.com/api/agent/user-story \
+  -H "Content-Type: application/json" \
+  -d '{"feature":"As a shopper, I want to save payment methods so checkout is faster","preset":"product"}'
+```
+
+The response includes the story, acceptance criteria, dependencies, clarifications, and a deterministic quality score. Optional fields are `user`, `storyType` (`feature`, `improvement`, or `task`), `priority`, and `preset`.
+
+## Acceptance Criteria Generator
+
+Turn a story or feature note into testable Gherkin, checklist criteria, or both.
+
+```bash
+curl -X POST https://agiletoolhub.com/api/agent/acceptance-criteria \
+  -H "Content-Type: application/json" \
+  -d '{"story":"As a shopper, I want to save payment methods so checkout is faster","format":"gherkin"}'
+```
+
+The `format` can be `gherkin`, `checklist`, or `both`. Use the `preset` field to add Product, Engineering, API, or Tech Debt checks.
 
 ## Recommended agent workflow
 

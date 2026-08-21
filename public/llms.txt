@@ -25,6 +25,18 @@ AgileToolHub provides free browser-based Agile and Scrum tools, templates, and g
 
 For tool purposes, inputs, outputs, and workflow selection, see https://agiletoolhub.com/ai-tools
 
+## Agent API
+
+Machine-readable tool manifest: https://agiletoolhub.com/api/agent/tools
+- Story point estimator: POST https://agiletoolhub.com/api/agent/story-point
+- Sprint capacity calculator: POST https://agiletoolhub.com/api/agent/sprint-capacity
+- User story generator: POST https://agiletoolhub.com/api/agent/user-story
+- Acceptance criteria generator: POST https://agiletoolhub.com/api/agent/acceptance-criteria
+- OpenAPI specification: https://agiletoolhub.com/openapi.json
+- Agent API documentation: https://agiletoolhub.com/docs/ai-agent-tools
+
+All agent endpoints are free, require no API key, accept JSON, and return deterministic JSON/Markdown results. Human review remains recommended for product decisions and sprint commitments.
+
 ## Full sitemap
 
 https://agiletoolhub.com/sitemap.xml

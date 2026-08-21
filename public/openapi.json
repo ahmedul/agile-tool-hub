@@ -64,6 +64,58 @@
           "400": { "$ref": "#/components/responses/BadRequest" }
         }
       }
+    },
+    "/api/agent/user-story": {
+      "post": {
+        "operationId": "generateUserStory",
+        "summary": "Generate a Jira-ready user story",
+        "description": "Turns feature notes into a deterministic Markdown user story with acceptance criteria, dependencies, clarifications, and a quality score.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserStoryRequest" },
+              "example": {
+                "feature": "As a shopper, I want to save payment methods so checkout is faster",
+                "preset": "product"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated user story",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContentToolResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/api/agent/acceptance-criteria": {
+      "post": {
+        "operationId": "generateAcceptanceCriteria",
+        "summary": "Generate testable acceptance criteria",
+        "description": "Turns a story or feature note into deterministic Gherkin and/or checklist acceptance criteria.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AcceptanceCriteriaRequest" },
+              "example": {
+                "story": "As a shopper, I want to save payment methods so checkout is faster",
+                "format": "gherkin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Generated acceptance criteria",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContentToolResponse" } } }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
     }
   },
   "components": {
@@ -141,6 +193,47 @@
             "properties": { "capacity": { "type": "number" } }
           }
         ]
+      },
+      "UserStoryRequest": {
+        "type": "object",
+        "required": ["feature"],
+        "properties": {
+          "feature": { "type": "string", "minLength": 3, "maxLength": 4000 },
+          "user": { "type": "string" },
+          "storyType": { "type": "string", "enum": ["feature", "improvement", "task"] },
+          "priority": { "type": "string", "enum": ["High", "Medium", "Low"] },
+          "preset": { "type": "string", "enum": ["product", "engineering", "api", "tech_debt"] }
+        }
+      },
+      "AcceptanceCriteriaRequest": {
+        "type": "object",
+        "required": ["story"],
+        "properties": {
+          "story": { "type": "string", "minLength": 3, "maxLength": 4000 },
+          "user": { "type": "string" },
+          "format": { "type": "string", "enum": ["gherkin", "checklist", "both"] },
+          "preset": { "type": "string", "enum": ["product", "engineering", "api", "tech_debt"] }
+        }
+      },
+      "ContentToolResponse": {
+        "type": "object",
+        "required": ["tool", "markdown", "parsed", "quality", "note"],
+        "properties": {
+          "tool": { "type": "string" },
+          "markdown": { "type": "string" },
+          "parsed": { "type": "object" },
+          "quality": { "$ref": "#/components/schemas/QualityResult" },
+          "note": { "type": "string" }
+        }
+      },
+      "QualityResult": {
+        "type": "object",
+        "required": ["score", "grade", "criteria"],
+        "properties": {
+          "score": { "type": "integer", "minimum": 0, "maximum": 100 },
+          "grade": { "type": "string", "enum": ["Excellent", "Good", "Needs Work"] },
+          "criteria": { "type": "array", "items": { "type": "object", "properties": { "label": { "type": "string" }, "met": { "type": "boolean" } } } }
+        }
       }
     },
     "responses": {

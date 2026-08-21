@@ -1,5 +1,8 @@
 import { POST as storyPointPost } from "@/app/api/agent/story-point/route";
 import { POST as sprintCapacityPost } from "@/app/api/agent/sprint-capacity/route";
+import { POST as userStoryPost } from "@/app/api/agent/user-story/route";
+import { POST as acceptanceCriteriaPost } from "@/app/api/agent/acceptance-criteria/route";
+import { GET as toolsGet } from "@/app/api/agent/tools/route";
 import { calculateStoryPointEstimate, calculateSprintCapacity } from "@/lib/agent-tools";
 
 function request(body: unknown) {
@@ -71,5 +74,42 @@ describe("agent tool API routes", () => {
     expect(body.tool).toBe("sprint-capacity-calculator");
     expect(body.recommendedCapacity).toBe(20);
     expect(body.members[0].capacity).toBe(16);
+  });
+
+  it("generates a scored Jira-ready user story", async () => {
+    const response = await userStoryPost(request({
+      feature: "As a shopper, I want to save payment methods so that checkout is faster",
+      preset: "product",
+    }));
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.tool).toBe("user-story-generator");
+    expect(body.markdown).toContain("## Acceptance Criteria");
+    expect(body.quality.score).toBeGreaterThan(0);
+  });
+
+  it("generates acceptance criteria in the requested format", async () => {
+    const response = await acceptanceCriteriaPost(request({
+      story: "As a shopper, I want to save payment methods so that checkout is faster",
+      format: "gherkin",
+    }));
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.tool).toBe("acceptance-criteria-generator");
+    expect(body.markdown).toContain("Given");
+    expect(body.markdown).toContain("When");
+    expect(body.markdown).toContain("Then");
+  });
+
+  it("publishes a machine-readable tool manifest", async () => {
+    const response = await toolsGet();
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.authentication).toBe("none");
+    expect(body.tools).toHaveLength(4);
+    expect(body.tools.map((tool: { name: string }) => tool.name)).toContain("generate_user_story");
   });
 });
