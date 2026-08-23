@@ -1,4 +1,4 @@
-import { agentJson, agentOptions, isFiniteNumber } from "@/lib/agent-api";
+import { agentJson, agentOptions, isFiniteNumber, recordAgentRequest } from "@/lib/agent-api";
 import { calculateSprintCapacity, type SprintCapacityMember } from "@/lib/agent-tools";
 
 export const runtime = "edge";
@@ -36,9 +36,11 @@ export async function POST(request: Request) {
     return agentJson({ error: "Each member needs non-negative daysAvailable and velocity numbers." }, { status: 400 });
   }
 
-  return agentJson({
+  const response = agentJson({
     tool: "sprint-capacity-calculator",
     ...calculateSprintCapacity(body.sprintDays, body.members),
     note: "Recommended capacity uses an 80% planning buffer. Adjust it using your team's history.",
   });
+  recordAgentRequest(request, "sprint-capacity-calculator", response.status);
+  return response;
 }

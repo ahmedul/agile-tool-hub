@@ -60,6 +60,11 @@ export default function PrivacyPage() {
           We use website analytics to understand aggregate traffic and feature usage trends. This helps
           us improve content and tools.
         </p>
+        <p>
+          Agent API requests may also produce aggregate server logs containing the tool name, response
+          status, and a coarse caller category. We do not log request text, story content, or generated
+          output for this measurement.
+        </p>
 
         <h2>5. Feedback and feature requests</h2>
         <p>

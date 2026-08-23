@@ -1,4 +1,4 @@
-import { agentJson, agentOptions } from "@/lib/agent-api";
+import { agentJson, agentOptions, recordAgentRequest } from "@/lib/agent-api";
 import { CONTENT_TOOL_PRESETS, generateAgentAcceptanceCriteria, type AcceptanceCriteriaFormat } from "@/lib/agent-content-tools";
 
 export const runtime = "edge";
@@ -24,5 +24,7 @@ export async function POST(request: Request) {
     format: body.format as AcceptanceCriteriaFormat | undefined,
     preset: body.preset as typeof CONTENT_TOOL_PRESETS[number] | undefined,
   });
-  return agentJson({ tool: "acceptance-criteria-generator", ...result, note: "Deterministic first draft. Confirm business rules, edge cases, and expected behavior with Product, Engineering, and QA." });
+  const response = agentJson({ tool: "acceptance-criteria-generator", ...result, note: "Deterministic first draft. Confirm business rules, edge cases, and expected behavior with Product, Engineering, and QA." });
+  recordAgentRequest(request, "acceptance-criteria-generator", response.status);
+  return response;
 }

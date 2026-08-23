@@ -43,5 +43,14 @@ const tools = [
 
 export async function OPTIONS() { return agentOptions(); }
 export async function GET() {
-  return agentJson({ name: "AgileToolHub Agent Tools", version: "1.1.0", baseUrl: "https://agiletoolhub.com", authentication: "none", openapi: "/openapi.json", documentation: "/docs/ai-agent-tools", tools });
+  return agentJson({
+    name: "AgileToolHub Agent Tools",
+    version: "1.2.0",
+    baseUrl: "https://agiletoolhub.com",
+    authentication: "none",
+    protocols: { httpJson: "/openapi.json", mcp: "/mcp" },
+    openapi: "/openapi.json",
+    documentation: "/docs/ai-agent-tools",
+    tools,
+  });
 }

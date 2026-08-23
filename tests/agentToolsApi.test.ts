@@ -3,6 +3,7 @@ import { POST as sprintCapacityPost } from "@/app/api/agent/sprint-capacity/rout
 import { POST as userStoryPost } from "@/app/api/agent/user-story/route";
 import { POST as acceptanceCriteriaPost } from "@/app/api/agent/acceptance-criteria/route";
 import { GET as toolsGet } from "@/app/api/agent/tools/route";
+import { POST as mcpPost } from "@/app/mcp/route";
 import { calculateStoryPointEstimate, calculateSprintCapacity } from "@/lib/agent-tools";
 
 function request(body: unknown) {
@@ -111,5 +112,20 @@ describe("agent tool API routes", () => {
     expect(body.authentication).toBe("none");
     expect(body.tools).toHaveLength(4);
     expect(body.tools.map((tool: { name: string }) => tool.name)).toContain("generate_user_story");
+    expect(body.protocols.mcp).toBe("/mcp");
+  });
+
+  it("rejects MCP requests from an untrusted origin", async () => {
+    const response = await mcpPost(new Request("https://agiletoolhub.com/mcp", {
+      method: "POST",
+      headers: {
+        host: "agiletoolhub.com",
+        origin: "https://evil.example",
+        "content-type": "application/json",
+      },
+      body: "{}",
+    }));
+
+    expect(response.status).toBe(403);
   });
 });

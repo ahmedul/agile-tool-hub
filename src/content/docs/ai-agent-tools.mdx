@@ -49,6 +49,10 @@ Use the [AI-Friendly Agile Tools Directory](/ai-tools) to discover the available
 
 For lightweight discovery, call [`/api/agent/tools`](https://agiletoolhub.com/api/agent/tools). It returns the current tool names, endpoints, inputs, outputs, OpenAPI link, and documentation link.
 
+## Remote MCP
+
+MCP-compatible clients can connect to `https://agiletoolhub.com/mcp`. The server exposes the same four tools through the standard Streamable HTTP transport and does not require an API key. Tool calls are stateless and return JSON inside MCP text content.
+
 All responses are JSON. Send `Content-Type: application/json`. An invalid request returns a `400` response with an `error` field.
 
 ## Story Point Estimator

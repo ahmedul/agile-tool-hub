@@ -1,4 +1,4 @@
-import { agentJson, agentOptions, isFiniteNumber } from "@/lib/agent-api";
+import { agentJson, agentOptions, isFiniteNumber, recordAgentRequest } from "@/lib/agent-api";
 import {
   calculateStoryPointEstimate,
   STORY_POINT_FACTOR_KEYS,
@@ -40,10 +40,12 @@ export async function POST(request: Request) {
     }, { status: 400 });
   }
 
-  return agentJson({
+  const response = agentJson({
     tool: "story-point-estimator",
     story: typeof body.story === "string" ? body.story.trim() : null,
     ...calculateStoryPointEstimate(body.factors),
     note: "This is a starting estimate. The delivery team should confirm the final estimate together.",
   });
+  recordAgentRequest(request, "story-point-estimator", response.status);
+  return response;
 }

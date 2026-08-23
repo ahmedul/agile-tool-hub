@@ -28,6 +28,7 @@ For tool purposes, inputs, outputs, and workflow selection, see https://agiletoo
 ## Agent API
 
 Machine-readable tool manifest: https://agiletoolhub.com/api/agent/tools
+Remote MCP endpoint: https://agiletoolhub.com/mcp
 - Story point estimator: POST https://agiletoolhub.com/api/agent/story-point
 - Sprint capacity calculator: POST https://agiletoolhub.com/api/agent/sprint-capacity
 - User story generator: POST https://agiletoolhub.com/api/agent/user-story

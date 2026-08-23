@@ -1,4 +1,4 @@
-import { agentJson, agentOptions } from "@/lib/agent-api";
+import { agentJson, agentOptions, recordAgentRequest } from "@/lib/agent-api";
 import { CONTENT_TOOL_PRESETS, generateAgentUserStory, type StoryPriority, type StoryType } from "@/lib/agent-content-tools";
 
 export const runtime = "edge";
@@ -28,5 +28,7 @@ export async function POST(request: Request) {
     priority: body.priority as StoryPriority | undefined,
     preset: body.preset as typeof CONTENT_TOOL_PRESETS[number] | undefined,
   });
-  return agentJson({ tool: "user-story-generator", ...result, note: "Deterministic first draft. Review scope, assumptions, and acceptance criteria with the delivery team." });
+  const response = agentJson({ tool: "user-story-generator", ...result, note: "Deterministic first draft. Review scope, assumptions, and acceptance criteria with the delivery team." });
+  recordAgentRequest(request, "user-story-generator", response.status);
+  return response;
 }

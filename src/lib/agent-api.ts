@@ -8,13 +8,27 @@ export const AGENT_API_HEADERS = {
 };
 
 export function agentJson(data: unknown, init?: ResponseInit) {
+  const tool = data && typeof data === "object" && "tool" in data && typeof data.tool === "string"
+    ? data.tool
+    : undefined;
   return NextResponse.json(data, {
     ...init,
     headers: {
       ...AGENT_API_HEADERS,
+      ...(tool ? { "X-AgileToolHub-Agent-Tool": tool } : {}),
       ...init?.headers,
     },
   });
+}
+
+export function recordAgentRequest(request: Request, tool: string, status: number): void {
+  const userAgent = request.headers.get("user-agent") ?? "";
+  const caller = /agent|bot|crawler|gpt|claude|copilot|llm/i.test(userAgent) ? "automated" : "other";
+  recordAgentUsage(tool, status, caller);
+}
+
+export function recordAgentUsage(tool: string, status: number, caller: "automated" | "other" | "mcp"): void {
+  console.info(JSON.stringify({ event: "agent_tool_request", tool, status, caller }));
 }
 
 export function agentOptions() {
