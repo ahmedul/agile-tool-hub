@@ -1,4 +1,4 @@
-import Link from "next/link";
+import TrackedLink from "./TrackedLink";
 
 interface RelatedLink {
   title: string;
@@ -13,9 +13,14 @@ export default function RelatedLinks({ links }: { links: RelatedLink[] }) {
       <ul className="space-y-2">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className="text-blue-600 hover:underline">
+            <TrackedLink
+              href={link.href}
+              label={link.title}
+              eventParams={{ surface: "article_related_links" }}
+              className="text-blue-600 hover:underline"
+            >
               → {link.title}
-            </Link>
+            </TrackedLink>
           </li>
         ))}
       </ul>

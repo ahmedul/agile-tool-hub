@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-import Link from "next/link";
 import Breadcrumbs from "./Breadcrumbs";
 import RelatedLinks from "./RelatedLinks";
 import CTASection, { CTAProps } from "./CTASection";
+import TrackedLink from "./TrackedLink";
 
 interface ContentLayoutProps {
   title: string;
@@ -109,9 +109,14 @@ export default function ContentLayout({
           <ul className="space-y-1">
             {topRelatedLinks.map((link) => (
               <li key={`top-${link.href}`}>
-                <Link href={link.href} className="text-sm text-blue-700 hover:underline">
+                <TrackedLink
+                  href={link.href}
+                  label={link.title}
+                  eventParams={{ surface: "article_quick_links", category }}
+                  className="text-sm text-blue-700 hover:underline"
+                >
                   {link.title}
-                </Link>
+                </TrackedLink>
               </li>
             ))}
           </ul>
