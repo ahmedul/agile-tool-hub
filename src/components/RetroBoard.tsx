@@ -221,9 +221,12 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const [inputs, setInputs] = useState<Record<ColumnId, string>>(makeInputsForType("standard"));
   const [sourceSessionId, setSourceSessionId] = useState("");
   const [importStatus, setImportStatus] = useState("");
+  const [templateLocked, setTemplateLocked] = useState(false);
+  const [templateReady, setTemplateReady] = useState(false);
   const animationsEnabled = useAnimation();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const discoveryChannelRef = useRef<RealtimeChannel | null>(null);
   const userIdRef = useRef<string>("");
   const myNameRef = useRef("");
   const autoJoinedRef = useRef(false);
@@ -271,6 +274,52 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     const snapshot: PersistedRetroState = { notes, retroType, timer: timerState };
     try { localStorage.setItem(`retro-state-${sessionId}`, JSON.stringify(snapshot)); } catch { /* Keep the live board usable. */ }
   }, [joined, notes, retroType, timerState, sessionId]);
+
+  // Check whether another participant has already selected the board template.
+  useEffect(() => {
+    if (joined || localStorage.getItem(`retro-name-${sessionId}`)) {
+      queueMicrotask(() => setTemplateReady(true));
+      return;
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const requestId = crypto.randomUUID();
+    const channel = supabase.channel(`retro-${sessionId}`, {
+      config: { broadcast: { self: false } },
+    });
+    discoveryChannelRef.current = channel;
+    const timeout = window.setTimeout(() => setTemplateReady(true), 1200);
+
+    channel
+      .on("broadcast", { event: "state_response" }, ({ payload }) => {
+        const response = payload as Extract<BroadcastEvent, { type: "state_response" }>;
+        if (response.requestId !== requestId || !response.retroType) return;
+        retroTypeRef.current = response.retroType;
+        setRetroType(response.retroType);
+        setInputs(makeInputsForType(response.retroType));
+        setTemplateLocked(true);
+        setTemplateReady(true);
+        window.clearTimeout(timeout);
+        channel.unsubscribe();
+      })
+      .subscribe(async (status) => {
+        if (status !== "SUBSCRIBED") return;
+        await channel.send({
+          type: "broadcast",
+          event: "request_state",
+          payload: { type: "request_state", requestId },
+        });
+      });
+
+    return () => {
+      window.clearTimeout(timeout);
+      channel.unsubscribe();
+      discoveryChannelRef.current = null;
+    };
+  }, [joined, sessionId]);
 
   const playSound = useCallback(() => {
     try {
@@ -530,6 +579,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
 
     return () => {
       channelRef.current?.unsubscribe();
+      discoveryChannelRef.current?.unsubscribe();
     };
   }, [currentUserId, joinChannel, sessionId]);
 
@@ -538,6 +588,8 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const handleJoin = () => {
     const name = nameInput.trim();
     if (!name) return;
+    discoveryChannelRef.current?.unsubscribe();
+    discoveryChannelRef.current = null;
     myNameRef.current = name;
     localStorage.setItem(`retro-name-${sessionId}`, name);
     setJoined(true);
@@ -720,16 +772,24 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                   <button
                     key={format.id}
                     onClick={() => handleRetroTypeChange(format.id)}
+                    disabled={templateLocked || !templateReady}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-all text-sm ${
                       retroType === format.id
                         ? "bg-blue-100 border-2 border-blue-600"
                         : "bg-gray-50 border-2 border-gray-200 hover:bg-gray-100"
-                    }`}
+                    } ${templateLocked || !templateReady ? "cursor-not-allowed opacity-75" : ""}`}
                   >
                     <span className="font-semibold text-gray-900">{format.label}</span>
                   </button>
                 ))}
               </div>
+              <p className="text-xs text-gray-500 mt-2">
+                {!templateReady
+                  ? "Checking whether this session already has a template…"
+                  : templateLocked
+                    ? "The session template was selected by the first participant."
+                    : "The first participant selects the shared template."}
+              </p>
             </div>
 
             <details>
