@@ -46,6 +46,7 @@ interface PersistedRetroState {
 type BroadcastEvent =
   | { type: "add_note"; note: RetroNote }
   | { type: "delete_note"; noteId: string }
+  | { type: "move_note"; noteId: string; columnId: ColumnId }
   | { type: "vote_note"; noteId: string; userId: string; action: "add" | "remove" }
   | { type: "full_state"; notes: RetroNote[]; retroType: RetroType; timer?: TimerState }
   | { type: "request_state"; requestId: string }
@@ -419,6 +420,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         if (isBoardLockedRef.current) break;
         setNotes((prev) => prev.filter((n) => n.id !== event.noteId));
         break;
+      case "move_note":
+        if (isBoardLockedRef.current) break;
+        setNotes((prev) => prev.map((note) => note.id === event.noteId ? { ...note, columnId: event.columnId } : note));
+        break;
       case "vote_note":
         if (isBoardLockedRef.current) break;
         setNotes((prev) =>
@@ -531,6 +536,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         // Broadcast: all game state
         .on("broadcast", { event: "add_note" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .on("broadcast", { event: "delete_note" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
+        .on("broadcast", { event: "move_note" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .on("broadcast", { event: "vote_note" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .on("broadcast", { event: "full_state" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .on("broadcast", { event: "state_response" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
@@ -623,6 +629,16 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     if (isBoardLockedRef.current) return;
     setNotes((prev) => prev.filter((note) => note.id !== noteId));
     broadcast({ type: "delete_note", noteId });
+  };
+
+  const handleDropNote = (event: React.DragEvent<HTMLDivElement>, columnId: ColumnId) => {
+    event.preventDefault();
+    if (isBoardLockedRef.current || columnId !== "action_items") return;
+    const noteId = event.dataTransfer.getData("text/plain");
+    const note = notesRef.current.find((item) => item.id === noteId);
+    if (!note || !["went_well", "to_improve"].includes(note.columnId)) return;
+    setNotes((prev) => prev.map((item) => item.id === noteId ? { ...item, columnId } : item));
+    broadcast({ type: "move_note", noteId, columnId });
   };
 
   const buildExportLines = () => {
@@ -1023,7 +1039,12 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
             .sort((a, b) => b.votes.length - a.votes.length || a.createdAt - b.createdAt);
 
           return (
-            <div key={col.id} className={`rounded-xl border-2 ${col.bg} p-4 flex flex-col gap-3`}>
+            <div
+              key={col.id}
+              onDragOver={(event) => col.id === "action_items" && !isBoardLocked && event.preventDefault()}
+              onDrop={(event) => handleDropNote(event, col.id)}
+              className={`rounded-xl border-2 ${col.bg} p-4 flex flex-col gap-3 ${col.id === "action_items" ? "transition-shadow" : ""}`}
+            >
               {/* Column header */}
               <div className="flex items-center gap-2">
                 <span className="text-2xl">{col.emoji}</span>
@@ -1066,6 +1087,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                         animate="animate"
                         exit="exit"
                         transition={{ duration: DURATIONS.normal / 1000, delay: idx * 0.05, ease: EASINGS.smooth }}
+                        draggable={!isBoardLocked && (note.columnId === "went_well" || note.columnId === "to_improve")}
+                        onDragStart={(event) => {
+                          (event as unknown as DragEvent).dataTransfer?.setData("text/plain", note.id);
+                        }}
                         className={`rounded-lg border ${NOTE_COLORS[col.id]} p-3 group relative hover:shadow-md transition-shadow`}
                       >
                         <p className="text-sm text-gray-800 whitespace-pre-wrap break-words">{note.text}</p>
@@ -1102,6 +1127,9 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                 {colNotes.length === 0 && (
                   <div className="text-center py-12 text-gray-400">
                     <p className="text-lg">✨ Add something great here →</p>
+                    {col.id === "action_items" && !isBoardLocked && (
+                      <p className="text-xs mt-2">Drag a Went Well or To Improve note here</p>
+                    )}
                   </div>
                 )}
               </div>
