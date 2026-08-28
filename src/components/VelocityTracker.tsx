@@ -16,6 +16,7 @@ import OutputFeedback from "@/components/OutputFeedback";
 import CopyButton from "@/components/CopyButton";
 import { motion } from "framer-motion";
 import { useAnimation } from "@/hooks/useAnimation";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { DURATIONS } from "@/lib/animations";
 import CelebrationMoment from "@/components/CelebrationMoment";
 
@@ -42,14 +43,15 @@ interface VelocityMetrics {
 }
 
 export default function VelocityTracker() {
-  const [sprints, setSprints] = useState<Sprint[]>([
+  const [sprints, setSprints] = usePersistentState<Sprint[]>("tool-sprints-velocity", [
     { name: "Sprint 1", plannedPoints: 40, completedPoints: 38, teamSize: 4 },
   ]);
-  const [currentSprintName, setCurrentSprintName] = useState("Sprint 2");
-  const [plannedPoints, setPlannedPoints] = useState("");
-  const [completedPoints, setCompletedPoints] = useState("");
-  const [teamSize, setTeamSize] = useState("");
-  const [exportFormat, setExportFormat] = useState<"markdown" | "jira">(
+  const [currentSprintName, setCurrentSprintName] = usePersistentState("tool-current-sprint-velocity", "Sprint 2");
+  const [plannedPoints, setPlannedPoints] = usePersistentState("tool-planned-points-velocity", "");
+  const [completedPoints, setCompletedPoints] = usePersistentState("tool-completed-points-velocity", "");
+  const [teamSize, setTeamSize] = usePersistentState("tool-team-size-velocity", "");
+  const [exportFormat, setExportFormat] = usePersistentState<"markdown" | "jira">(
+    "tool-export-format-velocity",
     "markdown"
   );
   const [showMilestoneAnimation, setShowMilestoneAnimation] = useState(false);

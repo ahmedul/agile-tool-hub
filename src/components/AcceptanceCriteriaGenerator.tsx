@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { trackEvent } from "@/lib/analytics";
 import { scoreAcceptanceCriteria, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -223,17 +224,17 @@ ${constraints}`;
 
 
 export default function AcceptanceCriteriaGenerator() {
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = usePersistentState<FormState>("tool-draft-acceptance-criteria", {
     featureDescription: "",
     userType: "",
     format: "both",
     preset: "product",
   });
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = usePersistentState("tool-output-acceptance-criteria", "");
   const [copied, setCopied] = useState(false);
   const loading = false;
   const [error, setError] = useState("");
-  const [quality, setQuality] = useState<CriteriaQualityResult | null>(null);
+  const [quality, setQuality] = usePersistentState<CriteriaQualityResult | null>("tool-quality-acceptance-criteria", null);
 
   const quickExamples = [
     {

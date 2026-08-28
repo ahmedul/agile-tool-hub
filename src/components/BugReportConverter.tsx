@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { trackEvent } from "@/lib/analytics";
 import { scoreBugReport, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -363,12 +364,12 @@ ${acceptanceCriteria}`;
 
 
 export default function BugReportConverter() {
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
+  const [input, setInput] = usePersistentState("tool-draft-bug-report", "");
+  const [output, setOutput] = usePersistentState("tool-output-bug-report", "");
   const [copied, setCopied] = useState(false);
   const loading = false;
   const [error, setError] = useState("");
-  const [quality, setQuality] = useState<TicketQualityResult | null>(null);
+  const [quality, setQuality] = usePersistentState<TicketQualityResult | null>("tool-quality-bug-report", null);
 
   const quickExamples = [
     "Login button does nothing on Chrome 124 (macOS). Steps: 1) Open /login 2) enter valid creds 3) click Login. Expected dashboard. Actual spinner forever.",

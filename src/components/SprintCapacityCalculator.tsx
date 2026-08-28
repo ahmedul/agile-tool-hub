@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 
 interface TeamMember {
   id: number;
@@ -15,9 +15,9 @@ const DEFAULT_MEMBERS: TeamMember[] = [
 ];
 
 export default function SprintCapacityCalculator() {
-  const [sprintDays, setSprintDays] = useState(10);
-  const [members, setMembers] = useState<TeamMember[]>(DEFAULT_MEMBERS);
-  const [nextId, setNextId] = useState(3);
+  const [sprintDays, setSprintDays] = usePersistentState("tool-sprint-days-capacity", 10);
+  const [members, setMembers] = usePersistentState<TeamMember[]>("tool-members-capacity", DEFAULT_MEMBERS);
+  const [nextId, setNextId] = usePersistentState("tool-next-member-capacity", 3);
 
   const addMember = () => {
     setMembers((prev) => [

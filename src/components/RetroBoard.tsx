@@ -35,13 +35,21 @@ interface TimerState {
   currentPhase: Phase;
 }
 
+interface PersistedRetroState {
+  notes: RetroNote[];
+  retroType: RetroType;
+  timer: TimerState;
+}
+
 // ─── Broadcast event shapes ──────────────────────────────────────────────────
 
 type BroadcastEvent =
   | { type: "add_note"; note: RetroNote }
   | { type: "delete_note"; noteId: string }
   | { type: "vote_note"; noteId: string; userId: string; action: "add" | "remove" }
-  | { type: "full_state"; notes: RetroNote[]; retroType: RetroType }
+  | { type: "full_state"; notes: RetroNote[]; retroType: RetroType; timer: TimerState }
+  | { type: "request_state"; requestId: string }
+  | { type: "state_response"; requestId: string; notes: RetroNote[]; retroType: RetroType; timer: TimerState }
   | { type: "timer_update"; timer: TimerState }
   | { type: "phase_change"; phase: Phase };
 
@@ -113,6 +121,14 @@ const PHASE_HELP: Record<Phase, string> = {
   done: "Done: board is locked; export is still available.",
 };
 
+const PHASE_DETAILS: Record<Phase, { label: string; detail: string }> = {
+  brainstorm: { label: "Brainstorm", detail: "Everyone adds observations independently. Avoid debating or editing other notes yet." },
+  grouping: { label: "Grouping", detail: "Merge duplicates and cluster similar notes so the team can see recurring themes." },
+  discussion: { label: "Discussion", detail: "Talk through the highest-voted themes, clarify what happened, and identify what needs to change." },
+  action: { label: "Action", detail: "Turn selected themes into specific next steps. Add an owner and a target date in the note text." },
+  done: { label: "Done", detail: "Temporarily locks editing while you export or review the agreed actions. You can undo Done and continue editing." },
+};
+
 const NOTE_COLORS: Record<ColumnId, string> = {
   went_well: "bg-green-100 border-green-300",
   to_improve: "bg-red-100 border-red-300",
@@ -136,6 +152,19 @@ function makeInputsForType(type: RetroType): Record<ColumnId, string> {
     next[col.id] = "";
   });
   return next;
+}
+
+function readPersistedRetroState(sessionId: string): PersistedRetroState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(`retro-state-${sessionId}`);
+    if (!raw) return null;
+    const saved = JSON.parse(raw) as PersistedRetroState;
+    if (!Array.isArray(saved.notes) || !saved.timer || !saved.retroType) return null;
+    return saved;
+  } catch {
+    return null;
+  }
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -177,6 +206,8 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const [timerState, setTimerState] = useState<TimerState>({ isRunning: false, remainingSeconds: 600, totalSeconds: 600, currentPhase: "brainstorm" });
   const [timerDuration, setTimerDuration] = useState(10); // minutes
   const [inputs, setInputs] = useState<Record<ColumnId, string>>(makeInputsForType("standard"));
+  const [sourceSessionId, setSourceSessionId] = useState("");
+  const [importStatus, setImportStatus] = useState("");
   const animationsEnabled = useAnimation();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
@@ -188,6 +219,8 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const isBoardLockedRef = useRef(false);
   const noteSequenceRef = useRef(0);
+  const stateHydratedRef = useRef(false);
+  const timerRef = useRef<TimerState>(timerState);
 
   // ── Broadcast helpers ──────────────────────────────────────────────────────
 
@@ -198,10 +231,31 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   // Keep notesRef and retroTypeRef in sync for use in callbacks
   useEffect(() => { notesRef.current = notes; }, [notes]);
   useEffect(() => { retroTypeRef.current = retroType; }, [retroType]);
+  useEffect(() => { timerRef.current = timerState; }, [timerState]);
   useEffect(() => { isBoardLockedRef.current = timerState.currentPhase === "done"; }, [timerState.currentPhase]);
 
   // Persist theme preference
   useEffect(() => { localStorage.setItem("retro-theme", theme); }, [theme]);
+  useEffect(() => {
+    const saved = readPersistedRetroState(sessionId);
+    if (saved) {
+      notesRef.current = saved.notes;
+      retroTypeRef.current = saved.retroType;
+      timerRef.current = saved.timer;
+      queueMicrotask(() => {
+        setNotes(saved.notes);
+        setRetroType(saved.retroType);
+        setInputs(makeInputsForType(saved.retroType));
+        setTimerState(saved.timer);
+      });
+    }
+    stateHydratedRef.current = true;
+  }, [sessionId]);
+  useEffect(() => {
+    if (!stateHydratedRef.current || !joined) return;
+    const snapshot: PersistedRetroState = { notes, retroType, timer: timerState };
+    localStorage.setItem(`retro-state-${sessionId}`, JSON.stringify(snapshot));
+  }, [joined, notes, retroType, timerState, sessionId]);
 
   const playSound = useCallback(() => {
     try {
@@ -273,7 +327,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   };
 
   const changePhase = (phase: Phase) => {
-    if (isBoardLockedRef.current) return;
+    if (isBoardLockedRef.current && phase !== "action") return;
     const newTimer: TimerState = { ...timerState, currentPhase: phase, isRunning: false, remainingSeconds: 0 };
     setTimerState(newTimer);
     // Keep all clients in sync: moving to a new phase (especially Done) stops timer everywhere.
@@ -315,26 +369,56 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         );
         break;
       case "full_state":
-        setNotes(event.notes);
+        // Never let an empty late broadcast erase a locally restored board.
+        if (event.notes.length > 0 || notesRef.current.length === 0) {
+          notesRef.current = event.notes;
+          setNotes(event.notes);
+        }
         if (event.retroType) {
+          retroTypeRef.current = event.retroType;
           setRetroType(event.retroType);
           setInputs(makeInputsForType(event.retroType));
         }
+        timerRef.current = event.timer;
+        setTimerState(event.timer);
+        break;
+      case "state_response":
+        if (event.notes.length > 0) {
+          const imported = event.notes
+            .filter((note) => note.columnId === "action_items")
+            .map((note) => ({
+              ...note,
+              id: crypto.randomUUID(),
+              columnId: "action_items" as ColumnId,
+              authorId: userIdRef.current,
+              authorName: myNameRef.current,
+              votes: [],
+              createdAt: Date.now(),
+            }));
+          if (imported.length > 0) {
+            setNotes((prev) => [...prev, ...imported]);
+            imported.forEach((note) => broadcast({ type: "add_note", note }));
+          }
+        }
         break;
       case "timer_update":
+        timerRef.current = event.timer;
         setTimerState(event.timer);
         break;
       case "phase_change":
-        if (isBoardLockedRef.current && event.phase !== "done") break;
-        setTimerState((prev) => ({
+        setTimerState((prev) => {
+          const next = {
           ...prev,
           currentPhase: event.phase,
-          isRunning: event.phase === "done" ? false : prev.isRunning,
+          isRunning: false,
           remainingSeconds: event.phase === "done" ? 0 : prev.remainingSeconds,
-        }));
+          };
+          timerRef.current = next;
+          return next;
+        });
         break;
     }
-  }, []);
+  }, [broadcast]);
 
   // ── Join / channel setup ───────────────────────────────────────────────────
 
@@ -374,7 +458,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
           if (me) {
             // Small delay so they're subscribed before we broadcast
             setTimeout(() => {
-              broadcast({ type: "full_state", notes: notesRef.current, retroType: retroTypeRef.current });
+              broadcast({ type: "full_state", notes: notesRef.current, retroType: retroTypeRef.current, timer: timerRef.current });
             }, 500);
           }
         })
@@ -383,6 +467,21 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         .on("broadcast", { event: "delete_note" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .on("broadcast", { event: "vote_note" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .on("broadcast", { event: "full_state" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
+        .on("broadcast", { event: "state_response" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
+        .on("broadcast", { event: "request_state" }, ({ payload }) => {
+          const request = payload as Extract<BroadcastEvent, { type: "request_state" }>;
+          channel.send({
+            type: "broadcast",
+            event: "state_response",
+            payload: {
+              type: "state_response",
+              requestId: request.requestId,
+              notes: notesRef.current,
+              retroType: retroTypeRef.current,
+              timer: timerRef.current,
+            } satisfies BroadcastEvent,
+          });
+        })
         .on("broadcast", { event: "timer_update" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .on("broadcast", { event: "phase_change" }, ({ payload }) => applyEvent(payload as BroadcastEvent))
         .subscribe(async (status) => {
@@ -446,12 +545,14 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
       votes: [],
       createdAt: ++noteSequenceRef.current,
     };
+    setNotes((prev) => [...prev, note]);
     broadcast({ type: "add_note", note });
     setInputs((prev) => ({ ...prev, [columnId]: "" }));
   };
 
   const handleDeleteNote = (noteId: string) => {
     if (isBoardLockedRef.current) return;
+    setNotes((prev) => prev.filter((note) => note.id !== noteId));
     broadcast({ type: "delete_note", noteId });
   };
 
@@ -512,12 +613,64 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
     if (isBoardLockedRef.current) return;
     const uid = userIdRef.current;
     const alreadyVoted = note.votes.includes(uid);
+    setNotes((prev) => prev.map((item) => item.id === note.id ? {
+      ...item,
+      votes: alreadyVoted
+        ? item.votes.filter((id) => id !== uid)
+        : [...new Set([...item.votes, uid])],
+    } : item));
     broadcast({
       type: "vote_note",
       noteId: note.id,
       userId: uid,
       action: alreadyVoted ? "remove" : "add",
     });
+  };
+
+  const handleImportActions = () => {
+    const sourceId = sourceSessionId.trim();
+    if (!sourceId || sourceId === sessionId || !myNameRef.current) return;
+    const savedSource = readPersistedRetroState(sourceId);
+    if (savedSource) {
+      applyEvent({
+        type: "state_response",
+        requestId: "local-storage",
+        notes: savedSource.notes,
+        retroType: savedSource.retroType,
+        timer: savedSource.timer,
+      });
+      setImportStatus("Action items imported from this browser.");
+      return;
+    }
+    setImportStatus("Looking for action items…");
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+    const requestId = crypto.randomUUID();
+    const sourceChannel = supabase.channel(`retro-${sourceId}`, {
+      config: { broadcast: { self: false } },
+    });
+    sourceChannel
+      .on("broadcast", { event: "state_response" }, ({ payload }) => {
+        const response = payload as Extract<BroadcastEvent, { type: "state_response" }>;
+        if (response.requestId !== requestId) return;
+        applyEvent(response);
+        setImportStatus("Action items imported.");
+        setTimeout(() => sourceChannel.unsubscribe(), 1000);
+      })
+      .subscribe(async (status) => {
+        if (status !== "SUBSCRIBED") return;
+        await sourceChannel.send({
+          type: "broadcast",
+          event: "request_state",
+          payload: { type: "request_state", requestId },
+        });
+        setTimeout(() => {
+          setImportStatus((current) => current === "Looking for action items…" ? "No active board found." : current);
+          sourceChannel.unsubscribe();
+        }, 2500);
+      });
   };
 
   // ─── Join screen ──────────────────────────────────────────────────────────
@@ -730,7 +883,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
               <button
                 key={phase}
                 onClick={() => changePhase(phase)}
-                disabled={isBoardLocked}
+                disabled={isBoardLocked && phase !== "action"}
                 className={`px-3 py-2 rounded-lg text-xs font-semibold capitalize transition-colors ${
                   timerState.currentPhase === phase
                     ? "bg-blue-600 text-white"
@@ -740,10 +893,47 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                 {phase}
               </button>
             ))}
+            {isBoardLocked && (
+              <button
+                onClick={() => changePhase("action")}
+                className="px-3 py-2 rounded-lg text-xs font-semibold bg-amber-500 text-white hover:bg-amber-600"
+                title="Unlock the board and return to the Action phase"
+              >
+                Undo Done
+              </button>
+            )}
           </div>
 
           <div className={`w-full text-xs ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
             {PHASE_HELP[timerState.currentPhase]}
+          </div>
+          <details className={`w-full text-xs ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
+            <summary className="cursor-pointer font-semibold hover:text-blue-600">More information about each phase</summary>
+            <div className="grid gap-2 mt-3 sm:grid-cols-2 lg:grid-cols-5">
+              {(Object.keys(PHASE_DETAILS) as Phase[]).map((phase) => (
+                <div key={phase} className="rounded-lg border border-gray-200 bg-gray-50 p-2">
+                  <strong className="capitalize">{PHASE_DETAILS[phase].label}:</strong> {PHASE_DETAILS[phase].detail}
+                </div>
+              ))}
+            </div>
+          </details>
+          <div className="w-full flex flex-wrap items-center gap-2 border-t border-gray-200 pt-3">
+            <label htmlFor="retro-import" className="text-xs font-semibold">Pull actions from another board</label>
+            <input
+              id="retro-import"
+              value={sourceSessionId}
+              onChange={(e) => setSourceSessionId(e.target.value)}
+              placeholder="Paste source session ID"
+              className="w-56 rounded-lg border border-gray-300 px-3 py-1.5 text-xs"
+            />
+            <button
+              onClick={handleImportActions}
+              disabled={!sourceSessionId.trim() || isBoardLocked}
+              className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-40"
+            >
+              Import Action Items
+            </button>
+            {importStatus && <span className="text-xs text-gray-500">{importStatus}</span>}
           </div>
         </div>
       </div>

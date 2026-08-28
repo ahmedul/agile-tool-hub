@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { trackEvent } from "@/lib/analytics";
 import OutputFeedback from "@/components/OutputFeedback";
 
@@ -246,17 +247,17 @@ function generateStandup(form: FormState, members: TeamMemberUpdate[], standupMo
 }
 
 export default function DailyStandupGenerator() {
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = usePersistentState<FormState>("tool-draft-daily-standup", {
     yesterday: "",
     today: "",
     blockers: "",
     context: "",
   });
-  const [standupMode, setStandupMode] = useState<StandupMode>("individual");
-  const [outputFormat, setOutputFormat] = useState<OutputFormat>("markdown");
-  const [teamMembers, setTeamMembers] = useState<TeamMemberUpdate[]>(DEFAULT_TEAM_MEMBERS);
-  const [nextMemberId, setNextMemberId] = useState(3);
-  const [output, setOutput] = useState("");
+  const [standupMode, setStandupMode] = usePersistentState<StandupMode>("tool-mode-daily-standup", "individual");
+  const [outputFormat, setOutputFormat] = usePersistentState<OutputFormat>("tool-format-daily-standup", "markdown");
+  const [teamMembers, setTeamMembers] = usePersistentState<TeamMemberUpdate[]>("tool-members-daily-standup", DEFAULT_TEAM_MEMBERS);
+  const [nextMemberId, setNextMemberId] = usePersistentState("tool-next-member-daily-standup", 3);
+  const [output, setOutput] = usePersistentState("tool-output-daily-standup", "");
   const [copied, setCopied] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

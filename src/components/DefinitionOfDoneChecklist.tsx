@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type DoneItem = {
   id: string;
@@ -55,6 +55,33 @@ export default function DefinitionOfDoneChecklist() {
   const [teamName, setTeamName] = useState("Team Definition of Done");
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
+  const hydrated = useRef(false);
+  const skipNextWrite = useRef(true);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("tool-draft-definition-of-done") || "null") as { teamName?: string; checked?: string[] } | null;
+      if (saved) {
+        queueMicrotask(() => {
+          if (saved.teamName) setTeamName(saved.teamName);
+          if (saved.checked) setChecked(new Set(saved.checked));
+        });
+      }
+    } catch {
+      // Keep the checklist usable if the saved draft is unavailable.
+    } finally {
+      hydrated.current = true;
+      skipNextWrite.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated.current || skipNextWrite.current) {
+      skipNextWrite.current = false;
+      return;
+    }
+    localStorage.setItem("tool-draft-definition-of-done", JSON.stringify({ teamName, checked: [...checked] }));
+  }, [teamName, checked]);
 
   const allItems = SECTIONS.flatMap((section) => section.items);
   const progress = Math.round((checked.size / allItems.length) * 100);

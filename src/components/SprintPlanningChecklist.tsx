@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type ChecklistItem = {
   id: string;
@@ -62,6 +62,35 @@ export default function SprintPlanningChecklist() {
   const [capacity, setCapacity] = useState("30");
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
+  const hydrated = useRef(false);
+  const skipNextWrite = useRef(true);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("tool-draft-sprint-planning-checklist") || "null") as { sprintName?: string; sprintGoal?: string; capacity?: string; checked?: string[] } | null;
+      if (saved) {
+        queueMicrotask(() => {
+          if (saved.sprintName) setSprintName(saved.sprintName);
+          if (saved.sprintGoal !== undefined) setSprintGoal(saved.sprintGoal);
+          if (saved.capacity !== undefined) setCapacity(saved.capacity);
+          if (saved.checked) setChecked(new Set(saved.checked));
+        });
+      }
+    } catch {
+      // Keep the checklist usable if the saved draft is unavailable.
+    } finally {
+      hydrated.current = true;
+      skipNextWrite.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated.current || skipNextWrite.current) {
+      skipNextWrite.current = false;
+      return;
+    }
+    localStorage.setItem("tool-draft-sprint-planning-checklist", JSON.stringify({ sprintName, sprintGoal, capacity, checked: [...checked] }));
+  }, [sprintName, sprintGoal, capacity, checked]);
 
   const allItems = SECTIONS.flatMap((section) => section.items);
   const checkedCount = checked.size;

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { trackEvent } from "@/lib/analytics";
 import { scoreUserStory, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -320,18 +321,18 @@ ${parsed.sourceContext || featureDescription.trim()}`;
 
 
 export default function UserStoryGenerator() {
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = usePersistentState<FormState>("tool-draft-user-story", {
     featureDescription: "",
     userType: "",
     storyType: "feature",
     priority: "Medium",
     preset: "product",
   });
-  const [output, setOutput] = useState("");
+  const [output, setOutput] = usePersistentState("tool-output-user-story", "");
   const [copied, setCopied] = useState(false);
   const loading = false;
   const [error, setError] = useState("");
-  const [quality, setQuality] = useState<StoryQualityResult | null>(null);
+  const [quality, setQuality] = usePersistentState<StoryQualityResult | null>("tool-quality-user-story", null);
 
   const quickExamples = [
     {

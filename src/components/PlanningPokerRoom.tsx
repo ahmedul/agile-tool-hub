@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAnimation } from "@/hooks/useAnimation";
+import { usePersistentState } from "@/hooks/usePersistentState";
 import { ANIMATION_VARIANTS, DURATIONS, STAGGER_CONTAINER, STAGGER_ITEM } from "@/lib/animations";
 import CopyButton from "./CopyButton";
 import CelebrationMoment from "@/components/CelebrationMoment";
@@ -234,24 +235,14 @@ function getSeatingProfile(total: number) {
 export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) {
   const [nameInput, setNameInput] = useState("");
   const [joined, setJoined] = useState(false);
-  const [myVote, setMyVote] = useState<Vote>(null);
+  const [myVote, setMyVote] = usePersistentState<Vote>(`pp-vote-${sessionId}`, null);
   const [participants, setParticipants] = useState<Record<string, ParticipantState>>({});
-  const [currentStory, setCurrentStory] = useState("");
-  const [storyInput, setStoryInput] = useState("");
-  const [revealed, setRevealed] = useState(false);
+  const [currentStory, setCurrentStory] = usePersistentState(`pp-current-story-${sessionId}`, "");
+  const [storyInput, setStoryInput] = usePersistentState(`pp-story-input-${sessionId}`, "");
+  const [revealed, setRevealed] = usePersistentState(`pp-revealed-${sessionId}`, false);
   const [avatarTheme, setAvatarTheme] = useState<AvatarTheme>("animals");
-  const [stories, setStories] = useState<StorySummary[]>(() => {
-    if (typeof window === "undefined") return [];
-    const savedStories = localStorage.getItem(`pp_stories_${sessionId}`);
-    if (!savedStories) return [];
-    try {
-      const parsed = JSON.parse(savedStories) as StorySummary[];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  });
-  const [finalEstimate, setFinalEstimate] = useState<Vote>(null);
+  const [stories, setStories] = usePersistentState<StorySummary[]>(`pp_stories_${sessionId}`, []);
+  const [finalEstimate, setFinalEstimate] = usePersistentState<Vote>(`pp-final-estimate-${sessionId}`, null);
   const [connStatus, setConnStatus] = useState<"connecting" | "connected" | "error">("connecting");
   const sessionUrl =
     typeof window !== "undefined"
@@ -406,11 +397,6 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
     }
   }, [revealed, participants]);
   
-  // Persist stories to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem(`pp_stories_${sessionId}`, JSON.stringify(stories));
-  }, [stories, sessionId]);
-
   const joinChannel = useCallback(
     (name: string) => {
       const uid = userIdRef.current;

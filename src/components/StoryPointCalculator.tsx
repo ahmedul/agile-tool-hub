@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { usePersistentState } from "@/hooks/usePersistentState";
 
 type FactorKey = "effort" | "complexity" | "uncertainty" | "risk" | "dependencies";
 
@@ -161,8 +162,8 @@ function getEstimateLabel(estimate: number) {
 }
 
 export default function StoryPointCalculator() {
-  const [summary, setSummary] = useState("");
-  const [values, setValues] = useState<Record<FactorKey, number>>(INITIAL_VALUES);
+  const [summary, setSummary] = usePersistentState("tool-summary-story-points", "");
+  const [values, setValues] = usePersistentState<Record<FactorKey, number>>("tool-values-story-points", INITIAL_VALUES);
   const [copied, setCopied] = useState(false);
 
   const totalScore = useMemo(
