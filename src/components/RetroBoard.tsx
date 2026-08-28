@@ -47,9 +47,9 @@ type BroadcastEvent =
   | { type: "add_note"; note: RetroNote }
   | { type: "delete_note"; noteId: string }
   | { type: "vote_note"; noteId: string; userId: string; action: "add" | "remove" }
-  | { type: "full_state"; notes: RetroNote[]; retroType: RetroType; timer: TimerState }
+  | { type: "full_state"; notes: RetroNote[]; retroType: RetroType; timer?: TimerState }
   | { type: "request_state"; requestId: string }
-  | { type: "state_response"; requestId: string; notes: RetroNote[]; retroType: RetroType; timer: TimerState }
+  | { type: "state_response"; requestId: string; notes: RetroNote[]; retroType: RetroType; timer?: TimerState }
   | { type: "timer_update"; timer: TimerState }
   | { type: "phase_change"; phase: Phase };
 
@@ -160,11 +160,24 @@ function readPersistedRetroState(sessionId: string): PersistedRetroState | null 
     const raw = localStorage.getItem(`retro-state-${sessionId}`);
     if (!raw) return null;
     const saved = JSON.parse(raw) as PersistedRetroState;
-    if (!Array.isArray(saved.notes) || !saved.timer || !saved.retroType) return null;
-    return saved;
+    if (!Array.isArray(saved.notes) || !saved.retroType) return null;
+    return {
+      notes: saved.notes,
+      retroType: saved.retroType,
+      timer: normalizeTimerState(saved.timer),
+    };
   } catch {
     return null;
   }
+}
+
+function normalizeTimerState(timer: Partial<TimerState> | undefined): TimerState {
+  return {
+    isRunning: timer?.isRunning === true,
+    remainingSeconds: typeof timer?.remainingSeconds === "number" ? timer.remainingSeconds : 600,
+    totalSeconds: typeof timer?.totalSeconds === "number" && timer.totalSeconds > 0 ? timer.totalSeconds : 600,
+    currentPhase: timer?.currentPhase && PHASE_DETAILS[timer.currentPhase] ? timer.currentPhase : "brainstorm",
+  };
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -235,7 +248,9 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   useEffect(() => { isBoardLockedRef.current = timerState.currentPhase === "done"; }, [timerState.currentPhase]);
 
   // Persist theme preference
-  useEffect(() => { localStorage.setItem("retro-theme", theme); }, [theme]);
+  useEffect(() => {
+    try { localStorage.setItem("retro-theme", theme); } catch { /* Storage may be unavailable. */ }
+  }, [theme]);
   useEffect(() => {
     const saved = readPersistedRetroState(sessionId);
     if (saved) {
@@ -246,7 +261,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         setNotes(saved.notes);
         setRetroType(saved.retroType);
         setInputs(makeInputsForType(saved.retroType));
-        setTimerState(saved.timer);
+        setTimerState(normalizeTimerState(saved.timer));
       });
     }
     stateHydratedRef.current = true;
@@ -254,7 +269,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
   useEffect(() => {
     if (!stateHydratedRef.current || !joined) return;
     const snapshot: PersistedRetroState = { notes, retroType, timer: timerState };
-    localStorage.setItem(`retro-state-${sessionId}`, JSON.stringify(snapshot));
+    try { localStorage.setItem(`retro-state-${sessionId}`, JSON.stringify(snapshot)); } catch { /* Keep the live board usable. */ }
   }, [joined, notes, retroType, timerState, sessionId]);
 
   const playSound = useCallback(() => {
@@ -379,8 +394,9 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
           setRetroType(event.retroType);
           setInputs(makeInputsForType(event.retroType));
         }
-        timerRef.current = event.timer;
-        setTimerState(event.timer);
+        const normalizedTimer = normalizeTimerState(event.timer ?? timerRef.current);
+        timerRef.current = normalizedTimer;
+        setTimerState(normalizedTimer);
         break;
       case "state_response":
         if (event.notes.length > 0) {
@@ -402,8 +418,9 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
         }
         break;
       case "timer_update":
-        timerRef.current = event.timer;
-        setTimerState(event.timer);
+        const timer = normalizeTimerState(event.timer ?? timerRef.current);
+        timerRef.current = timer;
+        setTimerState(timer);
         break;
       case "phase_change":
         setTimerState((prev) => {
