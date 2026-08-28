@@ -146,6 +146,8 @@ const NOTE_COLORS: Record<ColumnId, string> = {
   glad: "bg-green-100 border-green-300",
 };
 
+const DRAGGABLE_RETRO_COLUMNS: ColumnId[] = ["went_well", "to_improve", "action_items"];
+
 function makeInputsForType(type: RetroType): Record<ColumnId, string> {
   const format = RETRO_FORMATS[type];
   const next: Record<ColumnId, string> = {} as Record<ColumnId, string>;
@@ -633,10 +635,10 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
 
   const handleDropNote = (event: React.DragEvent<HTMLDivElement>, columnId: ColumnId) => {
     event.preventDefault();
-    if (isBoardLockedRef.current || columnId !== "action_items") return;
+    if (isBoardLockedRef.current || !DRAGGABLE_RETRO_COLUMNS.includes(columnId)) return;
     const noteId = event.dataTransfer.getData("text/plain");
     const note = notesRef.current.find((item) => item.id === noteId);
-    if (!note || !["went_well", "to_improve"].includes(note.columnId)) return;
+    if (!note || !DRAGGABLE_RETRO_COLUMNS.includes(note.columnId) || note.columnId === columnId) return;
     setNotes((prev) => prev.map((item) => item.id === noteId ? { ...item, columnId } : item));
     broadcast({ type: "move_note", noteId, columnId });
   };
@@ -1041,7 +1043,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
           return (
             <div
               key={col.id}
-              onDragOver={(event) => col.id === "action_items" && !isBoardLocked && event.preventDefault()}
+              onDragOver={(event) => DRAGGABLE_RETRO_COLUMNS.includes(col.id) && !isBoardLocked && event.preventDefault()}
               onDrop={(event) => handleDropNote(event, col.id)}
               className={`rounded-xl border-2 ${col.bg} p-4 flex flex-col gap-3 ${col.id === "action_items" ? "transition-shadow" : ""}`}
             >
@@ -1087,7 +1089,7 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                         animate="animate"
                         exit="exit"
                         transition={{ duration: DURATIONS.normal / 1000, delay: idx * 0.05, ease: EASINGS.smooth }}
-                        draggable={!isBoardLocked && (note.columnId === "went_well" || note.columnId === "to_improve")}
+                        draggable={!isBoardLocked && DRAGGABLE_RETRO_COLUMNS.includes(note.columnId)}
                         onDragStart={(event) => {
                           (event as unknown as DragEvent).dataTransfer?.setData("text/plain", note.id);
                         }}
@@ -1127,8 +1129,8 @@ export default function RetroBoard({ sessionId }: { sessionId: string }) {
                 {colNotes.length === 0 && (
                   <div className="text-center py-12 text-gray-400">
                     <p className="text-lg">✨ Add something great here →</p>
-                    {col.id === "action_items" && !isBoardLocked && (
-                      <p className="text-xs mt-2">Drag a Went Well or To Improve note here</p>
+                    {DRAGGABLE_RETRO_COLUMNS.includes(col.id) && !isBoardLocked && (
+                      <p className="text-xs mt-2">Drag notes between these columns</p>
                     )}
                   </div>
                 )}
