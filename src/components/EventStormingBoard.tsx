@@ -65,6 +65,8 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   const channelRef = useRef<RealtimeChannel | null>(null);
   const userRef = useRef("");
   const stateRef = useRef(state);
+  const serverLoadedRef = useRef(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     stateRef.current = state;
@@ -96,6 +98,36 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     });
   }, [sessionId]);
 
+  // Load the durable server snapshot first; localStorage remains the fallback
+  // that keeps the current browser usable during a temporary outage.
+  useEffect(() => {
+    if (!joined) return;
+    let cancelled = false;
+    serverLoadedRef.current = false;
+    fetch(`/api/collaboration-sessions/${sessionId}`, { cache: "no-store" })
+      .then(async (response) => {
+        if (cancelled || !response.ok) return;
+        const saved = await response.json() as { state?: StormState };
+        if (saved.state?.cards && Array.isArray(saved.state.cards)) setState(saved.state);
+      })
+      .catch(() => { /* Use local recovery when durable storage is unavailable. */ })
+      .finally(() => { if (!cancelled) serverLoadedRef.current = true; });
+    return () => { cancelled = true; };
+  }, [joined, sessionId, setState]);
+
+  useEffect(() => {
+    if (!joined || !serverLoadedRef.current) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      fetch(`/api/collaboration-sessions/${sessionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ toolType: "event_storming", title: state.title, state }),
+      }).catch(() => { /* localStorage still protects the current browser. */ });
+    }, 600);
+    return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
+  }, [joined, sessionId, setState, state]);
+
   useEffect(() => {
     if (!joined) return;
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
@@ -114,7 +146,6 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
       .on("broadcast", { event: "edit" }, ({ payload }) => apply(payload as StormEvent))
       .on("broadcast", { event: "delete" }, ({ payload }) => apply(payload as StormEvent))
       .on("broadcast", { event: "phase" }, ({ payload }) => apply(payload as StormEvent))
-      .on("broadcast", { event: "request_state" }, () => send({ type: "state", state: stateRef.current }))
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           setConnection("connected");
