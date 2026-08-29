@@ -78,6 +78,11 @@ const tools = [
     description: "Real-time retro board for Agile teams.",
     href: "/tools/retro-board",
   },
+  {
+    title: "EventStorming Board",
+    description: "Map business processes and domain events with a distributed team.",
+    href: "/tools/event-storming",
+  },
 ];
 
 const toolGroups = [
