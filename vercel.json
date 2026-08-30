@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/cron/cleanup-eventstorming",
+      "schedule": "17 3 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/:path*",
