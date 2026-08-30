@@ -260,25 +260,37 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     doc.setTextColor(15, 23, 42); doc.setFontSize(22); doc.text(state.title, margin, 16);
     doc.setFontSize(9); doc.setTextColor(100); doc.text(`EventStorming process map · ${new Date().toLocaleDateString()} · ${state.cards.length} cards · ${(state.links ?? []).length} relationships`, margin, 22);
     doc.setDrawColor(203, 213, 225); doc.setLineWidth(0.5); doc.line(margin, 27, pageWidth - margin, 27);
-    const eventCards = state.cards.filter((card) => card.type === "event").sort((a, b) => a.lane - b.lane || a.createdAt - b.createdAt);
-    eventCards.forEach((card, index) => {
-      const next = eventCards[index + 1];
-      if (!next || next.lane <= card.lane) return;
-      const x1 = margin + (card.lane - 0.5) * laneWidth;
-      const x2 = margin + (next.lane - 0.5) * laneWidth;
-      doc.setDrawColor(251, 146, 60); doc.setLineWidth(1); doc.line(x1 + 18, 74, x2 - 18, 74);
-      doc.setFillColor(251, 146, 60); doc.triangle(x2 - 14, 74, x2 - 20, 71, x2 - 20, 77, "F");
-    });
+    const pdfPositions = new Map<string, { left: number; right: number; y: number; height: number }>();
+    for (let index = 0; index < laneCount; index += 1) {
+      const x = margin + index * laneWidth;
+      const laneCards = state.cards.filter((card) => card.lane === index + 1).sort((a, b) => a.createdAt - b.createdAt);
+      let y = 47;
+      laneCards.forEach((card) => {
+        const lines = doc.splitTextToSize(`${CARD_TYPES[card.type].label}\n${card.text}`, laneWidth - 8) as string[];
+        const height = Math.max(13, lines.length * 4 + 5);
+        pdfPositions.set(card.id, { left: x + 3, right: x + laneWidth - 3, y: y + height / 2, height });
+        y += height + 3;
+      });
+    }
     (state.links ?? []).forEach((link, index) => {
-      const from = state.cards.find((card) => card.id === link.from);
-      const to = state.cards.find((card) => card.id === link.to);
-      if (!from || !to || from.lane === to.lane) return;
-      const x1 = margin + (from.lane - 0.5) * laneWidth;
-      const x2 = margin + (to.lane - 0.5) * laneWidth;
+      const from = pdfPositions.get(link.from);
+      const to = pdfPositions.get(link.to);
+      if (!from || !to) return;
+      const forward = to.left >= from.left;
+      const startX = forward ? from.right : from.left;
+      const endX = forward ? to.left : to.right;
+      const routeY = forward ? 43 - (index % 4) * 2 : pageHeight - 29 + (index % 4) * 2;
+      const startBend = forward ? startX + 8 : startX - 8;
+      const endBend = forward ? endX - 8 : endX + 8;
+      const pathPoints = [[startX, from.y], [startBend, from.y], [startBend, routeY], [endBend, routeY], [endBend, to.y], [endX, to.y]];
       const hex = LINK_COLORS[index % LINK_COLORS.length].slice(1);
       const red = Number.parseInt(hex.slice(0, 2), 16); const green = Number.parseInt(hex.slice(2, 4), 16); const blue = Number.parseInt(hex.slice(4, 6), 16);
-      doc.setDrawColor(red, green, blue); doc.setLineWidth(0.5); doc.setLineDashPattern([2, 2], 0); doc.line(x1 + (x2 > x1 ? 12 : -12), 80, x2 - (x2 > x1 ? 12 : -12), 80); doc.setLineDashPattern([], 0);
-      doc.setFillColor(red, green, blue); doc.triangle(x2 - (x2 > x1 ? 10 : -10), 80, x2 - (x2 > x1 ? 15 : -5), 78, x2 - (x2 > x1 ? 15 : -5), 82, "F");
+      doc.setLineDashPattern([2, 2], 0); doc.setLineWidth(2.2); doc.setDrawColor(248, 250, 252);
+      for (let point = 1; point < pathPoints.length; point += 1) doc.line(pathPoints[point - 1][0], pathPoints[point - 1][1], pathPoints[point][0], pathPoints[point][1]);
+      doc.setLineWidth(0.7); doc.setDrawColor(red, green, blue);
+      for (let point = 1; point < pathPoints.length; point += 1) doc.line(pathPoints[point - 1][0], pathPoints[point - 1][1], pathPoints[point][0], pathPoints[point][1]);
+      doc.setLineDashPattern([], 0); doc.setFillColor(red, green, blue);
+      doc.triangle(endX, to.y, endX - (forward ? 3 : -3), to.y - 1.8, endX - (forward ? 3 : -3), to.y + 1.8, "F");
     });
     for (let index = 0; index < laneCount; index += 1) {
       const x = margin + index * laneWidth;
@@ -298,7 +310,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     }
     const legendY = pageHeight - 15;
     doc.setFontSize(7); doc.setTextColor(71, 85, 105); doc.text("Legend:", margin, legendY);
-    (Object.keys(CARD_TYPES) as CardType[]).slice(0, 6).forEach((type, index) => { const x = margin + 18 + index * 53; const [red, green, blue] = PDF_COLORS[type]; doc.setFillColor(red, green, blue); doc.roundedRect(x, legendY - 4, 4, 4, 1, 1, "F"); doc.setTextColor(71, 85, 105); doc.text(CARD_TYPES[type].label, x + 6, legendY); });
+    (Object.keys(CARD_TYPES) as CardType[]).forEach((type, index) => { const x = margin + 18 + index * 34; const [red, green, blue] = PDF_COLORS[type]; doc.setFillColor(red, green, blue); doc.roundedRect(x, legendY - 4, 4, 4, 1, 1, "F"); doc.setTextColor(71, 85, 105); doc.text(CARD_TYPES[type].label, x + 6, legendY); });
     doc.save(`eventstorming-${sessionId}.pdf`);
   };
 
