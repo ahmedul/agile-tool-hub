@@ -62,6 +62,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   const [members, setMembers] = useState<string[]>([]);
   const [connection, setConnection] = useState<"connecting" | "connected" | "offline">("connecting");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
   const channelRef = useRef<RealtimeChannel | null>(null);
   const userRef = useRef("");
   const stateRef = useRef(state);
@@ -197,6 +198,17 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     doc.save(`eventstorming-${sessionId}.pdf`);
   };
 
+  const copySessionLink = async () => {
+    const url = `${window.location.origin}/tools/event-storming/${sessionId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      window.setTimeout(() => setLinkCopied(false), 1800);
+    } catch {
+      setLinkCopied(false);
+    }
+  };
+
   const cardsByLane = useMemo(() => LANES.map((number) => state.cards.filter((card) => card.lane === number)), [state.cards]);
 
   if (!joined) return (
@@ -220,6 +232,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
           <input value={state.title} onChange={(event) => setState((current) => ({ ...current, title: event.target.value }))} className="min-w-[240px] flex-1 rounded-lg border border-transparent px-2 py-1 text-xl font-bold text-slate-900 hover:border-slate-200 focus:border-orange-400 focus:outline-none" aria-label="Workshop title" />
           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${connection === "connected" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>{connection === "connected" ? "● Live" : "○ Reconnecting"}</span>
           <span className="text-sm text-slate-500">{members.length || 1} participant{members.length === 1 ? "" : "s"}</span>
+          <button onClick={copySessionLink} className="rounded-lg border border-orange-300 px-3 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50">{linkCopied ? "Link copied ✓" : "Copy session link"}</button>
           <button onClick={exportPdf} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Export PDF</button>
         </div>
       </header>
