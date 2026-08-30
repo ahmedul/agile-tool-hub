@@ -260,38 +260,6 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     doc.setTextColor(15, 23, 42); doc.setFontSize(22); doc.text(state.title, margin, 16);
     doc.setFontSize(9); doc.setTextColor(100); doc.text(`EventStorming process map · ${new Date().toLocaleDateString()} · ${state.cards.length} cards · ${(state.links ?? []).length} relationships`, margin, 22);
     doc.setDrawColor(203, 213, 225); doc.setLineWidth(0.5); doc.line(margin, 27, pageWidth - margin, 27);
-    const pdfPositions = new Map<string, { left: number; right: number; y: number; height: number }>();
-    for (let index = 0; index < laneCount; index += 1) {
-      const x = margin + index * laneWidth;
-      const laneCards = state.cards.filter((card) => card.lane === index + 1).sort((a, b) => a.createdAt - b.createdAt);
-      let y = 47;
-      laneCards.forEach((card) => {
-        const lines = doc.splitTextToSize(`${CARD_TYPES[card.type].label}\n${card.text}`, laneWidth - 8) as string[];
-        const height = Math.max(13, lines.length * 4 + 5);
-        pdfPositions.set(card.id, { left: x + 3, right: x + laneWidth - 3, y: y + height / 2, height });
-        y += height + 3;
-      });
-    }
-    (state.links ?? []).forEach((link, index) => {
-      const from = pdfPositions.get(link.from);
-      const to = pdfPositions.get(link.to);
-      if (!from || !to) return;
-      const forward = to.left >= from.left;
-      const startX = forward ? from.right : from.left;
-      const endX = forward ? to.left : to.right;
-      const routeY = forward ? 43 - (index % 4) * 2 : pageHeight - 29 + (index % 4) * 2;
-      const startBend = forward ? startX + 8 : startX - 8;
-      const endBend = forward ? endX - 8 : endX + 8;
-      const pathPoints = [[startX, from.y], [startBend, from.y], [startBend, routeY], [endBend, routeY], [endBend, to.y], [endX, to.y]];
-      const hex = LINK_COLORS[index % LINK_COLORS.length].slice(1);
-      const red = Number.parseInt(hex.slice(0, 2), 16); const green = Number.parseInt(hex.slice(2, 4), 16); const blue = Number.parseInt(hex.slice(4, 6), 16);
-      doc.setLineDashPattern([2, 2], 0); doc.setLineWidth(2.2); doc.setDrawColor(248, 250, 252);
-      for (let point = 1; point < pathPoints.length; point += 1) doc.line(pathPoints[point - 1][0], pathPoints[point - 1][1], pathPoints[point][0], pathPoints[point][1]);
-      doc.setLineWidth(0.7); doc.setDrawColor(red, green, blue);
-      for (let point = 1; point < pathPoints.length; point += 1) doc.line(pathPoints[point - 1][0], pathPoints[point - 1][1], pathPoints[point][0], pathPoints[point][1]);
-      doc.setLineDashPattern([], 0); doc.setFillColor(red, green, blue);
-      doc.triangle(endX, to.y, endX - (forward ? 3 : -3), to.y - 1.8, endX - (forward ? 3 : -3), to.y + 1.8, "F");
-    });
     for (let index = 0; index < laneCount; index += 1) {
       const x = margin + index * laneWidth;
       doc.setFillColor(255, 237, 213); doc.roundedRect(x + 1, 31, laneWidth - 2, 10, 2, 2, "F");
@@ -308,6 +276,27 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         y += height + 3;
       });
     }
+    const relationshipY = 132;
+    doc.setFillColor(255, 247, 237); doc.setDrawColor(253, 186, 116); doc.roundedRect(margin, relationshipY, pageWidth - margin * 2, 38, 3, 3, "FD");
+    doc.setTextColor(124, 45, 18); doc.setFontSize(11); doc.text("Relationships", margin + 5, relationshipY + 7);
+    doc.setTextColor(154, 52, 18); doc.setFontSize(7); doc.text("Explicit connections captured during the workshop", margin + 37, relationshipY + 7);
+    (state.links ?? []).forEach((link, index) => {
+      const from = state.cards.find((card) => card.id === link.from);
+      const to = state.cards.find((card) => card.id === link.to);
+      if (!from || !to) return;
+      const column = index % 2;
+      const row = Math.floor(index / 2);
+      const x = margin + 6 + column * ((pageWidth - margin * 2 - 12) / 2);
+      const y = relationshipY + 13 + row * 5.5;
+      const hex = LINK_COLORS[index % LINK_COLORS.length].slice(1);
+      const red = Number.parseInt(hex.slice(0, 2), 16); const green = Number.parseInt(hex.slice(2, 4), 16); const blue = Number.parseInt(hex.slice(4, 6), 16);
+      const fromText = from.text.length > 27 ? `${from.text.slice(0, 26)}…` : from.text;
+      const toText = to.text.length > 27 ? `${to.text.slice(0, 26)}…` : to.text;
+      doc.setFillColor(red, green, blue); doc.circle(x, y - 1.5, 1.5, "F");
+      doc.setTextColor(71, 85, 105); doc.setFontSize(7); doc.text(`${index + 1}. ${fromText}`, x + 4, y);
+      const arrowX = x + 48; doc.setDrawColor(red, green, blue); doc.setLineWidth(0.7); doc.line(arrowX, y - 1.5, arrowX + 8, y - 1.5); doc.setFillColor(red, green, blue); doc.triangle(arrowX + 9, y - 1.5, arrowX + 6.5, y - 2.8, arrowX + 6.5, y - 0.2, "F");
+      doc.setTextColor(71, 85, 105); doc.text(toText, arrowX + 12, y);
+    });
     const legendY = pageHeight - 15;
     doc.setFontSize(7); doc.setTextColor(71, 85, 105); doc.text("Legend:", margin, legendY);
     (Object.keys(CARD_TYPES) as CardType[]).forEach((type, index) => { const x = margin + 18 + index * 34; const [red, green, blue] = PDF_COLORS[type]; doc.setFillColor(red, green, blue); doc.roundedRect(x, legendY - 4, 4, 4, 1, 1, "F"); doc.setTextColor(71, 85, 105); doc.text(CARD_TYPES[type].label, x + 6, legendY); });
