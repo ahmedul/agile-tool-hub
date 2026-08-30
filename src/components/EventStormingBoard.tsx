@@ -230,7 +230,22 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   };
 
   const addTimelineStep = () => {
-    setState((current) => ({ ...current, laneCount: Math.min(MAX_LANE_COUNT, (current.laneCount ?? DEFAULT_LANE_COUNT) + 1) }));
+    const nextState = { ...state, laneCount: Math.min(MAX_LANE_COUNT, (state.laneCount ?? DEFAULT_LANE_COUNT) + 1) };
+    apply({ type: "state", state: nextState });
+    send({ type: "state", state: nextState });
+  };
+
+  const removeTimelineStep = () => {
+    const currentCount = state.laneCount ?? DEFAULT_LANE_COUNT;
+    if (currentCount <= 1) return;
+    const nextCount = currentCount - 1;
+    const nextState = {
+      ...state,
+      laneCount: nextCount,
+      cards: state.cards.map((card) => card.lane > nextCount ? { ...card, lane: nextCount } : card),
+    };
+    apply({ type: "state", state: nextState });
+    send({ type: "state", state: nextState });
   };
 
   const exportPdf = () => {
@@ -368,7 +383,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between gap-3"><h2 className="font-bold text-slate-900">Legend & card types</h2><span className="text-xs text-slate-500">Click a type, write one idea, then add it to the process</span></div>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{(Object.keys(CARD_TYPES) as CardType[]).map((type) => <button key={type} onClick={() => setSelectedType(type)} className={`rounded-xl border-2 p-3 text-left transition ${CARD_TYPES[type].color} ${selectedType === type ? "ring-2 ring-orange-400 ring-offset-1" : "opacity-80 hover:opacity-100"}`}><span className="font-semibold">{CARD_TYPES[type].label}</span><span className="mt-1 block text-xs opacity-80">{CARD_TYPES[type].description}</span></button>)}</div>
-          <div className="mt-4 flex flex-wrap gap-2"><input value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && addCard()} placeholder={CARD_TYPES[selectedType].placeholder} className="min-w-[240px] flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-orange-500 focus:outline-none" /><select value={lane} onChange={(event) => setLane(Number(event.target.value))} className="rounded-xl border border-slate-300 px-3 py-3 text-sm">{Array.from({ length: timelineStepCount }, (_, index) => <option key={index + 1} value={index + 1}>Step {index + 1}</option>)}</select><button onClick={addCard} disabled={!draft.trim()} className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-40">Add {CARD_TYPES[selectedType].label}</button><button onClick={addTimelineStep} disabled={timelineStepCount >= MAX_LANE_COUNT} className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40">+ Add timeline step</button></div>
+          <div className="mt-4 flex flex-wrap gap-2"><input value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && addCard()} placeholder={CARD_TYPES[selectedType].placeholder} className="min-w-[240px] flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-orange-500 focus:outline-none" /><select value={lane} onChange={(event) => setLane(Number(event.target.value))} className="rounded-xl border border-slate-300 px-3 py-3 text-sm">{Array.from({ length: timelineStepCount }, (_, index) => <option key={index + 1} value={index + 1}>Step {index + 1}</option>)}</select><button onClick={addCard} disabled={!draft.trim()} className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-40">Add {CARD_TYPES[selectedType].label}</button><button onClick={addTimelineStep} disabled={timelineStepCount >= MAX_LANE_COUNT} className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40">+ Add timeline step</button><button onClick={removeTimelineStep} disabled={timelineStepCount <= 1} className="rounded-xl border border-red-200 px-4 py-3 text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-40">− Remove last step</button></div>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500"><button onClick={() => setLinkSource(null)} className={`rounded-full border px-3 py-1.5 font-semibold ${linkSource ? "border-orange-300 bg-orange-50 text-orange-700" : "border-slate-200"}`}>{linkSource ? "Link mode active — choose the destination card" : "Link cards"}</button><span>Click Link on one card, then another. Click the same pair again to remove its link.</span></div>
         </div>
 
