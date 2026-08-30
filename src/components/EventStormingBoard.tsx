@@ -21,6 +21,7 @@ type StormState = {
   title: string;
   cards: StormCard[];
   phase: Phase;
+  laneCount: number;
 };
 
 type StormEvent =
@@ -49,8 +50,26 @@ const PHASES: Array<{ id: Phase; label: string; description: string }> = [
   { id: "review", label: "Review", description: "Capture hotspots and agree on next steps." },
 ];
 
-const EMPTY_STATE: StormState = { title: "Untitled process", cards: [], phase: "discover" };
-const LANES = Array.from({ length: 8 }, (_, index) => index + 1);
+const DEFAULT_LANE_COUNT = 8;
+const MAX_LANE_COUNT = 16;
+const EMPTY_STATE: StormState = { title: "Untitled process", cards: [], phase: "discover", laneCount: DEFAULT_LANE_COUNT };
+
+const PDF_COLORS: Record<CardType, [number, number, number]> = {
+  event: [255, 224, 178], command: [191, 219, 254], actor: [254, 240, 138], policy: [233, 213, 255],
+  read_model: [187, 247, 208], external_system: [251, 207, 232], aggregate: [253, 230, 138], hotspot: [254, 202, 202],
+};
+
+function normalizeStormState(value: Partial<StormState> | undefined): StormState {
+  const laneCount = typeof value?.laneCount === "number"
+    ? Math.max(1, Math.min(MAX_LANE_COUNT, Math.floor(value.laneCount)))
+    : DEFAULT_LANE_COUNT;
+  return {
+    title: typeof value?.title === "string" ? value.title : EMPTY_STATE.title,
+    cards: Array.isArray(value?.cards) ? value.cards.map((card) => ({ ...card, lane: Math.max(1, Math.min(laneCount, card.lane)) })) : [],
+    phase: value?.phase && PHASES.some((phase) => phase.id === value.phase) ? value.phase : "discover",
+    laneCount,
+  };
+}
 
 export default function EventStormingBoard({ sessionId }: { sessionId: string }) {
   const [name, setName] = useState("");
@@ -80,9 +99,9 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
 
   const apply = useCallback((event: StormEvent) => {
     setState((current) => {
-      if (event.type === "state") return event.state;
+      if (event.type === "state") return normalizeStormState(event.state);
       if (event.type === "add") return current.cards.some((card) => card.id === event.card.id) ? current : { ...current, cards: [...current.cards, event.card] };
-      if (event.type === "move") return { ...current, cards: current.cards.map((card) => card.id === event.id ? { ...card, lane: Math.max(1, Math.min(8, event.lane)) } : card) };
+      if (event.type === "move") return { ...current, cards: current.cards.map((card) => card.id === event.id ? { ...card, lane: Math.max(1, Math.min(current.laneCount ?? DEFAULT_LANE_COUNT, event.lane)) } : card) };
       if (event.type === "edit") return { ...current, cards: current.cards.map((card) => card.id === event.id ? { ...card, text: event.text } : card) };
       if (event.type === "delete") return { ...current, cards: current.cards.filter((card) => card.id !== event.id) };
       return { ...current, phase: event.phase };
@@ -109,7 +128,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
       .then(async (response) => {
         if (cancelled || !response.ok) return;
         const saved = await response.json() as { state?: StormState };
-        if (saved.state?.cards && Array.isArray(saved.state.cards)) setState(saved.state);
+        if (saved.state?.cards && Array.isArray(saved.state.cards)) setState(normalizeStormState(saved.state));
       })
       .catch(() => { /* Use local recovery when durable storage is unavailable. */ })
       .finally(() => { if (!cancelled) serverLoadedRef.current = true; });
@@ -178,24 +197,49 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     send({ type: "phase", phase });
   };
 
+  const addTimelineStep = () => {
+    setState((current) => ({ ...current, laneCount: Math.min(MAX_LANE_COUNT, (current.laneCount ?? DEFAULT_LANE_COUNT) + 1) }));
+  };
+
   const exportPdf = () => {
-    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-    doc.setFontSize(20); doc.text(state.title, 14, 16);
-    doc.setFontSize(9); doc.setTextColor(90); doc.text(`EventStorming map · ${new Date().toLocaleDateString()} · ${state.cards.length} cards`, 14, 22);
-    let y = 32;
-    for (const phase of PHASES) {
-      const cards = state.cards.filter((card) => card.type === "event" || card.type === "hotspot" || phase.id === state.phase);
-      if (!cards.length) continue;
-      doc.setFontSize(12); doc.setTextColor(20); doc.text(phase.label, 14, y); y += 6;
-      cards.slice(0, 18).forEach((card) => {
-        const label = `${CARD_TYPES[card.type].label}: ${card.text}`;
-        const lines = doc.splitTextToSize(`• ${label}`, 260) as string[];
-        doc.setFontSize(9); doc.setTextColor(card.type === "hotspot" ? 180 : 50, card.type === "hotspot" ? 30 : 50, 50);
-        doc.text(lines, 18, y); y += lines.length * 4 + 1;
-        if (y > 185) { doc.addPage(); y = 18; }
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a3" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 12;
+    const laneCount = state.laneCount ?? DEFAULT_LANE_COUNT;
+    const laneWidth = (pageWidth - margin * 2) / laneCount;
+    doc.setFillColor(248, 250, 252); doc.rect(0, 0, pageWidth, pageHeight, "F");
+    doc.setTextColor(15, 23, 42); doc.setFontSize(22); doc.text(state.title, margin, 16);
+    doc.setFontSize(9); doc.setTextColor(100); doc.text(`EventStorming process map · ${new Date().toLocaleDateString()} · ${state.cards.length} cards`, margin, 22);
+    doc.setDrawColor(203, 213, 225); doc.setLineWidth(0.5); doc.line(margin, 27, pageWidth - margin, 27);
+    const eventCards = state.cards.filter((card) => card.type === "event").sort((a, b) => a.lane - b.lane || a.createdAt - b.createdAt);
+    eventCards.forEach((card, index) => {
+      const next = eventCards[index + 1];
+      if (!next || next.lane <= card.lane) return;
+      const x1 = margin + (card.lane - 0.5) * laneWidth;
+      const x2 = margin + (next.lane - 0.5) * laneWidth;
+      doc.setDrawColor(251, 146, 60); doc.setLineWidth(1); doc.line(x1 + 18, 74, x2 - 18, 74);
+      doc.setFillColor(251, 146, 60); doc.triangle(x2 - 14, 74, x2 - 20, 71, x2 - 20, 77, "F");
+    });
+    for (let index = 0; index < laneCount; index += 1) {
+      const x = margin + index * laneWidth;
+      doc.setFillColor(255, 237, 213); doc.roundedRect(x + 1, 31, laneWidth - 2, 10, 2, 2, "F");
+      doc.setTextColor(154, 52, 18); doc.setFontSize(9); doc.text(`STEP ${index + 1}`, x + laneWidth / 2, 37, { align: "center" });
+      const laneCards = state.cards.filter((card) => card.lane === index + 1).sort((a, b) => a.createdAt - b.createdAt);
+      let y = 47;
+      laneCards.forEach((card) => {
+        const lines = doc.splitTextToSize(`${CARD_TYPES[card.type].label}\n${card.text}`, laneWidth - 8) as string[];
+        const height = Math.max(13, lines.length * 4 + 5);
+        if (y + height > pageHeight - 24) return;
+        const [red, green, blue] = PDF_COLORS[card.type];
+        doc.setFillColor(red, green, blue); doc.setDrawColor(Math.max(0, red - 20), Math.max(0, green - 20), Math.max(0, blue - 20)); doc.roundedRect(x + 3, y, laneWidth - 6, height, 2, 2, "FD");
+        doc.setTextColor(30, 41, 59); doc.setFontSize(7); doc.text(lines, x + 5, y + 5);
+        y += height + 3;
       });
-      y += 4;
     }
+    const legendY = pageHeight - 15;
+    doc.setFontSize(7); doc.setTextColor(71, 85, 105); doc.text("Legend:", margin, legendY);
+    (Object.keys(CARD_TYPES) as CardType[]).slice(0, 6).forEach((type, index) => { const x = margin + 18 + index * 53; const [red, green, blue] = PDF_COLORS[type]; doc.setFillColor(red, green, blue); doc.roundedRect(x, legendY - 4, 4, 4, 1, 1, "F"); doc.setTextColor(71, 85, 105); doc.text(CARD_TYPES[type].label, x + 6, legendY); });
     doc.save(`eventstorming-${sessionId}.pdf`);
   };
 
@@ -218,7 +262,8 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     }
   };
 
-  const cardsByLane = useMemo(() => LANES.map((number) => state.cards.filter((card) => card.lane === number)), [state.cards]);
+  const timelineStepCount = state.laneCount ?? DEFAULT_LANE_COUNT;
+  const cardsByLane = useMemo(() => Array.from({ length: timelineStepCount }, (_, index) => state.cards.filter((card) => card.lane === index + 1)), [state.cards, timelineStepCount]);
 
   if (!joined) return (
     <div className="mx-auto flex min-h-[70vh] max-w-lg items-center justify-center px-4 py-10">
@@ -263,11 +308,11 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         <div className="mb-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between gap-3"><h2 className="font-bold text-slate-900">Legend & card types</h2><span className="text-xs text-slate-500">Click a type, write one idea, then add it to the process</span></div>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{(Object.keys(CARD_TYPES) as CardType[]).map((type) => <button key={type} onClick={() => setSelectedType(type)} className={`rounded-xl border-2 p-3 text-left transition ${CARD_TYPES[type].color} ${selectedType === type ? "ring-2 ring-orange-400 ring-offset-1" : "opacity-80 hover:opacity-100"}`}><span className="font-semibold">{CARD_TYPES[type].label}</span><span className="mt-1 block text-xs opacity-80">{CARD_TYPES[type].description}</span></button>)}</div>
-          <div className="mt-4 flex flex-wrap gap-2"><input value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && addCard()} placeholder={CARD_TYPES[selectedType].placeholder} className="min-w-[240px] flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-orange-500 focus:outline-none" /><select value={lane} onChange={(event) => setLane(Number(event.target.value))} className="rounded-xl border border-slate-300 px-3 py-3 text-sm"><option value={1}>Step 1</option>{LANES.slice(1).map((number) => <option key={number} value={number}>Step {number}</option>)}</select><button onClick={addCard} disabled={!draft.trim()} className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-40">Add {CARD_TYPES[selectedType].label}</button></div>
+          <div className="mt-4 flex flex-wrap gap-2"><input value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && addCard()} placeholder={CARD_TYPES[selectedType].placeholder} className="min-w-[240px] flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-orange-500 focus:outline-none" /><select value={lane} onChange={(event) => setLane(Number(event.target.value))} className="rounded-xl border border-slate-300 px-3 py-3 text-sm">{Array.from({ length: timelineStepCount }, (_, index) => <option key={index + 1} value={index + 1}>Step {index + 1}</option>)}</select><button onClick={addCard} disabled={!draft.trim()} className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-40">Add {CARD_TYPES[selectedType].label}</button><button onClick={addTimelineStep} disabled={timelineStepCount >= MAX_LANE_COUNT} className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40">+ Add timeline step</button></div>
         </div>
 
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="min-w-[1200px] p-4"><div className="mb-3 flex items-center gap-3"><div className="w-36 text-xs font-bold uppercase tracking-wider text-slate-500">Timeline</div><div className="flex-1 border-t-2 border-dashed border-slate-300" /><span className="text-xs font-semibold text-slate-500">Later →</span></div><div className="grid grid-cols-8 gap-3">{cardsByLane.map((cards, index) => <div key={index} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const id = event.dataTransfer.getData("text/plain"); if (id) moveCard(id, index + 1); }} className="min-h-[420px] rounded-xl border border-slate-200 bg-slate-50 p-2"><div className="mb-2 text-center text-xs font-bold text-slate-400">STEP {index + 1}</div><div className="space-y-2">{cards.map((card) => <div key={card.id} draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", card.id)} className={`group cursor-grab rounded-xl border-2 p-3 shadow-sm active:cursor-grabbing ${CARD_TYPES[card.type].color}`}><div className="mb-1 flex items-center justify-between gap-2"><span className="text-[10px] font-bold uppercase tracking-wide opacity-70">{CARD_TYPES[card.type].label}</span><button onClick={() => { apply({ type: "delete", id: card.id }); send({ type: "delete", id: card.id }); }} className="text-xs opacity-0 hover:text-red-700 group-hover:opacity-100" aria-label={`Delete ${card.text}`}>✕</button></div><p className="text-sm font-medium leading-snug">{card.text}</p><p className="mt-2 text-[10px] opacity-60">{card.author}</p></div>)}</div>{cards.length === 0 && <p className="mt-20 text-center text-xs text-slate-400">Drop cards here</p>}</div>)}</div></div>
+          <div className="min-w-[1200px] p-4"><div className="mb-3 flex items-center gap-3"><div className="w-36 text-xs font-bold uppercase tracking-wider text-slate-500">Timeline</div><div className="flex-1 border-t-2 border-dashed border-slate-300" /><span className="text-xs font-semibold text-slate-500">Later →</span></div><div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${timelineStepCount}, minmax(0, 1fr))` }}>{cardsByLane.map((cards, index) => <div key={index} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const id = event.dataTransfer.getData("text/plain"); if (id) moveCard(id, index + 1); }} className="relative min-h-[420px] rounded-xl border border-slate-200 bg-slate-50 p-2"><div className="mb-2 text-center text-xs font-bold text-slate-400">STEP {index + 1}</div>{index < timelineStepCount - 1 && <span className="pointer-events-none absolute -right-3 top-7 z-10 text-xl font-bold text-orange-400">→</span>}<div className="space-y-2">{cards.map((card) => <div key={card.id} draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", card.id)} className={`group cursor-grab rounded-xl border-2 p-3 shadow-sm active:cursor-grabbing ${CARD_TYPES[card.type].color}`}><div className="mb-1 flex items-center justify-between gap-2"><span className="text-[10px] font-bold uppercase tracking-wide opacity-70">{CARD_TYPES[card.type].label}</span><button onClick={() => { apply({ type: "delete", id: card.id }); send({ type: "delete", id: card.id }); }} className="text-xs opacity-0 hover:text-red-700 group-hover:opacity-100" aria-label={`Delete ${card.text}`}>✕</button></div><p className="text-sm font-medium leading-snug">{card.text}</p><p className="mt-2 text-[10px] opacity-60">{card.author}</p></div>)}</div>{cards.length === 0 && <p className="mt-20 text-center text-xs text-slate-400">Drop cards here</p>}</div>)}</div></div>
         </div>
         <p className="mt-3 text-center text-xs text-slate-500">Drag cards between steps to refine the process. Your board is saved in this browser and shared live with the session.</p>
       </main>
