@@ -17,11 +17,14 @@ type StormCard = {
   createdAt: number;
 };
 
+type StormLink = { id: string; from: string; to: string };
+
 type StormState = {
   title: string;
   cards: StormCard[];
   phase: Phase;
   laneCount: number;
+  links: StormLink[];
 };
 
 type StormEvent =
@@ -30,7 +33,9 @@ type StormEvent =
   | { type: "move"; id: string; lane: number }
   | { type: "edit"; id: string; text: string }
   | { type: "delete"; id: string }
-  | { type: "phase"; phase: Phase };
+  | { type: "phase"; phase: Phase }
+  | { type: "link"; link: StormLink }
+  | { type: "unlink"; id: string };
 
 const CARD_TYPES: Record<CardType, { label: string; color: string; description: string; placeholder: string }> = {
   event: { label: "Domain event", color: "bg-orange-100 border-orange-300 text-orange-950", description: "Something that happened, written in past tense.", placeholder: "e.g. Order placed" },
@@ -52,7 +57,7 @@ const PHASES: Array<{ id: Phase; label: string; description: string }> = [
 
 const DEFAULT_LANE_COUNT = 8;
 const MAX_LANE_COUNT = 16;
-const EMPTY_STATE: StormState = { title: "Untitled process", cards: [], phase: "discover", laneCount: DEFAULT_LANE_COUNT };
+const EMPTY_STATE: StormState = { title: "Untitled process", cards: [], phase: "discover", laneCount: DEFAULT_LANE_COUNT, links: [] };
 
 const PDF_COLORS: Record<CardType, [number, number, number]> = {
   event: [255, 224, 178], command: [191, 219, 254], actor: [254, 240, 138], policy: [233, 213, 255],
@@ -68,6 +73,7 @@ function normalizeStormState(value: Partial<StormState> | undefined): StormState
     cards: Array.isArray(value?.cards) ? value.cards.map((card) => ({ ...card, lane: Math.max(1, Math.min(laneCount, card.lane)) })) : [],
     phase: value?.phase && PHASES.some((phase) => phase.id === value.phase) ? value.phase : "discover",
     laneCount,
+    links: Array.isArray(value?.links) ? value.links.filter((link) => link && typeof link.id === "string" && typeof link.from === "string" && typeof link.to === "string" && link.from !== link.to) : [],
   };
 }
 
@@ -82,7 +88,10 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   const [connection, setConnection] = useState<"connecting" | "connected" | "offline">("connecting");
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [linkSource, setLinkSource] = useState<string | null>(null);
+  const [linkPositions, setLinkPositions] = useState<Record<string, { x: number; y: number }>>({});
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const timelineRef = useRef<HTMLDivElement | null>(null);
   const userRef = useRef("");
   const stateRef = useRef(state);
   const serverLoadedRef = useRef(false);
@@ -104,6 +113,8 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
       if (event.type === "move") return { ...current, cards: current.cards.map((card) => card.id === event.id ? { ...card, lane: Math.max(1, Math.min(current.laneCount ?? DEFAULT_LANE_COUNT, event.lane)) } : card) };
       if (event.type === "edit") return { ...current, cards: current.cards.map((card) => card.id === event.id ? { ...card, text: event.text } : card) };
       if (event.type === "delete") return { ...current, cards: current.cards.filter((card) => card.id !== event.id) };
+      if (event.type === "link") return current.links.some((link) => link.from === event.link.from && link.to === event.link.to) ? current : { ...current, links: [...current.links, event.link] };
+      if (event.type === "unlink") return { ...current, links: current.links.filter((link) => link.id !== event.id) };
       return { ...current, phase: event.phase };
     });
   }, [setState]);
@@ -197,6 +208,27 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     send({ type: "phase", phase });
   };
 
+  const toggleLink = (cardId: string) => {
+    if (!linkSource) {
+      setLinkSource(cardId);
+      return;
+    }
+    if (linkSource === cardId) {
+      setLinkSource(null);
+      return;
+    }
+    const existing = state.links.find((link) => link.from === linkSource && link.to === cardId);
+    if (existing) {
+      apply({ type: "unlink", id: existing.id });
+      send({ type: "unlink", id: existing.id });
+    } else {
+      const link: StormLink = { id: crypto.randomUUID(), from: linkSource, to: cardId };
+      apply({ type: "link", link });
+      send({ type: "link", link });
+    }
+    setLinkSource(null);
+  };
+
   const addTimelineStep = () => {
     setState((current) => ({ ...current, laneCount: Math.min(MAX_LANE_COUNT, (current.laneCount ?? DEFAULT_LANE_COUNT) + 1) }));
   };
@@ -210,7 +242,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     const laneWidth = (pageWidth - margin * 2) / laneCount;
     doc.setFillColor(248, 250, 252); doc.rect(0, 0, pageWidth, pageHeight, "F");
     doc.setTextColor(15, 23, 42); doc.setFontSize(22); doc.text(state.title, margin, 16);
-    doc.setFontSize(9); doc.setTextColor(100); doc.text(`EventStorming process map · ${new Date().toLocaleDateString()} · ${state.cards.length} cards`, margin, 22);
+    doc.setFontSize(9); doc.setTextColor(100); doc.text(`EventStorming process map · ${new Date().toLocaleDateString()} · ${state.cards.length} cards · ${state.links.length} relationships`, margin, 22);
     doc.setDrawColor(203, 213, 225); doc.setLineWidth(0.5); doc.line(margin, 27, pageWidth - margin, 27);
     const eventCards = state.cards.filter((card) => card.type === "event").sort((a, b) => a.lane - b.lane || a.createdAt - b.createdAt);
     eventCards.forEach((card, index) => {
@@ -220,6 +252,15 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
       const x2 = margin + (next.lane - 0.5) * laneWidth;
       doc.setDrawColor(251, 146, 60); doc.setLineWidth(1); doc.line(x1 + 18, 74, x2 - 18, 74);
       doc.setFillColor(251, 146, 60); doc.triangle(x2 - 14, 74, x2 - 20, 71, x2 - 20, 77, "F");
+    });
+    state.links.forEach((link) => {
+      const from = state.cards.find((card) => card.id === link.from);
+      const to = state.cards.find((card) => card.id === link.to);
+      if (!from || !to || from.lane === to.lane) return;
+      const x1 = margin + (from.lane - 0.5) * laneWidth;
+      const x2 = margin + (to.lane - 0.5) * laneWidth;
+      doc.setDrawColor(249, 115, 22); doc.setLineWidth(0.5); doc.setLineDashPattern([2, 2], 0); doc.line(x1 + (x2 > x1 ? 12 : -12), 80, x2 - (x2 > x1 ? 12 : -12), 80); doc.setLineDashPattern([], 0);
+      doc.setFillColor(249, 115, 22); doc.triangle(x2 - (x2 > x1 ? 10 : -10), 80, x2 - (x2 > x1 ? 15 : -5), 78, x2 - (x2 > x1 ? 15 : -5), 82, "F");
     });
     for (let index = 0; index < laneCount; index += 1) {
       const x = margin + index * laneWidth;
@@ -265,6 +306,25 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   const timelineStepCount = state.laneCount ?? DEFAULT_LANE_COUNT;
   const cardsByLane = useMemo(() => Array.from({ length: timelineStepCount }, (_, index) => state.cards.filter((card) => card.lane === index + 1)), [state.cards, timelineStepCount]);
 
+  useEffect(() => {
+    const updatePositions = () => {
+      const container = timelineRef.current;
+      if (!container) return;
+      const bounds = container.getBoundingClientRect();
+      const next: Record<string, { x: number; y: number }> = {};
+      container.querySelectorAll<HTMLElement>("[data-storm-card]").forEach((element) => {
+        const id = element.dataset.stormCard;
+        if (!id) return;
+        const rect = element.getBoundingClientRect();
+        next[id] = { x: rect.left - bounds.left + rect.width / 2, y: rect.top - bounds.top + rect.height / 2 };
+      });
+      setLinkPositions(next);
+    };
+    updatePositions();
+    window.addEventListener("resize", updatePositions);
+    return () => window.removeEventListener("resize", updatePositions);
+  }, [state.cards, timelineStepCount]);
+
   if (!joined) return (
     <div className="mx-auto flex min-h-[70vh] max-w-lg items-center justify-center px-4 py-10">
       <div className="w-full rounded-3xl border border-orange-200 bg-white p-8 shadow-xl">
@@ -309,12 +369,13 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
           <div className="mb-3 flex items-center justify-between gap-3"><h2 className="font-bold text-slate-900">Legend & card types</h2><span className="text-xs text-slate-500">Click a type, write one idea, then add it to the process</span></div>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{(Object.keys(CARD_TYPES) as CardType[]).map((type) => <button key={type} onClick={() => setSelectedType(type)} className={`rounded-xl border-2 p-3 text-left transition ${CARD_TYPES[type].color} ${selectedType === type ? "ring-2 ring-orange-400 ring-offset-1" : "opacity-80 hover:opacity-100"}`}><span className="font-semibold">{CARD_TYPES[type].label}</span><span className="mt-1 block text-xs opacity-80">{CARD_TYPES[type].description}</span></button>)}</div>
           <div className="mt-4 flex flex-wrap gap-2"><input value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && addCard()} placeholder={CARD_TYPES[selectedType].placeholder} className="min-w-[240px] flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-orange-500 focus:outline-none" /><select value={lane} onChange={(event) => setLane(Number(event.target.value))} className="rounded-xl border border-slate-300 px-3 py-3 text-sm">{Array.from({ length: timelineStepCount }, (_, index) => <option key={index + 1} value={index + 1}>Step {index + 1}</option>)}</select><button onClick={addCard} disabled={!draft.trim()} className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-40">Add {CARD_TYPES[selectedType].label}</button><button onClick={addTimelineStep} disabled={timelineStepCount >= MAX_LANE_COUNT} className="rounded-xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-40">+ Add timeline step</button></div>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500"><button onClick={() => setLinkSource(null)} className={`rounded-full border px-3 py-1.5 font-semibold ${linkSource ? "border-orange-300 bg-orange-50 text-orange-700" : "border-slate-200"}`}>{linkSource ? "Link mode active — choose the destination card" : "Link cards"}</button><span>Click Link on one card, then another. Click the same pair again to remove its link.</span></div>
         </div>
 
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="min-w-[1200px] p-4"><div className="mb-3 flex items-center gap-3"><div className="w-36 text-xs font-bold uppercase tracking-wider text-slate-500">Timeline</div><div className="flex-1 border-t-2 border-dashed border-slate-300" /><span className="text-xs font-semibold text-slate-500">Later →</span></div><div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${timelineStepCount}, minmax(0, 1fr))` }}>{cardsByLane.map((cards, index) => <div key={index} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const id = event.dataTransfer.getData("text/plain"); if (id) moveCard(id, index + 1); }} className="relative min-h-[420px] rounded-xl border border-slate-200 bg-slate-50 p-2"><div className="mb-2 text-center text-xs font-bold text-slate-400">STEP {index + 1}</div>{index < timelineStepCount - 1 && <span className="pointer-events-none absolute -right-3 top-7 z-10 text-xl font-bold text-orange-400">→</span>}<div className="space-y-2">{cards.map((card) => <div key={card.id} draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", card.id)} className={`group cursor-grab rounded-xl border-2 p-3 shadow-sm active:cursor-grabbing ${CARD_TYPES[card.type].color}`}><div className="mb-1 flex items-center justify-between gap-2"><span className="text-[10px] font-bold uppercase tracking-wide opacity-70">{CARD_TYPES[card.type].label}</span><button onClick={() => { apply({ type: "delete", id: card.id }); send({ type: "delete", id: card.id }); }} className="text-xs opacity-0 hover:text-red-700 group-hover:opacity-100" aria-label={`Delete ${card.text}`}>✕</button></div><p className="text-sm font-medium leading-snug">{card.text}</p><p className="mt-2 text-[10px] opacity-60">{card.author}</p></div>)}</div>{cards.length === 0 && <p className="mt-20 text-center text-xs text-slate-400">Drop cards here</p>}</div>)}</div></div>
+          <div ref={timelineRef} className="relative min-w-[1200px] p-4"><div className="mb-3 flex items-center gap-3"><div className="w-36 text-xs font-bold uppercase tracking-wider text-slate-500">Timeline</div><div className="flex-1 border-t-2 border-dashed border-slate-300" /><span className="text-xs font-semibold text-slate-500">Later →</span></div><svg className="pointer-events-none absolute inset-0 z-20 h-full w-full overflow-visible" aria-hidden="true"><defs><marker id="storm-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 z" fill="#f97316" /></marker></defs>{state.links.map((link) => { const from = linkPositions[link.from]; const to = linkPositions[link.to]; if (!from || !to) return null; return <path key={link.id} d={`M ${from.x} ${from.y} C ${from.x + 35} ${from.y}, ${to.x - 35} ${to.y}, ${to.x} ${to.y}`} fill="none" stroke="#f97316" strokeWidth="2" strokeDasharray="5 3" markerEnd="url(#storm-arrow)" />; })}</svg><div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${timelineStepCount}, minmax(0, 1fr))` }}>{cardsByLane.map((cards, index) => <div key={index} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const id = event.dataTransfer.getData("text/plain"); if (id) moveCard(id, index + 1); }} className="relative min-h-[420px] rounded-xl border border-slate-200 bg-slate-50 p-2"><div className="mb-2 text-center text-xs font-bold text-slate-400">STEP {index + 1}</div>{index < timelineStepCount - 1 && <span className="pointer-events-none absolute -right-3 top-7 z-10 text-xl font-bold text-orange-400">→</span>}<div className="space-y-2">{cards.map((card) => <div key={card.id} data-storm-card={card.id} draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", card.id)} className={`group cursor-grab rounded-xl border-2 p-3 shadow-sm active:cursor-grabbing ${CARD_TYPES[card.type].color} ${linkSource === card.id ? "ring-2 ring-orange-500 ring-offset-2" : ""}`} onClick={() => linkSource && toggleLink(card.id)}><div className="mb-1 flex items-center justify-between gap-2"><span className="text-[10px] font-bold uppercase tracking-wide opacity-70">{CARD_TYPES[card.type].label}</span><div className="flex items-center gap-2"><button onClick={(event) => { event.stopPropagation(); toggleLink(card.id); }} className="text-[10px] font-semibold text-orange-700 opacity-0 group-hover:opacity-100" aria-label={`Link ${card.text}`}>Link</button><button onClick={(event) => { event.stopPropagation(); apply({ type: "delete", id: card.id }); send({ type: "delete", id: card.id }); }} className="text-xs opacity-0 hover:text-red-700 group-hover:opacity-100" aria-label={`Delete ${card.text}`}>✕</button></div></div><p className="text-sm font-medium leading-snug">{card.text}</p><p className="mt-2 text-[10px] opacity-60">{card.author}</p></div>)}</div>{cards.length === 0 && <p className="mt-20 text-center text-xs text-slate-400">Drop cards here</p>}</div>)}</div></div>
         </div>
-        <p className="mt-3 text-center text-xs text-slate-500">Drag cards between steps to refine the process. Your board is saved in this browser and shared live with the session.</p>
+        <p className="mt-3 text-center text-xs text-slate-500">Drag cards between steps to refine the process. Use links for meaningful relationships. Your board is saved in this browser and shared live with the session.</p>
       </main>
     </div>
   );
