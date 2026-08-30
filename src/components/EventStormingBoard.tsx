@@ -136,7 +136,8 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     channel
       .on("presence", { event: "sync" }, () => {
         const presence = channel.presenceState<{ name: string }>();
-        setMembers(Object.values(presence).flat().map((entry) => entry.name).filter(Boolean));
+        const names = Object.values(presence).flat().map((entry) => entry.name.trim()).filter(Boolean);
+        setMembers(Array.from(new Set(names)));
       })
       .on("broadcast", { event: "request_state" }, () => {
         channel.send({ type: "broadcast", event: "state", payload: { type: "state", state: stateRef.current } });
@@ -239,7 +240,12 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-3">
           <input value={state.title} onChange={(event) => setState((current) => ({ ...current, title: event.target.value }))} className="min-w-[240px] flex-1 rounded-lg border border-transparent px-2 py-1 text-xl font-bold text-slate-900 hover:border-slate-200 focus:border-orange-400 focus:outline-none" aria-label="Workshop title" />
           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${connection === "connected" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>{connection === "connected" ? "● Live" : "○ Reconnecting"}</span>
-          <span className="text-sm text-slate-500">{members.length || 1} participant{members.length === 1 ? "" : "s"}</span>
+          <div className="flex items-center gap-1.5" aria-label="Workshop participants">
+            <span className="text-sm text-slate-500">{members.length || 1} participant{members.length === 1 ? "" : "s"}</span>
+            <div className="flex max-w-[280px] flex-wrap gap-1">
+              {(members.length ? members : [userRef.current]).map((member) => <span key={member} className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{member}</span>)}
+            </div>
+          </div>
           <button onClick={copySessionLink} className="rounded-lg border border-orange-300 px-3 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50">{linkCopied ? "Link copied ✓" : "Copy session link"}</button>
           <button onClick={exportPdf} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Export PDF</button>
         </div>
