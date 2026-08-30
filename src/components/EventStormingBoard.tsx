@@ -198,6 +198,14 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     doc.save(`eventstorming-${sessionId}.pdf`);
   };
 
+  const joinWorkshop = () => {
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+    userRef.current = trimmedName;
+    localStorage.setItem(`event-storming-name-${sessionId}`, trimmedName);
+    setJoined(true);
+  };
+
   const copySessionLink = async () => {
     const url = `${window.location.origin}/tools/event-storming/${sessionId}`;
     try {
@@ -218,8 +226,8 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         <h1 className="text-3xl font-bold text-gray-950">EventStorming workshop</h1>
         <p className="mt-2 text-gray-600">Map what happens in a business process with your team.</p>
         <label className="mt-8 block text-sm font-semibold text-gray-700">Your name</label>
-        <input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && name.trim() && setJoined(true)} placeholder="e.g. Ahmed" className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200" />
-        <button onClick={() => { userRef.current = name.trim(); localStorage.setItem(`event-storming-name-${sessionId}`, name.trim()); setJoined(true); }} disabled={!name.trim()} className="mt-6 w-full rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600 disabled:opacity-40">Join workshop →</button>
+        <input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && joinWorkshop()} placeholder="e.g. Ahmed" className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200" />
+        <button onClick={joinWorkshop} disabled={!name.trim()} className="mt-6 w-full rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600 disabled:opacity-40">Join workshop →</button>
         <p className="mt-5 break-all text-center font-mono text-xs text-gray-400">{sessionId}</p>
       </div>
     </div>
