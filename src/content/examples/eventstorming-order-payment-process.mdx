@@ -1,0 +1,70 @@
+---
+title: "EventStorming Example: Online Order and Payment Process"
+description: "A worked EventStorming example for an online order and payment journey, including domain events, commands, actors, systems, and hotspots."
+slug: "eventstorming-order-payment-process"
+category: "EventStorming"
+keywords:
+  - eventstorming example
+  - event storming ecommerce
+  - order payment process map
+  - domain events example
+  - business process event map
+relatedLinks:
+  - title: "EventStorming Board"
+    href: "/tools/event-storming"
+  - title: "How to Run EventStorming Online"
+    href: "/guides/how-to-run-event-storming-online"
+  - title: "Domain Events Explained"
+    href: "/docs/eventstorming-domain-events"
+---
+
+This example maps a customer buying a product online. Use it as starter content for a workshop, then challenge every assumption with people who know the real process.
+
+## Process context
+
+A customer browses the shop, adds a product to a cart, submits an order, pays through an external provider, and receives the delivery. The warehouse and customer support teams handle exceptions.
+
+## Domain events
+
+Place these events in order on the timeline:
+
+1. Product viewed
+2. Product added to cart
+3. Checkout started
+4. Order submitted
+5. Stock validated
+6. Payment authorized
+7. Order confirmed
+8. Warehouse notified
+9. Order packed
+10. Order shipped
+11. Delivery update sent
+12. Order delivered
+
+## Commands and actors
+
+| Command | Actor or system | Resulting event |
+|---|---|---|
+| Add product to cart | Customer | Product added to cart |
+| Submit order | Customer | Order submitted |
+| Authorize payment | Checkout service | Payment authorized |
+| Confirm order | Order service | Order confirmed |
+| Prepare shipment | Warehouse worker | Order packed |
+| Ship order | Courier integration | Order shipped |
+
+## External systems and policies
+
+- Payment provider authorizes or declines payment.
+- Inventory service validates stock.
+- A policy sends an order confirmation after payment succeeds.
+- A policy requests customer notification when delivery status changes.
+
+## Hotspots to discuss
+
+- How long is stock reserved after checkout starts?
+- What happens if payment succeeds but order confirmation fails?
+- Can a customer change the address after the order is submitted?
+- Who approves a refund after the package is shipped?
+- Which system owns the delivery status?
+
+Now open the [EventStorming Board](/tools/event-storming), create a session, and map this process with your team.

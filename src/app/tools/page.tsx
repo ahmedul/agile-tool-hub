@@ -117,6 +117,16 @@ const toolGroups = [
       { title: "Sprint Planning Checklist", href: "/tools/sprint-planning-checklist" },
     ],
   },
+  {
+    title: "Workshops and collaboration",
+    description: "Run collaborative discovery workshops and map processes with distributed teams.",
+    links: [
+      { title: "EventStorming Board", href: "/tools/event-storming" },
+      { title: "How to Run EventStorming Online", href: "/guides/how-to-run-event-storming-online" },
+      { title: "EventStorming Domain Events", href: "/docs/eventstorming-domain-events" },
+      { title: "EventStorming Order and Payment Example", href: "/examples/eventstorming-order-payment-process" },
+    ],
+  },
 ];
 
 const chooserRows = [

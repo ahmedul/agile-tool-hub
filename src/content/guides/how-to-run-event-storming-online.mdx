@@ -1,0 +1,66 @@
+---
+title: "How to Run an EventStorming Workshop Online"
+description: "A practical guide to running a remote EventStorming workshop with distributed software teams, from domain events to hotspots and next steps."
+slug: "how-to-run-event-storming-online"
+category: "Guides"
+keywords:
+  - how to run event storming online
+  - eventstorming workshop
+  - remote event storming
+  - domain driven design workshop
+  - business process mapping
+relatedLinks:
+  - title: "EventStorming Board"
+    href: "/tools/event-storming"
+  - title: "EventStorming Order and Payment Example"
+    href: "/examples/eventstorming-order-payment-process"
+  - title: "Domain Events Explained"
+    href: "/docs/eventstorming-domain-events"
+  - title: "Retrospective Board"
+    href: "/tools/retro-board"
+---
+
+EventStorming is a collaborative way to understand a business process by placing important domain events on a shared timeline. It helps software engineers, product people, and domain experts build a common language before discussing implementation.
+
+## Prepare the workshop
+
+Choose one bounded process, such as checkout, onboarding, or incident response. Invite people who understand the process from different perspectives. For a distributed team, share the process goal and vocabulary before the meeting so everyone can contribute quickly.
+
+Open the [free EventStorming Board](/tools/event-storming), create a session, and share the session link with the team. Keep the legend visible so participants do not need to remember every card type.
+
+## Phase 1: Discover domain events
+
+Start with events only. An event is something that has already happened and matters to the business. Write events in the past tense:
+
+- Order submitted
+- Payment authorized
+- Package shipped
+
+Do not debate the design yet. Capture what people know, including events that seem obvious or incomplete. The goal is to expose the whole story.
+
+## Phase 2: Sequence the process
+
+Move events into a rough left-to-right timeline. The order does not need to be perfect at first. When two events appear out of order, use the disagreement as a prompt for clarification rather than silently choosing an answer.
+
+## Phase 3: Add causes and participants
+
+Add commands, actors, policies, read models, external systems, and aggregates around the events:
+
+- A command expresses an intention.
+- An actor or system issues a command.
+- A policy reacts to an event.
+- A read model provides information needed for a decision.
+- An external system sits outside the process boundary.
+- An aggregate is a possible consistency boundary.
+
+Keep these as hypotheses. EventStorming is for learning about the domain, not for prematurely finalizing the architecture.
+
+## Phase 4: Capture hotspots
+
+Use hotspots for unanswered questions, risks, contradictions, and areas where the team disagrees. Do not hide uncertainty in meeting notes. Make it visible on the map so the team can assign a follow-up.
+
+## Finish with useful outcomes
+
+Before ending, review the most important events and hotspots. Agree on the next actions, owners, and any process boundaries that need deeper investigation. Export the board as a PDF and share it with the wider team.
+
+For a complete worked example, see the [order and payment EventStorming example](/examples/eventstorming-order-payment-process).

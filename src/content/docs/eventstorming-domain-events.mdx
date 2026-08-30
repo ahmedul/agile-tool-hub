@@ -1,0 +1,53 @@
+---
+title: "EventStorming Domain Events, Commands, and Hotspots"
+description: "A plain-language reference for the main EventStorming card types and how they help teams understand software and business processes."
+slug: "eventstorming-domain-events"
+category: "Docs"
+keywords:
+  - eventstorming domain events
+  - eventstorming card types
+  - commands and events
+  - eventstorming hotspots
+  - domain driven design terminology
+relatedLinks:
+  - title: "EventStorming Board"
+    href: "/tools/event-storming"
+  - title: "How to Run EventStorming Online"
+    href: "/guides/how-to-run-event-storming-online"
+  - title: "Order and Payment EventStorming Example"
+    href: "/examples/eventstorming-order-payment-process"
+---
+
+## Domain event
+
+A domain event is a meaningful fact that already happened. Write it in past tense, such as **Payment authorized** or **Account created**. Events form the backbone of an EventStorming timeline.
+
+## Command
+
+A command is an intention that may cause an event, such as **Submit order** or **Approve refund**. Commands usually come from an actor, another system, or a policy.
+
+## Actor
+
+An actor is a person, role, or system that initiates an action. Examples include Customer, Support Agent, Warehouse Worker, or Checkout Service.
+
+## Policy
+
+A policy is a business rule or reaction that connects an event to a later action. For example, **When payment is authorized, send confirmation**.
+
+## Read model
+
+A read model is information someone needs to make a decision. Examples include an order summary, available stock view, or delivery status screen.
+
+## External system
+
+An external system is outside the process boundary being explored, such as a payment provider, courier, tax service, or identity provider.
+
+## Aggregate
+
+An aggregate is a possible consistency boundary discovered during deeper modelling. It should be treated as a hypothesis during the workshop, not as a decision that must be correct immediately.
+
+## Hotspot
+
+A hotspot records a question, risk, contradiction, or unresolved disagreement. Hotspots make uncertainty visible and give the team a concrete follow-up list.
+
+Use the [EventStorming Board](/tools/event-storming) to place these concepts on a shared process timeline.

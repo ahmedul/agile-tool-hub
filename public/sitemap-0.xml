@@ -7,6 +7,7 @@
 <url><loc>https://agiletoolhub.com/docs/agile-glossary</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/docs/ai-agent-tools</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/docs/definition-of-done-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://agiletoolhub.com/docs/eventstorming-domain-events</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/docs/kanban-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/docs/scrum-ceremonies-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/docs/story-points-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -17,6 +18,7 @@
 <url><loc>https://agiletoolhub.com/examples/bug-report-example-for-mobile-app</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/bug-report-example-for-web-application</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/code-review-examples-performance</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://agiletoolhub.com/examples/eventstorming-order-payment-process</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/micromanagement-in-agile-teams</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/mobile-crash-jira-ticket-example</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/scope-creep-agile-projects</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -52,6 +54,7 @@
 <url><loc>https://agiletoolhub.com/guides/how-to-create-and-scope-epics</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-run-a-sprint-retrospective</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-run-effective-standups</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://agiletoolhub.com/guides/how-to-run-event-storming-online</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-run-remote-planning-poker</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-write-a-feature-request</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-write-a-good-jira-ticket</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>

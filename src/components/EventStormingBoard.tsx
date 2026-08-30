@@ -243,7 +243,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
           <div className="flex items-center gap-1.5" aria-label="Workshop participants">
             <span className="text-sm text-slate-500">{members.length || 1} participant{members.length === 1 ? "" : "s"}</span>
             <div className="flex max-w-[280px] flex-wrap gap-1">
-              {(members.length ? members : [userRef.current]).map((member) => <span key={member} className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{member}</span>)}
+              {(members.length ? members : [name]).map((member) => <span key={member} className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{member}</span>)}
             </div>
           </div>
           <button onClick={copySessionLink} className="rounded-lg border border-orange-300 px-3 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-50">{linkCopied ? "Link copied ✓" : "Copy session link"}</button>

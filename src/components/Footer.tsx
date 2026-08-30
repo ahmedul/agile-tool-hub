@@ -32,6 +32,7 @@ export default function Footer() {
             <li><Link href="/tools/planning-poker" className="hover:text-blue-600">Planning Poker</Link></li>
             <li><Link href="/tools/sprint-capacity-calculator" className="hover:text-blue-600">Capacity Calculator</Link></li>
             <li><Link href="/tools/retro-board" className="hover:text-blue-600">Retrospective Board</Link></li>
+            <li><Link href="/tools/event-storming" className="hover:text-blue-600">EventStorming Board</Link></li>
           </ul>
         </div>
         <div>
