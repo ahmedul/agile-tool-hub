@@ -83,6 +83,11 @@ const tools = [
     description: "Map business processes and domain events with a distributed team.",
     href: "/tools/event-storming",
   },
+  {
+    title: "User Story Mapping Workshop",
+    description: "Map the user journey and slice stories into practical releases with your team.",
+    href: "/tools/user-story-mapping",
+  },
 ];
 
 const toolGroups = [
@@ -119,9 +124,10 @@ const toolGroups = [
   },
   {
     title: "Workshops and collaboration",
-    description: "Run collaborative discovery workshops and map processes with distributed teams.",
+    description: "Run collaborative discovery workshops, map processes, and plan releases with distributed teams.",
     links: [
       { title: "EventStorming Board", href: "/tools/event-storming" },
+      { title: "User Story Mapping Workshop", href: "/tools/user-story-mapping" },
       { title: "How to Run EventStorming Online", href: "/guides/how-to-run-event-storming-online" },
       { title: "EventStorming Domain Events", href: "/docs/eventstorming-domain-events" },
       { title: "EventStorming Order and Payment Example", href: "/examples/eventstorming-order-payment-process" },

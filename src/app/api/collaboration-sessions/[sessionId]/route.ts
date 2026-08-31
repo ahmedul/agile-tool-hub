@@ -32,7 +32,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ sess
   if (!supabase) return Response.json({ error: "Durable session storage is not configured." }, { status: 503 });
   let body: { toolType?: unknown; title?: unknown; state?: unknown; version?: unknown };
   try { body = await request.json() as typeof body; } catch { return Response.json({ error: "Invalid JSON body." }, { status: 400 }); }
-  if (body.toolType !== "event_storming" || typeof body.title !== "string" || !body.state || typeof body.state !== "object") return Response.json({ error: "Invalid collaboration session payload." }, { status: 400 });
+  if (!(body.toolType === "event_storming" || body.toolType === "user_story_mapping") || typeof body.title !== "string" || !body.state || typeof body.state !== "object") return Response.json({ error: "Invalid collaboration session payload." }, { status: 400 });
   if (JSON.stringify(body.state).length > 500_000) return Response.json({ error: "Session state is too large." }, { status: 413 });
   const { data, error } = await supabase.from("collaboration_sessions").upsert({
     session_id: sessionId,
