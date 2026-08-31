@@ -11,6 +11,7 @@
 <url><loc>https://agiletoolhub.com/docs/kanban-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/docs/scrum-ceremonies-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/docs/story-points-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://agiletoolhub.com/docs/user-story-mapping-explained</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/acceptance-criteria-examples-for-api</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/acceptance-criteria-examples-for-checkout</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -27,6 +28,7 @@
 <url><loc>https://agiletoolhub.com/examples/user-story-examples-for-dashboard</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/user-story-examples-for-login-page</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/examples/user-story-examples-for-mobile-app</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://agiletoolhub.com/examples/user-story-map-online-checkout</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/acceptance-criteria-patterns-and-examples</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/agile-anti-patterns-to-avoid</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -51,6 +53,7 @@
 <url><loc>https://agiletoolhub.com/guides/definition-of-ready-best-practices</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/epic-breakdown-best-practices</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-break-down-epics-into-user-stories</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://agiletoolhub.com/guides/how-to-create-a-user-story-map</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-create-and-scope-epics</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-run-a-sprint-retrospective</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/guides/how-to-run-effective-standups</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
@@ -111,5 +114,6 @@
 <url><loc>https://agiletoolhub.com/tools/sprint-planning-tools</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/tools/story-point-calculator</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/tools/user-story-generator</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+<url><loc>https://agiletoolhub.com/tools/user-story-mapping</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 <url><loc>https://agiletoolhub.com/tools/velocity-tracker</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>
