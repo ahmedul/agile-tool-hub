@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import UserStoryGenerator from "@/components/UserStoryGenerator";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
@@ -102,6 +103,7 @@ export default function UserStoryGeneratorPage() {
         </ul>
       </div>
 
+      <ToolFeedbackPanel toolName="User Story Generator" toolSlug="user-story-generator" />
       <FAQ items={faqItems} />
 
       <div className="mt-10 border-t border-gray-200 pt-8">

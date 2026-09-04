@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SprintPlanningChecklist from "@/components/SprintPlanningChecklist";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
@@ -100,6 +101,7 @@ export default function SprintPlanningChecklistPage() {
           </p>
         </section>
 
+        <ToolFeedbackPanel toolName="Sprint Planning Checklist" toolSlug="sprint-planning-checklist" />
         <FAQ items={faqItems} />
 
         <div className="mt-10 border-t border-gray-200 pt-8">

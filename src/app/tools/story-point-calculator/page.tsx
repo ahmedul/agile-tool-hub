@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StoryPointCalculator from "@/components/StoryPointCalculator";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
@@ -122,6 +123,7 @@ export default function StoryPointCalculatorPage() {
           </p>
         </section>
 
+        <ToolFeedbackPanel toolName="Story Point Calculator" toolSlug="story-point-calculator" />
         <FAQ items={faqItems} />
 
         <div className="mt-10 border-t border-gray-200 pt-8">

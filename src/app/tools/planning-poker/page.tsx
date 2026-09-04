@@ -4,6 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import CreatePlanningSession from "@/components/CreatePlanningSession";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import {
   buildHowToSchema,
   buildBreadcrumbSchema,
@@ -195,6 +196,7 @@ export default function PlanningPokerPage() {
           </div>
         </div>
 
+        <ToolFeedbackPanel toolName="Planning Poker" toolSlug="planning-poker" />
         <FAQ items={faqItems} />
 
         {/* Related links */}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DefinitionOfDoneChecklist from "@/components/DefinitionOfDoneChecklist";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
@@ -86,6 +87,7 @@ export default function DefinitionOfDoneChecklistPage() {
           </p>
         </section>
 
+        <ToolFeedbackPanel toolName="Definition of Done Checklist" toolSlug="definition-of-done-checklist" />
         <FAQ items={faqItems} />
 
         <div className="mt-10 border-t border-gray-200 pt-8">
