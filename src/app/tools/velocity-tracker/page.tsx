@@ -1,4 +1,5 @@
 import VelocityTracker from "@/components/VelocityTracker";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import FAQ from "@/components/FAQ";
 import RelatedLinks from "@/components/RelatedLinks";
 import CTASection from "@/components/CTASection";
@@ -164,6 +165,7 @@ export default function VelocityTrackerPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
             Frequently Asked Questions
           </h2>
+          <ToolFeedbackPanel toolName="Velocity Tracker" toolSlug="velocity-tracker" />
           <FAQ items={faqs} />
         </div>
       </div>

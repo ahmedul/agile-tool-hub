@@ -34,6 +34,7 @@ const feedbackOptions: Array<{
 
 export default function ToolFeedbackPanel({ toolName, toolSlug }: ToolFeedbackPanelProps) {
   const [selected, setSelected] = useState<FeedbackKind | null>(null);
+  const [expanded, setExpanded] = useState(false);
   const [message, setMessage] = useState("");
   const [quickSubmitted, setQuickSubmitted] = useState(false);
   const [detailedStatus, setDetailedStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -170,6 +171,26 @@ export default function ToolFeedbackPanel({ toolName, toolSlug }: ToolFeedbackPa
 
   return (
     <section className="mt-12 rounded-lg border border-blue-200 bg-blue-50 p-6">
+      <button
+        type="button"
+        aria-expanded={expanded}
+        onClick={() => setExpanded((value) => !value)}
+        className="flex w-full items-center justify-between gap-4 text-left"
+      >
+        <span>
+          <span className="block text-xs font-semibold uppercase tracking-wide text-blue-700">
+            Feedback
+          </span>
+          <span className="mt-1 block text-base font-semibold text-gray-900">
+            Help improve {toolName}
+          </span>
+        </span>
+        <span className="shrink-0 text-sm font-semibold text-blue-700">
+          {expanded ? "Hide" : "Give feedback"}
+        </span>
+      </button>
+
+      {expanded && <div className="mt-5">
       <div className="flex flex-col gap-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-blue-700">
           Improve this tool
@@ -290,6 +311,7 @@ export default function ToolFeedbackPanel({ toolName, toolSlug }: ToolFeedbackPa
           )}
         </div>
       )}
+      </div>}
     </section>
   );
 }

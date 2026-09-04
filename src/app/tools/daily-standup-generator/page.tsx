@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import DailyStandupGenerator from "@/components/DailyStandupGenerator";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata } from "@/lib/seo";
@@ -87,6 +88,7 @@ export default function DailyStandupGeneratorPage() {
           </p>
         </div>
 
+        <ToolFeedbackPanel toolName="Daily Standup Generator" toolSlug="daily-standup-generator" />
         <FAQ items={faqItems} />
 
         <div className="mt-10 border-t border-gray-200 pt-8">

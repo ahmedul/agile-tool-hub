@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import {
@@ -430,6 +431,7 @@ export default function SprintPlanningToolsPage() {
         </section>
 
         <section className="max-w-4xl mx-auto px-4 py-12">
+          <ToolFeedbackPanel toolName="Sprint Planning Tools" toolSlug="sprint-planning-tools" />
           <FAQ items={faqItems} />
         </section>
       </div>

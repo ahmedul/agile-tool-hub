@@ -4,6 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
 import CreateRetroSession from "@/components/CreateRetroSession";
+import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -156,6 +157,7 @@ export default function RetroBoardPage() {
           </div>
         </div>
 
+        <ToolFeedbackPanel toolName="Retrospective Board" toolSlug="retro-board" />
         <FAQ items={faqItems} />
 
         <div className="mt-12 pt-8 border-t border-gray-200">
