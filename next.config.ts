@@ -64,6 +64,20 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        // These endpoints are public machine-readable resources for agents and
+        // integrations, but they are not search landing pages.
+        source: "/api/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+      {
+        source: "/openapi.json",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+      {
+        source: "/llms.txt",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
     ];
   },
 };
