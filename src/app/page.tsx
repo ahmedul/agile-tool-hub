@@ -5,6 +5,7 @@ import ToolCard from "@/components/ToolCard";
 import JsonLd from "@/components/JsonLd";
 import HeroSection from "@/components/HeroSection";
 import FeaturedCard from "@/components/FeaturedCard";
+import TrackedLink from "@/components/TrackedLink";
 import { buildMetadata, buildOrganizationSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -85,6 +86,26 @@ export default function Home() {
           { label: "Bug Report Converter", href: "/tools/bug-report-to-jira-ticket-converter", variant: "outline" },
         ]}
       />
+
+      <section className="border-b border-blue-100 bg-blue-50 px-4 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Optional team shortcut</p>
+            <h2 className="mt-1 text-xl font-bold text-gray-900">Jira &amp; Agile Starter Pack · €19 one-time</h2>
+            <p className="mt-1 max-w-2xl text-sm text-gray-600">
+              Download a curated bundle of Jira templates, Scrum checklists, examples, and AI prompts. The free tools remain free.
+            </p>
+          </div>
+          <TrackedLink
+            href="/packs/jira-agile-starter-pack"
+            label="View Starter Pack"
+            eventParams={{ surface: "homepage_offer", placement: "hero_followup" }}
+            className="inline-block whitespace-nowrap rounded-lg bg-blue-700 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-blue-800"
+          >
+            View the Starter Pack
+          </TrackedLink>
+        </div>
+      </section>
 
       <section className="bg-white border-b border-gray-200 py-14 px-4">
         <div className="max-w-6xl mx-auto">
