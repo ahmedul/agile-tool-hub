@@ -20,6 +20,7 @@ interface ContentLayoutProps {
 function inferCta(title: string, category: string, relatedLinks?: { title: string; href: string }[]): CTAProps {
   const lowerTitle = title.toLowerCase();
   const categoryRoute = `/${category.toLowerCase()}`;
+  const packHref = "/packs/jira-agile-starter-pack";
   const toolLink = relatedLinks?.find((link) => link.href.startsWith("/tools/"));
 
   if (toolLink) {
@@ -28,8 +29,8 @@ function inferCta(title: string, category: string, relatedLinks?: { title: strin
       description: `Use ${toolLink.title} to generate cleaner, Jira-ready output in seconds.`,
       primaryHref: toolLink.href,
       primaryLabel: `Try ${toolLink.title}`,
-      secondaryHref: categoryRoute,
-      secondaryLabel: `Browse ${category}`,
+      secondaryHref: packHref,
+      secondaryLabel: "Get the Starter Pack",
     };
   }
 
@@ -39,8 +40,8 @@ function inferCta(title: string, category: string, relatedLinks?: { title: strin
       description: "Turn rough feature notes into structured, Jira-ready user stories with acceptance criteria.",
       primaryHref: "/tools/user-story-generator",
       primaryLabel: "Try User Story Generator",
-      secondaryHref: categoryRoute,
-      secondaryLabel: `Browse ${category}`,
+      secondaryHref: packHref,
+      secondaryLabel: "Get the Starter Pack",
     };
   }
 
@@ -50,8 +51,8 @@ function inferCta(title: string, category: string, relatedLinks?: { title: strin
       description: "Generate testable Given/When/Then and checklist acceptance criteria for your backlog items.",
       primaryHref: "/tools/acceptance-criteria-generator",
       primaryLabel: "Try AC Generator",
-      secondaryHref: categoryRoute,
-      secondaryLabel: `Browse ${category}`,
+      secondaryHref: packHref,
+      secondaryLabel: "Get the Starter Pack",
     };
   }
 
@@ -61,8 +62,8 @@ function inferCta(title: string, category: string, relatedLinks?: { title: strin
       description: "Paste messy bug notes and get a clean, structured Jira ticket in seconds.",
       primaryHref: "/tools/bug-report-to-jira-ticket-converter",
       primaryLabel: "Try Bug Converter",
-      secondaryHref: categoryRoute,
-      secondaryLabel: `Browse ${category}`,
+      secondaryHref: packHref,
+      secondaryLabel: "Get the Starter Pack",
     };
   }
 
