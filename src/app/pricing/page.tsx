@@ -91,9 +91,9 @@ export default function PricingPage() {
       <div className="mt-10 rounded-xl border border-blue-200 bg-blue-50 p-6 md:flex md:items-center md:justify-between md:gap-8">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">One-time purchase</p>
-          <h2 className="mt-1 text-xl font-bold text-gray-900">Jira &amp; Agile Starter Pack · €29</h2>
+          <h2 className="mt-1 text-xl font-bold text-gray-900">Jira &amp; Agile Starter Pack · €19 launch price</h2>
           <p className="mt-2 max-w-2xl text-sm text-gray-600">
-            A curated bundle of Jira-ready stories, bug reports, acceptance criteria, Scrum checklists, and AI prompts.
+            A curated bundle of Jira-ready stories, bug reports, acceptance criteria, Scrum checklists, and AI prompts. Regular price €29.
           </p>
         </div>
         <Link

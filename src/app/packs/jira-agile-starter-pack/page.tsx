@@ -58,7 +58,8 @@ export default function JiraAgileStarterPackPage() {
 
         <aside className="h-fit rounded-xl border border-blue-200 bg-blue-50 p-6">
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-800">One-time purchase</p>
-          <p className="mt-2 text-4xl font-bold text-gray-950">€29</p>
+          <p className="mt-2 text-4xl font-bold text-gray-950">€19</p>
+          <p className="mt-1 text-sm font-medium text-blue-800">Early-access price · regular price €29</p>
           <p className="mt-2 text-sm leading-6 text-gray-600">Download the organized bundle and use it across Jira, Confluence, Notion, or team notes.</p>
           {packCheckoutUrl ? (
             <a
