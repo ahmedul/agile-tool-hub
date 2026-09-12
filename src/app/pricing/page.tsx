@@ -88,6 +88,22 @@ export default function PricingPage() {
         ))}
       </div>
 
+      <div className="mt-10 rounded-xl border border-blue-200 bg-blue-50 p-6 md:flex md:items-center md:justify-between md:gap-8">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-700">One-time purchase</p>
+          <h2 className="mt-1 text-xl font-bold text-gray-900">Jira &amp; Agile Starter Pack · €29</h2>
+          <p className="mt-2 max-w-2xl text-sm text-gray-600">
+            A curated bundle of Jira-ready stories, bug reports, acceptance criteria, Scrum checklists, and AI prompts.
+          </p>
+        </div>
+        <Link
+          href="/packs/jira-agile-starter-pack"
+          className="mt-4 inline-block whitespace-nowrap rounded-lg bg-blue-600 px-5 py-2.5 font-medium text-white hover:bg-blue-700 md:mt-0"
+        >
+          View the starter pack
+        </Link>
+      </div>
+
       <div className="text-center mt-10">
         <Link href="/tools" className="text-blue-600 hover:underline">
           Back to Tools
