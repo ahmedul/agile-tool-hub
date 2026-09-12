@@ -40,6 +40,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# private paid product output
+/private/starter-pack/
+/private/starter-pack-source/
+/private/*.zip
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
