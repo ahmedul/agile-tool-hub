@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo";
+import TrackedLink from "@/components/TrackedLink";
 
 export const metadata: Metadata = buildMetadata({
   title: "Jira & Agile Starter Pack | Ready-to-Use Team Templates",
@@ -62,12 +63,15 @@ export default function JiraAgileStarterPackPage() {
           <p className="mt-1 text-sm font-medium text-blue-800">Early-access price · regular price €29</p>
           <p className="mt-2 text-sm leading-6 text-gray-600">Download the organized bundle and use it across Jira, Confluence, Notion, or team notes.</p>
           {packCheckoutUrl ? (
-            <a
+            <TrackedLink
               href={packCheckoutUrl}
+              label="starter_pack_checkout"
+              eventName="checkout_start"
+              eventParams={{ product: "jira_agile_starter_pack", price: 19, currency: "EUR" }}
               className="mt-6 block rounded-lg bg-blue-700 px-5 py-3 text-center font-semibold text-white hover:bg-blue-800"
             >
               Get the starter pack
-            </a>
+            </TrackedLink>
           ) : (
             <p className="mt-6 rounded-lg border border-blue-300 bg-white px-4 py-3 text-center text-sm font-medium text-blue-900">
               Checkout is being prepared
