@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const RETENTION_DAYS: Record<string, number> = { event_storming: 15, user_story_mapping: 14 };
+const RETENTION_DAYS: Record<string, number> = { event_storming: 30, user_story_mapping: 30 };
 
 function getAdminClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;

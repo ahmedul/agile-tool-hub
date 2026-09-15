@@ -78,6 +78,19 @@ function normalizeStormState(value: Partial<StormState> | undefined): StormState
   };
 }
 
+function mergeStormStates(local: StormState, remote: StormState): StormState {
+  const cards = new Map(local.cards.map((card) => [card.id, card]));
+  remote.cards.forEach((card) => cards.set(card.id, card));
+  const links = new Map((local.links ?? []).map((link) => [link.id, link]));
+  (remote.links ?? []).forEach((link) => links.set(link.id, link));
+  return normalizeStormState({
+    ...remote,
+    title: local.title !== EMPTY_STATE.title ? local.title : remote.title,
+    cards: Array.from(cards.values()),
+    links: Array.from(links.values()),
+  });
+}
+
 export default function EventStormingBoard({ sessionId }: { sessionId: string }) {
   const [name, setName] = useState("");
   const [joined, setJoined] = useState(false);
@@ -138,9 +151,31 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     serverLoadedRef.current = false;
     fetch(`/api/collaboration-sessions/${sessionId}`, { cache: "no-store" })
       .then(async (response) => {
-        if (cancelled || !response.ok) return;
-        const saved = await response.json() as { state?: StormState };
-        if (saved.state?.cards && Array.isArray(saved.state.cards)) setState(normalizeStormState(saved.state));
+        if (cancelled) return;
+        if (response.ok) {
+          const saved = await response.json() as { state?: StormState };
+          const remoteState = normalizeStormState(saved.state);
+          const mergedState = mergeStormStates(stateRef.current, remoteState);
+          setState(mergedState);
+          // Preserve local work that was made while the server request was in flight.
+          if (JSON.stringify(mergedState) !== JSON.stringify(remoteState)) {
+            await fetch(`/api/collaboration-sessions/${sessionId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ toolType: "event_storming", title: mergedState.title, state: mergedState }),
+              keepalive: true,
+            });
+          }
+        } else if (response.status === 404) {
+          // Create the durable snapshot immediately, even if the user has not edited yet.
+          const localState = normalizeStormState(stateRef.current);
+          await fetch(`/api/collaboration-sessions/${sessionId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ toolType: "event_storming", title: localState.title, state: localState }),
+            keepalive: true,
+          });
+        }
       })
       .catch(() => { /* Use local recovery when durable storage is unavailable. */ })
       .finally(() => { if (!cancelled) serverLoadedRef.current = true; });
@@ -394,7 +429,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div ref={timelineRef} className="relative min-w-[1200px] p-4"><div className="mb-3 flex items-center gap-3"><div className="w-36 text-xs font-bold uppercase tracking-wider text-slate-500">Timeline</div><div className="flex-1 border-t-2 border-dashed border-slate-300" /><span className="text-xs font-semibold text-slate-500">Later →</span></div><svg className="pointer-events-none absolute inset-0 z-20 h-full w-full overflow-visible" aria-hidden="true"><defs>{LINK_COLORS.map((color, index) => <marker key={color} id={`storm-arrow-${index}`} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill={color} /></marker>)}</defs>{(state.links ?? []).map((link, index) => { const from = linkPositions[link.from]; const to = linkPositions[link.to]; if (!from || !to) return null; const forward = to.x >= from.x; const startX = forward ? from.right : from.left; const endX = forward ? to.left : to.right; const bend = Math.max(28, Math.abs(endX - startX) * 0.35); const colorIndex = index % LINK_COLORS.length; const path = `M ${startX} ${from.y} C ${forward ? startX + bend : startX - bend} ${from.y}, ${forward ? endX - bend : endX + bend} ${to.y}, ${endX} ${to.y}`; return <g key={link.id}><path d={path} fill="none" stroke="white" strokeWidth="7" strokeLinecap="round" /><path d={path} fill="none" stroke={LINK_COLORS[colorIndex]} strokeWidth="2.5" strokeDasharray="6 3" strokeLinecap="round" markerEnd={`url(#storm-arrow-${colorIndex})`} /></g>; })}</svg><div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${timelineStepCount}, minmax(0, 1fr))` }}>{cardsByLane.map((cards, index) => <div key={index} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const id = event.dataTransfer.getData("text/plain"); if (id) moveCard(id, index + 1); }} className="relative min-h-[420px] rounded-xl border border-slate-200 bg-slate-50 p-2"><div className="mb-2 text-center text-xs font-bold text-slate-400">STEP {index + 1}</div>{index < timelineStepCount - 1 && <span className="pointer-events-none absolute -right-3 top-7 z-10 text-xl font-bold text-orange-400">→</span>}<div className="space-y-2">{cards.map((card) => <div key={card.id} data-storm-card={card.id} draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", card.id)} className={`group cursor-grab rounded-xl border-2 p-3 shadow-sm active:cursor-grabbing ${CARD_TYPES[card.type].color} ${linkSource === card.id ? "ring-2 ring-orange-500 ring-offset-2" : ""}`} onClick={() => linkSource && toggleLink(card.id)}><div className="mb-1 flex items-center justify-between gap-2"><span className="text-[10px] font-bold uppercase tracking-wide opacity-70">{CARD_TYPES[card.type].label}</span><div className="flex items-center gap-2"><button onClick={(event) => { event.stopPropagation(); toggleLink(card.id); }} className="text-[10px] font-semibold text-orange-700 opacity-0 group-hover:opacity-100" aria-label={`Link ${card.text}`}>Link</button><button onClick={(event) => { event.stopPropagation(); apply({ type: "delete", id: card.id }); send({ type: "delete", id: card.id }); }} className="text-xs opacity-0 hover:text-red-700 group-hover:opacity-100" aria-label={`Delete ${card.text}`}>✕</button></div></div><p className="text-sm font-medium leading-snug">{card.text}</p><p className="mt-2 text-[10px] opacity-60">{card.author}</p></div>)}</div>{cards.length === 0 && <p className="mt-20 text-center text-xs text-slate-400">Drop cards here</p>}</div>)}</div></div>
         </div>
-        <p className="mt-3 text-center text-xs text-slate-500">Drag cards between steps to refine the process. Use links for meaningful relationships. Your board is saved in this browser and shared live with the session.</p>
+        <p className="mt-3 text-center text-xs text-slate-500">Drag cards between steps to refine the process. Use links for meaningful relationships. Your board is saved locally and to the shared session for up to 30 days after the last activity.</p>
       </main>
     </div>
   );
