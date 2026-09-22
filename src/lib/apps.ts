@@ -13,6 +13,9 @@ export interface AppListing {
   status: "Available" | "Coming soon";
   playStoreUrl?: string;
   features: string[];
+  useCases: string[];
+  faqs: Array<{ question: string; answer: string }>;
+  seoTitle: string;
 }
 
 export const apps: AppListing[] = [
@@ -29,7 +32,14 @@ export const apps: AppListing[] = [
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.deskfit.officeworkout",
-    features: ["Five-minute guided routines", "Designed for office spaces", "Simple reminders to move"],
+    features: ["15+ five-minute routines", "Animated illustrations and voice coaching", "Offline-first with no login or ads", "Daily reminders and progress tracking"],
+    useCases: ["Neck and shoulder resets between meetings", "Posture support after long coding sessions", "Quick energy breaks without equipment", "Gentle stretches at a desk or in a home office"],
+    seoTitle: "5-Minute Office Workout App for Desk Workers",
+    faqs: [
+      { question: "What is DeskFit?", answer: "DeskFit is an Android app with short, guided five-minute workouts and stretches designed for people who spend much of the day sitting at a desk." },
+      { question: "Do I need equipment to use DeskFit?", answer: "No. DeskFit routines are designed for an office environment and use only a chair or a nearby wall when needed." },
+      { question: "Does DeskFit work offline?", answer: "Yes. DeskFit is designed to work without an internet connection, with no login and no ads." },
+    ],
   },
   {
     slug: "expiryguard-document-reminder",
@@ -44,7 +54,14 @@ export const apps: AppListing[] = [
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.expiryguard",
-    features: ["Track multiple expiry dates", "Helpful renewal reminders", "Private, focused document list"],
+    features: ["Smart dashboard for valid, expiring, and expired documents", "AI-powered OCR and biometric authentication", "Local-only storage with no cloud, tracking, or ads", "Family profiles, calendar integration, and PDF export"],
+    useCases: ["Passport, visa, and residence permit reminders", "Driving licence and ID card expiry dates", "Health insurance card and family document tracking", "Offline document organization for travellers and expats"],
+    seoTitle: "Document Expiry Reminder App for Passports and IDs",
+    faqs: [
+      { question: "What documents can ExpiryGuard remind me about?", answer: "ExpiryGuard can help track passports, visas, residence permits, driving licences, health insurance cards, ID cards, and other documents with expiry dates." },
+      { question: "Does ExpiryGuard store documents in the cloud?", answer: "No. The app uses local-only storage, so your document information stays on your device rather than being uploaded to a cloud account." },
+      { question: "Can I manage documents for my family?", answer: "Yes. ExpiryGuard includes family profiles for organizing documents for a spouse, children, or other family members." },
+    ],
   },
   {
     slug: "returnguard-refund-reminder",
@@ -59,7 +76,14 @@ export const apps: AppListing[] = [
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.returnguard.reminder",
-    features: ["Return-window reminders", "Refund follow-up dates", "A quick view of open returns"],
+    features: ["14, 30, 60, or custom return windows", "Receipt photos and purchase details", "Warranty date tracking", "Private on-device storage with no account or ads"],
+    useCases: ["Clothing, shoes, gifts, and online orders", "Return deadlines that are easy to forget", "Receipts that need to stay close after checkout", "Warranty records and refund opportunities"],
+    seoTitle: "Return and Refund Reminder App with Receipt Tracking",
+    faqs: [
+      { question: "What does ReturnGuard track?", answer: "ReturnGuard tracks purchases, return deadlines, receipt photos, warranty dates, store and price details, and refund opportunities." },
+      { question: "Can I set a custom return window?", answer: "Yes. You can choose a 14, 30, or 60-day return window, or enter a custom deadline for a purchase." },
+      { question: "Are my receipts uploaded to the cloud?", answer: "No. ReturnGuard is designed to keep purchases and receipt photos on your device, without an account, cloud sync, or ads." },
+    ],
   },
   {
     slug: "trialguard-free-trial-reminder",
@@ -74,7 +98,14 @@ export const apps: AppListing[] = [
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.trialguard",
-    features: ["Trial end-date reminders", "Subscription cost visibility", "Simple cancellation prompts"],
+    features: ["Reminders before free trials renew", "Monthly and yearly subscription tracking", "Custom reminder dates and upcoming billing view", "Private on-device information"],
+    useCases: ["Streaming service free trials", "Productivity and cloud tool subscriptions", "Fitness memberships and recurring plans", "Reviewing monthly and yearly subscription costs"],
+    seoTitle: "Free Trial and Subscription Renewal Reminder App",
+    faqs: [
+      { question: "What is TrialGuard?", answer: "TrialGuard is an Android app for tracking free trials and recurring subscriptions so you can get a reminder before the next billing date." },
+      { question: "Can TrialGuard remind me before a free trial ends?", answer: "Yes. Add the trial start date, renewal date, price, and preferred reminder date to receive an alert before renewal." },
+      { question: "Does TrialGuard track subscription costs?", answer: "Yes. TrialGuard lets you record monthly and yearly prices and view upcoming billing dates in one place." },
+    ],
   },
 ];
 
