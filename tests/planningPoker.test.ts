@@ -1,6 +1,7 @@
 import {
   appendStorySummary,
   deriveRecommendedEstimate,
+  SKIP_DEFER_CARDS,
   resetVotes,
   upsertMyVote,
   upsertUnvoted,
@@ -23,6 +24,11 @@ describe("planning poker utilities", () => {
   it("returns null when no votes exist", () => {
     const estimate = deriveRecommendedEstimate([null, null]);
     expect(estimate).toBeNull();
+  });
+
+  it("includes potato in the skip/defer choices without adding it to estimates", () => {
+    expect(SKIP_DEFER_CARDS).toContain("🥔");
+    expect(deriveRecommendedEstimate(["🥔"])).toBeNull();
   });
 
   it("upserts voted participant if missing", () => {

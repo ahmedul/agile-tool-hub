@@ -1,7 +1,8 @@
 export const PLANNING_POKER_CARDS = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, "?", "🍺", "☕", "💰"] as const;
+export const SKIP_DEFER_CARDS = ["🍺", "☕", "💰", "🥔"] as const;
 
-export type CardValue = (typeof PLANNING_POKER_CARDS)[number];
-export type NumericCardValue = Exclude<CardValue, "?">;
+export type CardValue = (typeof PLANNING_POKER_CARDS)[number] | (typeof SKIP_DEFER_CARDS)[number];
+export type NumericCardValue = Extract<CardValue, number>;
 export type Vote = CardValue | null;
 
 export interface ParticipantState {
