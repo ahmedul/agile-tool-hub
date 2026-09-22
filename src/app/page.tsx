@@ -107,6 +107,17 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-b border-gray-200 bg-white px-4 py-12">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">From the same maker</p>
+            <h2 className="mt-2 text-2xl font-bold text-gray-900">Simple Android apps for everyday life</h2>
+            <p className="mt-2 text-gray-600">Explore focused apps for document reminders, free trials, returns, invoices, and healthy desk breaks.</p>
+          </div>
+          <Link href="/apps" className="inline-flex shrink-0 items-center justify-center rounded-lg border border-blue-200 px-5 py-3 text-sm font-semibold text-blue-700 hover:border-blue-400 hover:bg-blue-50">Browse apps →</Link>
+        </div>
+      </section>
+
       <section className="bg-white border-b border-gray-200 py-14 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-8">
