@@ -13,6 +13,7 @@ import {
   deriveRecommendedEstimate,
   PLANNING_POKER_CARDS,
   resetVotes,
+  SKIP_DEFER_CARDS,
   upsertMyVote,
   upsertUnvoted,
   upsertVoted,
@@ -274,6 +275,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const animationsEnabled = useAnimation();
 
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const participantsRef = useRef<Record<string, ParticipantState>>({});
   const userIdRef = useRef<string>("");
   const myNameRef = useRef("");
   const myVoteRef = useRef<Vote>(null);
@@ -287,6 +289,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
   const soundEnabledRef = useRef(soundEnabled);
 
   useEffect(() => { myVoteRef.current = myVote; }, [myVote]);
+  useEffect(() => { participantsRef.current = participants; }, [participants]);
   useEffect(() => { currentStoryRef.current = currentStory; }, [currentStory]);
   useEffect(() => { revealedRef.current = revealed; }, [revealed]);
   useEffect(() => {
@@ -478,6 +481,14 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
               targetId: requesterId,
               story: currentStoryRef.current,
               revealed: revealedRef.current,
+              participants: Object.fromEntries(
+                Object.entries(participantsRef.current).map(([userId, participant]) => [userId, {
+                  name: participant.name,
+                  hasVoted: participant.hasVoted,
+                  // Keep vote values private until the room has been revealed.
+                  vote: revealedRef.current ? participant.vote : null,
+                }]),
+              ),
             },
           });
         })
@@ -486,6 +497,7 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             targetId: string;
             story?: string;
             revealed?: boolean;
+            participants?: Record<string, ParticipantState>;
           };
           if (targetId !== userIdRef.current) return;
 
@@ -494,7 +506,22 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
             setStoryInput(story);
           }
           if (typeof revealed === "boolean") {
+            revealedRef.current = revealed;
             setRevealed(revealed);
+          }
+          if (participants) {
+            const snapshotRevealed = Boolean(revealed);
+            setParticipants((prev) => {
+              const next = { ...prev };
+              for (const [userId, participant] of Object.entries(participants)) {
+                next[userId] = {
+                  name: participant.name || prev[userId]?.name || "Participant",
+                  hasVoted: participant.hasVoted,
+                  vote: snapshotRevealed ? participant.vote : null,
+                };
+              }
+              return next;
+            });
           }
         })
         // Reveal triggered — every client (including sender via self:true) sends their actual vote
@@ -896,13 +923,13 @@ export default function PlanningPokerRoom({ sessionId }: { sessionId: string }) 
                 initial="initial"
                 animate={animationsEnabled ? "animate" : false}
               >
-                {PLANNING_POKER_CARDS.filter((card) => typeof card === "string" && card !== "?").map((card) => (
+                {SKIP_DEFER_CARDS.map((card) => (
                   <motion.button
                     key={card}
                     variants={STAGGER_ITEM}
                     onClick={() => handleVote(card)}
                     disabled={revealed || !hasStory}
-                    title={!hasStory ? "Set a story first to enable voting" : card === "🍺" ? "Can't estimate (need more info)" : card === "☕" ? "Too complex (needs breakdown)" : "Money/stakeholder decision"}
+                    title={!hasStory ? "Set a story first to enable voting" : card === "🍺" ? "Can't estimate (need more info)" : card === "☕" ? "Too complex (needs breakdown)" : card === "💰" ? "Money/stakeholder decision" : "Defer this story for later"}
                     className={[
                       "w-14 h-20 rounded-xl border-2 text-2xl font-bold transition-all duration-150",
                       myVote === card
