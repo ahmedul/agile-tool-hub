@@ -43,7 +43,7 @@ export default function AppDirectory() {
         {filteredApps.map((app) => (
           <Link key={app.slug} href={`/apps/${app.slug}`} className="grid grid-cols-1 gap-4 border-b border-gray-200 px-5 py-4 transition last:border-0 hover:bg-blue-50/40 sm:grid-cols-[minmax(0,1fr)_140px_120px] sm:items-center sm:gap-6 sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
-              <AppIcon accent={app.accent} icon={app.icon} />
+              <AppIcon accent={app.accent} icon={app.icon} iconUrl={app.iconUrl} />
               <div className="min-w-0">
                 <h2 className="truncate font-semibold text-gray-900">{app.name}</h2>
                 <p className="truncate text-sm text-gray-500">{app.packageName}</p>

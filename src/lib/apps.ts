@@ -9,6 +9,7 @@ export interface AppListing {
   category: AppCategory;
   accent: string;
   icon: string;
+  iconUrl: string;
   platform: "Android";
   status: "Available" | "Coming soon";
   playStoreUrl?: string;
@@ -29,6 +30,7 @@ export const apps: AppListing[] = [
     category: "Health",
     accent: "#6f9f83",
     icon: "↗",
+    iconUrl: "https://play-lh.googleusercontent.com/OO2gVEGsRm3Pe-4hyrkh8jjgjycrB8f7t4YtowvBDQuq6I8O2LqSXoqpgrnwb5N9sTQcEMweirB4oSKWExM1jA=w240-h480",
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.deskfit.officeworkout",
@@ -51,6 +53,7 @@ export const apps: AppListing[] = [
     category: "Productivity",
     accent: "#1677ff",
     icon: "▤",
+    iconUrl: "https://play-lh.googleusercontent.com/gFCa5BsSVRaBaABC5Y2tI34_RrA14SjHrumHPri802yprCPAnKeXWHgGBkdOthPQD4rokVTJoxNTwcddG0lye6M=w240-h480",
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.expiryguard",
@@ -73,6 +76,7 @@ export const apps: AppListing[] = [
     category: "Finance",
     accent: "#69c72d",
     icon: "↶",
+    iconUrl: "https://play-lh.googleusercontent.com/LWDlzwLFi7Mmkule8UOLRexufOq1r9B8GGNk_D6OKJgGYL4woJKKbL4O1eDF76k-1LDFwbPcQ6_R4uThU9kvaQ=w240-h480",
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.returnguard.reminder",
@@ -95,6 +99,7 @@ export const apps: AppListing[] = [
     category: "Finance",
     accent: "#4820a8",
     icon: "T",
+    iconUrl: "https://play-lh.googleusercontent.com/ILLq1lX9vM7eTjttByI-C2p6M5wu4SJ4iNnJFIc-S4bRH_8Wj7s1WgnTw6UnxggmWaVBZQ_A70WLOhPBDmVMNQ=w240-h480",
     platform: "Android",
     status: "Available",
     playStoreUrl: "https://play.google.com/store/apps/details?id=com.trialguard",

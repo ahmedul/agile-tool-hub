@@ -1,10 +1,11 @@
 interface AppIconProps {
   accent: string;
   icon: string;
+  iconUrl?: string;
   size?: "small" | "large";
 }
 
-export default function AppIcon({ accent, icon, size = "small" }: AppIconProps) {
+export default function AppIcon({ accent, icon, iconUrl, size = "small" }: AppIconProps) {
   const sizeClasses = size === "large" ? "h-24 w-24 text-4xl rounded-3xl" : "h-12 w-12 text-xl rounded-xl";
 
   return (
@@ -13,7 +14,9 @@ export default function AppIcon({ accent, icon, size = "small" }: AppIconProps) 
       style={{ backgroundColor: accent }}
       aria-hidden="true"
     >
-      {icon}
+      {iconUrl ? (
+        <span className="h-full w-full rounded-[inherit] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${iconUrl})` }} role="img" aria-label="App icon" />
+      ) : icon}
     </div>
   );
 }

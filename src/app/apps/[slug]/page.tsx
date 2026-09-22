@@ -27,7 +27,7 @@ export default async function AppDetailPage({ params }: { params: Promise<{ slug
         <Link href="/apps" className="text-sm font-medium text-blue-700 hover:underline">← All apps</Link>
         <section className="mt-8 rounded-3xl border border-gray-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6 sm:p-10">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
-            <AppIcon accent={app.accent} icon={app.icon} size="large" />
+            <AppIcon accent={app.accent} icon={app.icon} iconUrl={app.iconUrl} size="large" />
             <div><p className="text-sm font-semibold uppercase tracking-wide text-blue-700">{app.category} · {app.platform}</p><h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{app.seoTitle}</h1><p className="mt-2 text-sm text-gray-500">{app.name} · {app.packageName}</p></div>
           </div>
           <p className="mt-8 max-w-2xl text-lg leading-8 text-gray-700">{app.description}</p>
