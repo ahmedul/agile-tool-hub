@@ -27,7 +27,7 @@ export default function OutputFeedback({ tool, mode = "local" }: OutputFeedbackP
       trackEvent("feedback_text_submitted", {
         tool,
         mode,
-        text: feedbackText.slice(0, 200), // truncate to 200 chars for privacy
+        text_length: feedbackText.trim().length,
       });
     }
     setSubmitted(true);

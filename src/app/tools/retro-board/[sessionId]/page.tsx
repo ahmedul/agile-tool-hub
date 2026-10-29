@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import RetroBoard from "@/components/RetroBoard";
+
+export const metadata: Metadata = {
+  title: "Retrospective Session",
+  robots: { index: false, follow: false },
+};
 
 export default async function RetroBoardSessionPage({
   params,

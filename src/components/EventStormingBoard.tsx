@@ -5,37 +5,8 @@ import { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import { jsPDF } from "jspdf";
 import { usePersistentState } from "@/hooks/usePersistentState";
 
-type CardType = "event" | "command" | "actor" | "policy" | "read_model" | "external_system" | "aggregate" | "hotspot";
-type Phase = "discover" | "sequence" | "model" | "review";
-
-type StormCard = {
-  id: string;
-  type: CardType;
-  text: string;
-  lane: number;
-  author: string;
-  createdAt: number;
-};
-
-type StormLink = { id: string; from: string; to: string };
-
-type StormState = {
-  title: string;
-  cards: StormCard[];
-  phase: Phase;
-  laneCount: number;
-  links: StormLink[];
-};
-
-type StormEvent =
-  | { type: "state"; state: StormState }
-  | { type: "add"; card: StormCard }
-  | { type: "move"; id: string; lane: number }
-  | { type: "edit"; id: string; text: string }
-  | { type: "delete"; id: string }
-  | { type: "phase"; phase: Phase }
-  | { type: "link"; link: StormLink }
-  | { type: "unlink"; id: string };
+import { applyStormEvent, DEFAULT_LANE_COUNT, EMPTY_STORM_STATE as EMPTY_STATE, MAX_LANE_COUNT, mergeStormStates, normalizeStormState, type CardType, type Phase, type StormCard, type StormEvent, type StormLink, type StormState } from "@/lib/eventStorming";
+import { trackEvent } from "@/lib/analytics";
 
 const CARD_TYPES: Record<CardType, { label: string; color: string; description: string; placeholder: string }> = {
   event: { label: "Domain event", color: "bg-orange-100 border-orange-300 text-orange-950", description: "Something that happened, written in past tense.", placeholder: "e.g. Order placed" },
@@ -55,41 +26,11 @@ const PHASES: Array<{ id: Phase; label: string; description: string }> = [
   { id: "review", label: "Review", description: "Capture hotspots and agree on next steps." },
 ];
 
-const DEFAULT_LANE_COUNT = 8;
-const MAX_LANE_COUNT = 16;
-const EMPTY_STATE: StormState = { title: "Untitled process", cards: [], phase: "discover", laneCount: DEFAULT_LANE_COUNT, links: [] };
-
 const PDF_COLORS: Record<CardType, [number, number, number]> = {
   event: [255, 224, 178], command: [191, 219, 254], actor: [254, 240, 138], policy: [233, 213, 255],
   read_model: [187, 247, 208], external_system: [251, 207, 232], aggregate: [253, 230, 138], hotspot: [254, 202, 202],
 };
 const LINK_COLORS = ["#ea580c", "#2563eb", "#16a34a", "#9333ea", "#db2777", "#0891b2"];
-
-function normalizeStormState(value: Partial<StormState> | undefined): StormState {
-  const laneCount = typeof value?.laneCount === "number"
-    ? Math.max(1, Math.min(MAX_LANE_COUNT, Math.floor(value.laneCount)))
-    : DEFAULT_LANE_COUNT;
-  return {
-    title: typeof value?.title === "string" ? value.title : EMPTY_STATE.title,
-    cards: Array.isArray(value?.cards) ? value.cards.map((card) => ({ ...card, lane: Math.max(1, Math.min(laneCount, card.lane)) })) : [],
-    phase: value?.phase && PHASES.some((phase) => phase.id === value.phase) ? value.phase : "discover",
-    laneCount,
-    links: Array.isArray(value?.links) ? value.links.filter((link) => link && typeof link.id === "string" && typeof link.from === "string" && typeof link.to === "string" && link.from !== link.to) : [],
-  };
-}
-
-function mergeStormStates(local: StormState, remote: StormState): StormState {
-  const cards = new Map(local.cards.map((card) => [card.id, card]));
-  remote.cards.forEach((card) => cards.set(card.id, card));
-  const links = new Map((local.links ?? []).map((link) => [link.id, link]));
-  (remote.links ?? []).forEach((link) => links.set(link.id, link));
-  return normalizeStormState({
-    ...remote,
-    title: local.title !== EMPTY_STATE.title ? local.title : remote.title,
-    cards: Array.from(cards.values()),
-    links: Array.from(links.values()),
-  });
-}
 
 export default function EventStormingBoard({ sessionId }: { sessionId: string }) {
   const [name, setName] = useState("");
@@ -108,7 +49,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   const timelineRef = useRef<HTMLDivElement | null>(null);
   const userRef = useRef("");
   const stateRef = useRef(state);
-  const serverLoadedRef = useRef(false);
+  const [loadedSession, setLoadedSession] = useState<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -121,16 +62,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   }, []);
 
   const apply = useCallback((event: StormEvent) => {
-    setState((current) => {
-      if (event.type === "state") return normalizeStormState(event.state);
-      if (event.type === "add") return current.cards.some((card) => card.id === event.card.id) ? current : { ...current, cards: [...current.cards, event.card] };
-      if (event.type === "move") return { ...current, cards: current.cards.map((card) => card.id === event.id ? { ...card, lane: Math.max(1, Math.min(current.laneCount ?? DEFAULT_LANE_COUNT, event.lane)) } : card) };
-      if (event.type === "edit") return { ...current, cards: current.cards.map((card) => card.id === event.id ? { ...card, text: event.text } : card) };
-      if (event.type === "delete") return { ...current, cards: current.cards.filter((card) => card.id !== event.id) };
-      if (event.type === "link") return (current.links ?? []).some((link) => link.from === event.link.from && link.to === event.link.to) ? current : { ...current, links: [...(current.links ?? []), event.link] };
-      if (event.type === "unlink") return { ...current, links: (current.links ?? []).filter((link) => link.id !== event.id) };
-      return { ...current, phase: event.phase };
-    });
+    setState((current) => applyStormEvent(current, event));
   }, [setState]);
 
   useEffect(() => {
@@ -148,7 +80,6 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
   useEffect(() => {
     if (!joined) return;
     let cancelled = false;
-    serverLoadedRef.current = false;
     fetch(`/api/collaboration-sessions/${sessionId}`, { cache: "no-store" })
       .then(async (response) => {
         if (cancelled) return;
@@ -178,12 +109,12 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         }
       })
       .catch(() => { /* Use local recovery when durable storage is unavailable. */ })
-      .finally(() => { if (!cancelled) serverLoadedRef.current = true; });
+      .finally(() => { if (!cancelled) setLoadedSession(sessionId); });
     return () => { cancelled = true; };
   }, [joined, sessionId, setState]);
 
   useEffect(() => {
-    if (!joined || !serverLoadedRef.current) return;
+    if (!joined || loadedSession !== sessionId) return;
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
       fetch(`/api/collaboration-sessions/${sessionId}`, {
@@ -193,7 +124,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
       }).catch(() => { /* localStorage still protects the current browser. */ });
     }, 600);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
-  }, [joined, sessionId, setState, state]);
+  }, [joined, loadedSession, sessionId, setState, state]);
 
   useEffect(() => {
     if (!joined) return;
@@ -213,6 +144,8 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
       .on("broadcast", { event: "move" }, ({ payload }) => apply(payload as StormEvent))
       .on("broadcast", { event: "edit" }, ({ payload }) => apply(payload as StormEvent))
       .on("broadcast", { event: "delete" }, ({ payload }) => apply(payload as StormEvent))
+      .on("broadcast", { event: "link" }, ({ payload }) => apply(payload as StormEvent))
+      .on("broadcast", { event: "unlink" }, ({ payload }) => apply(payload as StormEvent))
       .on("broadcast", { event: "phase" }, ({ payload }) => apply(payload as StormEvent))
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
@@ -336,6 +269,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     doc.setFontSize(7); doc.setTextColor(71, 85, 105); doc.text("Legend:", margin, legendY);
     (Object.keys(CARD_TYPES) as CardType[]).forEach((type, index) => { const x = margin + 18 + index * 34; const [red, green, blue] = PDF_COLORS[type]; doc.setFillColor(red, green, blue); doc.roundedRect(x, legendY - 4, 4, 4, 1, 1, "F"); doc.setTextColor(71, 85, 105); doc.text(CARD_TYPES[type].label, x + 6, legendY); });
     doc.save(`eventstorming-${sessionId}.pdf`);
+    trackEvent("output_export", { tool: "event_storming", format: "pdf", card_count: state.cards.length });
   };
 
   const joinWorkshop = () => {
@@ -343,6 +277,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     if (!trimmedName) return;
     userRef.current = trimmedName;
     localStorage.setItem(`event-storming-name-${sessionId}`, trimmedName);
+    trackEvent("session_joined", { tool: "event_storming" });
     setJoined(true);
   };
 
@@ -350,6 +285,7 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
     const url = `${window.location.origin}/tools/event-storming/${sessionId}`;
     try {
       await navigator.clipboard.writeText(url);
+      trackEvent("invite_copy", { tool: "event_storming" });
       setLinkCopied(true);
       window.setTimeout(() => setLinkCopied(false), 1800);
     } catch {
@@ -385,8 +321,8 @@ export default function EventStormingBoard({ sessionId }: { sessionId: string })
         <div className="mb-6 text-4xl">🟠</div>
         <h1 className="text-3xl font-bold text-gray-950">EventStorming workshop</h1>
         <p className="mt-2 text-gray-600">Map what happens in a business process with your team.</p>
-        <label className="mt-8 block text-sm font-semibold text-gray-700">Your name</label>
-        <input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && joinWorkshop()} placeholder="e.g. Ahmed" className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200" />
+        <label htmlFor="storm-name" className="mt-8 block text-sm font-semibold text-gray-700">Your name</label>
+        <input id="storm-name" autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => event.key === "Enter" && joinWorkshop()} placeholder="e.g. Ahmed" className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200" />
         <button onClick={joinWorkshop} disabled={!name.trim()} className="mt-6 w-full rounded-xl bg-orange-500 py-3 font-semibold text-white hover:bg-orange-600 disabled:opacity-40">Join workshop →</button>
         <p className="mt-5 break-all text-center font-mono text-xs text-gray-400">{sessionId}</p>
       </div>

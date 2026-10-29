@@ -24,6 +24,7 @@ function getContentDir(type: string) {
 }
 
 function normalizeDate(value: unknown): string | undefined {
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? undefined : value.toISOString();
   if (typeof value !== "string" || value.trim().length === 0) return undefined;
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return undefined;
@@ -33,17 +34,15 @@ function normalizeDate(value: unknown): string | undefined {
 function parseContentFile(filePath: string): ContentItem {
   const raw = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(raw);
-  const stats = fs.statSync(filePath);
   const meta = data as ContentMeta & { date?: string; lastUpdated?: string };
 
   const publishedAt =
     normalizeDate(meta.publishedAt) ??
-    normalizeDate(meta.date) ??
-    stats.mtime.toISOString();
+    normalizeDate(meta.date);
   const updatedAt =
     normalizeDate(meta.updatedAt) ??
     normalizeDate(meta.lastUpdated) ??
-    stats.mtime.toISOString();
+    publishedAt;
 
   return {
     ...meta,

@@ -15,20 +15,77 @@ relatedLinks:
     href: "/tools/user-story-generator"
   - title: "Acceptance Criteria Generator"
     href: "/tools/acceptance-criteria-generator"
+publishedAt: "2026-08-31"
+updatedAt: "2026-10-29"
 ---
 
-A user story map gives a team a shared view of the product journey. Activities sit across the top, tasks sit beneath them, and user stories are arranged into release slices from the smallest valuable version to future work.
+A user story map arranges a person's journey from left to right and the smallest useful release from top to bottom. It helps a team decide which capabilities belong together before turning them into sprint tickets.
 
-## Start with the user journey
+Open the [free User Story Mapping Workshop](/tools/user-story-mapping) to build the map together, or use the [checkout example](/examples/user-story-map-online-checkout) as a starting point.
 
-Choose one persona and describe what they are trying to accomplish. Add broad activities from left to right, such as **Discover**, **Choose**, **Pay**, and **Manage order**. Keep the map focused on one journey rather than the entire product.
+## Prepare one clear workshop question
 
-## Add tasks and stories
+Choose one user, one goal, and a boundary. For a checkout workshop, the user is a shopper, the goal is to buy an in-stock product, and the boundary runs from finding the product to receiving confirmation. Refunds can be discussed later without becoming part of the first purchase journey.
 
-Tasks describe what the user does. Stories describe the smallest valuable capability that helps them do it. Keep stories specific enough to discuss with product, design, QA, and engineering.
+Invite people who understand product decisions, implementation, testing, and customer problems. Bring the relevant research or support tickets. If an assumption has no evidence, write it down as a question instead of quietly treating it as a requirement.
 
-## Slice the releases
+## 1. Walk through the journey
 
-Place the smallest coherent journey in **MVP**, the next valuable improvements in **Release 2**, and unresolved or lower-priority work in **Later**. A release slice should tell a usable story, not just collect technically related tasks.
+Ask someone to tell the story aloud: “I find a product, check its details, add it to my cart, pay, and receive confirmation.” Turn these steps into activity columns. Keep activity names in the user's language rather than naming services or database tables.
 
-Try the [free User Story Mapping Workshop](/tools/user-story-mapping) with your team. The board supports live collaboration, drag and drop, durable saving, and PDF export.
+| Activity | User task | Candidate story |
+|---|---|---|
+| Discover | Check whether an item fits | View the description, price, and availability |
+| Decide | Review the purchase | Change a quantity and see the updated total |
+| Pay | Submit payment | Pay once and see a clear result |
+| Confirm | Know the purchase succeeded | Receive an order reference and confirmation |
+
+Activities describe broad parts of the journey. Tasks describe actions within them. User stories identify capabilities that can be discussed and tested. In the online board, task and story cards share an activity column; label them deliberately so the two levels remain clear.
+
+## 2. Add the missing paths
+
+Walk through the happy path first, then ask what changes when something fails. What if a product sells out? What if payment is declined? Can the shopper retry without a duplicate charge? Where does the customer get help?
+
+Place each question near the relevant activity. Agree which answers are essential to a safe first release and which need discovery. Use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) to prepare a first draft, then review the actual business rules with the team.
+
+## 3. Draw a usable release slice
+
+An MVP row should describe a coherent journey a person can complete. For the checkout example, product details, a cart, one payment method, and confirmation belong together. A cart alone does not complete the buying goal.
+
+Move optional improvements into Release 2 or Later. Saved payment methods, promotional codes, and delivery preferences may be valuable, but their priority depends on the audience and business constraints.
+
+Use this decision for each candidate card:
+
+- Does the first release fail its goal without it? Keep it in the MVP discussion.
+- Is there a safe, explicit workaround? Consider a later slice.
+- Is an important assumption unanswered? Assign discovery before commitment.
+
+Release rows express product priorities. They are not promised dates and do not replace a capacity check.
+
+## 4. Turn selected cards into backlog items
+
+For each MVP card, write a user outcome, acceptance criteria, dependencies, and an explicit boundary. The [User Story Template](/templates/user-story-template) provides a reusable format. Estimate the resulting stories with [Planning Poker](/tools/planning-poker) after the team understands their scope.
+
+Example:
+
+```markdown
+## Story
+As a shopper, I want a clear payment result so I know whether my order exists.
+
+## Acceptance criteria
+- A successful payment displays an order reference.
+- A declined payment leaves the cart available for another attempt.
+- Repeating the same submission does not create another paid order.
+
+## Questions to resolve
+- What should happen while a payment result is still pending?
+- Which payment provider events confirm the final order state?
+```
+
+## Finish with decisions and owners
+
+Before ending the workshop, check that every activity has a place in the first usable release. Read the MVP row as a complete journey, record unresolved questions with owners, and identify the next backlog items to refine.
+
+Share the workshop link only with intended participants: anyone with the link can join and edit. Export a PDF for a meeting snapshot. Keep detailed delivery work in your issue tracker and revisit the map when customer feedback changes the next release.
+
+The [checkout story map example](/examples/user-story-map-online-checkout) shows these decisions applied to a complete journey. For larger features, use the [epic breakdown guide](/guides/how-to-break-down-epics-into-user-stories) to create smaller slices.

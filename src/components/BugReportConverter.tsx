@@ -1,4 +1,6 @@
 "use client";
+
+import { useToolUsage } from "@/hooks/useToolUsage";
 import Link from "next/link";
 import { useState } from "react";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -364,6 +366,7 @@ ${acceptanceCriteria}`;
 
 
 export default function BugReportConverter() {
+  const markUsed = useToolUsage("bug_report");
   const [input, setInput] = usePersistentState("tool-draft-bug-report", "");
   const [output, setOutput] = usePersistentState("tool-output-bug-report", "");
   const [copied, setCopied] = useState(false);
@@ -381,6 +384,7 @@ export default function BugReportConverter() {
     if (!input.trim()) return;
     setError("");
     // Always use local mode (AI mode not yet available)
+    markUsed();
     trackEvent("generator_run", { tool: "bug_report", mode: "local" });
 
     const generated = convertBugReport(input);

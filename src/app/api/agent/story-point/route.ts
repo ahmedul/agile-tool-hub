@@ -5,7 +5,7 @@ import {
   type StoryPointFactors,
 } from "@/lib/agent-tools";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 function isValidFactors(value: unknown): value is StoryPointFactors {
   if (!value || typeof value !== "object") return false;

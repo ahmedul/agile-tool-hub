@@ -1,5 +1,8 @@
 "use client";
 
+import { useToolUsage } from "@/hooks/useToolUsage";
+import { trackEvent } from "@/lib/analytics";
+
 import { useMemo, useState } from "react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 
@@ -162,6 +165,7 @@ function getEstimateLabel(estimate: number) {
 }
 
 export default function StoryPointCalculator() {
+  const markUsed = useToolUsage("story_point_calculator");
   const [summary, setSummary] = usePersistentState("tool-summary-story-points", "");
   const [values, setValues] = usePersistentState<Record<FactorKey, number>>("tool-values-story-points", INITIAL_VALUES);
   const [copied, setCopied] = useState(false);
@@ -239,11 +243,13 @@ export default function StoryPointCalculator() {
   }, [confidence, estimate, estimateLabel, nextActions, selectedFactors, summary, totalScore]);
 
   const updateValue = (key: FactorKey, score: number) => {
+    markUsed();
     setValues((current) => ({ ...current, [key]: score }));
     setCopied(false);
   };
 
   const applyPreset = (preset: StoryPreset) => {
+    markUsed();
     setSummary(preset.summary);
     setValues(preset.values);
     setCopied(false);
@@ -256,7 +262,9 @@ export default function StoryPointCalculator() {
   };
 
   const copyEstimate = async () => {
+    markUsed();
     await navigator.clipboard.writeText(markdown);
+    trackEvent("output_copy", { tool: "story_point_calculator", mode: "local", output_length: markdown.length });
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   };

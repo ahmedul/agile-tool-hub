@@ -13,32 +13,76 @@ relatedLinks:
     href: "/tools/user-story-mapping"
   - title: "How to Create a User Story Map"
     href: "/guides/how-to-create-a-user-story-map"
+publishedAt: "2026-08-31"
+updatedAt: "2026-10-29"
 ---
 
-## Activities
+This worked user story map follows a shopper buying one in-stock physical product. The release goal is to let the shopper complete a purchase and understand its result. It assumes one supported market, a single currency, and one payment provider; a different business may need different first-release boundaries.
 
-Use these activities as the backbone of a checkout journey:
+Build your version in the [free User Story Mapping Workshop](/tools/user-story-mapping), or follow the [mapping workshop guide](/guides/how-to-create-a-user-story-map) with your team.
 
-1. Discover a product
-2. Build the cart
-3. Pay for the order
-4. Track the order
-5. Manage the order
+## The journey and release map
 
-## MVP slice
+Read columns from left to right to follow the shopper. Read a release row across all columns to check whether it delivers a usable journey.
 
-- View product details
-- Add a product to the cart
-- Enter payment details
-- Confirm the order
-- Receive an order confirmation
+| Release | Discover | Build cart | Pay | Confirm and manage |
+|---|---|---|---|---|
+| MVP | View product details and stock | Add an item, change quantity, see the total | Enter shipping details and use one payment method | View the order reference and receive confirmation |
+| Release 2 | Filter relevant products | Apply an eligible promotion | Save an approved payment method | View shipment status |
+| Later | Personalized suggestions | Recover a saved cart across devices | Choose additional payment methods | Request a self-service return |
 
-## Later slices
+These rows are a proposed prioritization, not a universal ecommerce checklist. A store selling digital goods will need a different delivery step; a regulated product may require eligibility checks before payment.
 
-- Save payment methods
-- Apply promotional codes
-- Choose delivery windows
-- Track shipment status
-- Request a refund
+## Why these cards belong in the MVP
 
-Use the [User Story Mapping Workshop](/tools/user-story-mapping) to challenge this example with your product, QA, design, and engineering teams.
+A shopper needs enough information to choose, an accurate total before paying, and a reliable indication of whether the order succeeded. Failure recovery is part of that journey. A declined card must not leave someone guessing whether they have been charged.
+
+The first release therefore includes retry behavior and duplicate-submission protection. It defers saved cards because entering payment details each time still allows a complete purchase. It also defers self-service returns only if customers already have an acceptable support route.
+
+## Turn the payment card into a testable story
+
+```markdown
+## Title
+Show a reliable checkout payment result
+
+## User story
+As a shopper, I want to know whether my payment succeeded,
+so that I can complete my purchase without paying twice.
+
+## Acceptance criteria
+- A successful payment creates one order and displays its reference.
+- A declined payment shows an actionable message and preserves the cart.
+- Repeating the same payment request does not create a second charge.
+- A pending result explains what happens next without claiming success.
+- The confirmation contains the same items and total as the paid order.
+
+## Out of scope
+Saved cards, multiple currencies, and split payments.
+
+## Dependencies
+Payment provider integration and an agreed order-state model.
+```
+
+Review these criteria with engineering and QA. A payment provider may return an intermediate result before a webhook confirms the final state. The team must agree how the customer experience reflects that transition.
+
+## Explore the failure paths before estimating
+
+| Situation | Required user experience | Question for the team |
+|---|---|---|
+| Product becomes unavailable | Explain the changed cart before charging | When is inventory reserved? |
+| Card is declined | Preserve the cart and allow a safe retry | Which errors can be shown directly? |
+| Shopper submits twice | Show one purchase result | How is the request identified as a retry? |
+| Payment result is delayed | Show a pending state and a next step | How is the final result reconciled? |
+| Confirmation delivery fails | Keep the order reference available | Can support resend the confirmation? |
+
+The map reveals these decisions; it does not resolve them automatically. Assign an owner to each unanswered question before committing the affected story to a sprint.
+
+## Split a story that is still too large
+
+If “complete checkout” covers too much work, explore smaller user-visible slices: one product type, one supported market, or one payment method. Keep the end-to-end journey intact. Splitting into “database work” and “frontend work” alone does not explain what a shopper can do after either item ships.
+
+Use the [epic breakdown guide](/guides/how-to-break-down-epics-into-user-stories) to compare possible boundaries, then [estimate together](/tools/planning-poker). Bring the selected stories into the [Sprint Planning Checklist](/tools/sprint-planning-checklist) to check readiness and capacity.
+
+## Review the next release using evidence
+
+After launch, examine where customers struggle. Failed payments may make recovery improvements more valuable than promotional codes. Support requests about delivery may move shipment tracking ahead of saved cards. Record the evidence, revisit the release rows, and keep the original release decision visible so the team understands what changed.

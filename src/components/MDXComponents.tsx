@@ -1,11 +1,18 @@
 import type { ComponentProps } from "react";
 import type { MDXRemoteProps } from "next-mdx-remote/rsc";
+import TrackedLink from "./TrackedLink";
 
 function mergeClassName(...classes: Array<string | undefined>) {
   return classes.filter(Boolean).join(" ");
 }
 
 export const mdxComponents: MDXRemoteProps["components"] = {
+  a: ({ href, children, className, ...props }: ComponentProps<"a">) => {
+    if (href?.startsWith("/tools/") || href?.startsWith("/packs/")) {
+      return <TrackedLink href={href} label={href} className={className} eventParams={{ surface: "article_body" }}>{children}</TrackedLink>;
+    }
+    return <a href={href} className={className} {...props}>{children}</a>;
+  },
   table: ({ className, ...props }: ComponentProps<"table">) => (
     <div className="my-6 max-w-full overflow-x-auto rounded-lg border border-gray-200">
       <table className={mergeClassName("m-0 w-full min-w-[42rem] border-collapse text-sm", className)} {...props} />

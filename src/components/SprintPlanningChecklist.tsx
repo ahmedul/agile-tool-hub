@@ -1,5 +1,8 @@
 "use client";
 
+import { useToolUsage } from "@/hooks/useToolUsage";
+import { trackEvent } from "@/lib/analytics";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type ChecklistItem = {
@@ -57,6 +60,7 @@ const REQUIRED_IDS = SECTIONS.flatMap((section) => section.items)
   .map((item) => item.id);
 
 export default function SprintPlanningChecklist() {
+  const markUsed = useToolUsage("sprint_planning_checklist");
   const [sprintName, setSprintName] = useState("Sprint 1");
   const [sprintGoal, setSprintGoal] = useState("");
   const [capacity, setCapacity] = useState("30");
@@ -121,6 +125,7 @@ export default function SprintPlanningChecklist() {
   }, [capacity, checked, progress, sprintGoal, sprintName, status]);
 
   const toggleItem = (id: string) => {
+    markUsed();
     setChecked((current) => {
       const next = new Set(current);
       if (next.has(id)) {
@@ -134,6 +139,7 @@ export default function SprintPlanningChecklist() {
   };
 
   const checkRequired = () => {
+    markUsed();
     setChecked((current) => new Set([...current, ...REQUIRED_IDS]));
   };
 
@@ -143,7 +149,9 @@ export default function SprintPlanningChecklist() {
   };
 
   const copyChecklist = async () => {
+    markUsed();
     await navigator.clipboard.writeText(markdown);
+    trackEvent("output_copy", { tool: "sprint_planning_checklist", mode: "local", output_length: markdown.length });
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   };

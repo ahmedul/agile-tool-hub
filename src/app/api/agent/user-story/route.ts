@@ -1,7 +1,7 @@
 import { agentJson, agentOptions, recordAgentRequest } from "@/lib/agent-api";
 import { CONTENT_TOOL_PRESETS, generateAgentUserStory, type StoryPriority, type StoryType } from "@/lib/agent-content-tools";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 const storyTypes = ["feature", "improvement", "task"];
 const priorities = ["High", "Medium", "Low"];

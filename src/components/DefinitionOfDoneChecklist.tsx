@@ -1,5 +1,8 @@
 "use client";
 
+import { useToolUsage } from "@/hooks/useToolUsage";
+import { trackEvent } from "@/lib/analytics";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type DoneItem = {
@@ -52,6 +55,7 @@ const SECTIONS: DoneSection[] = [
 ];
 
 export default function DefinitionOfDoneChecklist() {
+  const markUsed = useToolUsage("definition_of_done_checklist");
   const [teamName, setTeamName] = useState("Team Definition of Done");
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
@@ -107,6 +111,7 @@ export default function DefinitionOfDoneChecklist() {
   }, [checked, progress, status, teamName]);
 
   const toggleItem = (id: string) => {
+    markUsed();
     setChecked((current) => {
       const next = new Set(current);
       if (next.has(id)) {
@@ -120,6 +125,7 @@ export default function DefinitionOfDoneChecklist() {
   };
 
   const markAllDone = () => {
+    markUsed();
     setChecked(new Set(allItems.map((item) => item.id)));
   };
 
@@ -129,7 +135,9 @@ export default function DefinitionOfDoneChecklist() {
   };
 
   const copyChecklist = async () => {
+    markUsed();
     await navigator.clipboard.writeText(markdown);
+    trackEvent("output_copy", { tool: "definition_of_done_checklist", mode: "local", output_length: markdown.length });
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1600);
   };

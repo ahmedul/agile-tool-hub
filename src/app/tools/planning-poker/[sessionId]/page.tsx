@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import PlanningPokerRoom from "@/components/PlanningPokerRoom";
 import ToolFeedbackPanel from "@/components/ToolFeedbackPanel";
+
+export const metadata: Metadata = {
+  title: "Planning Poker Session",
+  robots: { index: false, follow: false },
+};
 
 export default async function PlanningPokerSessionPage({
   params,

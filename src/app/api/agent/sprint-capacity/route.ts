@@ -1,7 +1,7 @@
 import { agentJson, agentOptions, isFiniteNumber, recordAgentRequest } from "@/lib/agent-api";
 import { calculateSprintCapacity, type SprintCapacityMember } from "@/lib/agent-tools";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 function isValidMember(value: unknown): value is SprintCapacityMember {
   if (!value || typeof value !== "object") return false;

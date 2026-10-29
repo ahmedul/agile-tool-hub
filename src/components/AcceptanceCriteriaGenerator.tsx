@@ -1,4 +1,6 @@
 "use client";
+
+import { useToolUsage } from "@/hooks/useToolUsage";
 import Link from "next/link";
 import { useState } from "react";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -224,6 +226,7 @@ ${constraints}`;
 
 
 export default function AcceptanceCriteriaGenerator() {
+  const markUsed = useToolUsage("acceptance_criteria");
   const [form, setForm] = usePersistentState<FormState>("tool-draft-acceptance-criteria", {
     featureDescription: "",
     userType: "",
@@ -270,6 +273,7 @@ export default function AcceptanceCriteriaGenerator() {
     if (!form.featureDescription.trim()) return;
     setError("");
     // Always use local mode (AI mode not yet available)
+    markUsed();
     trackEvent("generator_run", { tool: "acceptance_criteria", mode: "local", format: form.format, preset: form.preset });
     const generated = generateAcceptanceCriteria(form);
     const qualityResult = scoreAcceptanceCriteria(generated.markdown, form.format, generated.parsed.user.trim().length >= 2, generated.parsed.clarifications, generated.parsed.hasMeasurableSignal);
