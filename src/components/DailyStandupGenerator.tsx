@@ -1,5 +1,7 @@
 "use client";
 
+import { useToolUsage } from "@/hooks/useToolUsage";
+
 import Link from "next/link";
 import { useState } from "react";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -247,6 +249,7 @@ function generateStandup(form: FormState, members: TeamMemberUpdate[], standupMo
 }
 
 export default function DailyStandupGenerator() {
+  const markUsed = useToolUsage("daily_standup");
   const [form, setForm] = usePersistentState<FormState>("tool-draft-daily-standup", {
     yesterday: "",
     today: "",
@@ -285,6 +288,7 @@ export default function DailyStandupGenerator() {
   };
 
   const handleGenerate = () => {
+    markUsed();
     trackEvent("generator_run", {
       tool: "daily_standup",
       mode: "local",

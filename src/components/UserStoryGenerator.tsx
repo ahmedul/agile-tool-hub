@@ -1,4 +1,6 @@
 "use client";
+
+import { useToolUsage } from "@/hooks/useToolUsage";
 import Link from "next/link";
 import { useState } from "react";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -321,6 +323,7 @@ ${parsed.sourceContext || featureDescription.trim()}`;
 
 
 export default function UserStoryGenerator() {
+  const markUsed = useToolUsage("user_story");
   const [form, setForm] = usePersistentState<FormState>("tool-draft-user-story", {
     featureDescription: "",
     userType: "",
@@ -371,6 +374,7 @@ export default function UserStoryGenerator() {
     if (!form.featureDescription.trim()) return;
     setError("");
     // Always use local mode (AI mode not yet available)
+    markUsed();
     trackEvent("generator_run", { tool: "user_story", mode: "local", preset: form.preset });
     const generated = generateUserStory(form);
     const qualityResult = scoreUserStory(generated.markdown, generated.parsed.hasMeasurableOutcome, generated.parsed.dependencies);

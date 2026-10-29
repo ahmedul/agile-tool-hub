@@ -26,7 +26,7 @@ function inferCta(title: string, category: string, relatedLinks?: { title: strin
   if (toolLink) {
     return {
       title: `Try the ${toolLink.title}`,
-      description: `Use ${toolLink.title} to generate cleaner, Jira-ready output in seconds.`,
+      description: `Open ${toolLink.title} to put this resource into practice with your team.`,
       primaryHref: toolLink.href,
       primaryLabel: `Try ${toolLink.title}`,
       secondaryHref: packHref,

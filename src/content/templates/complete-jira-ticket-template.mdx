@@ -19,11 +19,24 @@ relatedLinks:
     href: "/tools/acceptance-criteria-generator"
   - title: "How to Write a Good Jira Ticket"
     href: "/guides/how-to-write-a-good-jira-ticket"
+publishedAt: "2026-05-25"
+updatedAt: "2026-10-29"
 ---
 
 ## Complete Jira Ticket Template
 
 Use this **Jira ticket template** to write clearer bug, story, task, and feature tickets in minutes. Copy, paste, and adapt each section by issue type.
+
+## Choose the right ticket type
+
+| You need to describe | Start with | Make the outcome verifiable with |
+|---|---|---|
+| Existing behavior that is broken | Bug Report Ticket | Reproduction steps and expected behavior |
+| A capability someone needs | User Story Ticket | A user outcome and acceptance criteria |
+| A bounded maintenance activity | Technical Task Ticket | A deliverable and a validation plan |
+| A proposed product change | Feature / Improvement Ticket | The problem, scope, and success conditions |
+
+Use the Quick copy selector above to choose a section. Paste it into your issue description, replace the placeholders, and move issue type and priority into your Jira project's own fields. Custom fields and supported formatting vary by project.
 
 ---
 
@@ -162,6 +175,38 @@ High / Medium / Low
 ```
 
 ---
+
+## Technical Task Ticket
+
+```markdown
+## Title
+[Describe the concrete change and the affected system]
+
+## Issue Type
+Task
+
+## Objective
+[Why this work is needed and who benefits]
+
+## Scope
+- [The component, service, configuration, or data to change]
+
+## Acceptance Criteria
+- [ ] [Observable result that confirms the change]
+- [ ] [Regression or compatibility check]
+- [ ] [Rollout or rollback check where relevant]
+
+## Validation
+[Commands, test cases, dashboards, or review evidence]
+
+## Dependencies
+[Required access, linked work, or external decisions]
+
+## Out of Scope
+[Related work that belongs in a different ticket]
+```
+
+A useful task might be “Rotate the staging webhook signing secret and verify delivery.” Its validation should explain how the team checks the new secret and how a failed rollout is recovered. Avoid a title such as “Webhook cleanup” that leaves the deliverable undefined.
 
 ## What Every Jira Ticket Needs
 

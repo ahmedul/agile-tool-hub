@@ -1,4 +1,6 @@
 "use client";
+
+import { useToolUsage } from "@/hooks/useToolUsage";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
@@ -43,6 +45,7 @@ interface VelocityMetrics {
 }
 
 export default function VelocityTracker() {
+  const markUsed = useToolUsage("velocity_tracker");
   const [sprints, setSprints] = usePersistentState<Sprint[]>("tool-sprints-velocity", [
     { name: "Sprint 1", plannedPoints: 40, completedPoints: 38, teamSize: 4 },
   ]);
@@ -198,6 +201,7 @@ h3. Key Metrics
       }
     }
 
+    markUsed();
     trackEvent("generator_run", {
       tool: "velocity_tracker",
       mode: "input",
@@ -496,7 +500,7 @@ h3. Key Metrics
               </div>
 
               <div className="flex gap-3">
-                <CopyButton text={output} />
+                <CopyButton text={output} eventName="output_copy" eventParams={{ tool: "velocity_tracker", mode: "local" }} />
                 <button
                   onClick={() => {
                     trackEvent("output_feedback", {

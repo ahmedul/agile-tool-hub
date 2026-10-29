@@ -5,7 +5,7 @@ import HeroSection from "@/components/HeroSection";
 import FeaturedCard from "@/components/FeaturedCard";
 import FAQ from "@/components/FAQ";
 import JsonLd from "@/components/JsonLd";
-import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema, buildFAQSchema, buildTemplateSchema, KEYWORDS } from "@/lib/seo";
+import { buildMetadata, buildBreadcrumbSchema, buildCollectionPageSchema, buildFAQSchema, KEYWORDS } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Free Agile & Scrum Tools for Sprint Planning",
@@ -224,30 +224,6 @@ export default function ToolsPage() {
     })),
   });
 
-  // Rating schema for popular tools
-  const topToolRatings = [
-    buildTemplateSchema({
-      name: "Bug Report to Jira Ticket Converter",
-      description: "Paste messy bug notes and get a clean, structured Jira ticket instantly",
-      url: "https://agiletoolhub.com/tools/bug-report-to-jira-ticket-converter",
-      rating: { ratingValue: 4.9, ratingCount: 267 },
-      author: "AgileToolHub",
-    }),
-    buildTemplateSchema({
-      name: "User Story Generator",
-      description: "Describe your feature and get a complete Jira-ready user story with acceptance criteria",
-      url: "https://agiletoolhub.com/tools/user-story-generator",
-      rating: { ratingValue: 4.8, ratingCount: 312 },
-      author: "AgileToolHub",
-    }),
-    buildTemplateSchema({
-      name: "Planning Poker",
-      description: "Real-time story point estimation for your whole team",
-      url: "https://agiletoolhub.com/tools/planning-poker",
-      rating: { ratingValue: 4.7, ratingCount: 198 },
-      author: "AgileToolHub",
-    }),
-  ];
   const faqSchema = buildFAQSchema(faqItems);
 
   return (
@@ -255,9 +231,6 @@ export default function ToolsPage() {
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={collectionSchema} />
       <JsonLd data={faqSchema} />
-      {topToolRatings.map((schema, idx) => (
-        <JsonLd key={idx} data={schema} />
-      ))}
       <HeroSection
         title="Free Agile and Scrum tools for software teams"
         description="Plan sprints, estimate story points, improve Jira tickets, run retrospectives, and generate clearer backlog content without signup."

@@ -43,12 +43,52 @@ faqItems:
   - question: "What's the difference between a ticket title and description?"
     answer: "Title: One sentence that describes the problem (searchable in Jira). Description: Details needed to solve it (steps, context, linked tickets). Title should stand alone; description provides context."
   - question: "How do I know when a ticket is too big?"
-    answer: "If it can't be completed by one person in 3 days, it's too big. If it needs design review or spans multiple systems, it's too big. Break it into smaller tickets. Smaller tickets = faster delivery and faster feedback."
+    answer: "A ticket is too large when its outcome or acceptance criteria cannot be understood, tested, and completed within the team's planning horizon. Split independent outcomes; cross-system work or collaboration alone does not make a ticket too large."
+publishedAt: "2026-05-23"
+updatedAt: "2026-10-29"
 ---
 
 A bad Jira ticket wastes hours. A good Jira ticket saves them.
 
 This guide covers what separates a useful ticket from one that gets bounced back, ignored, or misunderstood.
+
+## Start with a complete before-and-after example
+
+“Checkout is broken; please fix” does not tell a developer where to begin. The following fictional example adds the minimum information another person needs to reproduce and verify the issue. Adapt the details to your product rather than copying the sample environment as fact.
+
+```markdown
+## Title
+Checkout submits twice when Pay is pressed repeatedly on mobile
+
+## Context
+A shopper can submit the payment form again while the first request is pending.
+
+## Steps to reproduce
+1. Open the staging checkout with an in-stock item.
+2. Enter a valid test payment method.
+3. Enable a slow network profile and press Pay twice before a result appears.
+
+## Expected
+One payment attempt leads to one order. Pending progress is visible.
+
+## Actual
+Two submissions appear in the request log; confirm whether both create charges.
+
+## Environment and evidence
+[Device, browser, application build, request IDs, and a recording]
+
+## Acceptance criteria
+- A pending payment has a visible state.
+- Repeated submission does not create another paid order.
+- A declined attempt can be retried safely.
+
+## Open question
+Does the payment service already support idempotent requests?
+```
+
+Notice that the example separates observed duplicate requests from an unconfirmed duplicate charge. Keep observations, assumptions, and questions distinct so the team investigates the actual failure.
+
+For a reusable structure, [copy the complete Jira ticket template](/templates/complete-jira-ticket-template). If you have rough notes, use the [Bug Report Converter](/tools/bug-report-to-jira-ticket-converter), then verify its output against your evidence.
 
 ## 1. Write a Specific Title
 

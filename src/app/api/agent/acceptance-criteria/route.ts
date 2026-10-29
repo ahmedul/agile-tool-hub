@@ -1,7 +1,7 @@
 import { agentJson, agentOptions, recordAgentRequest } from "@/lib/agent-api";
 import { CONTENT_TOOL_PRESETS, generateAgentAcceptanceCriteria, type AcceptanceCriteriaFormat } from "@/lib/agent-content-tools";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 const formats = ["gherkin", "checklist", "both"];
 
 export async function OPTIONS() { return agentOptions(); }

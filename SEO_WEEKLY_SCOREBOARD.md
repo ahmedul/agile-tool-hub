@@ -1,75 +1,37 @@
-# SEO Weekly Scoreboard (Goal: 1,000 weekly users)
+# SEO weekly scoreboard
 
-Use this file once per week (same day each week, ideally Sunday).
+Updated: 2026-10-29. Screenshot baseline; no live GA4 or Search Console property access was available during implementation.
 
-## North Star
+## Observed baseline
 
-- Weekly users from organic search: target 1,000/week
-- Current baseline (Jul 2026): low double digits/week
+| Metric | Period | Value | Change shown |
+|---|---|---:|---:|
+| Sessions | Oct 22–28, 2026 | 397 | +19.2% |
+| Active users | Same GA4 period | 300 | +25.5% |
+| Organic-search sessions | Channel card, last 7 days | 148 | +111.3% |
+| Bing organic sessions | Source card, last 7 days | 111 | +9.9% |
+| Google organic sessions | Source card, last 7 days | 13 | +8.3% |
+| Key events | Same GA4 period | 11 | +83.3% |
+| Google Search clicks | Overview, roughly Jul–Oct 2026 | 103 | Not supplied |
+| Indexed URLs | Search Console screenshot | 86 | Declining on overview chart |
+| Excluded URLs | Search Console screenshot | 67 | See task board for reasons |
 
-## 12-Week Milestones
+These are different reports and periods. Do not equate sessions with users, events with pageviews, or key-event counts with converted-user counts. Search Console clicks and GA4 sessions are different metrics.
 
-- Week 2 target: 150 users/week
-- Week 4 target: 250-350 users/week
-- Week 8 target: 500-700 users/week
-- Week 12 target: 900-1,100 users/week
+## Record the same comparison each week
 
-## Metrics To Record Weekly
+| Week ending | Organic sessions (GA4) | Google clicks (GSC) | Impressions | CTR | Avg position | Useful copies / eligible sessions | Important canonical pages indexed | Notes |
+|---|---:|---:|---:|---:|---:|---|---|---|
+| 2026-11-01 | | | | | | | | First week after deployment |
+| 2026-11-08 | | | | | | | | |
+| 2026-11-15 | | | | | | | | |
+| 2026-11-22 | | | | | | | | |
 
-Fill one row every week from Google Search Console + GA4.
+## Review rules
 
-| Week End Date | Organic Users (GA4) | Clicks (GSC) | Impressions (GSC) | CTR (GSC) | Avg Position (GSC) | Indexed Pages | New Pages Published | URLs Requested For Indexing | Top Query 1 (Clicks/Impr) | Top Query 2 (Clicks/Impr) | Top Query 3 (Clicks/Impr) | Notes |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|---|---|
-| 2026-08-02 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-08-09 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-08-16 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-08-23 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-08-30 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-09-06 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-09-13 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-09-20 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-09-27 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-10-04 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-10-11 |  |  |  |  |  |  |  |  |  |  |  |  |
-| 2026-10-18 |  |  |  |  |  |  |  |  |  |  |  |  |
-
-## Weekly Operating Checklist (15-30 min)
-
-1. GSC Performance: compare Last 7 days vs Previous 7 days.
-2. Log clicks, impressions, CTR, and average position.
-3. Find pages with impressions > 200 and CTR < 1%.
-4. Improve title/description on top 3 low-CTR pages.
-5. Request indexing for only changed URLs.
-6. Publish at least 2 high-intent pages this week.
-
-## Decision Rules
-
-- If impressions are up but clicks are flat:
-  - Problem: snippet/title intent mismatch.
-  - Action: rewrite titles/descriptions for top 3 pages.
-
-- If impressions are flat or down:
-  - Problem: content/crawl momentum is low.
-  - Action: publish 2+ pages and request indexing for each.
-
-- If average position improves but CTR stays near zero:
-  - Problem: weak SERP hook.
-  - Action: add specific value terms in titles (Free, Examples, Template, Checklist, Calculator).
-
-## Priority Query Set To Monitor
-
-Track these weekly from your current growth cluster:
-
-- scrum ceremonies
-- story points
-- story point estimation
-- user story template
-- acceptance criteria generator
-- acceptance criteria template
-
-## This Week Plan
-
-- Request indexing for latest updated URLs.
-- Keep only successful sitemap entries in GSC.
-- Publish 2 pages tied to highest-impression queries with zero clicks.
-- Re-check compare report in 7 days and update this file.
+- Check performance by query **and landing page** before rewriting a title. A low CTR at a low ranking is not the same problem as low CTR among high-ranking results.
+- Inspect excluded URLs individually. Redirects and intentionally excluded workshop sessions need not be indexed.
+- Improve existing high-intent pages with distinct examples and a useful action; publish new pages only when they answer a separate need.
+- Compare useful copies and tool usage by organic landing page after the event changes have accumulated data.
+- Request indexing for materially changed important URLs after deployment. Repeated requests for unchanged pages are not the operating strategy.
+- A lack of Core Web Vitals field data is inconclusive. Use browser checks and performance measurements while waiting for sufficient real-user data.

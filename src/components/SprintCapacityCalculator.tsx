@@ -1,5 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useToolUsage } from "@/hooks/useToolUsage";
+import { trackEvent } from "@/lib/analytics";
+
 import { usePersistentState } from "@/hooks/usePersistentState";
 
 interface TeamMember {
@@ -15,11 +19,21 @@ const DEFAULT_MEMBERS: TeamMember[] = [
 ];
 
 export default function SprintCapacityCalculator() {
+  const markUsed = useToolUsage("sprint_capacity_calculator");
   const [sprintDays, setSprintDays] = usePersistentState("tool-sprint-days-capacity", 10);
   const [members, setMembers] = usePersistentState<TeamMember[]>("tool-members-capacity", DEFAULT_MEMBERS);
   const [nextId, setNextId] = usePersistentState("tool-next-member-capacity", 3);
+  const [copied, setCopied] = useState(false);
+
+  const changeSprintDays = (value: number) => {
+    markUsed();
+    const days = Math.max(1, Math.min(30, Number.isFinite(value) ? value : 1));
+    setSprintDays(days);
+    setMembers((previous) => previous.map(member => ({ ...member, daysAvailable: Math.min(member.daysAvailable, days) })));
+  };
 
   const addMember = () => {
+    markUsed();
     setMembers((prev) => [
       ...prev,
       { id: nextId, name: `Developer ${nextId}`, daysAvailable: sprintDays, velocity: 2 },
@@ -28,10 +42,12 @@ export default function SprintCapacityCalculator() {
   };
 
   const removeMember = (id: number) => {
+    markUsed();
     setMembers((prev) => prev.filter((m) => m.id !== id));
   };
 
   const updateMember = (id: number, field: keyof TeamMember, value: string | number) => {
+    markUsed();
     setMembers((prev) =>
       prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)),
     );
@@ -43,21 +59,32 @@ export default function SprintCapacityCalculator() {
   const totalAvailableDays = members.reduce((sum, m) => sum + m.daysAvailable, 0);
   const utilizationPct = maxDays > 0 ? Math.round((totalAvailableDays / maxDays) * 100) : 0;
 
+  const copyCapacity = async () => {
+    markUsed();
+    const output = [
+      "## Sprint Capacity Plan", `Sprint length: ${sprintDays} working days`,
+      ...members.map(member => `- ${member.name}: ${member.daysAvailable} days × ${member.velocity} points/day = ${member.daysAvailable * member.velocity} points`),
+      `Maximum capacity: ${totalCapacity} points`, `Recommended capacity (80%): ${recommendedCapacity} points`,
+      "Planning estimate only; validate it against recent team velocity.",
+    ].join("\n");
+    await navigator.clipboard.writeText(output);
+    trackEvent("output_copy", { tool: "sprint_capacity_calculator", mode: "local", output_length: output.length });
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  };
+
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       {/* Sprint length */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Sprint Length</h2>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           {[5, 10, 15].map((d) => (
             <button
               key={d}
-              onClick={() => {
-                setSprintDays(d);
-                setMembers((prev) => prev.map((m) => ({ ...m, daysAvailable: Math.min(m.daysAvailable, d) })));
-              }}
+              onClick={() => changeSprintDays(d)}
               className={[
-                "px-5 py-2.5 rounded-lg font-medium border text-sm transition-colors",
+                "px-3 sm:px-5 py-2.5 rounded-lg font-medium border text-sm transition-colors",
                 sprintDays === d
                   ? "bg-blue-600 text-white border-blue-600"
                   : "bg-white text-gray-700 border-gray-300 hover:border-blue-400",
@@ -66,13 +93,14 @@ export default function SprintCapacityCalculator() {
               {d === 5 ? "1 week" : d === 10 ? "2 weeks" : "3 weeks"}
             </button>
           ))}
-          <div className="flex items-center gap-2 ml-2">
+          <div className="flex items-center gap-2">
             <input
               type="number"
               min={1}
               max={30}
               value={sprintDays}
-              onChange={(e) => setSprintDays(Math.max(1, Number(e.target.value)))}
+              aria-label="Sprint length in working days"
+              onChange={(e) => changeSprintDays(Number(e.target.value))}
               className="w-16 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
             />
             <span className="text-sm text-gray-500">working days</span>
@@ -92,8 +120,8 @@ export default function SprintCapacityCalculator() {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="max-w-full overflow-x-auto">
+          <table className="w-full min-w-[34rem] text-sm">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="text-left py-2 pr-4 text-gray-500 font-medium">Name</th>
@@ -116,6 +144,7 @@ export default function SprintCapacityCalculator() {
                     <input
                       type="text"
                       value={m.name}
+                      aria-label={`Team member ${m.id} name`}
                       onChange={(e) => updateMember(m.id, "name", e.target.value)}
                       className="w-full px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -126,6 +155,7 @@ export default function SprintCapacityCalculator() {
                       min={0}
                       max={sprintDays}
                       value={m.daysAvailable}
+                      aria-label={`Days available for ${m.name}`}
                       onChange={(e) =>
                         updateMember(m.id, "daysAvailable", Math.min(sprintDays, Math.max(0, Number(e.target.value))))
                       }
@@ -140,7 +170,8 @@ export default function SprintCapacityCalculator() {
                         max={10}
                         step={0.5}
                         value={m.velocity}
-                        onChange={(e) => updateMember(m.id, "velocity", Math.max(0.5, Number(e.target.value)))}
+                        aria-label={`Points per day for ${m.name}`}
+                        onChange={(e) => updateMember(m.id, "velocity", Math.min(10, Math.max(0.5, Number(e.target.value))))}
                         className="w-20 px-3 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-center"
                       />
                     </div>
@@ -153,6 +184,7 @@ export default function SprintCapacityCalculator() {
                   <td className="py-3">
                     <button
                       onClick={() => removeMember(m.id)}
+                      aria-label={`Remove ${m.name}`}
                       disabled={members.length === 1}
                       className="text-gray-300 hover:text-red-400 disabled:opacity-0 transition-colors text-lg leading-none"
                     >
@@ -197,6 +229,12 @@ export default function SprintCapacityCalculator() {
             {totalAvailableDays}/{members.length * sprintDays} days available
           </p>
         </div>
+      </div>
+
+      <div>
+        <button onClick={copyCapacity} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+          {copied ? "Copied" : "Copy capacity plan"}
+        </button>
       </div>
 
       {/* Advice */}

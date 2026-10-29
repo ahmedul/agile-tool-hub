@@ -5,22 +5,10 @@ import ContentLayout from "@/components/ContentLayout";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import JsonLd from "@/components/JsonLd";
 import TemplateCopyActions from "@/components/TemplateCopyActions";
+import { extractTemplateSections } from "@/lib/template-copy";
 import { mdxComponents } from "@/components/MDXComponents";
 import { mdxRemoteOptions } from "@/lib/mdx";
 import { buildArticleSchema, buildBreadcrumbSchema, buildFAQSchema, buildHowToSchema, buildMetadata } from "@/lib/seo";
-
-const HIGH_INTENT_TEMPLATE_SLUGS = new Set([
-  "jira-bug-report-template",
-  "user-story-template",
-  "acceptance-criteria-template",
-  "qa-test-case-template",
-  "technical-debt-ticket-template",
-]);
-
-function extractFirstCodeBlock(content: string): string | null {
-  const match = content.match(/```(?:[\w-]+)?\n([\s\S]*?)```/);
-  return match?.[1]?.trim() || null;
-}
 
 function getTemplateCta(slug: string) {
   if (slug.includes("user-story")) {
@@ -81,8 +69,7 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
   const item = getContentBySlug("templates", slug);
   if (!item) notFound();
 
-  const codeBlock = extractFirstCodeBlock(item.content);
-  const showCopyActions = HIGH_INTENT_TEMPLATE_SLUGS.has(slug) && !!codeBlock;
+  const sections = extractTemplateSections(item.content);
 
   const jsonLd = buildArticleSchema({
     title: item.title,
@@ -121,7 +108,7 @@ export default async function TemplatePage({ params }: { params: Promise<{ slug:
         breadcrumbs={[{ label: "Templates", href: "/templates" }, { label: item.title }]}
         relatedLinks={item.relatedLinks}
         ctaProps={getTemplateCta(slug)}
-        preContent={showCopyActions && codeBlock ? <TemplateCopyActions markdown={codeBlock} /> : null}
+        preContent={sections.length > 0 ? <TemplateCopyActions sections={sections} slug={slug} /> : null}
       >
         <MDXRemote source={item.content} options={mdxRemoteOptions} components={mdxComponents} />
       </ContentLayout>

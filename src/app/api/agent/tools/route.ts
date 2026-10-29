@@ -1,6 +1,6 @@
 import { agentJson, agentOptions } from "@/lib/agent-api";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 const tools = [
   {

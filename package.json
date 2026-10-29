@@ -9,20 +9,21 @@
     "lint": "eslint",
     "test": "vitest",
     "test:run": "vitest run",
-    "postbuild": "next-sitemap"
+    "postbuild": "next-sitemap",
+    "check:seo": "node scripts/check-seo.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
-    "@modelcontextprotocol/server": "^2.0.0",
-    "@next/mdx": "^16.2.6",
-    "@next/third-parties": "^16.2.6",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "@next/mdx": "^16.4.3",
+    "@next/third-parties": "^16.4.3",
     "@supabase/supabase-js": "^2.106.1",
     "@tailwindcss/typography": "^0.5.19",
     "framer-motion": "^11.0.0",
     "gray-matter": "^4.0.3",
     "jspdf": "^4.2.1",
-    "next": "16.2.6",
+    "next": "16.4.3",
     "next-mdx-remote": "^6.0.0",
     "next-sitemap": "^4.2.3",
     "react": "19.2.4",
@@ -31,7 +32,7 @@
     "recharts": "^3.8.1",
     "rehype-highlight": "^7.0.2",
     "remark-gfm": "^4.0.1",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -40,9 +41,14 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.6",
+    "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.7"
+  },
+  "overrides": {
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "^6.1.5"
+    }
   }
 }

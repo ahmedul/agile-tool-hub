@@ -24,7 +24,7 @@ export default function PrivacyPage() {
 
       <div className="prose prose-gray max-w-none">
         <p>
-          Last updated: July 29, 2026
+          Last updated: October 29, 2026
         </p>
 
         <h2>1. Overview</h2>
@@ -44,9 +44,18 @@ export default function PrivacyPage() {
           <li>No account is required for Local mode</li>
         </ul>
 
+        <h2>Collaboration workshops</h2>
+        <p>
+          EventStorming and User Story Mapping send board contents and display names through
+          Supabase for shared sessions. Board snapshots are saved on our server and scheduled
+          for deletion after 30 days of inactivity. Your browser also keeps a local recovery copy;
+          clear browser storage to remove it. Anyone with a workshop link can join and edit it.
+          Planning Poker and retrospective sessions also use Supabase for live collaboration.
+        </p>
+
         <h2>3. AI mode</h2>
         <p>
-          In AI mode, your input is sent to our server and then securely forwarded to the AI provider
+          AI mode has not launched, and its generation endpoint is disabled. When available, AI input would be sent to our server and then forwarded to the AI provider
           to generate output.
         </p>
         <ul>
