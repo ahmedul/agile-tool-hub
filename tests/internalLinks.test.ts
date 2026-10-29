@@ -24,6 +24,7 @@ function getPublicRoutes(): Set<string> {
     "/examples",
     "/guides",
     "/pricing",
+    "/search",
     "/privacy",
     "/templates",
     "/tools",
