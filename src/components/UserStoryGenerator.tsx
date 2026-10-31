@@ -9,6 +9,7 @@ import { scoreUserStory, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
 import ToolStepCard from "@/components/ToolStepCard";
 import ToolSuccessBanner from "@/components/ToolSuccessBanner";
+import ToolOutputActions from "@/components/ToolOutputActions";
 
 type StoryType = "feature" | "improvement" | "task";
 type Priority = "High" | "Medium" | "Low";
@@ -332,7 +333,6 @@ export default function UserStoryGenerator() {
     preset: "product",
   });
   const [output, setOutput] = usePersistentState("tool-output-user-story", "");
-  const [copied, setCopied] = useState(false);
   const loading = false;
   const [error, setError] = useState("");
   const [quality, setQuality] = usePersistentState<StoryQualityResult | null>("tool-quality-user-story", null);
@@ -387,13 +387,6 @@ export default function UserStoryGenerator() {
       grade: qualityResult.grade,
       preset: form.preset,
     });
-  };
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    trackEvent("output_copy", { tool: "user_story", mode: "local", output_length: output.length });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const applyExample = (index: number) => {
@@ -582,23 +575,16 @@ export default function UserStoryGenerator() {
               </ul>
             </div>
           )}
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Generated User Story</label>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleGenerate}
-                disabled={!canGenerate}
-                className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-white transition-colors disabled:opacity-50"
-              >
-                Regenerate
-              </button>
-              <button
-                onClick={handleCopy}
-                className="text-sm px-4 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50 transition-colors"
-              >
-                {copied ? "Copied!" : "Copy for Jira"}
-              </button>
-            </div>
+          <div className="mb-3 space-y-2">
+            <h3 className="text-sm font-medium text-gray-700">Generated User Story</h3>
+            <ToolOutputActions
+              key={output}
+              text={output}
+              tool="user_story"
+              filename="user-story.md"
+              onRegenerate={handleGenerate}
+              canRegenerate={canGenerate}
+            />
           </div>
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}

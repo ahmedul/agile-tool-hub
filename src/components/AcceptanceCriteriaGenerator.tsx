@@ -9,6 +9,7 @@ import { scoreAcceptanceCriteria, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
 import ToolStepCard from "@/components/ToolStepCard";
 import ToolSuccessBanner from "@/components/ToolSuccessBanner";
+import ToolOutputActions from "@/components/ToolOutputActions";
 
 type OutputFormat = "gherkin" | "checklist" | "both";
 type CriteriaPreset = "product" | "engineering" | "api" | "tech_debt";
@@ -234,7 +235,6 @@ export default function AcceptanceCriteriaGenerator() {
     preset: "product",
   });
   const [output, setOutput] = usePersistentState("tool-output-acceptance-criteria", "");
-  const [copied, setCopied] = useState(false);
   const loading = false;
   const [error, setError] = useState("");
   const [quality, setQuality] = usePersistentState<CriteriaQualityResult | null>("tool-quality-acceptance-criteria", null);
@@ -286,13 +286,6 @@ export default function AcceptanceCriteriaGenerator() {
       grade: qualityResult.grade,
       preset: form.preset,
     });
-  };
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    trackEvent("output_copy", { tool: "acceptance_criteria", mode: "local", output_length: output.length });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const applyExample = (index: number) => {
@@ -465,23 +458,16 @@ export default function AcceptanceCriteriaGenerator() {
               </ul>
             </div>
           )}
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Generated Acceptance Criteria</label>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleGenerate}
-                disabled={!canGenerate}
-                className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-white transition-colors disabled:opacity-50"
-              >
-                Regenerate
-              </button>
-              <button
-                onClick={handleCopy}
-                className="text-sm px-4 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50 transition-colors"
-              >
-                {copied ? "Copied!" : "Copy for Jira"}
-              </button>
-            </div>
+          <div className="mb-3 space-y-2">
+            <h3 className="text-sm font-medium text-gray-700">Generated Acceptance Criteria</h3>
+            <ToolOutputActions
+              key={output}
+              text={output}
+              tool="acceptance_criteria"
+              filename="acceptance-criteria.md"
+              onRegenerate={handleGenerate}
+              canRegenerate={canGenerate}
+            />
           </div>
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}

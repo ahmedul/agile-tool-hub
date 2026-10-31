@@ -9,6 +9,7 @@ import { scoreBugReport, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
 import ToolStepCard from "@/components/ToolStepCard";
 import ToolSuccessBanner from "@/components/ToolSuccessBanner";
+import ToolOutputActions from "@/components/ToolOutputActions";
 
 interface ParsedBugReport {
   title: string;
@@ -369,7 +370,6 @@ export default function BugReportConverter() {
   const markUsed = useToolUsage("bug_report");
   const [input, setInput] = usePersistentState("tool-draft-bug-report", "");
   const [output, setOutput] = usePersistentState("tool-output-bug-report", "");
-  const [copied, setCopied] = useState(false);
   const loading = false;
   const [error, setError] = useState("");
   const [quality, setQuality] = usePersistentState<TicketQualityResult | null>("tool-quality-bug-report", null);
@@ -397,13 +397,6 @@ export default function BugReportConverter() {
       score: qualityResult.score,
       grade: qualityResult.grade,
     });
-  };
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    trackEvent("output_copy", { tool: "bug_report", mode: "local", output_length: output.length });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const canGenerate = Boolean(input.trim()) && !loading;
@@ -515,23 +508,16 @@ export default function BugReportConverter() {
               </ul>
             </div>
           )}
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Generated Jira Ticket</label>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleGenerate}
-                disabled={!canGenerate}
-                className="text-sm px-3 py-1.5 rounded border border-slate-300 hover:bg-white transition-colors disabled:opacity-50"
-              >
-                Regenerate
-              </button>
-              <button
-                onClick={handleCopy}
-                className="text-sm px-4 py-1.5 rounded border border-slate-300 bg-white hover:bg-slate-50 transition-colors"
-              >
-                {copied ? "Copied!" : "Copy for Jira"}
-              </button>
-            </div>
+          <div className="mb-3 space-y-2">
+            <h3 className="text-sm font-medium text-gray-700">Generated Jira Ticket</h3>
+            <ToolOutputActions
+              key={output}
+              text={output}
+              tool="bug_report"
+              filename="jira-bug-report.md"
+              onRegenerate={handleGenerate}
+              canRegenerate={canGenerate}
+            />
           </div>
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}
