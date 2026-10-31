@@ -185,6 +185,16 @@ export default function Home() {
           {/* Standard Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <ToolCard
+              title="Jira Ticket Quality Checker"
+              description="Review a bug report, story, or acceptance criteria for missing context and unfinished text."
+              href="/tools/jira-ticket-quality-checker"
+            />
+            <ToolCard
+              title="Jira CSV Builder and Validator"
+              description="Prepare import rows and check CSV formatting, IDs, and parent relationships before importing."
+              href="/tools/jira-csv-builder"
+            />
+            <ToolCard
               title="Acceptance Criteria Generator"
               description="Generate testable acceptance criteria in Given/When/Then or checklist format in seconds."
               href="/tools/acceptance-criteria-generator"

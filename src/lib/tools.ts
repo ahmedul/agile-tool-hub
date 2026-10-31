@@ -1,5 +1,15 @@
 export const tools = [
   {
+    title: "Jira Ticket Quality Checker",
+    description: "Review bugs, user stories, and acceptance criteria for missing context, placeholders, and wording to clarify.",
+    href: "/tools/jira-ticket-quality-checker",
+  },
+  {
+    title: "Jira CSV Builder and Validator",
+    description: "Build a Jira import CSV or check summaries, quoting, duplicate IDs, and parent hierarchy before import.",
+    href: "/tools/jira-csv-builder",
+  },
+  {
     title: "Bug Report to Jira Ticket Converter",
     description: "Paste messy bug notes and get a clean, structured Jira ticket instantly.",
     href: "/tools/bug-report-to-jira-ticket-converter",

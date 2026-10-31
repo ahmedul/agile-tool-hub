@@ -39,6 +39,8 @@ const toolGroups = [
     title: "Backlog and Jira ticket quality",
     description: "Turn rough product, QA, and bug notes into clearer Jira-ready backlog items.",
     links: [
+      { title: "Jira Ticket Quality Checker", href: "/tools/jira-ticket-quality-checker" },
+      { title: "Jira CSV Builder and Validator", href: "/tools/jira-csv-builder" },
       { title: "User Story Generator", href: "/tools/user-story-generator" },
       { title: "Acceptance Criteria Generator", href: "/tools/acceptance-criteria-generator" },
       { title: "Bug Report Converter", href: "/tools/bug-report-to-jira-ticket-converter" },
@@ -69,6 +71,18 @@ const toolGroups = [
 ];
 
 const chooserRows = [
+  {
+    need: "Review an existing Jira ticket",
+    tool: "Jira Ticket Quality Checker",
+    href: "/tools/jira-ticket-quality-checker",
+    next: "Discuss missing context and flagged wording with the author.",
+  },
+  {
+    need: "Prepare a batch of Jira import rows",
+    tool: "Jira CSV Builder and Validator",
+    href: "/tools/jira-csv-builder",
+    next: "Review file checks, then confirm field mapping in Jira.",
+  },
   {
     need: "Estimate a single user story",
     tool: "Story Point Calculator",
@@ -131,7 +145,7 @@ const faqItems = [
   {
     question: "Which tools help with Jira ticket quality?",
     answer:
-      "Use the User Story Generator, Acceptance Criteria Generator, and Bug Report to Jira Ticket Converter to create clearer Jira-ready backlog items with structured details.",
+      "Draft with the User Story Generator, Acceptance Criteria Generator, or Bug Report Converter. Review the wording with the Jira Ticket Quality Checker, then prepare import rows with the Jira CSV Builder and Validator.",
   },
   {
     question: "Do these tools replace Scrum ceremonies?",
