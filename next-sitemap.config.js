@@ -25,6 +25,7 @@ module.exports = {
   exclude: [
     "/api/*",
     "/mcp",
+    "/search",
     "/opengraph-image",
     "/tools/event-storming/*",
     "/tools/user-story-mapping/*",

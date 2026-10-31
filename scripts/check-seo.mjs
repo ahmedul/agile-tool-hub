@@ -50,15 +50,19 @@ await Promise.all(Array.from({ length: 4 }, async () => {
   }
 }));
 
-for (const tool of ["planning-poker", "retro-board", "event-storming", "user-story-mapping"]) {
-  const path = `/tools/${tool}/11111111-1111-4111-8111-111111111111`;
+async function checkExcludedPage(path, label) {
   const { response, body } = await get(path);
   const robots = body.match(/<meta name="robots" content="([^"]+)"/)?.[1] ?? "";
-  if (response.status !== 200 || !/noindex/i.test(robots)) failures.push({ url: path, error: "Workshop must render with noindex" });
-  if (pages.some(url => new URL(url).pathname === path)) failures.push({ url: path, error: "Workshop is listed in the sitemap" });
+  if (response.status !== 200 || !/noindex/i.test(robots)) failures.push({ url: path, error: `${label} must render with noindex` });
+  if (pages.some(url => new URL(url).pathname === new URL(path, base).pathname)) failures.push({ url: path, error: `${label} is listed in the sitemap` });
 }
 
-const result = { base: base.origin, checkedPages: checked.length, checkedWorkshops: 4, failures };
+for (const tool of ["planning-poker", "retro-board", "event-storming", "user-story-mapping"]) {
+  await checkExcludedPage(`/tools/${tool}/11111111-1111-4111-8111-111111111111`, "Workshop");
+}
+await checkExcludedPage("/search?q=planning+poker", "Search results page");
+
+const result = { base: base.origin, checkedPages: checked.length, checkedWorkshops: 4, checkedSearchPages: 1, failures };
 if (process.env.SEO_REPORT_PATH) await writeFile(process.env.SEO_REPORT_PATH, JSON.stringify({ ...result, checked }, null, 2));
 console.log(JSON.stringify(result, null, 2));
 if (failures.length) process.exitCode = 1;
