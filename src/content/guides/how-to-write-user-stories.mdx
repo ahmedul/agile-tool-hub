@@ -5,6 +5,8 @@ slug: how-to-write-user-stories
 category: guides
 keywords: ["how to write user stories", "user story best practices", "as a user I want", "user story format", "user story template", "acceptance criteria"]
 relatedLinks:
+  - title: "User Story Generator"
+    href: "/tools/user-story-generator"
   - title: "AI Backlog Refinement Prompts"
     href: "/guides/ai-backlog-refinement-prompts"
   - title: "📖 Complete Guide to User Stories & Epic Breakdown"
@@ -26,12 +28,48 @@ relatedLinks:
   - title: "Definition of Ready Template"
     href: "/templates/definition-of-ready-template"
 publishedAt: "2026-06-05"
-updatedAt: "2026-08-20"
+updatedAt: "2026-10-31"
 ---
 
 User stories are how agile teams translate customer needs into actionable work. But "we need a user story" doesn't mean teams write them well. Many stories are either too vague to build ("Make the dashboard better") or too narrow to deliver value ("Add blue border to button").
 
 This guide teaches you the craft: what makes a story *good*, how to write them across different domains, and how to avoid the patterns that derail sprints.
+
+## Turn rough catalog notes into a reviewable story
+
+Try this fictional input in the [User Story Generator](/tools/user-story-generator):
+
+```text
+Shopper can narrow the catalog by category and price.
+Keep both filters active together. Show an empty state when nothing matches.
+Results should update within 2 seconds on the agreed test dataset.
+Support mobile and desktop. Saved filters and recommendations are out of scope.
+```
+
+A reviewed story could read:
+
+```markdown
+As a shopper comparing products,
+I want to filter the catalog by category and price,
+So that I can find suitable items within my budget.
+
+## Acceptance criteria
+- Category and price filters can be applied together.
+- Results reflect both filters on the agreed test dataset.
+- No matching products produces an empty state with a way to clear filters.
+- Results update within 2 seconds under the agreed test conditions.
+- The interaction is usable on supported mobile and desktop layouts.
+
+## Out of scope
+Saved filters and product recommendations.
+
+## Open question
+Does the catalog API already support a combined category and price query?
+```
+
+This is a manually reviewed example, not a promise that a generator can infer missing business rules. Agree on the dataset, supported devices, and API dependency before estimating. You can split category and price filtering if the combined outcome is too large for the team to finish.
+
+Use the [free sprint workshop kit](/guides/free-sprint-workshop-kit) for a sample backlog and a short group review of the same scenario.
 
 ## The User Story Anatomy: As a / I want / So that
 
@@ -231,10 +269,10 @@ These are vague and often unrealistic to "complete." Better:
 ```
 ✓ Acceptance Criteria:
 - User can log in with email and password
-- Passwords are hashed using bcrypt before storage
-- Login endpoint returns JWT token valid for 24 hours
-- Failed login after 5 attempts temporarily locks the account for 15 minutes
-- All unit tests pass (>80% code coverage)
+- Invalid credentials show an agreed error without revealing whether an account exists
+- Expired sessions require authentication before protected actions
+- Repeated failed attempts follow the agreed abuse-prevention policy
+- The team can demonstrate the agreed happy path and failure scenarios
 ```
 
 Each criterion is testable and achievable in one sprint.
@@ -252,9 +290,9 @@ Caching is a technical decision, not a user story. This should be:
 
 Then the team decides caching is one way to achieve it. (Or database indexing. Or CDN. Details are implementation.)
 
-## Acceptance Criteria: The Story's Definition of Done
+## Acceptance criteria and the Definition of Done
 
-Every story needs acceptance criteria—the checklist that defines "done." Good criteria are:
+Acceptance criteria describe the outcomes specific to this story. The Definition of Done describes the shared quality standard for the Increment. Review both before accepting the work. Useful criteria are:
 
 1. **Testable:** You can verify each one (not subjective)
 2. **Achievable:** The team can complete them in one sprint
@@ -279,16 +317,13 @@ Acceptance Criteria:
 
 Each criterion is independently verifiable. The developer and QA can run through them systematically.
 
-## Size Your Stories to Fit a Sprint
+## Size stories with the people doing the work
 
-A good user story should be completable in 1–3 days of focused work. If a story will take a full sprint or more, it's too big—break it down.
+Keep a story small enough for the team to understand, implement, test, and meet its Definition of Done within a Sprint. The right size depends on the team and the outcome; a point value does not prescribe a fixed number of hours or days.
 
-**Rough estimates:**
-- **1–3 points:** "I can build this in a few hours" (small scope, low risk)
-- **5–8 points:** "This is a typical story, maybe a day's work" (standard scope)
-- **13+ points:** "This feels big and risky" (probably break it down)
+Compare the story with completed work, discuss uncertainty, and split independently useful outcomes when appropriate. If an unanswered question dominates the estimate, agree on an investigation and its expected output before committing to a precise size.
 
-If you find yourself in a 2-week spike just to understand what the story is, it's not ready.
+Read the [story point estimation guide](/guides/story-point-estimation-guide-with-examples) for a reference-story exercise and [Atlassian’s explanation of relative estimation](https://www.atlassian.com/agile/project-management/estimation) for further background.
 
 ## The User Story Lifecycle
 
@@ -310,9 +345,9 @@ Before your team commits to a sprint, verify:
 - ✓ **Does it follow "As a / I want / So that"?** (Or is it clearly written otherwise)
 - ✓ **Is the user type specific?** (Not just "user")
 - ✓ **Does the benefit matter?** (Would a customer care? Does it reduce friction?)
-- ✓ **Do you have 4+ acceptance criteria?** (Enough to know what "done" is)
+- ✓ **Do the criteria cover the important outcomes and failure states?**
 - ✓ **Is each criterion testable?** (Can QA verify? Not subjective?)
-- ✓ **Can your team build this in 1–3 days?** (If longer, it's too big)
+- ✓ **Can your team complete and verify this outcome within the Sprint?**
 - ✓ **Are there unresolved blockers?** (Design? API documentation? Dependencies?)
 
 If you answer "no" to any, it needs more refinement before sprint.
@@ -324,14 +359,10 @@ Once a story is in the sprint:
 - Developers create a branch linked to the story (e.g., `feature/user-story-123`)
 - Developers reference the story number in commits
 - QA uses acceptance criteria as the test checklist
-- When all criteria are met and tests pass, the story is "Done"
+- Review the story outcomes and shared Definition of Done before accepting the work
 
 See the [Definition of Ready Template](/templates/definition-of-ready-template) for a full rundown of what makes a story ready to build.
 
-## Wrapping Up
+## Put the story into practice
 
-User stories are a tool for communication, not a constraint. The format ("As a...") matters less than clarity: Who benefits? What can they do? Why does it matter?
-
-Master this, and your refinement sessions get shorter, sprint commitments become reliable, and your team ships features that customers actually wanted—not what you *guessed* they wanted.
-
-Ready to write? Start with the [User Story Template](/templates/user-story-template) and run through the checklist above. Your future self will thank you at sprint review.
+Use the [User Story Generator](/tools/user-story-generator) to structure rough notes, then review the outcome, scope, and assumptions with your team. Keep the [User Story Template](/templates/user-story-template) for recurring work, or use the [free sprint workshop kit](/guides/free-sprint-workshop-kit) to practice the review with a sample backlog.

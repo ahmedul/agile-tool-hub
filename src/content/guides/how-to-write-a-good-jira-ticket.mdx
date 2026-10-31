@@ -1,5 +1,5 @@
 ---
-title: "How to Write a Good Jira Ticket"
+title: "How to Write a Good Jira Ticket With Examples"
 description: "A practical guide for software teams on how to write clear, actionable Jira tickets. Covers titles, descriptions, acceptance criteria, and common mistakes."
 slug: "how-to-write-a-good-jira-ticket"
 category: "Guides"
@@ -29,13 +29,13 @@ relatedLinks:
     href: "/guides/bug-report-vs-jira-ticket"
 faqItems:
   - question: "How long should a Jira ticket description be?"
-    answer: "Long enough to be clear, short enough to read in under 2 minutes. If it takes longer than that, the ticket is probably too large and should be split into smaller tickets."
+    answer: "Include enough context to reproduce, implement, and verify the outcome. Split independent outcomes when useful; reading time alone does not determine ticket size."
   - question: "Should developers write their own tickets?"
     answer: "Yes, when they find bugs or need to track technical work. Technical tasks, debt, and infrastructure work should be in Jira so the team has full visibility of all work."
   - question: "How specific should steps to reproduce be?"
     answer: "Specific enough that someone who has never seen the bug can reproduce it by following the steps. Include the URL, the data they should enter, and the exact action to take."
   - question: "When should a ticket be marked Critical?"
-    answer: "Only when the system is down, data is lost, or there is a security breach. Mark everything Critical and nothing is critical. Most tickets are High or Medium."
+    answer: "Use your organization's incident and priority definitions. Severe service, data, or security impact may require urgent incident handling; agree on the impact and response with the responsible team."
   - question: "How do I write acceptance criteria?"
     answer: "Make them testable, specific, and focused on behavior not implementation. A QA engineer should be able to write a test case from each criterion. Include happy path and error states."
   - question: "Should every ticket have acceptance criteria?"
@@ -45,7 +45,7 @@ faqItems:
   - question: "How do I know when a ticket is too big?"
     answer: "A ticket is too large when its outcome or acceptance criteria cannot be understood, tested, and completed within the team's planning horizon. Split independent outcomes; cross-system work or collaboration alone does not make a ticket too large."
 publishedAt: "2026-05-23"
-updatedAt: "2026-10-29"
+updatedAt: "2026-10-31"
 ---
 
 A bad Jira ticket wastes hours. A good Jira ticket saves them.
@@ -89,6 +89,21 @@ Does the payment service already support idempotent requests?
 Notice that the example separates observed duplicate requests from an unconfirmed duplicate charge. Keep observations, assumptions, and questions distinct so the team investigates the actual failure.
 
 For a reusable structure, [copy the complete Jira ticket template](/templates/complete-jira-ticket-template). If you have rough notes, use the [Bug Report Converter](/tools/bug-report-to-jira-ticket-converter), then verify its output against your evidence.
+
+## Review the draft before you hand it to a developer
+
+Try this short exercise with the example above. One person acts as the reporter and another as the person who must reproduce the failure. Give the reviewer only the ticket, then ask them to identify the first action they would take.
+
+| Review question | Evidence needed in this example |
+|---|---|
+| Can someone reproduce the issue? | Starting page, test data, network condition, and the repeated action |
+| What was actually observed? | Two requests in the log; duplicate charges are still unconfirmed |
+| What would prove the fix? | One paid order from repeated submission, plus a safe declined-payment retry |
+| What could change the implementation? | Whether the payment service supports idempotency |
+
+If the reviewer has to invent a detail, add it as an open question or collect the missing evidence. Do not turn a guess into a reported fact.
+
+To try the workflow, paste rough notes into the [Bug Report Converter](/tools/bug-report-to-jira-ticket-converter), check its proposed structure, then copy or download the reviewed draft. Use the [free sprint workshop kit](/guides/free-sprint-workshop-kit) to turn the same review into a team exercise.
 
 ## 1. Write a Specific Title
 
@@ -134,20 +149,20 @@ Acceptance criteria define what "done" means. Without them, developers guess, QA
 
 ## 4. Set the Right Priority
 
-Priority should reflect business impact, not urgency to the reporter.
+Agree on priority using business impact, urgency, available workarounds, and your team’s incident policy. The labels and response expectations below are examples to adapt to your organization.
 
 | Priority | Meaning |
 |---|---|
-| Critical | System down, data loss, or security breach. Fix immediately. |
-| High | Major feature broken with no workaround. Fix this sprint. |
-| Medium | Feature broken but has a workaround. Fix next sprint. |
+| Critical | Severe service, data, or security impact. Follow the incident response policy. |
+| High | Important workflow blocked without a useful workaround. Agree on urgency with the owner. |
+| Medium | Meaningful impact with a usable workaround. Prioritize against other planned work. |
 | Low | Cosmetic issue or minor annoyance. Fix when time allows. |
 
 Don't mark everything High. If everything is high priority, nothing is.
 
 ## 5. Attach Evidence
 
-A screenshot or console error log saves 30 minutes of back-and-forth. Always attach:
+A screenshot, recording, or relevant log helps another person investigate. Attach the evidence that explains this issue:
 
 - Browser console errors
 - Network tab screenshots
@@ -165,7 +180,7 @@ An unassigned ticket in a large backlog is a ticket that will not be looked at. 
 ## Common Mistakes
 
 - **Title that describes the symptom, not the problem** — "Page is slow" vs "Dashboard API takes 8+ seconds to load for accounts with >1000 items"
-- **Missing steps to reproduce** — Developers spend 30 minutes reproducing what took you 2 minutes to find
+- **Missing steps to reproduce** — Another person has to reconstruct the conditions before investigating
 - **No acceptance criteria** — The ticket gets closed and the bug comes back
 - **Screenshots not attached** — "I saw an error" without showing the error
 - **Marking everything Critical** — Real critical tickets get ignored when everything is critical
@@ -173,7 +188,7 @@ An unassigned ticket in a large backlog is a ticket that will not be looked at. 
 ## FAQ
 
 **How long should a Jira ticket description be?**
-Long enough to be clear, short enough to read in under 2 minutes. If it takes longer than that, the ticket is probably too large and should be split.
+Include enough context to reproduce, implement, and verify the outcome. Split independent outcomes when useful; reading time alone does not determine ticket size.
 
 **Should developers write their own tickets?**
 Yes, when they find bugs or need to track technical work. Technical tasks, debt, and infrastructure work should be in Jira so the team has full visibility.

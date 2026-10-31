@@ -30,6 +30,7 @@ function getPublicRoutes(): Set<string> {
     "/tools",
     "/openapi.json",
     "/api/agent/tools",
+    "/downloads/agiletoolhub-sprint-workshop-kit.md",
   ]);
 
   for (const type of CONTENT_TYPES) {

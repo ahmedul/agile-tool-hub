@@ -1,0 +1,13 @@
+asset_id,channel,landing_page,utm_url,publication_status
+w1_ticket_before_after,linkedin,/tools/bug-report-to-jira-ticket-converter,https://agiletoolhub.com/tools/bug-report-to-jira-ticket-converter?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w1_ticket_before_after,draft
+w1_user_story,linkedin,/tools/user-story-generator,https://agiletoolhub.com/tools/user-story-generator?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w1_user_story,draft
+w2_capacity,linkedin,/guides/sprint-capacity-planning-guide,https://agiletoolhub.com/guides/sprint-capacity-planning-guide?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w2_capacity,draft
+w2_estimation,linkedin,/guides/story-point-estimation-guide-with-examples,https://agiletoolhub.com/guides/story-point-estimation-guide-with-examples?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w2_estimation,draft
+w3_api_criteria,linkedin,/guides/how-to-write-acceptance-criteria,https://agiletoolhub.com/guides/how-to-write-acceptance-criteria?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w3_api_criteria,draft
+w3_workshop_kit,linkedin,/guides/free-sprint-workshop-kit,https://agiletoolhub.com/guides/free-sprint-workshop-kit?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w3_workshop_kit,draft
+w4_retro_experiment,linkedin,/tools/retro-board,https://agiletoolhub.com/tools/retro-board?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w4_retro_experiment,draft
+w4_saved_draft,linkedin,/tools/user-story-generator,https://agiletoolhub.com/tools/user-story-generator?utm_source=linkedin&utm_medium=social&utm_campaign=first_10_teams&utm_content=w4_saved_draft,draft
+pilot_existing_contacts,personal_invitation,/guides/free-sprint-workshop-kit,https://agiletoolhub.com/guides/free-sprint-workshop-kit?utm_source=pilot_invite&utm_medium=referral&utm_campaign=first_10_teams&utm_content=existing_contacts,draft
+pilot_coaches,coach_invitation,/guides/free-sprint-workshop-kit,https://agiletoolhub.com/guides/free-sprint-workshop-kit?utm_source=coach_outreach&utm_medium=referral&utm_campaign=first_10_teams&utm_content=coach_workshop,draft
+community_example,community,/guides/how-to-write-a-good-jira-ticket,https://agiletoolhub.com/guides/how-to-write-a-good-jira-ticket?utm_source=community&utm_medium=referral&utm_campaign=first_10_teams&utm_content=ticket_example,draft
+practical_walkthrough,dev_article,/guides/how-to-write-a-good-jira-ticket,https://agiletoolhub.com/guides/how-to-write-a-good-jira-ticket?utm_source=devto&utm_medium=referral&utm_campaign=first_10_teams&utm_content=review_walkthrough,draft
