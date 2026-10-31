@@ -3,7 +3,6 @@ import Link from "next/link";
 import TemplateCard from "@/components/TemplateCard";
 import ToolCard from "@/components/ToolCard";
 import JsonLd from "@/components/JsonLd";
-import HeroSection from "@/components/HeroSection";
 import FeaturedCard from "@/components/FeaturedCard";
 import TrackedLink from "@/components/TrackedLink";
 import { buildMetadata, buildOrganizationSchema, KEYWORDS } from "@/lib/seo";
@@ -74,47 +73,41 @@ export default function Home() {
   return (
     <>
       <JsonLd data={organizationSchema} />
-      <HeroSection
-        title="Create better Jira tickets, bug reports, and Agile templates in minutes"
-        description="Free templates and simple tools for software teams that want clearer tickets, better acceptance criteria, and smoother delivery."
-        gradientFrom="from-blue-600"
-        gradientTo="to-blue-100"
-        ctaButtons={[
-          { label: "Browse Templates", href: "/templates", variant: "primary" },
-          { label: "Try Planning Poker", href: "/tools/planning-poker", variant: "secondary" },
-          { label: "User Story Generator", href: "/tools/user-story-generator", variant: "outline" },
-          { label: "Bug Report Converter", href: "/tools/bug-report-to-jira-ticket-converter", variant: "outline" },
-        ]}
-      />
-
-      <section className="border-b border-blue-100 bg-blue-50 px-4 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Optional team shortcut</p>
-            <h2 className="mt-1 text-xl font-bold text-gray-900">Jira &amp; Agile Starter Pack · €19 one-time</h2>
-            <p className="mt-1 max-w-2xl text-sm text-gray-600">
-              Download a curated bundle of Jira templates, Scrum checklists, examples, and AI prompts. The free tools remain free.
-            </p>
+      <section className="border-b border-blue-100 bg-blue-50 px-4 py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-sm font-semibold text-blue-800">Free tools for Scrum Masters and software teams</p>
+          <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-tight tracking-tight text-gray-950 sm:text-5xl lg:text-6xl">
+            Plan your sprint and write clearer Jira tickets
+          </h1>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-gray-700">
+            Estimate together with Planning Poker, check team capacity, and turn rough notes into Jira-ready stories. Start using the tools without creating an account.
+          </p>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <TrackedLink href="/tools/planning-poker" label="Start Planning Poker" eventParams={{ surface: "homepage_hero" }} className="rounded-lg bg-blue-700 px-5 py-3 font-semibold text-white hover:bg-blue-800">
+              Start Planning Poker
+            </TrackedLink>
+            <TrackedLink href="/tools/user-story-generator" label="Write a user story" eventParams={{ surface: "homepage_hero" }} className="rounded-lg border border-blue-300 bg-white px-5 py-3 font-semibold text-blue-800 hover:bg-blue-100">
+              Write a user story
+            </TrackedLink>
           </div>
-          <TrackedLink
-            href="/packs/jira-agile-starter-pack"
-            label="View Starter Pack"
-            eventParams={{ surface: "homepage_offer", placement: "hero_followup" }}
-            className="inline-block whitespace-nowrap rounded-lg bg-blue-700 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-blue-800"
-          >
-            View the Starter Pack
-          </TrackedLink>
+          <p className="mt-4 text-sm text-gray-600">No account required · Free calculators, generators, and team boards</p>
         </div>
       </section>
 
-      <section className="border-b border-gray-200 bg-white px-4 py-12">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">From the same maker</p>
-            <h2 className="mt-2 text-2xl font-bold text-gray-900">Simple Android apps for everyday life</h2>
-            <p className="mt-2 text-gray-600">Explore focused apps for document reminders, free trials, returns, invoices, and healthy desk breaks.</p>
-          </div>
-          <Link href="/apps" className="inline-flex shrink-0 items-center justify-center rounded-lg border border-blue-200 px-5 py-3 text-sm font-semibold text-blue-700 hover:border-blue-400 hover:bg-blue-50">Browse apps →</Link>
+      <section className="mx-auto max-w-6xl px-4 py-10">
+        <h2 className="text-2xl font-bold text-gray-950">What do you need to do today?</h2>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { title: "Plan sprint capacity", description: "Check availability before choosing the next sprint's work.", href: "/tools/sprint-capacity-calculator" },
+            { title: "Structure a bug report", description: "Turn rough notes into a ticket your team can investigate.", href: "/tools/bug-report-to-jira-ticket-converter" },
+            { title: "Run a retrospective", description: "Invite your team to share observations and agree on actions.", href: "/tools/retro-board" },
+            { title: "Facilitate a workshop", description: "Use a free agenda, sample backlog, and retrospective exercise.", href: "/guides/free-sprint-workshop-kit" },
+          ].map(task => (
+            <TrackedLink key={task.href} href={task.href} label={task.title} eventParams={{ surface: "homepage_task_picker" }} className="rounded-xl border border-gray-200 bg-white p-5 hover:border-blue-400 hover:bg-blue-50">
+              <h3 className="font-semibold text-blue-800">{task.title} <span aria-hidden="true">→</span></h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">{task.description}</p>
+            </TrackedLink>
+          ))}
         </div>
       </section>
 
@@ -520,6 +513,37 @@ export default function Home() {
           ))}
         </div>
       </section>
+      <section className="border-b border-blue-100 bg-blue-50 px-4 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Optional team shortcut</p>
+            <h2 className="mt-1 text-xl font-bold text-gray-900">Jira &amp; Agile Starter Pack · €19 one-time</h2>
+            <p className="mt-1 max-w-2xl text-sm text-gray-600">
+              Download a curated bundle of Jira templates, Scrum checklists, examples, and AI prompts. The free tools remain free.
+            </p>
+          </div>
+          <TrackedLink
+            href="/packs/jira-agile-starter-pack"
+            label="View Starter Pack"
+            eventParams={{ surface: "homepage_offer", placement: "after_resources" }}
+            className="inline-block whitespace-nowrap rounded-lg bg-blue-700 px-5 py-3 text-center text-sm font-semibold text-white hover:bg-blue-800"
+          >
+            View the Starter Pack
+          </TrackedLink>
+        </div>
+      </section>
+
+      <section className="border-b border-gray-200 bg-white px-4 py-12">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">From the same maker</p>
+            <h2 className="mt-2 text-2xl font-bold text-gray-900">Simple Android apps for everyday life</h2>
+            <p className="mt-2 text-gray-600">Explore focused apps for document reminders, free trials, returns, invoices, and healthy desk breaks.</p>
+          </div>
+          <Link href="/apps" className="inline-flex shrink-0 items-center justify-center rounded-lg border border-blue-200 px-5 py-3 text-sm font-semibold text-blue-700 hover:border-blue-400 hover:bg-blue-50">Browse apps →</Link>
+        </div>
+      </section>
+
     </>
   );
 }

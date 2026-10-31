@@ -1,616 +1,151 @@
 ---
-title: "Sprint Capacity Planning: Math, Examples, and Common Mistakes"
-description: "Master capacity math. Learn raw capacity calculation, vacation/meeting deductions, buffer sizing, velocity vs capacity, and real examples."
+title: "Sprint Capacity Planning Formula and Worked Example"
+description: "Calculate sprint capacity with a five-person example covering holidays, leave, meetings, support duties, a planning reserve, and team velocity."
 slug: "sprint-capacity-planning-guide"
 category: "Guides"
+publishedAt: "2026-06-12"
+updatedAt: "2026-10-31"
 keywords:
   - sprint capacity planning
   - how to calculate sprint capacity
-  - team velocity forecasting
-  - agile capacity estimation
-  - sprint planning
+  - sprint capacity with holidays
+  - team availability
+  - capacity versus velocity
 relatedLinks:
-  - title: "Free Sprint Planning Tools"
-    href: "/tools/sprint-planning-tools"
-  - title: "AI Sprint Planning Prompts"
-    href: "/guides/ai-sprint-planning-prompts"
-  - title: "Complete Guide to Sprint Planning & Estimation"
-    href: "/guides/complete-guide-to-sprint-planning-and-estimation"
   - title: "Sprint Capacity Calculator"
     href: "/tools/sprint-capacity-calculator"
+  - title: "Free Sprint Workshop Kit"
+    href: "/guides/free-sprint-workshop-kit"
   - title: "Sprint Planning Checklist"
     href: "/tools/sprint-planning-checklist"
+  - title: "Velocity Tracker"
+    href: "/tools/velocity-tracker"
   - title: "Sprint Planning Template"
     href: "/templates/sprint-planning-template"
-  - title: "Sprint Velocity Tracking Guide"
-    href: "/guides/sprint-velocity-tracking-guide"
   - title: "Story Point Estimation Guide"
     href: "/guides/story-point-estimation-guide-with-examples"
   - title: "How to Write Sprint Goals"
     href: "/guides/how-to-write-sprint-goals"
-  - title: "Velocity Tracker"
-    href: "/tools/velocity-tracker"
-  - title: "Definition of Ready Best Practices"
-    href: "/guides/definition-of-ready-best-practices"
-  - title: "Avoiding Common Sprint Mistakes"
-    href: "/guides/avoiding-common-sprint-mistakes"
-  - title: "Sprint Retrospective Template"
-    href: "/templates/sprint-retrospective-template"
-  - title: "Backlog Refinement Template"
-    href: "/templates/backlog-refinement-template"
-publishedAt: "2026-06-12"
-updatedAt: "2026-08-03"
+faqItems:
+  - question: "How do you calculate sprint capacity?"
+    answer: "Start with scheduled team hours, subtract holidays, leave, meetings, and other commitments in the same unit, then make any planning reserve explicit. Use the result alongside past performance and the Sprint Goal."
+  - question: "Is capacity the same as velocity?"
+    answer: "No. Capacity describes upcoming availability. Velocity describes points completed in previous Sprints under the team's own estimation and completion standards."
+  - question: "How many story points should each developer complete per day?"
+    answer: "There is no universal rate. Story points are relative estimates within a team, not an individual productivity quota or a seniority benchmark."
+  - question: "Should every team use a 20 percent buffer?"
+    answer: "No. Choose an explicit reserve using the team's interruption history and uncertainty. Avoid subtracting the same interruption allowance twice."
 ---
 
-## What Is Sprint Capacity?
+Sprint capacity planning makes upcoming availability visible before the team chooses work. Start with the calendar, subtract known commitments in consistent units, and discuss what the remaining time means for the Sprint Goal. Available hours help a forecast; they do not guarantee completed features.
 
-**Sprint capacity** is the total amount of work your team can realistically complete in one sprint.
+Use the [Sprint Capacity Calculator](/tools/sprint-capacity-calculator) to make availability assumptions visible, or use the hours-based table below. For a group exercise, the [free sprint workshop kit](/guides/free-sprint-workshop-kit) includes an agenda and sample backlog.
 
-It's measured in **story points** (or hours, but points are better).
+## The capacity formula
 
-```
-Example:
-Your team has 3 developers
-Sprint is 2 weeks (10 working days)
-Each dev has 25 points of capacity per week
-Available: 3 devs × 2 weeks × 25 pts/week = 150 points of raw capacity
-
-But: Not all 150 points are available (vacation, meetings, etc.)
-After adjustments: ~120 points available
-So: Plan the sprint with 120 points of stories
+```text
+Scheduled team hours = sum of each person's scheduled hours in the Sprint
+Available hours = scheduled hours - holidays - leave - meetings - other commitments
+Planning allowance = available hours - an explicit reserve, if the team chooses one
 ```
 
----
+Use the same unit for every term. Meeting hours across five people must be compared with scheduled hours across the same five people. If a holiday is already excluded from scheduled working days, do not subtract it again.
 
-## Why Capacity Planning Matters
+## Worked example for five people
 
-### Without Capacity Planning
+This fictional team has five people scheduled for ten weekdays at eight hours per day. A public holiday falls on one of those weekdays and affects everyone. Alex also takes two other days of leave; Blair takes one. Each person has four hours of planned meetings. Casey and Devon each have eight hours of support duty.
 
-```
-Sprint starts Monday.
-PO: "Here are 180 points of stories. Ship them all."
-Dev 1: "OK, let's try!"
+| Person | Scheduled hours | Holiday | Leave | Meetings | Support | Available hours |
+|---|---|---|---|---|---|---|
+| Alex | 80 | 8 | 16 | 4 | 0 | 52 |
+| Blair | 80 | 8 | 8 | 4 | 0 | 60 |
+| Casey | 80 | 8 | 0 | 4 | 8 | 60 |
+| Devon | 80 | 8 | 0 | 4 | 8 | 60 |
+| Ellis | 80 | 8 | 0 | 4 | 0 | 68 |
+| **Total** | **400** | **40** | **24** | **20** | **16** | **300** |
 
-Wednesday: Team is drowning
-Dev 1: "We're only 40% done and it's already mid-sprint"
-Dev 2: "We committed to too much"
-Dev 3: "Now we're working weekends to catch up"
-
-Friday: Stories slip, quality suffers, team burns out
-→ Next sprint they ship even less (burned out)
-```
-
----
-
-### With Capacity Planning
-
-```
-Refinement: Team calculates capacity = 120 points
-PO selects 120 points of highest-priority stories
-
-Sprint starts Monday.
-Dev 1: "We have 120 points, which feels achievable"
-Dev 2: "We can work at a steady pace"
-Dev 3: "No crunch time needed"
-
-Friday: 118 points done ✓ Team is energized
-Next sprint: Team delivers consistently
-→ Velocity is predictable, forecasting is accurate
+```text
+5 people × 10 weekdays × 8 hours = 400 scheduled hours
+400 - 40 holiday - 24 leave - 20 meetings - 16 support = 300 available hours
+Example reserve of 10% = 30 hours
+Example planning allowance = 270 hours
 ```
 
----
+The ten percent reserve is a choice for this example, not a Scrum rule. A team with frequent unplanned support may choose another approach. If support is already represented by a reserve, do not also subtract the same support hours as a separate commitment.
 
-## The Capacity Planning Formula
+## Check the roles and dependencies behind the total
 
-Here's the math:
+Three hundred available hours does not mean every combination of work is feasible. A story may depend on a specialist who is away, a review that cannot happen until Friday, or another team's release.
 
-```
-Raw Capacity = (Number of Developers) × (Days per Sprint) × (Points per Day)
+Review the likely work against the people and skills needed to finish it. If all selected stories require Casey's review, Casey's availability can be a constraint even when other team members have unused time. Pairing and shared ownership can change that constraint; they do not create extra calendar hours.
 
-Adjusted Capacity = Raw Capacity - Vacation - Meetings - Buffer
-```
+## Capacity and velocity answer different questions
 
----
+| Planning input | What it describes | How to use it |
+|---|---|---|
+| Upcoming capacity | Availability and known commitments in the next Sprint | Check whether the proposed work fits the people and calendar |
+| Historical velocity | Points completed in comparable past Sprints | Understand the team's own delivery history and variation |
+| Sprint Goal | The outcome the team wants to achieve | Choose a coherent set of work and discuss useful tradeoffs |
 
-## Step 1: Calculate Raw Capacity
+If a team completed 28, 32, 30, and 30 points in comparable Sprints, its arithmetic average is 30 points. That history is a starting discussion, not a promise to complete 30 points next time. Leave, changing team composition, unfamiliar work, and dependencies can change the forecast.
 
-**Raw capacity** = how many points the team could do if they just coded all day.
+The [Scrum Guide](https://scrumguides.org/scrum-guide.html#sprint-planning) describes past performance, upcoming capacity, and the Definition of Done as inputs that help Developers forecast. It does not prescribe points per developer, a fixed hours-to-points conversion, or a universal buffer.
 
-### Formula
+## Use the calculator with explicit assumptions
 
-```
-Raw Capacity = Team Size × Working Days × Points per Dev per Day
-```
+The [Sprint Capacity Calculator](/tools/sprint-capacity-calculator) uses available days and an entered points-per-day planning assumption. Its recommended result applies an 80 percent factor to the entered point total. Treat that as a heuristic to discuss with the team.
 
-### Example for a 3-Person Team, 2-Week Sprint
+For the calendar in this example, Alex has seven available days before meetings and support, Blair has eight, and the other three people have nine each. Use the hours table when you need to account explicitly for meeting and support time. The calculator does not infer those commitments from a person's name or role.
 
-```
-Team Size: 3 developers
-Working Days: 10 days per sprint (2 weeks × 5 days/week)
-Points per Dev per Day: 5 points (typical for mid-experience developers)
+A default rate shown in a calculator is an example input. There is no general junior, mid-level, or senior developer points-per-day benchmark. [Story points describe relative work and uncertainty](https://www.atlassian.com/agile/project-management/estimation); agree on any planning assumption using the team's own context and review it against completed work.
 
-Raw Capacity = 3 × 10 × 5 = 150 points
-```
+## Run a ten minute capacity check
 
-### How Many Points per Developer per Day?
+1. Confirm the Sprint dates and scheduled hours for each person.
+2. Mark holidays and leave once, including part-time schedules.
+3. Record planned meetings, support duties, and other commitments.
+4. Explain any reserve and check for double counting.
+5. Compare the proposed work with recent delivery and role constraints.
+6. Agree on the Sprint Goal and make remaining uncertainty visible.
 
-This depends on your team's experience and estimation style:
+Use the [Sprint Planning Checklist](/tools/sprint-planning-checklist) for the readiness discussion. Keep your capacity assumptions with the plan so a later retrospective can distinguish unexpected change from a planning mistake.
 
-| Experience | Points/Day | Notes |
-|------------|--------|-------|
-| **Junior (< 2 yrs)** | 2–3 | Learning, slower, need help |
-| **Mid-level (2–5 yrs)** | 4–6 | Most common, consistent |
-| **Senior (5+ yrs)** | 6–8 | Fast, mentors, solves blockers |
-| **New to company** | 2–3 | Learning codebase, slower |
-| **Very productive team** | 7–8 | High experience, great tooling |
-| **Conservative teams** | 3–4 | Prefer under-committing |
+## Copy this capacity record
 
-**Rule of thumb for a balanced team:** 5 points per dev per day
+```markdown
+## Sprint capacity assumptions
+Sprint dates:
+Scheduled team hours:
+Holidays and leave already excluded:
+Planned meetings and support:
+Available hours:
+Optional reserve and reason:
 
----
+## Planning checks
+Recent comparable delivery:
+Skills or dependencies that constrain the plan:
+Sprint Goal:
+Unresolved question and owner:
 
-## Step 2: Subtract Vacation, Meetings, Context Switching
-
-Not all 10 days are coding days. Account for:
-
-### Vacation / PTO
-
-```
-If one dev takes 5 days off:
-That's 1 dev × 5 days × 5 points/day = 25 points less capacity
-
-Example:
-Raw: 150 points
-Vacation: -25 points
-= 125 points
+## Review next time
+What changed after planning?
+Which assumption should we update?
 ```
 
-### Meetings (Standup, Retro, Planning, Refinement)
+## Frequently asked questions
 
-```
-Daily standup: 0.25 hours × 3 devs × 10 days = 7.5 hours
-Sprint planning: 2 hours × 3 devs = 6 hours
-Refinement: 1.5 hours × 3 devs × 2 sessions = 9 hours
-Retro: 1 hour × 3 devs = 3 hours
-Total: ~25 hours for 3 devs in a 2-week sprint
+### How do you account for a public holiday?
 
-25 hours ÷ 80 (working hours in 2 weeks) = 31% of time on meetings
-In points: 150 × 0.31 = ~47 points
-Adjusted: 150 - 47 = 103 points
-```
+Subtract the hours that each affected person would otherwise have worked. If your working-day count already excludes the holiday, make no further holiday deduction.
 
-### Context Switching (Code Review, Pair Programming, Helping Others)
+### Does a person on leave reduce the team forecast proportionally?
 
-```
-Code review: 1 hour per dev per day (average)
-Pair programming: 2–3 hours per dev per week
-Slack/email: 1 hour per dev per day
+Not necessarily. Work dependencies, role coverage, and the selected stories affect the outcome. Make the absence visible, then discuss the specific plan rather than assuming every person contributes an interchangeable fraction of points.
 
-Total: ~3–4 hours per dev per day lost to context switching
+### Should every team use a 20 percent buffer?
 
-If each dev works 8 hours and loses 3 hours:
-That's 5 hours actual coding per dev per day
-(Our "5 points per dev per day" already includes this)
+No. Choose an explicit reserve using the team's interruption history and uncertainty. Avoid counting the same interruption allowance in both the reserve and known commitments.
 
-So don't double-count. 5 points/day already assumes some context switching.
-```
+### What should a new team do without velocity history?
 
----
-
-## Step 3: Apply Your Buffer
-
-A **buffer** is extra capacity you hold back as insurance.
-
-Why? Because:
-- Unexpected bugs emerge
-- Production issues interrupt
-- Someone gets sick
-- Estimates are sometimes wrong
-
-### Buffer Sizes
-
-| Team Maturity | Buffer Size | Reasoning |
-|-------|-------|-------|
-| **New team** | 20–30% | High uncertainty |
-| **Maturing team** | 10–20% | Medium uncertainty |
-| **High-performing team** | 5–10% | Low uncertainty |
-| **Very predictable work** | 5% | Stable, low-risk stories |
-| **High-risk work** | 30%+ | Complex, unproven technology |
-
-### Example with 15% Buffer
-
-```
-Raw capacity: 150 points
-Minus vacation: -25 points
-Minus meetings: -47 points
-Subtotal: 78 points
-
-Buffer (15% of 78): -12 points
-Final Capacity: 66 points
-
-So the team commits to 60–66 points this sprint
-(Under-commit by a few points for safety)
-```
-
----
-
-## Full Capacity Calculation Walkthrough
-
-Let's do a complete example:
-
-### Scenario: E-Commerce Team, 2-Week Sprint
-
-```
-Team:
-- Dev 1 (Senior): 6 pts/day normally
-- Dev 2 (Mid): 5 pts/day normally
-- Dev 3 (Junior): 3 pts/day normally
-- QA: 4 pts/day (embedded in the team)
-Total: 4 people
-
-Sprint Duration: 10 working days
-
-Raw Capacity:
-Dev 1: 6 × 10 = 60 pts
-Dev 2: 5 × 10 = 50 pts
-Dev 3: 3 × 10 = 30 pts
-QA: 4 × 10 = 40 pts
-Total: 180 points
-
-Adjustments:
-- Dev 1 is out Mon–Tue (2 days × 6 pts) = -12 pts
-- Dev 2 is mentoring an intern (3 hours/day × 10 days = 30 hours)
-  = -30 hours ÷ 8 hours/day ÷ 5 pts/day = -19 pts
-- Meetings (standup, planning, retro, refinement): ~50 pts total
-
-Adjusted Capacity: 180 - 12 - 19 - 50 = 99 points
-
-Buffer (15% of 99): -15 points
-
-Final Capacity: 84 points
-
-Team commits to: 80–84 points this sprint
-```
-
----
-
-## How to Use Capacity in Sprint Planning
-
-Once you know your capacity, use it at sprint planning:
-
-### Sprint Planning Meeting
-
-```
-Tech Lead: "Our capacity this sprint is 80 points."
-
-PO: "Great. Let me pick the highest-priority stories."
-PO picks stories totaling 82 points.
-
-Team: "That's over capacity."
-
-PO: "OK, removing the lowest-priority item (5 pts).
-New total: 77 points."
-
-Team: "Looks good."
-
-Dev 1: "We have 3 points of buffer. 
-If a critical bug emerges, we can absorb it."
-
-Tech Lead: "Committed. Sprint starts Monday."
-```
-
----
-
-## Capacity vs Velocity: What's the Difference?
-
-People confuse these. Here's the distinction:
-
-| Aspect | Capacity | Velocity |
-|--------|----------|----------|
-| **Definition** | How much *can* we do (estimate before sprint) | How much *did* we do (measure after sprint) |
-| **Timing** | Calculated before sprint starts | Measured after sprint ends |
-| **Use case** | Plan how many stories to commit | Forecast future sprint capacity |
-| **Example** | "We have 80 points of capacity" | "Last sprint we completed 76 points" |
-
-**Key insight:** Over time, Velocity = Capacity (if planned well).
-
----
-
-## Common Capacity Planning Mistakes
-
-### ❌ Mistake 1: Using Raw Capacity (No Adjustments)
-
-```
-Raw Capacity: 150 points
-Team commits: 150 points
-
-Reality:
-- Team gets vacation: -25 points
-- Meetings eat 47 points
-- Unexpected production bug: -20 points
-
-Result: 150 - 25 - 47 - 20 = 58 points done (but committed 150)
-Team failure rate: 62%
-```
-
-**Fix:** Always adjust for vacation, meetings, and buffer.
-
----
-
-### ❌ Mistake 2: Overestimating Points per Developer
-
-```
-Junior dev (< 1 year): Assumes 5 pts/day
-Reality: 2–3 pts/day
-
-Team commits based on inflated estimate.
-Mid-sprint: Team is 40% behind.
-```
-
-**Fix:** Know your team. Track actual velocity over 3 sprints.
-Then use that real number for planning, not guesses.
-
----
-
-### ❌ Mistake 3: No Buffer (100% Utilization Target)
-
-```
-Capacity: 80 points
-Team commits: 80 points
-Buffer: 0 points
-
-Mid-sprint:
-- Production bug (10 pts of rework)
-- Someone gets sick
-- Estimate was wrong
-
-Result: Sprint blows up, team scrambles
-```
-
-**Fix:** Always hold 10–20% buffer. It's insurance, not waste.
-
----
-
-### ❌ Mistake 4: Forgetting About Meetings
-
-```
-Team has 3 standups, planning, retro, refinement
-Never quantified the cost: ~50 hours/sprint
-
-Capacity calculated: 150 points
-Reality: Meetings alone cost 30–40 points
-
-Team commits 140 points.
-Mid-sprint: Team realizes meetings cost more than expected.
-Panic.
-```
-
-**Fix:** Calculate meeting overhead upfront.
-
----
-
-### ❌ Mistake 5: Changing Capacity Mid-Sprint
-
-```
-Monday: "Capacity is 80 points. Committed to 75."
-Wednesday: PO: "Can we add 20 more points?"
-Team: "No, we committed..."
-PO: "Come on, just fit it in?"
-
-Team adds 20 points mid-sprint.
-Friday: Chaos. Nothing done well.
-```
-
-**Fix:** Capacity is locked for the sprint. 
-If new work comes up mid-sprint, remove something else of equal size.
-
----
-
-## Capacity Adjustments for Different Scenarios
-
-### Scenario: New Team (First Sprint)
-
-```
-No historical velocity data.
-Conservative approach:
-
-Raw capacity: 100 points
-Meeting/vacation adjustments: -40 points
-Buffer: -20 points
-Final: 40 points
-
-Plan 40 points for first sprint.
-See how it goes.
-Next sprint: Adjust based on actual velocity.
-```
-
----
-
-### Scenario: Team Split (Some Work Full-Time, Some Part-Time)
-
-```
-Dev 1: Full-time, 5 pts/day
-Dev 2: Part-time (3 days/week), 3 pts/day
-
-Capacity calculation:
-Dev 1: 5 × 10 = 50 pts
-Dev 2: 3 × 6 days = 18 pts
-Total: 68 points
-
-After adjustments: 55 points available
-```
-
----
-
-### Scenario: Many Meetings (Fast-Moving Startup)
-
-```
-Raw capacity: 150 points
-
-Meeting/interruption breakdown:
-- Daily standup: 5 hours
-- Sprint planning/retro: 4 hours
-- Refinement: 3 hours
-- Unplanned meetings: 2 hours per dev per day = 100 hours!
-- Code review / pair programming: 20 hours
-
-Total overhead: 132 hours for 3 people over 2 weeks
-That's 130 hours ÷ 160 hours = 81% of time!
-
-Adjusted: 150 × 0.19 = 28 points available
-
-Reality: High-interrupt teams can only commit 20–30 points.
-Fix: Protect focus time. Block time for deep work.
-```
-
----
-
-### Scenario: Major Release Coming (High-Stakes Sprint)
-
-```
-Raw capacity: 100 points
-Extra quality work: -15 points (code review, testing)
-Release risk: -20 points buffer (bugs, unknown unknowns)
-Adjusted capacity: 65 points
-
-Plan for 60 points.
-This is lower because you need buffer for stability.
-```
-
----
-
-## How to Improve Capacity Over Time
-
-### Month 1: Establish Baseline
-
-```
-Calculate capacity each week.
-Track actual velocity.
-See the gap.
-```
-
----
-
-### Month 2–3: Identify Waste
-
-```
-"Meetings are eating 40% of our time"
-→ Cut unnecessary meetings
-→ Capacity goes up
-
-"We're context-switching like crazy"
-→ Block focus time
-→ Capacity goes up
-
-"Junior dev is slower than estimated"
-→ Pair them with senior dev
-→ Capacity improves faster
-```
-
----
-
-### Month 4+: Stabilize
-
-```
-Capacity becomes predictable.
-Velocity matches capacity ± 5%.
-Team is sustainable, not burning out.
-```
-
----
-
-## Capacity and Team Morale
-
-**High capacity utilization (100%) = burnout**
-
-```
-Sprint 1: Commit 150 points, do 145 (96% success)
-Team: "We did great!"
-
-Sprint 2: Commit 160 points, do 140 (87% success)
-Team: "We failed."
-
-Sprint 3: Commit 170 points, do 130 (76% success)
-Team: "We're incompetent."
-
-Reality: You over-committed every sprint.
-The team isn't getting worse, you're adding more work.
-```
-
-**Better approach: Comfortable capacity**
-
-```
-Capacity: 100 points
-Commit: 80–90 points
-Buffer: 10–20 points
-
-Actual velocity: 85 points
-Team: "We delivered! And we had room for unexpected issues."
-Morale: High
-Burnout: Low
-Sustainability: High
-```
-
----
-
-## Capacity Planning Tools
-
-You can calculate manually or use tools:
-
-### Manual Calculation
-
-```
-Spreadsheet template:
-- Team size
-- Days per sprint
-- Points per dev per day
-- Vacation/PTO
-- Meetings
-- Buffer
-→ Final capacity
-```
-
-### Automated Tools
-
-- **Sprint Capacity Calculator** — Easy online tool for quick estimates
-- **Jira Reports** — Built-in capacity planning for Jira teams
-- **Linear** — Capacity visibility in sprint board
-- **Excel / Google Sheets** — DIY template
-
----
-
-## FAQ on Sprint Capacity
-
-**Q: Should we ever exceed capacity?**  
-A: Rare emergency only. If you exceed 2 sprints in a row, 
-something's wrong with your estimation or planning.
-
-**Q: How often should we recalculate capacity?**  
-A: Every sprint. Team composition changes, people get sick, 
-vacation shifts. Recalculate before each sprint planning.
-
-**Q: What if we have a new developer join mid-sprint?**  
-A: They won't contribute much (ramp-up cost). 
-Plan 2–3 sprints before their capacity matters.
-
-**Q: Should part-time team members have lower capacity?**  
-A: Yes. Pro-rate: 3-day week = 60% of full-time capacity.
-
-**Q: Can we use hours instead of points?**  
-A: Yes, but points are better (less precise, easier to estimate). 
-If using hours: 1 story point ≈ 6–8 hours of work.
-
-**Q: What if our velocity is always lower than capacity?**  
-A: Means capacity is overestimated. Reduce it and replan.
-Track actual velocity over 3 sprints, use that as your guide.
-
----
-
-## Next: Track Velocity and Forecast
-
-Once you understand capacity, track velocity to forecast future sprints.
-
-See:
-- [Sprint Velocity Tracking Guide](/guides/sprint-velocity-tracking-guide)
-- [Velocity Tracker](/tools/velocity-tracker)
-- [Sprint Planning Template](/templates/sprint-planning-template)
+Use known availability, select a small coherent set of work, and make uncertainty visible. Inspect what actually finishes and build a useful history over time. An experience-based points quota does not replace that learning.

@@ -10,6 +10,7 @@ interface TrackedLinkProps extends LinkProps {
   className?: string;
   eventName?: string;
   eventParams?: Record<string, string | number | boolean>;
+  download?: string | boolean;
 }
 
 export default function TrackedLink({

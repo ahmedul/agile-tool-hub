@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { useSavedDraft } from "@/hooks/useSavedDraft";
 import { textDraftSchema, qualityDraftSchema } from "@/lib/generator-drafts";
 import DraftActions from "@/components/DraftActions";
+import { isIncidentContext, splitBugNotes } from "@/lib/generator-input";
 import { trackEvent } from "@/lib/analytics";
 import { scoreBugReport, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -211,14 +212,8 @@ function detectPriority(text: string): ParsedBugReport["priority"] {
 
 function parseBugReport(input: string): ParsedBugReport {
   const sourceInput = sanitizeInput(input);
-  const lines = input
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-  const sanitizedLines = sourceInput
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+  const lines = splitBugNotes(input);
+  const sanitizedLines = splitBugNotes(sourceInput);
   const normalized = sourceInput.replace(/\s+/g, " ").trim();
 
   const explicitExpected = lines.find((line) => /^(expected|should|expected result)[:\s]/i.test(line));
@@ -244,10 +239,16 @@ function parseBugReport(input: string): ParsedBugReport {
     .map((sentence) => sentence.trim())
     .filter((sentence) => /\b(open|go to|navigate|click|tap|select|submit|enter|refresh|try)\b/i.test(sentence));
 
-  const incidentSteps = deriveIncidentSteps(normalized);
+  const incidentSteps = isIncidentContext(normalized) ? deriveIncidentSteps(normalized) : [];
+  const labeledSteps = sanitizedLines
+    .filter(line => /^steps(?:\s+to\s+reproduce)?\s*:/i.test(line))
+    .map(line => line.replace(/^steps(?:\s+to\s+reproduce)?\s*:\s*/i, ""))
+    .filter(Boolean);
 
   const steps = numberedSteps.length && !hasOnlyPlaceholderNumberedSteps
     ? numberedSteps
+    : labeledSteps.length
+      ? labeledSteps
     : incidentSteps.length
       ? incidentSteps
     : actionSentences.slice(0, 5).map((sentence, index) =>

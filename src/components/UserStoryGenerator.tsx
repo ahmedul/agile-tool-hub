@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { useSavedDraft } from "@/hooks/useSavedDraft";
 import { userStoryDraftSchema, textDraftSchema, qualityDraftSchema } from "@/lib/generator-drafts";
 import DraftActions from "@/components/DraftActions";
+import { extractScopeExclusions, extractStoryIntent, isIncidentContext, splitStoryNotes } from "@/lib/generator-input";
 import { trackEvent } from "@/lib/analytics";
 import { scoreUserStory, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -95,9 +96,7 @@ function redactPeopleMentions(text: string): string {
 }
 
 function isIncidentInput(normalized: string): boolean {
-  return /(outage|incident|impact(ed)?|degradation|service placement|desire\s*db|vprn|edge\d+\.|fra\d+|mad|ams)/i.test(
-    normalized
-  );
+  return isIncidentContext(normalized);
 }
 
 function deriveIncidentStoryFields(normalized: string): {
@@ -128,34 +127,18 @@ function deriveIncidentStoryFields(normalized: string): {
 function parseStoryInput(featureDescription: string, userType: string): ParsedStoryInput {
   const sourceInput = sanitizeStoryInput(featureDescription);
   const normalized = sourceInput.replace(/\s+/g, " ").trim();
-  const lines = sourceInput
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+  const lines = splitStoryNotes(sourceInput);
 
-  const userFromText =
-    normalized.match(/\bas an?\s+([^,.;]+)/i)?.[1] ??
-    normalized.match(/\bfor\s+([^,.;]+?)\s+(?:to|who|when)/i)?.[1] ??
-    userType;
+  const intent = extractStoryIntent(sourceInput, userType, firstMeaningfulLine(lines));
+  const userFromText = intent.user;
 
   const incidentLike = isIncidentInput(normalized);
   const incidentFields = incidentLike ? deriveIncidentStoryFields(normalized) : null;
 
-  const goalFromText =
-    normalized.match(/\bi want to\s+([^.;]+)/i)?.[1] ??
-    normalized.match(/\bneed to\s+([^.;]+)/i)?.[1] ??
-    normalized.match(/\bshould be able to\s+([^.;]+)/i)?.[1] ??
-    firstMeaningfulLine(lines);
+  const goalFromText = intent.goal;
+  const benefitFromText = intent.benefit;
 
-  const benefitFromText =
-    normalized.match(/\bso that\s+([^.;]+)/i)?.[1] ??
-    normalized.match(/\bbecause\s+([^.;]+)/i)?.[1] ??
-    "the user can complete the job faster with fewer errors";
-
-  const constraints = lines
-    .filter((line) => /(must|cannot|can't|within|without|except|limit|only if|must not)/i.test(line))
-    .slice(0, 4)
-    .map((line) => line.replace(/^[-*]\s*/, ""));
+  const constraints = extractScopeExclusions(sourceInput);
 
   const dependencies = lines
     .filter((line) => /(depends on|blocked by|requires|needs|integration|api|design)/i.test(line))

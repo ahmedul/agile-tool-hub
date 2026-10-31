@@ -71,6 +71,10 @@ const nextConfig: NextConfig = {
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
       {
+        source: "/downloads/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      },
+      {
         source: "/openapi.json",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },

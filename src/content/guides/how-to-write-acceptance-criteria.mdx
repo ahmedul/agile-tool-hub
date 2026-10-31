@@ -4,7 +4,7 @@ description: "Learn how to write clear, testable acceptance criteria for Jira wi
 slug: "how-to-write-acceptance-criteria"
 category: "Guides"
 publishedAt: "2026-06-05"
-updatedAt: "2026-08-04"
+updatedAt: "2026-10-31"
 keywords:
   - how to write acceptance criteria
   - acceptance criteria guide
@@ -52,7 +52,7 @@ faqItems:
   - question: "Should acceptance criteria be Given/When/Then or checklist format?"
     answer: "Given/When/Then is best for user behavior, workflows, and BDD-style testing. Checklist format is faster for straightforward Jira tickets. Many teams use both."
   - question: "How many acceptance criteria should a user story have?"
-    answer: "Most user stories need 3 to 7 acceptance criteria. If you need more than 10, the story may be too large and should probably be split."
+    answer: "There is no universal count. Cover the important outcomes, boundaries, and failure states. Consider splitting when the story contains independent outcomes or is too large to complete and verify within the Sprint."
   - question: "Who writes acceptance criteria?"
     answer: "The Product Owner usually writes the first draft. Developers, QA, designers, and stakeholders refine them during backlog refinement or sprint planning."
   - question: "Can acceptance criteria describe implementation details?"
@@ -64,6 +64,32 @@ faqItems:
 Acceptance criteria define what must be true before a user story can be accepted. They reduce rework because the team agrees on behavior, edge cases, and quality expectations before development starts.
 
 Use this guide when you are writing Jira stories, preparing backlog refinement, or turning rough feature notes into testable work. For a faster first draft, use the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator). For a copy-paste structure, use the [Acceptance Criteria Template](/templates/acceptance-criteria-template).
+
+## Review an API failure with concrete test data
+
+Imagine a fictional `POST /orders` API that accepts a quantity from 1 through 10. The agreed contract uses HTTP 201 for a created order and HTTP 400 for invalid input. These response choices belong to this example; use your own API contract.
+
+| Submitted quantity | Expected result | Check for QA |
+|---|---|---|
+| 1 | Order created with quantity 1 | Response identifies the new order |
+| 10 | Order created with quantity 10 | Upper boundary is accepted |
+| 0 | Validation error | Response identifies the invalid quantity field |
+| 11 | Validation error | Upper boundary is enforced |
+| Missing | Validation error | Missing-field guidance is returned |
+
+```gherkin
+Feature: Validate order quantity
+  Scenario: Reject a quantity above the agreed limit
+    Given an authenticated customer has a valid product in the cart
+    When they submit an order with quantity 11
+    Then the response has status 400
+    And the response identifies quantity as invalid
+    And no order is created for that request
+```
+
+Agree on the meaning of each result with Product and QA. Add authorization and retry cases when they are in scope. Gherkin structures a scenario; executing it also requires matching step definitions and a test environment, as explained in the [Cucumber reference](https://cucumber.io/docs/gherkin/reference/).
+
+Try the [Acceptance Criteria Generator](/tools/acceptance-criteria-generator) with the API contract notes, then review its proposed scenarios against the table. The [free sprint workshop kit](/guides/free-sprint-workshop-kit) includes an exercise for reviewing outcomes together.
 
 ## What Are Acceptance Criteria?
 
@@ -335,7 +361,7 @@ Given/When/Then is best for user behavior, workflows, and BDD-style testing. Che
 
 **How many acceptance criteria should a user story have?**
 
-Most user stories need 3 to 7 acceptance criteria. If you need more than 10, the story may be too large and should probably be split.
+There is no universal count. Cover the important outcomes, boundaries, and failure states. Consider splitting when the story contains independent outcomes or is too large to complete and verify within the Sprint.
 
 **Who writes acceptance criteria?**
 
