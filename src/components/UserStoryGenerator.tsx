@@ -2,8 +2,10 @@
 
 import { useToolUsage } from "@/hooks/useToolUsage";
 import Link from "next/link";
-import { useState } from "react";
-import { usePersistentState } from "@/hooks/usePersistentState";
+import { useRef, useState } from "react";
+import { useSavedDraft } from "@/hooks/useSavedDraft";
+import { userStoryDraftSchema, textDraftSchema, qualityDraftSchema } from "@/lib/generator-drafts";
+import DraftActions from "@/components/DraftActions";
 import { trackEvent } from "@/lib/analytics";
 import { scoreUserStory, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -325,17 +327,18 @@ ${parsed.sourceContext || featureDescription.trim()}`;
 
 export default function UserStoryGenerator() {
   const markUsed = useToolUsage("user_story");
-  const [form, setForm] = usePersistentState<FormState>("tool-draft-user-story", {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [form, setForm, formDraft] = useSavedDraft<FormState>("tool-draft-user-story", {
     featureDescription: "",
     userType: "",
     storyType: "feature",
     priority: "Medium",
     preset: "product",
-  });
-  const [output, setOutput] = usePersistentState("tool-output-user-story", "");
+  }, userStoryDraftSchema);
+  const [output, setOutput, outputDraft] = useSavedDraft("tool-output-user-story", "", textDraftSchema);
   const loading = false;
   const [error, setError] = useState("");
-  const [quality, setQuality] = usePersistentState<StoryQualityResult | null>("tool-quality-user-story", null);
+  const [quality, setQuality, qualityDraft] = useSavedDraft<StoryQualityResult | null>("tool-quality-user-story", null, qualityDraftSchema);
 
   const quickExamples = [
     {
@@ -405,6 +408,10 @@ export default function UserStoryGenerator() {
 
   return (
     <div className="space-y-6">
+      <DraftActions drafts={[formDraft, outputDraft, qualityDraft]} onReset={() => {
+        setError("");
+        requestAnimationFrame(() => inputRef.current?.focus());
+      }} />
       <div className="rounded-2xl border border-sky-200 bg-gradient-to-br from-sky-50 via-white to-amber-50 p-5">
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <span className="px-3 py-1 rounded-full text-xs font-semibold bg-sky-700 text-white">Fast Mode</span>
@@ -422,6 +429,7 @@ export default function UserStoryGenerator() {
           What should this feature do? <span className="text-rose-500">*</span>
         </label>
         <textarea
+          ref={inputRef}
           id="featureDescription"
           name="featureDescription"
           value={form.featureDescription}
