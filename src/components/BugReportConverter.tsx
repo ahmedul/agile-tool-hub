@@ -2,8 +2,10 @@
 
 import { useToolUsage } from "@/hooks/useToolUsage";
 import Link from "next/link";
-import { useState } from "react";
-import { usePersistentState } from "@/hooks/usePersistentState";
+import { useRef, useState } from "react";
+import { useSavedDraft } from "@/hooks/useSavedDraft";
+import { textDraftSchema, qualityDraftSchema } from "@/lib/generator-drafts";
+import DraftActions from "@/components/DraftActions";
 import { trackEvent } from "@/lib/analytics";
 import { scoreBugReport, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -368,11 +370,12 @@ ${acceptanceCriteria}`;
 
 export default function BugReportConverter() {
   const markUsed = useToolUsage("bug_report");
-  const [input, setInput] = usePersistentState("tool-draft-bug-report", "");
-  const [output, setOutput] = usePersistentState("tool-output-bug-report", "");
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [input, setInput, inputDraft] = useSavedDraft("tool-draft-bug-report", "", textDraftSchema);
+  const [output, setOutput, outputDraft] = useSavedDraft("tool-output-bug-report", "", textDraftSchema);
   const loading = false;
   const [error, setError] = useState("");
-  const [quality, setQuality] = usePersistentState<TicketQualityResult | null>("tool-quality-bug-report", null);
+  const [quality, setQuality, qualityDraft] = useSavedDraft<TicketQualityResult | null>("tool-quality-bug-report", null, qualityDraftSchema);
 
   const quickExamples = [
     "Login button does nothing on Chrome 124 (macOS). Steps: 1) Open /login 2) enter valid creds 3) click Login. Expected dashboard. Actual spinner forever.",
@@ -403,6 +406,10 @@ export default function BugReportConverter() {
 
   return (
     <div className="space-y-6">
+      <DraftActions drafts={[inputDraft, outputDraft, qualityDraft]} onReset={() => {
+        setError("");
+        requestAnimationFrame(() => inputRef.current?.focus());
+      }} />
       <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5">
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <span className="px-3 py-1 rounded-full text-xs font-semibold bg-violet-700 text-white">Fast Mode</span>
@@ -416,8 +423,10 @@ export default function BugReportConverter() {
       </div>
 
       <ToolStepCard accentClassName="text-violet-700" stepLabel="Step 1">
-        <label className="block text-sm font-semibold text-slate-800 mb-2">Paste bug notes or chat transcript</label>
+        <label htmlFor="bug-notes" className="block text-sm font-semibold text-slate-800 mb-2">Paste bug notes or chat transcript</label>
         <textarea
+          id="bug-notes"
+          ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="From Slack, Zoom notes, or your own words. The tool will clean it up for Jira."

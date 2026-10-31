@@ -3,7 +3,10 @@
 import { useToolUsage } from "@/hooks/useToolUsage";
 
 import Link from "next/link";
-import { usePersistentState } from "@/hooks/usePersistentState";
+import { useRef } from "react";
+import { useSavedDraft } from "@/hooks/useSavedDraft";
+import { standupDraftSchema, standupModeSchema, standupFormatSchema, standupMembersSchema, memberIdSchema, textDraftSchema } from "@/lib/generator-drafts";
+import DraftActions from "@/components/DraftActions";
 import { trackEvent } from "@/lib/analytics";
 import OutputFeedback from "@/components/OutputFeedback";
 import ToolOutputActions from "@/components/ToolOutputActions";
@@ -250,17 +253,18 @@ function generateStandup(form: FormState, members: TeamMemberUpdate[], standupMo
 
 export default function DailyStandupGenerator() {
   const markUsed = useToolUsage("daily_standup");
-  const [form, setForm] = usePersistentState<FormState>("tool-draft-daily-standup", {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [form, setForm, formDraft] = useSavedDraft<FormState>("tool-draft-daily-standup", {
     yesterday: "",
     today: "",
     blockers: "",
     context: "",
-  });
-  const [standupMode, setStandupMode] = usePersistentState<StandupMode>("tool-mode-daily-standup", "individual");
-  const [outputFormat, setOutputFormat] = usePersistentState<OutputFormat>("tool-format-daily-standup", "markdown");
-  const [teamMembers, setTeamMembers] = usePersistentState<TeamMemberUpdate[]>("tool-members-daily-standup", DEFAULT_TEAM_MEMBERS);
-  const [nextMemberId, setNextMemberId] = usePersistentState("tool-next-member-daily-standup", 3);
-  const [output, setOutput] = usePersistentState("tool-output-daily-standup", "");
+  }, standupDraftSchema);
+  const [standupMode, setStandupMode, modeDraft] = useSavedDraft<StandupMode>("tool-mode-daily-standup", "individual", standupModeSchema);
+  const [outputFormat, setOutputFormat, formatDraft] = useSavedDraft<OutputFormat>("tool-format-daily-standup", "markdown", standupFormatSchema);
+  const [teamMembers, setTeamMembers, membersDraft] = useSavedDraft<TeamMemberUpdate[]>("tool-members-daily-standup", DEFAULT_TEAM_MEMBERS, standupMembersSchema);
+  const [nextMemberId, setNextMemberId, memberIdDraft] = useSavedDraft("tool-next-member-daily-standup", 3, memberIdSchema);
+  const [output, setOutput, outputDraft] = useSavedDraft("tool-output-daily-standup", "", textDraftSchema);
   // Describe the generated result, even if the format controls change afterward.
   const generatedFormat = output.startsWith("h2. ") ? "jira" : "markdown";
   const generatedMode = output.startsWith("h2. Team") || output.startsWith("# Team") ? "team" : "individual";
@@ -278,8 +282,9 @@ export default function DailyStandupGenerator() {
   };
 
   const addTeamMember = () => {
-    setTeamMembers((prev) => [...prev, { id: nextMemberId, name: `Engineer ${nextMemberId}`, yesterday: "", today: "", blockers: "" }]);
-    setNextMemberId((prev) => prev + 1);
+    const id = Math.max(nextMemberId, ...teamMembers.map(member => member.id + 1));
+    setTeamMembers((prev) => [...prev, { id, name: `Engineer ${id}`, yesterday: "", today: "", blockers: "" }]);
+    setNextMemberId(id + 1);
   };
 
   const removeTeamMember = (id: number) => {
@@ -303,6 +308,9 @@ export default function DailyStandupGenerator() {
 
   return (
     <div className="space-y-5">
+      <DraftActions drafts={[formDraft, modeDraft, formatDraft, membersDraft, memberIdDraft, outputDraft]} onReset={() => {
+        requestAnimationFrame(() => inputRef.current?.focus());
+      }} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-lg border border-gray-200 p-3 bg-white">
           <label className="block text-sm font-medium text-gray-700 mb-2">Standup mode</label>
@@ -373,6 +381,7 @@ export default function DailyStandupGenerator() {
                 What did you complete yesterday?
               </label>
               <textarea
+                ref={inputRef}
                 id="yesterday"
                 name="yesterday"
                 value={form.yesterday}

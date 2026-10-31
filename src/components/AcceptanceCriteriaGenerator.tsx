@@ -2,8 +2,10 @@
 
 import { useToolUsage } from "@/hooks/useToolUsage";
 import Link from "next/link";
-import { useState } from "react";
-import { usePersistentState } from "@/hooks/usePersistentState";
+import { useRef, useState } from "react";
+import { useSavedDraft } from "@/hooks/useSavedDraft";
+import { criteriaDraftSchema, textDraftSchema, qualityDraftSchema } from "@/lib/generator-drafts";
+import DraftActions from "@/components/DraftActions";
 import { trackEvent } from "@/lib/analytics";
 import { scoreAcceptanceCriteria, QualityResult } from "@/lib/ticketQuality";
 import OutputFeedback from "@/components/OutputFeedback";
@@ -228,16 +230,17 @@ ${constraints}`;
 
 export default function AcceptanceCriteriaGenerator() {
   const markUsed = useToolUsage("acceptance_criteria");
-  const [form, setForm] = usePersistentState<FormState>("tool-draft-acceptance-criteria", {
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [form, setForm, formDraft] = useSavedDraft<FormState>("tool-draft-acceptance-criteria", {
     featureDescription: "",
     userType: "",
     format: "both",
     preset: "product",
-  });
-  const [output, setOutput] = usePersistentState("tool-output-acceptance-criteria", "");
+  }, criteriaDraftSchema);
+  const [output, setOutput, outputDraft] = useSavedDraft("tool-output-acceptance-criteria", "", textDraftSchema);
   const loading = false;
   const [error, setError] = useState("");
-  const [quality, setQuality] = usePersistentState<CriteriaQualityResult | null>("tool-quality-acceptance-criteria", null);
+  const [quality, setQuality, qualityDraft] = useSavedDraft<CriteriaQualityResult | null>("tool-quality-acceptance-criteria", null, qualityDraftSchema);
 
   const quickExamples = [
     {
@@ -303,6 +306,10 @@ export default function AcceptanceCriteriaGenerator() {
 
   return (
     <div className="space-y-6">
+      <DraftActions drafts={[formDraft, outputDraft, qualityDraft]} onReset={() => {
+        setError("");
+        requestAnimationFrame(() => inputRef.current?.focus());
+      }} />
       <div className="rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-5">
         <div className="flex flex-wrap items-center gap-2 mb-3">
           <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-700 text-white">Fast Mode</span>
@@ -320,6 +327,7 @@ export default function AcceptanceCriteriaGenerator() {
           What should this feature do? <span className="text-rose-500">*</span>
         </label>
         <textarea
+          ref={inputRef}
           id="featureDescription"
           name="featureDescription"
           value={form.featureDescription}
