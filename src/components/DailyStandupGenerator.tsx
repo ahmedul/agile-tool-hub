@@ -3,10 +3,10 @@
 import { useToolUsage } from "@/hooks/useToolUsage";
 
 import Link from "next/link";
-import { useState } from "react";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { trackEvent } from "@/lib/analytics";
 import OutputFeedback from "@/components/OutputFeedback";
+import ToolOutputActions from "@/components/ToolOutputActions";
 
 type StandupMode = "individual" | "team";
 type OutputFormat = "markdown" | "jira";
@@ -261,7 +261,9 @@ export default function DailyStandupGenerator() {
   const [teamMembers, setTeamMembers] = usePersistentState<TeamMemberUpdate[]>("tool-members-daily-standup", DEFAULT_TEAM_MEMBERS);
   const [nextMemberId, setNextMemberId] = usePersistentState("tool-next-member-daily-standup", 3);
   const [output, setOutput] = usePersistentState("tool-output-daily-standup", "");
-  const [copied, setCopied] = useState(false);
+  // Describe the generated result, even if the format controls change afterward.
+  const generatedFormat = output.startsWith("h2. ") ? "jira" : "markdown";
+  const generatedMode = output.startsWith("h2. Team") || output.startsWith("# Team") ? "team" : "individual";
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -297,19 +299,6 @@ export default function DailyStandupGenerator() {
       team_size: standupMode === "team" ? teamMembers.length : 1,
     });
     setOutput(generateStandup(form, teamMembers, standupMode, outputFormat));
-  };
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    trackEvent("output_copy", {
-      tool: "daily_standup",
-      mode: "local",
-      output_length: output.length,
-      standup_mode: standupMode,
-      output_format: outputFormat,
-    });
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -525,14 +514,17 @@ export default function DailyStandupGenerator() {
 
       {output && (
         <div className="mt-6">
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Generated Standup Update</label>
-            <button
-              onClick={handleCopy}
-              className="text-sm px-4 py-1.5 rounded border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              {copied ? "✓ Copied!" : "Copy"}
-            </button>
+          <div className="mb-3 space-y-2">
+            <h3 className="text-sm font-medium text-gray-700">Generated Standup Update</h3>
+            <ToolOutputActions
+              key={output}
+              text={output}
+              tool="daily_standup"
+              filename={`daily-standup.${generatedFormat === "jira" ? "txt" : "md"}`}
+              format={generatedFormat}
+              copyLabel="Copy"
+              eventParams={{ standup_mode: generatedMode, output_format: generatedFormat }}
+            />
           </div>
           <pre className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-800 whitespace-pre-wrap overflow-auto">
             {output}
