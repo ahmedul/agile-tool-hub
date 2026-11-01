@@ -1,0 +1,5 @@
+"Work type","Summary","Description","Work item ID","Parent","Labels"
+"Epic","Help shoppers find suitable products","Fictional catalog improvement exercise.","1","","catalog"
+"Story","Filter the catalog by category","As a shopper, I want to select a category.
+Show an empty state with a ""Clear filters"" action when nothing matches.","2","1","catalog"
+"Sub-task","Verify category and empty-state behavior","Use the agreed test dataset, including Café products.","3","2","catalog"

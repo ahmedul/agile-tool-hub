@@ -1,0 +1,151 @@
+---
+title: "Jira CSV Import Template: Epic, Story & Sub-task Examples"
+description: "Download free Jira CSV templates for bugs, user stories, and an Epic–Story–Sub-task hierarchy. Includes field mapping, quoted examples, and import checks."
+slug: "jira-csv-import-template"
+category: "Templates"
+publishedAt: "2026-11-01"
+updatedAt: "2026-11-01"
+keywords:
+  - jira csv import template
+  - jira csv import example
+  - jira epic story subtask csv
+  - jira bulk import template
+  - jira bug import csv
+relatedLinks:
+  - title: "Jira CSV Builder and Validator"
+    href: "/tools/jira-csv-builder"
+  - title: "Jira Ticket Quality Checker"
+    href: "/tools/jira-ticket-quality-checker"
+  - title: "Epic Template for Jira"
+    href: "/templates/epic-template-jira"
+  - title: "Jira Bug Report Template"
+    href: "/templates/jira-bug-report-template"
+  - title: "User Story Template"
+    href: "/templates/user-story-template"
+howToSteps:
+  - name: "Choose and adapt a sample"
+    description: "Download the bug, user story, or hierarchy CSV and replace the fictional rows with your team's agreed work."
+  - name: "Check the file"
+    description: "Load the CSV in the validator to check quoting, summaries, IDs, and parent references."
+  - name: "Review Jira field mapping"
+    description: "Select the destination in Jira's importer and map headers and work type values to its available fields."
+  - name: "Verify the imported sample"
+    description: "Review the import preview, then check the descriptions and parent relationships on the created items."
+faqItems:
+  - question: "What is the minimum Jira CSV import template?"
+    answer: "A header row with Summary and a nonempty summary for each item is the basic starting point. Your Jira configuration may require additional fields. These samples also include Work type and Description."
+  - question: "How do I import Epics, Stories, and Sub-tasks together?"
+    answer: "Give every row a unique Work item ID, set each child's Parent to its parent's numeric ID, and put parents before children. Confirm that your Jira importer exposes the hierarchy fields and that the destination supports those work types."
+  - question: "Should I use Parent or Epic Link in Jira Cloud?"
+    answer: "Current Jira Cloud guidance uses Parent for hierarchy imports. Legacy files with Epic Link need manual mapping review. Importer screens and available fields depend on your Jira setup."
+  - question: "Do these files update existing Jira work items?"
+    answer: "The samples contain no existing work item keys and are intended as starting points for creating new items. Their numeric IDs link rows within the file; they are not destination Jira keys. Check the import mapping before running it."
+  - question: "Can I use the examples without signing up?"
+    answer: "Yes. Download or copy all three CSV examples for free. The file checks run in your browser. Jira access and the appropriate import permissions are needed for the actual import."
+---
+
+Choose a filled example, replace its fictional content, and check the file before importing. These UTF-8 CSVs use quoted fields and include multiline descriptions. No signup is needed to download them.
+
+| Starting point | Contents | File |
+|---|---|---|
+| Bug report | One bug with reproduction context and separate expected and actual results | [Download bug report CSV](/downloads/jira-bug-report-import.csv) |
+| User stories | Two independent stories with acceptance criteria and scope boundaries | [Download user story CSV](/downloads/jira-user-story-import.csv) |
+| Linked hierarchy | One Epic, one Story, and one Sub-task with numeric parent references | [Download Epic–Story–Sub-task CSV](/downloads/jira-epic-story-subtask-import.csv) |
+
+To customize several rows in your browser, open the [Jira CSV Builder and Validator](/tools/jira-csv-builder). To check a download, choose **Validate an existing CSV**, select the file, and choose **Validate CSV**. File checks do not confirm your destination's permissions, required custom fields, or available work types.
+
+## Bug report CSV example
+
+This example separates observed requests from an unconfirmed charge. Replace the environment instruction with the actual build, browser, and device used in your investigation.
+
+```csv
+"Work type","Summary","Description","Work item ID","Parent","Labels"
+"Bug","Checkout submits twice when Pay is pressed on a slow connection","Fictional example; replace these details with observed evidence.
+Steps: Open staging checkout with an in-stock item, enable a slow network profile, and press Pay twice before a result appears.
+Expected: One order is created and a confirmation is displayed.
+Actual: Two requests appear in the log. Whether both create a charge is unconfirmed.
+Environment: Record the tested build, browser, and device before handoff.","1","","checkout"
+```
+
+## User story CSV example
+
+Each row carries its own user outcome and acceptance criteria. Review the wording with the [Ticket Quality Checker](/tools/jira-ticket-quality-checker) and your team before treating it as agreed scope.
+
+```csv
+"Work type","Summary","Description","Work item ID","Parent","Labels"
+"Story","Filter catalog products by category","As a shopper, I want to filter the catalog by category, so that I can compare relevant products.
+Acceptance criteria: Selecting a category shows matching products. No matches shows an empty state with a ""Clear filters"" action. Clearing the filter restores the catalog.
+Out of scope: Saved filters and recommendations.
+Dependency: The catalog API exposes the category field.","1","","catalog"
+"Story","View the confirmation for a completed order","As a shopper, I want to view my completed order, so that I can confirm what I purchased.
+Acceptance criteria: The confirmation shows the order reference and purchased items. An unavailable order shows a retry action without creating another order.
+Out of scope: Refunds and order editing.","2","","checkout"
+```
+
+## Epic, Story, and Sub-task CSV example
+
+The Epic's ID is `1`. The Story points to Parent `1`, and the Sub-task points to the Story's ID `2`. These numbers connect rows in this file; Jira assigns destination work item keys during creation.
+
+```csv
+"Work type","Summary","Description","Work item ID","Parent","Labels"
+"Epic","Help shoppers find suitable products","Fictional catalog improvement exercise.","1","","catalog"
+"Story","Filter the catalog by category","As a shopper, I want to select a category.
+Show an empty state with a ""Clear filters"" action when nothing matches.","2","1","catalog"
+"Sub-task","Verify category and empty-state behavior","Use the agreed test dataset, including Café products.","3","2","catalog"
+```
+
+Keep parent rows above their children. If you combine separate sample files into one hierarchy, assign unique IDs across the combined file and update every affected Parent value. Atlassian's [parent-child mapping guidance](https://support.atlassian.com/jira/kb/keep-issue-parent-child-mapping-during-csv-import-to-jira-cloud/) covers the company-managed Cloud import procedure and its field prerequisites.
+
+## Map the columns in Jira
+
+| CSV column | Mapping to review | What to change |
+|---|---|---|
+| Summary | Summary | Use a specific, nonempty overview of each item. |
+| Description | Description | Replace the fictional detail with your reviewed requirements or evidence. |
+| Work type | Work type or Issue type | Match Bug, Story, Epic, and Sub-task to values available in the destination. |
+| Work item ID | Work item ID or Issue ID | Keep a unique numeric ID for every hierarchy row. |
+| Parent | Parent | Use the parent's numeric ID; leave top-level rows empty. |
+| Labels | Labels | Replace the sample labels or leave their values blank. |
+
+Header names do not configure the importer automatically. Map them explicitly, including any additional fields your destination requires. Atlassian's [CSV preparation guide](https://support.atlassian.com/jira-software-cloud/docs/prepare-a-csv-file-for-import/) explains required summaries, quoting, and hierarchy columns.
+
+## Use a small sample first
+
+1. Download the relevant CSV and replace its sample content.
+2. Check it with the [CSV validator](/tools/jira-csv-builder). Fix syntax errors, missing summaries, duplicate IDs, and broken parent references.
+3. In Jira's CSV importer, choose the destination and review field and work type mappings. The available import flow depends on your access and setup; follow [Atlassian's import instructions](https://support.atlassian.com/jira-cloud-administration/docs/import-data-from-a-csv-file/).
+4. Review the import preview. After importing your sample, check the descriptions and parent relationships on the resulting items before expanding the batch.
+
+## Troubleshoot the file before importing
+
+| Problem | Check |
+|---|---|
+| Description splits into extra columns | Enclose the whole value in double quotes. The samples already quote every field. |
+| A quote breaks a description | Escape an embedded quote by doubling it, as in `""Clear filters""`. |
+| A child has no parent | Check its Parent value, the parent's ID, row order, and whether Parent is mapped in your importer. |
+| A file passes here but fails in Jira | Check custom required fields, work type values, permissions, and destination hierarchy settings. |
+| A legacy file has Epic Link | Review the current Parent mapping guidance instead of renaming it without checking its values. |
+
+For content structure beyond the import format, use the [Jira bug report template](/templates/jira-bug-report-template), [user story template](/templates/user-story-template), and [Epic template](/templates/epic-template-jira).
+
+## Frequently asked questions
+
+### What is the minimum Jira CSV import template?
+
+A header row with Summary and a nonempty summary for each item is the basic starting point. Your Jira configuration may require additional fields. These samples also include Work type and Description.
+
+### How do I import Epics, Stories, and Sub-tasks together?
+
+Give every row a unique Work item ID, set each child's Parent to its parent's numeric ID, and put parents before children. Confirm that your Jira importer exposes the hierarchy fields and that the destination supports those work types.
+
+### Should I use Parent or Epic Link in Jira Cloud?
+
+Current Jira Cloud guidance uses Parent for hierarchy imports. Legacy files with Epic Link need manual mapping review. Importer screens and available fields depend on your Jira setup.
+
+### Do these files update existing Jira work items?
+
+The samples contain no existing work item keys and are intended as starting points for creating new items. Their numeric IDs link rows within the file; they are not destination Jira keys. Check the import mapping before running it.
+
+### Can I use the examples without signing up?
+
+Yes. Download or copy all three CSV examples for free. The file checks run in your browser. Jira access and the appropriate import permissions are needed for the actual import.

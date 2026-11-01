@@ -11,6 +11,17 @@ import { mdxRemoteOptions } from "@/lib/mdx";
 import { buildArticleSchema, buildBreadcrumbSchema, buildFAQSchema, buildHowToSchema, buildMetadata } from "@/lib/seo";
 
 function getTemplateCta(slug: string) {
+  if (slug === "jira-csv-import-template") {
+    return {
+      title: "Check your CSV before importing",
+      description: "Validate file structure and parent references, then confirm your field mapping in Jira.",
+      primaryHref: "/tools/jira-csv-builder",
+      primaryLabel: "Open CSV Builder and Validator",
+      secondaryHref: "/tools/jira-ticket-quality-checker",
+      secondaryLabel: "Review ticket text",
+    };
+  }
+
   if (slug.includes("user-story")) {
     return {
       title: "Try the User Story Generator",

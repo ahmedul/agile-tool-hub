@@ -11,3 +11,11 @@ it("offers each complete template while ignoring headings inside its copied cont
 it("does not offer incomplete or empty code blocks", () => {
   expect(extractTemplateSections("## Empty\n```\n```\n## Incomplete\n```\nunclosed")).toEqual([]);
 });
+
+it("identifies CSV blocks and preserves cell whitespace without changing Markdown sections", () => {
+  const content = "## Import\n~~~CSV\nSummary,Description\nA, padded value  \n~~~\n## Ticket\n```markdown\n  ## Title\nFix checkout  \n```";
+  expect(extractTemplateSections(content)).toEqual([
+    { title: "Import", markdown: "Summary,Description\nA, padded value  ", format: "csv" },
+    { title: "Ticket", markdown: "## Title\nFix checkout" },
+  ]);
+});

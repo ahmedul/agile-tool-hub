@@ -18,6 +18,7 @@ export default function TemplatesPage() {
   const templates = getAllContent("templates");
   const priorityTemplateSlugs = [
     "complete-jira-ticket-template",
+    "jira-csv-import-template",
     "api-requirements-jira-template",
   ];
   const prioritizedTemplates = [

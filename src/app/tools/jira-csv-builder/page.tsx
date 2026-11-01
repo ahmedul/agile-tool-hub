@@ -30,6 +30,7 @@ export default function JiraCsvBuilderPage() {
       <span className="text-xs font-semibold uppercase text-green-700">Free tool · No signup</span>
       <h1 className="mt-2 text-3xl font-bold text-gray-900 md:text-4xl">{name}</h1>
       <p className="mb-8 mt-4 text-lg text-gray-600">Prepare a Jira Cloud import file, or check a CSV you already have. Find formatting problems and broken parent references before reviewing the import in Jira.</p>
+      <p className="mb-6 text-sm text-gray-700">Need a starting file? Get the <Link className="text-blue-700 underline" href="/templates/jira-csv-import-template">free Jira CSV import templates</Link> for bugs, user stories, and an Epic → Story → Sub-task hierarchy.</p>
       <JiraCsvBuilder />
       <section className="mt-12 rounded-xl border border-gray-200 bg-gray-50 p-6">
         <h2 className="text-xl font-bold text-gray-900">Example: import an Epic with a Story and Sub-task</h2>
