@@ -12,6 +12,7 @@ interface TemplateCopyActionsProps {
 export default function TemplateCopyActions({ sections, slug }: TemplateCopyActionsProps) {
   const [selected, setSelected] = useState(0);
   const markdown = sections[selected]?.markdown ?? "";
+  const csv = sections[selected]?.format === "csv";
   const params = { template_slug: slug, section: selected + 1 };
 
   return (
@@ -24,10 +25,16 @@ export default function TemplateCopyActions({ sections, slug }: TemplateCopyActi
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <CopyButton key={`markdown-${selected}`} text={markdown} label="Copy Markdown" eventName="template_copy" eventParams={{ ...params, format: "markdown" }} />
-          <CopyButton key={`jira-${selected}`} text={markdown} label="Copy for Jira" eventName="template_copy" eventParams={{ ...params, format: "jira" }} />
-          <CopyButton key={`github-${selected}`} text={markdown} label="Copy for GitHub" eventName="template_copy" eventParams={{ ...params, format: "github" }} />
-          <CopyButton key={`linear-${selected}`} text={markdown} label="Copy for Linear" eventName="template_copy" eventParams={{ ...params, format: "linear" }} />
+          {csv ? (
+            <CopyButton key={`csv-${selected}`} text={markdown} label="Copy CSV" eventName="template_copy" eventParams={{ ...params, format: "csv" }} />
+          ) : (
+            <>
+              <CopyButton key={`markdown-${selected}`} text={markdown} label="Copy Markdown" eventName="template_copy" eventParams={{ ...params, format: "markdown" }} />
+              <CopyButton key={`jira-${selected}`} text={markdown} label="Copy for Jira" eventName="template_copy" eventParams={{ ...params, format: "jira" }} />
+              <CopyButton key={`github-${selected}`} text={markdown} label="Copy for GitHub" eventName="template_copy" eventParams={{ ...params, format: "github" }} />
+              <CopyButton key={`linear-${selected}`} text={markdown} label="Copy for Linear" eventName="template_copy" eventParams={{ ...params, format: "linear" }} />
+            </>
+          )}
         </div>
       </div>
       {sections.length > 1 && (

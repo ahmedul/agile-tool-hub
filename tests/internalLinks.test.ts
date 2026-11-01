@@ -31,6 +31,9 @@ function getPublicRoutes(): Set<string> {
     "/openapi.json",
     "/api/agent/tools",
     "/downloads/agiletoolhub-sprint-workshop-kit.md",
+    "/downloads/jira-bug-report-import.csv",
+    "/downloads/jira-user-story-import.csv",
+    "/downloads/jira-epic-story-subtask-import.csv",
   ]);
 
   for (const type of CONTENT_TYPES) {

@@ -9,7 +9,9 @@ function mergeClassName(...classes: Array<string | undefined>) {
 export const mdxComponents: MDXRemoteProps["components"] = {
   a: ({ href, children, className, ...props }: ComponentProps<"a">) => {
     if (href?.startsWith("/downloads/")) {
-      return <TrackedLink href={href} label={href} download prefetch={false} className={className} eventName="resource_download_click" eventParams={{ surface: "article_body", format: "markdown" }}>{children}</TrackedLink>;
+      const extension = href.split(/[?#]/)[0].match(/\.([a-z0-9]+)$/i)?.[1]?.toLowerCase();
+      const format = extension === "md" ? "markdown" : extension ?? "file";
+      return <TrackedLink href={href} label={href} download prefetch={false} className={className} eventName="resource_download_click" eventParams={{ surface: "article_body", format }}>{children}</TrackedLink>;
     }
     if (href?.startsWith("/tools/") || href?.startsWith("/packs/")) {
       return <TrackedLink href={href} label={href} className={className} eventParams={{ surface: "article_body" }}>{children}</TrackedLink>;

@@ -1,0 +1,6 @@
+"Work type","Summary","Description","Work item ID","Parent","Labels"
+"Bug","Checkout submits twice when Pay is pressed on a slow connection","Fictional example; replace these details with observed evidence.
+Steps: Open staging checkout with an in-stock item, enable a slow network profile, and press Pay twice before a result appears.
+Expected: One order is created and a confirmation is displayed.
+Actual: Two requests appear in the log. Whether both create a charge is unconfirmed.
+Environment: Record the tested build, browser, and device before handoff.","1","","checkout"

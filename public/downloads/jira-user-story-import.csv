@@ -1,0 +1,8 @@
+"Work type","Summary","Description","Work item ID","Parent","Labels"
+"Story","Filter catalog products by category","As a shopper, I want to filter the catalog by category, so that I can compare relevant products.
+Acceptance criteria: Selecting a category shows matching products. No matches shows an empty state with a ""Clear filters"" action. Clearing the filter restores the catalog.
+Out of scope: Saved filters and recommendations.
+Dependency: The catalog API exposes the category field.","1","","catalog"
+"Story","View the confirmation for a completed order","As a shopper, I want to view my completed order, so that I can confirm what I purchased.
+Acceptance criteria: The confirmation shows the order reference and purchased items. An unavailable order shows a retry action without creating another order.
+Out of scope: Refunds and order editing.","2","","checkout"

@@ -49,6 +49,7 @@ export default function TicketQualityCheckerPage() {
       <section className="mt-10 border-t border-gray-200 pt-8">
         <h2 className="mb-4 text-lg font-semibold text-gray-900">Related tools and guides</h2>
         <ul className="space-y-2 text-blue-700">
+          <li><Link href="/templates/jira-csv-import-template" className="hover:underline">Download Jira CSV import examples</Link></li>
           <li><Link href="/tools/bug-report-to-jira-ticket-converter" className="hover:underline">Structure rough bug notes</Link></li>
           <li><Link href="/tools/user-story-generator" className="hover:underline">Draft a user story</Link></li>
           <li><Link href="/tools/acceptance-criteria-generator" className="hover:underline">Draft acceptance criteria</Link></li>
